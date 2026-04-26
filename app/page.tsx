@@ -4,59 +4,76 @@ import { useState } from "react";
 
 export default function Page() {
   const [vin, setVin] = useState("");
+  const [comment, setComment] = useState("");
 
   return (
     <main>
 
       {/* HEADER */}
       <header className="header">
-        <div className="logo">EU PARTS</div>
+        <div className="logo">
+          <div className="logo-icon">🚗</div>
+          <div>
+            <div className="logo-text">EU PARTS</div>
+            <div className="logo-sub">Поставка автозапчастей из Европы</div>
+          </div>
+        </div>
 
-        <a href="/login" className="cabinet-btn">
-          Личный кабинет
-        </a>
+        <nav className="menu">
+          <a href="#about">О нас</a>
+          <a href="#how">Как это работает</a>
+          <a href="#delivery">Доставка</a>
+          <a href="#guarantee">Гарантия</a>
+          <a href="#contact">Контакты</a>
+        </nav>
+
+        <div className="contacts">
+          <a href="https://wa.me/77000000000">WhatsApp</a>
+          <span>slynko.andrey@gmail.com</span>
+        </div>
       </header>
 
       {/* HERO */}
       <section className="hero">
 
-        {/* overlay */}
         <div className="overlay" />
 
-        {/* content */}
         <div className="content">
 
           <h1>
-            Поставка автозапчастей<br />
+            Подбор и поставка автозапчастей<br />
             <span>из Европы</span>
           </h1>
 
           <p>
-            Подбор по VIN или номеру детали с прозрачной ценой и сроками
+            Точные детали по VIN. Прозрачная цена. Надёжная логистика.
           </p>
 
-          {/* VIN BLOCK */}
+          {/* FORM */}
           <div className="glass">
 
-            <div className="vin-row">
-              <input
-                placeholder="Введите VIN или номер детали"
-                value={vin}
-                onChange={(e) => setVin(e.target.value)}
-              />
+            <input
+              placeholder="Введите VIN или номер детали"
+              value={vin}
+              onChange={(e) => setVin(e.target.value)}
+            />
 
-              <button>Получить предложение</button>
-            </div>
+            <textarea
+              placeholder="Опишите ваш запрос (необязательно)"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            />
 
-            {/* steps */}
+            <button>Получить предложение</button>
+
             <div className="steps">
-              <div>Запрос</div>
+              <span>Запрос</span>
               <span>→</span>
-              <div>Предложение</div>
+              <span>Предложение</span>
               <span>→</span>
-              <div>Оплата</div>
+              <span>Оплата</span>
               <span>→</span>
-              <div>Доставка</div>
+              <span>Доставка</span>
             </div>
 
           </div>
@@ -64,84 +81,123 @@ export default function Page() {
         </div>
       </section>
 
-      {/* HOW */}
-      <section className="how">
-        <h2>Как это работает</h2>
+      {/* ABOUT */}
+      <section id="about" className="section">
+        <h2>О нас</h2>
+        <p>Мы поставляем оригинальные и аналоговые автозапчасти напрямую из Европы.</p>
+      </section>
 
-        <div className="how-grid">
+      {/* HOW */}
+      <section id="how" className="section dark">
+        <h2>Как это работает</h2>
+        <div className="grid">
           <div>Вы отправляете VIN</div>
-          <div>Мы подбираем варианты</div>
-          <div>Фиксируем цену</div>
-          <div>Доставляем в Казахстан</div>
+          <div>Мы подбираем детали</div>
+          <div>Согласовываем цену</div>
+          <div>Доставляем</div>
         </div>
+      </section>
+
+      {/* DELIVERY */}
+      <section id="delivery" className="section">
+        <h2>Доставка</h2>
+        <p>Поставка из Польши в Казахстан с полным таможенным оформлением.</p>
+      </section>
+
+      {/* GUARANTEE */}
+      <section id="guarantee" className="section dark">
+        <h2>Гарантия</h2>
+        <p>Проверенные поставщики и контроль качества на всех этапах.</p>
+      </section>
+
+      {/* CONTACT */}
+      <section id="contact" className="section">
+        <h2>Контакты</h2>
+        <p>WhatsApp: +7 700 000 00 00</p>
+        <p>Email: slynko.andrey@gmail.com</p>
       </section>
 
       {/* STYLES */}
       <style jsx>{`
 
         main {
-          font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+          font-family: -apple-system, sans-serif;
         }
 
         /* HEADER */
         .header {
-          position: absolute;
-          top: 0;
+          position: fixed;
           width: 100%;
-          padding: 20px 30px;
+          top: 0;
           display: flex;
           justify-content: space-between;
           align-items: center;
+          padding: 15px 30px;
+          background: rgba(0,0,0,0.6);
+          backdrop-filter: blur(10px);
           color: #fff;
-          z-index: 10;
+          z-index: 100;
         }
 
         .logo {
-          font-weight: 600;
-          letter-spacing: 2px;
+          display: flex;
+          gap: 10px;
+          align-items: center;
         }
 
-        .cabinet-btn {
-          border: 1px solid rgba(255,255,255,0.6);
-          padding: 8px 14px;
-          border-radius: 6px;
-          text-decoration: none;
+        .logo-text {
+          font-weight: 600;
+        }
+
+        .logo-sub {
+          font-size: 11px;
+          opacity: 0.6;
+        }
+
+        .menu {
+          display: flex;
+          gap: 20px;
+        }
+
+        .menu a {
           color: #fff;
-          backdrop-filter: blur(10px);
+          text-decoration: none;
+          font-size: 14px;
+        }
+
+        .contacts {
+          display: flex;
+          gap: 15px;
+          font-size: 13px;
         }
 
         /* HERO */
         .hero {
           height: 100vh;
           background: url('/audi.jpg') center/cover no-repeat;
-          position: relative;
           display: flex;
-          justify-content: center;
           align-items: center;
+          justify-content: center;
+          position: relative;
         }
 
         .overlay {
           position: absolute;
           width: 100%;
           height: 100%;
-          background: linear-gradient(
-            to bottom,
-            rgba(0,0,0,0.7),
-            rgba(0,0,0,0.9)
-          );
+          background: rgba(0,0,0,0.7);
         }
 
         .content {
           position: relative;
           text-align: center;
           color: #fff;
-          max-width: 700px;
+          max-width: 600px;
           padding: 20px;
         }
 
         h1 {
-          font-size: 40px;
-          margin-bottom: 15px;
+          font-size: 34px;
         }
 
         h1 span {
@@ -149,86 +205,84 @@ export default function Page() {
         }
 
         p {
-          opacity: 0.75;
-          margin-bottom: 30px;
+          opacity: 0.7;
+          margin-bottom: 20px;
         }
 
-        /* GLASS BLOCK */
+        /* FORM */
         .glass {
           backdrop-filter: blur(20px);
           background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(255,255,255,0.1);
-          border-radius: 14px;
           padding: 20px;
-        }
-
-        .vin-row {
+          border-radius: 12px;
           display: flex;
+          flex-direction: column;
           gap: 10px;
         }
 
-        input {
-          flex: 1;
-          padding: 14px;
+        input, textarea {
+          padding: 12px;
           border-radius: 6px;
           border: none;
+        }
+
+        textarea {
+          min-height: 80px;
         }
 
         button {
           background: #7a1f1f;
           color: #fff;
           border: none;
-          padding: 14px 18px;
+          padding: 12px;
           border-radius: 6px;
-          cursor: pointer;
         }
 
-        /* STEPS */
         .steps {
-          margin-top: 20px;
-          display: flex;
-          justify-content: center;
-          gap: 10px;
-          font-size: 13px;
-          opacity: 0.8;
-          flex-wrap: wrap;
+          font-size: 12px;
+          opacity: 0.7;
         }
 
-        /* HOW */
-        .how {
+        /* SECTIONS */
+        .section {
           padding: 80px 20px;
           text-align: center;
         }
 
-        .how-grid {
-          margin-top: 40px;
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 20px;
+        .dark {
+          background: #111;
+          color: #fff;
         }
 
-        .how-grid div {
+        .grid {
+          display: grid;
+          grid-template-columns: repeat(4,1fr);
+          gap: 20px;
+          margin-top: 30px;
+        }
+
+        .grid div {
           padding: 20px;
-          border: 1px solid #eee;
+          border: 1px solid #ddd;
           border-radius: 10px;
         }
 
-        /* 📱 MOBILE */
+        /* MOBILE */
         @media (max-width: 768px) {
 
+          .menu {
+            display: none;
+          }
+
+          .contacts {
+            display: none;
+          }
+
           h1 {
-            font-size: 26px;
+            font-size: 24px;
           }
 
-          .vin-row {
-            flex-direction: column;
-          }
-
-          button {
-            width: 100%;
-          }
-
-          .how-grid {
+          .grid {
             grid-template-columns: 1fr;
           }
 
