@@ -151,3 +151,4 @@ export default function Page() {
         p {
           opacity: 0.75;
           margin
+          }
