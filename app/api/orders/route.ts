@@ -1,12 +1,19 @@
+let orders: any[] = [];
+
 export async function GET() {
-  return Response.json([
-    {
-      id: "1",
-      vin: "WAUZZZ",
-      message: "Тормозные колодки",
-      status: "Готово",
-      purchase: 80,
-      delivery: 10
-    }
-  ]);
+  return Response.json(orders);
+}
+
+export async function POST(req: Request) {
+  const body = await req.json();
+
+  const newOrder = {
+    id: Date.now().toString(),
+    vin: body.vin,
+    status: "В обработке"
+  };
+
+  orders.push(newOrder);
+
+  return Response.json({ ok: true });
 }
