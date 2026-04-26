@@ -150,5 +150,92 @@ export default function Page() {
 
         p {
           opacity: 0.75;
-          margin
+          margin-bottom: 30px;
+        }
+
+        /* GLASS BLOCK */
+        .glass {
+          backdrop-filter: blur(20px);
+          background: rgba(255,255,255,0.05);
+          border: 1px solid rgba(255,255,255,0.1);
+          border-radius: 14px;
+          padding: 20px;
+        }
+
+        .vin-row {
+          display: flex;
+          gap: 10px;
+        }
+
+        input {
+          flex: 1;
+          padding: 14px;
+          border-radius: 6px;
+          border: none;
+        }
+
+        button {
+          background: #7a1f1f;
+          color: #fff;
+          border: none;
+          padding: 14px 18px;
+          border-radius: 6px;
+          cursor: pointer;
+        }
+
+        /* STEPS */
+        .steps {
+          margin-top: 20px;
+          display: flex;
+          justify-content: center;
+          gap: 10px;
+          font-size: 13px;
+          opacity: 0.8;
+          flex-wrap: wrap;
+        }
+
+        /* HOW */
+        .how {
+          padding: 80px 20px;
+          text-align: center;
+        }
+
+        .how-grid {
+          margin-top: 40px;
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 20px;
+        }
+
+        .how-grid div {
+          padding: 20px;
+          border: 1px solid #eee;
+          border-radius: 10px;
+        }
+
+        /* 📱 MOBILE */
+        @media (max-width: 768px) {
+
+          h1 {
+            font-size: 26px;
           }
+
+          .vin-row {
+            flex-direction: column;
+          }
+
+          button {
+            width: 100%;
+          }
+
+          .how-grid {
+            grid-template-columns: 1fr;
+          }
+
+        }
+
+      `}</style>
+
+    </main>
+  );
+}
