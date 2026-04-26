@@ -12,5 +12,10 @@
     "react-dom": "18",
     "framer-motion": "^10",
     "lucide-react": "^0.300.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/react": "^18.0.0",
+    "@types/node": "^20.0.0"
   }
 }
