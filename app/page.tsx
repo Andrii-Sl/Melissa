@@ -293,3 +293,17 @@ export default function Page() {
     </main>
   );
 }
+<div style={{
+  position: "absolute",
+  top: 20,
+  right: 20,
+  zIndex: 10
+}}>
+  <a href="/login" style={{
+    color: "#fff",
+    border: "1px solid #fff",
+    padding: "8px 12px"
+  }}>
+    Личный кабинет
+  </a>
+</div>
