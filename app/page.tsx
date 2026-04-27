@@ -1,73 +1,60 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function Page() {
   const [vin, setVin] = useState("");
   const [comment, setComment] = useState("");
-  const [car, setCar] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async () => {
-    setLoading(true);
-
-    const res = await fetch("/api/vin", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ vin, comment })
-    });
-
-    const data = await res.json();
-    setCar(data);
-    setLoading(false);
-
-    // отправка заявки
-    await fetch("/api/order", {
-      method: "POST",
-      body: JSON.stringify({ vin, comment, car: data })
-    });
-  };
 
   return (
-    <main>
+    <main className="container">
 
       {/* HEADER */}
       <header className="header">
-        <div>
-          <b>AutoParts EU</b>
-          <div className="sub">Подбор и доставка запчастей</div>
+        <div className="logoBlock">
+          <Image src="/logo.png" alt="logo" width={160} height={40} />
+          <span className="subtitle">
+            ПОДБОР И ДОСТАВКА ЗАПЧАСТЕЙ ИЗ ЕВРОПЫ
+          </span>
         </div>
 
-        <nav>
+        <nav className="menu">
           <a>О компании</a>
           <a>Как это работает</a>
+          <a>Гарантия</a>
           <a>Доставка</a>
           <a>Контакты</a>
         </nav>
 
-        <a href="/login" className="btn-outline">
-          Личный кабинет
-        </a>
+        <div className="right">
+          <span>WhatsApp</span>
+          <span>Telegram</span>
+          <span className="email">slynko.andrey@gmail.com</span>
+
+          <a href="/login" className="cabinet">
+            Личный кабинет
+          </a>
+        </div>
       </header>
 
       {/* HERO */}
       <section className="hero">
 
         {/* LEFT */}
-        <motion.div
-          initial={{ opacity: 0, x: -40 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="hero-left"
-        >
-          <p className="label">ПОДБОР ПО VIN</p>
+        <div className="left">
 
-          <h1>Подбор автозапчастей из Европы</h1>
+          <p className="label">
+            ПОДБОР ПО VIN ИЛИ НОМЕРУ ДЕТАЛИ
+          </p>
+
+          <h1>
+            Подбор автозапчастей<br />из Европы
+          </h1>
 
           <p className="desc">
-            Оригинальные и качественные аналоги. Быстро и с гарантией.
+            Оригинальные и качественные аналоги для европейских автомобилей.
+            Быстро, надежно, с гарантией.
           </p>
 
           <input
@@ -77,45 +64,59 @@ export default function Page() {
           />
 
           <input
-            placeholder="Опишите запрос (необязательно)"
+            placeholder="Опишите ваш запрос (необязательно)"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
           />
 
-          <button onClick={handleSubmit}>
-            {loading ? "Загрузка..." : "Получить предложение"}
+          <button>
+            ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ
           </button>
 
-          {car && (
-            <div className="result">
-              {car.make} {car.model} ({car.year})
-            </div>
-          )}
-        </motion.div>
+          <p className="safe">
+            🔒 Ваши данные в безопасности и не передаются третьим лицам
+          </p>
 
-        {/* RIGHT */}
-        <motion.div
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="hero-img"
-        />
+        </div>
+
+        {/* RIGHT IMAGE */}
+        <div className="rightImage">
+          <Image
+            src="/audi.jpg"
+            alt="car"
+            fill
+            style={{ objectFit: "cover" }}
+          />
+        </div>
 
       </section>
 
       {/* HOW */}
       <section className="how">
-        {["Запрос", "Подбор", "Предложение", "Оплата", "Доставка"].map((x, i) => (
-          <motion.div
-            key={i}
-            whileHover={{ scale: 1.05 }}
-            className="step"
-          >
-            <div className="circle">{i + 1}</div>
-            <p>{x}</p>
-          </motion.div>
-        ))}
+
+        <h2>Как это работает</h2>
+
+        <div className="steps">
+
+          {[
+            ["Ваш запрос", "Вы отправляете VIN или номер детали и описание."],
+            ["Подбор и проверка", "Мы подбираем запчасти в Европе и проверяем наличие."],
+            ["Предложение", "Вы получаете предложение с ценой и сроками."],
+            ["Оплата", "Вы оплачиваете заказ удобным способом."],
+            ["Поставка", "Мы выкупаем и доставляем запчасти."],
+            ["Вы получаете", "Вы получаете заказ с гарантией."]
+          ].map((item, i) => (
+            <div key={i} className="step">
+              <div className="circle">{i + 1}</div>
+              <h4>{item[0]}</h4>
+              <p>{item[1]}</p>
+            </div>
+          ))}
+
+        </div>
+
       </section>
 
     </main>
   );
-        }
+          }
