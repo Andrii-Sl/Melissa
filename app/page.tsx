@@ -9,16 +9,16 @@ export default function Page() {
   return (
     <main>
 
-      {/* HEADER */}
       <header className="header">
-        <div className="logo">
-          <div className="logo-icon">🚗</div>
-          <div>
-            <div className="logo-text">EU PARTS</div>
-            <div className="logo-sub">Поставка автозапчастей из Европы</div>
-          </div>
-        </div>
+  <div className="logo">
+    EU PARTS
+  </div>
 
+  <a href="/login" className="cabinet-btn">
+    Личный кабинет
+  </a>
+</header>
+  
         <nav className="menu">
           <a href="#about">О нас</a>
           <a href="#how">Как это работает</a>
