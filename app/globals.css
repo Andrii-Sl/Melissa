@@ -1,0 +1,82 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #fff;
+}
+
+/* HEADER */
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 15px 40px;
+  display: flex;
+  justify-content: space-between;
+  background: #fff;
+  z-index: 100;
+  border-bottom: 1px solid #eee;
+}
+
+.header nav a {
+  margin: 0 10px;
+  cursor: pointer;
+}
+
+.btn-outline {
+  border: 1px solid #8B0000;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+/* HERO */
+.hero {
+  display: flex;
+  padding: 120px 40px;
+  justify-content: space-between;
+}
+
+.hero-left {
+  max-width: 500px;
+}
+
+.hero-left input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+}
+
+.hero-left button {
+  width: 100%;
+  padding: 14px;
+  background: #8B0000;
+  color: #fff;
+  border: none;
+}
+
+.hero-img {
+  width: 600px;
+  height: 350px;
+  background: url('/audi.jpg') center/cover no-repeat;
+  border-radius: 10px;
+}
+
+/* HOW */
+.how {
+  display: flex;
+  justify-content: space-around;
+  padding: 40px;
+  background: #f7f7f7;
+}
+
+.step {
+  text-align: center;
+}
+
+.circle {
+  width: 30px;
+  height: 30px;
+  background: #8B0000;
+  color: #fff;
+  border-radius: 50%;
+  margin: auto;
+}
