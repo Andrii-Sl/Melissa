@@ -10,7 +10,6 @@ export default function Page() {
   return (
     <main className="container">
 
-      {/* HEADER */}
       <header className="header">
         <div className="logoBlock">
           <Image src="/logo.png" alt="logo" width={160} height={40} />
@@ -20,11 +19,11 @@ export default function Page() {
         </div>
 
         <nav className="menu">
-          <a>О компании</a>
-          <a>Как это работает</a>
-          <a>Гарантия</a>
-          <a>Доставка</a>
-          <a>Контакты</a>
+          <a href="#">О компании</a>
+          <a href="#">Как это работает</a>
+          <a href="#">Гарантия</a>
+          <a href="#">Доставка</a>
+          <a href="#">Контакты</a>
         </nav>
 
         <div className="right">
@@ -32,21 +31,16 @@ export default function Page() {
           <span>Telegram</span>
           <span className="email">slynko.andrey@gmail.com</span>
 
-          <a href="/login" className="cabinet">
+          <a href="/dashboard" className="cabinet">
             Личный кабинет
           </a>
         </div>
       </header>
 
-      {/* HERO */}
       <section className="hero">
 
-        {/* LEFT */}
         <div className="left">
-
-          <p className="label">
-            ПОДБОР ПО VIN ИЛИ НОМЕРУ ДЕТАЛИ
-          </p>
+          <p className="label">ПОДБОР ПО VIN ИЛИ НОМЕРУ ДЕТАЛИ</p>
 
           <h1>
             Подбор автозапчастей<br />из Европы
@@ -54,32 +48,23 @@ export default function Page() {
 
           <p className="desc">
             Оригинальные и качественные аналоги для европейских автомобилей.
-            Быстро, надежно, с гарантией.
           </p>
 
           <input
-            placeholder="Введите VIN или номер детали"
+            placeholder="Введите VIN"
             value={vin}
             onChange={(e) => setVin(e.target.value)}
           />
 
           <input
-            placeholder="Опишите ваш запрос (необязательно)"
+            placeholder="Комментарий"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
           />
 
-          <button>
-            ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ
-          </button>
-
-          <p className="safe">
-            🔒 Ваши данные в безопасности и не передаются третьим лицам
-          </p>
-
+          <button>ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ</button>
         </div>
 
-        {/* RIGHT IMAGE */}
         <div className="rightImage">
           <Image
             src="/audi.jpg"
@@ -91,32 +76,6 @@ export default function Page() {
 
       </section>
 
-      {/* HOW */}
-      <section className="how">
-
-        <h2>Как это работает</h2>
-
-        <div className="steps">
-
-          {[
-            ["Ваш запрос", "Вы отправляете VIN или номер детали и описание."],
-            ["Подбор и проверка", "Мы подбираем запчасти в Европе и проверяем наличие."],
-            ["Предложение", "Вы получаете предложение с ценой и сроками."],
-            ["Оплата", "Вы оплачиваете заказ удобным способом."],
-            ["Поставка", "Мы выкупаем и доставляем запчасти."],
-            ["Вы получаете", "Вы получаете заказ с гарантией."]
-          ].map((item, i) => (
-            <div key={i} className="step">
-              <div className="circle">{i + 1}</div>
-              <h4>{item[0]}</h4>
-              <p>{item[1]}</p>
-            </div>
-          ))}
-
-        </div>
-
-      </section>
-
     </main>
   );
-          }
+        }
