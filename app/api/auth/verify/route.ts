@@ -1,4 +1,4 @@
-import { verifyCode } from "@/lib/auth";
+import { verifyCode } from "../../../../lib/auth";
 
 export async function POST(req: Request) {
   const { phone, code } = await req.json();
