@@ -14,7 +14,8 @@ export async function GET() {
       brand: "Hella",
       article: "5G1941006AF",
       price: calculatePrice(250),
-      status: "pending"
+      status: "pending",
+      days: "5-7 дней"
     },
     {
       id: 101210,
