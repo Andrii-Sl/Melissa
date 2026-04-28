@@ -1,7 +1,0 @@
-{vinResult && (
-  <div style={{ marginTop: "15px", color: "#fff" }}>
-    <p>Марка: {vinResult.make}</p>
-    <p>Модель: {vinResult.model}</p>
-    <p>Год: {vinResult.year}</p>
-  </div>
-)}
