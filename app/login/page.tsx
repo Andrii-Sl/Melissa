@@ -1,27 +1,43 @@
-const send = async () => {
-  const res = await fetch("/api/auth/send", {
-    method: "POST",
-    body: JSON.stringify({ phone })
-  });
+"use client";
 
-  const data = await res.json();
+import { useState } from "react";
 
-  // 🔑 если мастер-вход
-  if (data.master) {
-    const res2 = await fetch("/api/auth/verify", {
+export default function LoginPage() {
+  const [phone, setPhone] = useState("");
+  const [code, setCode] = useState("");
+
+  const handleLogin = async () => {
+    const res = await fetch("/api/auth/verify", {
       method: "POST",
-      body: JSON.stringify({ phone })
+      body: JSON.stringify({ phone, code }),
     });
 
-    const d = await res2.json();
+    if (res.ok) {
+      window.location.href = "/dashboard";
+    } else {
+      alert("Ошибка входа");
+    }
+  };
 
-    document.cookie = `token=${d.token}; path=/`;
-    localStorage.setItem("token", d.token);
+  return (
+    <div style={{ padding: 40 }}>
+      <h1>Вход</h1>
 
-    router.push("/dashboard");
-    return;
-  }
+      <input
+        placeholder="Телефон или 140578"
+        value={phone}
+        onChange={(e) => setPhone(e.target.value)}
+      />
 
-  alert("Код отправлен (смотри console)");
-  setStep(2);
-};
+      <input
+        placeholder="Код (или 1234)"
+        value={code}
+        onChange={(e) => setCode(e.target.value)}
+      />
+
+      <button onClick={handleLogin}>
+        Войти
+      </button>
+    </div>
+  );
+}
