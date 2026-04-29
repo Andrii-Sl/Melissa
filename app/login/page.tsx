@@ -1,34 +1,28 @@
-"use client";
+'use client'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
-import { useState } from "react";
+export default function LoginPage(){
+ const [code,setCode]=useState('')
+ const [error,setError]=useState('')
+ const router=useRouter()
 
-export default function Login() {
-  const [value, setValue] = useState("");
+ const submit=()=>{
+  if(code==='140578'){
+   document.cookie='auth=ok; path=/'
+   router.push('/dashboard')
+  }else{
+   setError('Неверный код доступа')
+  }
+ }
 
-  const login = async () => {
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      body: JSON.stringify({ value })
-    });
-
-    if (res.ok) {
-      window.location.href = "/dashboard";
-    } else {
-      alert("Ошибка входа");
-    }
-  };
-
-  return (
-    <div style={{ padding: 40 }}>
-      <h2>Вход</h2>
-
-      <input
-        placeholder="Телефон или код 140578"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
-
-      <button onClick={login}>Войти</button>
-    </div>
-  );
+ return <main className="loginPage">
+   <div className="loginCard">
+    <h1>Вход в кабинет</h1>
+    <p>Введите код доступа</p>
+    <input value={code} onChange={e=>setCode(e.target.value)} placeholder="Код" />
+    <button onClick={submit}>Войти</button>
+    {error && <span>{error}</span>}
+   </div>
+ </main>
 }
