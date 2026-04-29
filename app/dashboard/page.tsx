@@ -2,60 +2,49 @@
 
 import { useEffect, useState } from "react";
 
+type Order = {
+  id: number;
+  name: string;
+  car: string;
+  vin: string;
+  brand: string;
+  price?: number;
+  status: "pending" | "processing" | "done";
+  days?: string;
+};
+
 export default function Dashboard() {
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
     fetch("/api/orders")
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(setOrders);
   }, []);
+
+  const pay = async (amount: number) => {
+    const res = await fetch("/api/pay", {
+      method: "POST",
+      body: JSON.stringify({ amount }),
+    });
+
+    const data = await res.json();
+    window.location.href = data.url;
+  };
 
   return (
     <div className="dashboard">
 
       {/* SIDEBAR */}
       <aside className="sidebar">
-        <h2>EU PARTS</h2>
+        <h2 className="logo">AutoParts</h2>
 
-        <p className="active">Мои заказы</p>
-        <p>Подбор по VIN</p>
-        <p>Автомобили</p>
-        <p>Сообщения</p>
-        <p>Профиль</p>
-      </aside>
-
-      {/* MAIN */}
-      <main className="dashMain">
-
-        <h1>Мои заказы</h1>
-
-        {orders.map(o => (
-          <div key={o.id} className="order">
-
-            <div>
-              <b>{o.name}</b>
-              <p>{o.car}</p>
-              <p>VIN: {o.vin}</p>
-            </div>
-
-            <div>
-              {o.price && <p>€{o.price}</p>}
-              <p>{o.status}</p>
-            </div>
-
-          </div>
-        ))}
-
-      </main>
-
-      {/* RIGHT */}
-      <aside className="profile">
-        <h3>Профиль</h3>
-        <p>Андрей</p>
-        <p>Email</p>
-      </aside>
-
-    </div>
-  );
-}
+        <nav>
+          <p className="active">Мои заказы</p>
+          <p>Подбор по VIN</p>
+          <p>Мои автомобили</p>
+          <p>Сообщения</p>
+          <p>Избранное</p>
+          <p>Адреса доставки</p>
+          <p>Профиль</p>
+          <p>Наст
