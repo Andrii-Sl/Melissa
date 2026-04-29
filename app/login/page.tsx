@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export default function LoginPage() {
+export default function Login() {
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
 
@@ -17,18 +17,16 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ padding: 40 }}>
+    <div className="login">
       <h1>Вход</h1>
 
       <input
         placeholder="Телефон или 140578"
-        value={phone}
         onChange={(e) => setPhone(e.target.value)}
       />
 
       <input
         placeholder="Код"
-        value={code}
         onChange={(e) => setCode(e.target.value)}
       />
 
