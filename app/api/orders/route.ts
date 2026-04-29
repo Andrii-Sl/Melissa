@@ -1,33 +1,15 @@
-import { calculatePrice } from "@/lib/pricing";
+import { NextResponse } from 'next/server'
+import { admin } from '@/lib/admin'
 
-export async function GET() {
-  return Response.json([
-    {
-      id: 101234,
-      name: "Передняя фара правая",
-      car: "Volkswagen Passat B8 2017",
-      vin: "WVWZZZ3CZHE123456",
-      brand: "Hella",
-      price: calculatePrice(250),
-      status: "pending",
-      days: "5-7 дней"
-    },
-    {
-      id: 101210,
-      name: "Тормозные диски передние",
-      car: "BMW X5 G05 2019",
-      vin: "WBAJU410X0G123456",
-      brand: "Zimmermann",
-      status: "processing"
-    },
-    {
-      id: 101090,
-      name: "Турбина",
-      car: "Audi A6 C7 2016",
-      vin: "WAUZZZ4G0GN123456",
-      brand: "Garrett",
-      price: calculatePrice(650),
-      status: "done"
-    }
-  ]);
+export async function GET(){
+ const {data,error}=await admin.from('orders').select('*').order('created_at',{ascending:false})
+ if(error) return NextResponse.json({error:error.message},{status:500})
+ return NextResponse.json(data)
+}
+
+export async function POST(req:Request){
+ const body=await req.json()
+ const {data,error}=await admin.from('orders').insert(body).select().single()
+ if(error) return NextResponse.json({error:error.message},{status:500})
+ return NextResponse.json(data)
 }
