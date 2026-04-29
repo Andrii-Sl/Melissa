@@ -12,20 +12,50 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div style={{ padding: 30 }}>
-      <h1>Мои заказы</h1>
+    <div className="dashboard">
 
-      {orders.map(o => (
-        <div key={o.id} style={{
-          border: "1px solid #ddd",
-          padding: 15,
-          marginBottom: 10
-        }}>
-          <b>{o.name}</b>
-          <p>{o.car}</p>
-          <p>{o.status}</p>
-        </div>
-      ))}
+      {/* SIDEBAR */}
+      <aside className="sidebar">
+        <h2>EU PARTS</h2>
+
+        <p className="active">Мои заказы</p>
+        <p>Подбор по VIN</p>
+        <p>Автомобили</p>
+        <p>Сообщения</p>
+        <p>Профиль</p>
+      </aside>
+
+      {/* MAIN */}
+      <main className="dashMain">
+
+        <h1>Мои заказы</h1>
+
+        {orders.map(o => (
+          <div key={o.id} className="order">
+
+            <div>
+              <b>{o.name}</b>
+              <p>{o.car}</p>
+              <p>VIN: {o.vin}</p>
+            </div>
+
+            <div>
+              {o.price && <p>€{o.price}</p>}
+              <p>{o.status}</p>
+            </div>
+
+          </div>
+        ))}
+
+      </main>
+
+      {/* RIGHT */}
+      <aside className="profile">
+        <h3>Профиль</h3>
+        <p>Андрей</p>
+        <p>Email</p>
+      </aside>
+
     </div>
   );
 }
