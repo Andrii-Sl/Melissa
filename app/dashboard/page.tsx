@@ -1,50 +1,46 @@
-"use client";
+const orders=[
+ {id:'10234',name:'Передняя фара правая',car:'VW Passat B8',price:'€320',status:'Ожидает оплаты'},
+ {id:'10210',name:'Тормозные диски',car:'BMW X5 G05',price:'€540',status:'В подборе'},
+ {id:'10190',name:'Турбина',car:'Audi A6 C7',price:'€850',status:'Доставлен'}
+]
 
-import { useEffect, useState } from "react";
+export default function Dashboard(){
+ return <main className="dashWrap">
+  <aside className="sidebar">
+   <h3>AutoParts EU</h3>
+   <a className="active">Мои заказы</a>
+   <a>Подбор по VIN</a>
+   <a>Автомобили</a>
+   <a>Сообщения</a>
+   <a>Профиль</a>
+  </aside>
 
-type Order = {
-  id: number;
-  name: string;
-  car: string;
-  vin: string;
-  brand: string;
-  price?: number;
-  status: "pending" | "processing" | "done";
-  days?: string;
-};
+  <section className="dashMain">
+   <div className="dashTop">
+    <h1>Личный кабинет</h1>
+    <button>Новый запрос</button>
+   </div>
 
-export default function Dashboard() {
-  const [orders, setOrders] = useState<Order[]>([]);
+   <div className="statsGrid">
+    <div className="stat"><strong>12</strong><span>Всего заказов</span></div>
+    <div className="stat"><strong>3</strong><span>В работе</span></div>
+    <div className="stat"><strong>2</strong><span>Ожидают оплаты</span></div>
+    <div className="stat"><strong>7</strong><span>Завершено</span></div>
+   </div>
 
-  useEffect(() => {
-    fetch("/api/orders")
-      .then((res) => res.json())
-      .then(setOrders);
-  }, []);
-
-  const pay = async (amount: number) => {
-    const res = await fetch("/api/pay", {
-      method: "POST",
-      body: JSON.stringify({ amount }),
-    });
-
-    const data = await res.json();
-    window.location.href = data.url;
-  };
-
-  return (
-    <div className="dashboard">
-
-      {/* SIDEBAR */}
-      <aside className="sidebar">
-        <h2 className="logo">AutoParts</h2>
-
-        <nav>
-          <p className="active">Мои заказы</p>
-          <p>Подбор по VIN</p>
-          <p>Мои автомобили</p>
-          <p>Сообщения</p>
-          <p>Избранное</p>
-          <p>Адреса доставки</p>
-          <p>Профиль</p>
-          <p>Наст
+   <h2>Мои заказы</h2>
+   {orders.map(o=><div className="orderCard" key={o.id}>
+    <div>
+      <small>Заказ #{o.id}</small>
+      <h3>{o.name}</h3>
+      <p>{o.car}</p>
+    </div>
+    <div className="right">
+      <span>{o.status}</span>
+      <strong>{o.price}</strong>
+      <button>Подробнее</button>
+    </div>
+   </div>)}
+  </section>
+ </main>
+   }
