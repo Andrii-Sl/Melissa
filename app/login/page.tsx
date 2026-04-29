@@ -6,17 +6,14 @@ export default function LoginPage() {
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
 
-  const handleLogin = async () => {
+  const login = async () => {
     const res = await fetch("/api/auth/verify", {
       method: "POST",
       body: JSON.stringify({ phone, code }),
     });
 
-    if (res.ok) {
-      window.location.href = "/dashboard";
-    } else {
-      alert("Ошибка входа");
-    }
+    if (res.ok) window.location.href = "/dashboard";
+    else alert("Ошибка");
   };
 
   return (
@@ -30,14 +27,12 @@ export default function LoginPage() {
       />
 
       <input
-        placeholder="Код (или 1234)"
+        placeholder="Код"
         value={code}
         onChange={(e) => setCode(e.target.value)}
       />
 
-      <button onClick={handleLogin}>
-        Войти
-      </button>
+      <button onClick={login}>Войти</button>
     </div>
   );
 }
