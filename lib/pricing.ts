@@ -1,3 +1,5 @@
 export function calculatePrice(base: number) {
-  return Math.round(base * 1.3 + 40);
+  const margin = 1.35; // 35% маржа
+  const logistics = 25;
+  return Math.round(base * margin + logistics);
 }
