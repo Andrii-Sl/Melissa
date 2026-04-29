@@ -1,3 +1,4 @@
+/* RESET */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -5,16 +6,28 @@
 }
 
 body {
+  background: #f5f5f5;
   font-family: Arial, sans-serif;
-  background: #fff;
+  color: #111;
 }
 
-/* HEADER */
+/* =========================
+   CONTAINER
+========================= */
+.container {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* =========================
+   HEADER
+========================= */
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 15px 40px;
+  justify-content: space-between;
+  padding: 18px 40px;
+  background: #fff;
   border-bottom: 1px solid #eee;
 }
 
@@ -24,34 +37,26 @@ body {
 }
 
 .subtitle {
-  font-size: 11px;
+  font-size: 10px;
   color: #777;
 }
 
 .menu {
   display: flex;
   gap: 25px;
+}
+
+.menu a {
+  text-decoration: none;
+  color: #333;
   font-size: 14px;
+  cursor: pointer;
+}
+
+.menu a:hover {
+  color: #000;
 }
 
 .right {
   display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.cabinet {
-  border: 1px solid #000;
-  padding: 8px 15px;
-  border-radius: 6px;
-}
-
-/* HERO */
-.hero {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  height: 600px;
-}
-
-.heroLeft {
-  padding: 60
+  align
