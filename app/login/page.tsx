@@ -3,31 +3,29 @@
 import { useState } from "react";
 
 export default function Login() {
-  const [phone, setPhone] = useState("");
-  const [code, setCode] = useState("");
+  const [value, setValue] = useState("");
 
   const login = async () => {
-    const res = await fetch("/api/auth/verify", {
+    const res = await fetch("/api/auth/login", {
       method: "POST",
-      body: JSON.stringify({ phone, code }),
+      body: JSON.stringify({ value })
     });
 
-    if (res.ok) window.location.href = "/dashboard";
-    else alert("Ошибка");
+    if (res.ok) {
+      window.location.href = "/dashboard";
+    } else {
+      alert("Ошибка входа");
+    }
   };
 
   return (
-    <div className="login">
-      <h1>Вход</h1>
+    <div style={{ padding: 40 }}>
+      <h2>Вход</h2>
 
       <input
-        placeholder="Телефон или 140578"
-        onChange={(e) => setPhone(e.target.value)}
-      />
-
-      <input
-        placeholder="Код"
-        onChange={(e) => setCode(e.target.value)}
+        placeholder="Телефон или код 140578"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
       />
 
       <button onClick={login}>Войти</button>
