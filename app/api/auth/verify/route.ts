@@ -3,9 +3,7 @@ import { verifyCode } from "../../../../lib/auth";
 export async function POST(req: Request) {
   const { phone, code } = await req.json();
 
-  const ok = verifyCode(phone, code);
-
-  if (!ok) {
+  if (!verifyCode(phone, code)) {
     return Response.json({ success: false }, { status: 401 });
   }
 
