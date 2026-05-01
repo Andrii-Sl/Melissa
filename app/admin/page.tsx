@@ -1,5 +1,6 @@
 import "../panel.css";
 import LogoutButton from "@/components/LogoutButton";
+import { orders } from "@/data/orders";
 
 export default function AdminPage() {
   return (
@@ -33,18 +34,22 @@ export default function AdminPage() {
         <div className="stats">
 
           <div className="card">
+            <h3>Всего заказов</h3>
+            <strong>{orders.length}</strong>
+          </div>
+
+          <div className="card">
             <h3>Новых заявок</h3>
-            <strong>14</strong>
+            <strong>
+              {orders.filter(o => o.status === "Новая заявка").length}
+            </strong>
           </div>
 
           <div className="card">
-            <h3>Заказов в работе</h3>
-            <strong>27</strong>
-          </div>
-
-          <div className="card">
-            <h3>Прибыль месяц</h3>
-            <strong>€4 320</strong>
+            <h3>В пути</h3>
+            <strong>
+              {orders.filter(o => o.status === "В пути").length}
+            </strong>
           </div>
 
         </div>
@@ -55,33 +60,28 @@ export default function AdminPage() {
               <tr>
                 <th>№</th>
                 <th>Клиент</th>
+                <th>Товар</th>
                 <th>Статус</th>
                 <th>Сумма</th>
               </tr>
             </thead>
 
             <tbody>
-              <tr>
-                <td>#2041</td>
-                <td>Иванов</td>
-                <td><span className="badge">Оплачен</span></td>
-                <td>€380</td>
-              </tr>
-
-              <tr>
-                <td>#2038</td>
-                <td>Сергей</td>
-                <td><span className="badge">В пути</span></td>
-                <td>€210</td>
-              </tr>
-
-              <tr>
-                <td>#2035</td>
-                <td>Алихан</td>
-                <td><span className="badge">Новая заявка</span></td>
-                <td>€0</td>
-              </tr>
+              {orders.map((order) => (
+                <tr key={order.id}>
+                  <td>{order.id}</td>
+                  <td>{order.client}</td>
+                  <td>{order.item}</td>
+                  <td>
+                    <span className="badge">
+                      {order.status}
+                    </span>
+                  </td>
+                  <td>{order.total}</td>
+                </tr>
+              ))}
             </tbody>
+
           </table>
         </div>
 
@@ -89,4 +89,4 @@ export default function AdminPage() {
 
     </main>
   );
-      }
+                      }
