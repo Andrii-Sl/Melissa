@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { addLead } from "@/data/leads";
 
 export default function HomePage() {
   const [vin, setVin] = useState("");
@@ -13,6 +14,13 @@ export default function HomePage() {
       alert("Заполните все поля");
       return;
     }
+
+    addLead({
+      vin,
+      part,
+      phone,
+      status: "Новая"
+    });
 
     alert("Заявка отправлена!");
 
@@ -29,7 +37,6 @@ export default function HomePage() {
         color: "#111111"
       }}
     >
-
       {/* HEADER */}
       <header
         style={{
@@ -41,21 +48,11 @@ export default function HomePage() {
           borderBottom: "1px solid #e5e5e5"
         }}
       >
-        <div
-          style={{
-            fontSize: "26px",
-            fontWeight: "700"
-          }}
-        >
+        <div style={{ fontSize: "26px", fontWeight: "700" }}>
           AutoParts EU
         </div>
 
-        <nav
-          style={{
-            display: "flex",
-            gap: "28px"
-          }}
-        >
+        <nav style={{ display: "flex", gap: "28px" }}>
           <a href="#">Как это работает</a>
           <a href="#">Доставка</a>
           <a href="#">Контакты</a>
@@ -82,7 +79,6 @@ export default function HomePage() {
           gridTemplateColumns: "1fr 1fr"
         }}
       >
-
         {/* LEFT */}
         <div
           style={{
@@ -122,8 +118,7 @@ export default function HomePage() {
               height: "52px",
               padding: "0 14px",
               marginBottom: "12px",
-              border: "none",
-              outline: "none"
+              border: "none"
             }}
           />
 
@@ -135,8 +130,7 @@ export default function HomePage() {
               height: "52px",
               padding: "0 14px",
               marginBottom: "12px",
-              border: "none",
-              outline: "none"
+              border: "none"
             }}
           />
 
@@ -148,8 +142,7 @@ export default function HomePage() {
               height: "52px",
               padding: "0 14px",
               marginBottom: "16px",
-              border: "none",
-              outline: "none"
+              border: "none"
             }}
           />
 
@@ -161,8 +154,7 @@ export default function HomePage() {
               color: "#111111",
               border: "none",
               cursor: "pointer",
-              fontWeight: "700",
-              fontSize: "16px"
+              fontWeight: "700"
             }}
           >
             ОТПРАВИТЬ ЗАЯВКУ
@@ -171,8 +163,7 @@ export default function HomePage() {
           <div
             style={{
               marginTop: "18px",
-              color: "#cccccc",
-              fontSize: "15px"
+              color: "#cccccc"
             }}
           >
             WhatsApp · Telegram
@@ -187,60 +178,7 @@ export default function HomePage() {
             backgroundPosition: "center"
           }}
         />
-
       </section>
-
-      {/* HOW IT WORKS */}
-      <section
-        style={{
-          padding: "70px 40px",
-          background: "#ffffff"
-        }}
-      >
-        <h2
-          style={{
-            fontSize: "34px",
-            marginBottom: "28px"
-          }}
-        >
-          Как это работает
-        </h2>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4,1fr)",
-            gap: "20px"
-          }}
-        >
-          <div style={{ border: "1px solid #e5e5e5", padding: "24px" }}>
-            1. Оставляете заявку
-          </div>
-
-          <div style={{ border: "1px solid #e5e5e5", padding: "24px" }}>
-            2. Мы ищем детали
-          </div>
-
-          <div style={{ border: "1px solid #e5e5e5", padding: "24px" }}>
-            3. Согласовываем цену
-          </div>
-
-          <div style={{ border: "1px solid #e5e5e5", padding: "24px" }}>
-            4. Доставляем в Казахстан
-          </div>
-        </div>
-      </section>
-
-      {/* FOOTER */}
-      <footer
-        style={{
-          padding: "30px 40px",
-          borderTop: "1px solid #e5e5e5"
-        }}
-      >
-        © 2026 AutoParts EU
-      </footer>
-
     </main>
   );
-              }
+}
