@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { users } from "@/data/users";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -10,58 +11,75 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
 
   function login() {
+    const user = users.find(
+      (u) =>
+        u.email === email &&
+        u.password === password
+    );
 
-    if (email === "admin@mail.com" && password === "1234") {
-      document.cookie = "role=admin; path=/";
+    if (!user) {
+      alert("Неверный логин или пароль");
+      return;
+    }
+
+    document.cookie = `role=${user.role}; path=/`;
+
+    if (user.role === "admin") {
       router.push("/admin");
       return;
     }
 
-    if (email === "client@mail.com" && password === "1234") {
-      document.cookie = "role=client; path=/";
+    if (user.role === "client") {
       router.push("/dashboard");
       return;
     }
 
-    if (email === "supplier@mail.com" && password === "1234") {
-      document.cookie = "role=supplier; path=/";
+    if (user.role === "supplier") {
       router.push("/supplier");
       return;
     }
-
-    alert("Неверный логин или пароль");
   }
 
   return (
     <main
       style={{
-        minHeight:"100vh",
-        display:"flex",
-        justifyContent:"center",
-        alignItems:"center",
-        background:"#fff",
-        fontFamily:"Arial"
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        background: "#ffffff",
+        fontFamily: "Arial"
       }}
     >
       <div
         style={{
-          width:"420px",
-          border:"1px solid #ddd",
-          padding:"40px"
+          width: "420px",
+          border: "1px solid #ddd",
+          padding: "40px",
+          background: "#fff"
         }}
       >
-        <h1 style={{marginBottom:"24px"}}>Вход</h1>
+        <h1
+          style={{
+            marginBottom: "24px",
+            fontSize: "28px"
+          }}
+        >
+          Вход
+        </h1>
 
         <input
           placeholder="Email"
           value={email}
-          onChange={(e)=>setEmail(e.target.value)}
+          onChange={(e) =>
+            setEmail(e.target.value)
+          }
           style={{
-            width:"100%",
-            height:"48px",
-            marginBottom:"14px",
-            border:"1px solid #ddd",
-            padding:"0 12px"
+            width: "100%",
+            height: "48px",
+            marginBottom: "14px",
+            border: "1px solid #ddd",
+            padding: "0 12px"
           }}
         />
 
@@ -69,35 +87,43 @@ export default function LoginPage() {
           type="password"
           placeholder="Пароль"
           value={password}
-          onChange={(e)=>setPassword(e.target.value)}
+          onChange={(e) =>
+            setPassword(e.target.value)
+          }
           style={{
-            width:"100%",
-            height:"48px",
-            marginBottom:"18px",
-            border:"1px solid #ddd",
-            padding:"0 12px"
+            width: "100%",
+            height: "48px",
+            marginBottom: "18px",
+            border: "1px solid #ddd",
+            padding: "0 12px"
           }}
         />
 
         <button
           onClick={login}
           style={{
-            width:"100%",
-            height:"48px",
-            background:"#111",
-            color:"#fff",
-            border:"none",
-            cursor:"pointer"
+            width: "100%",
+            height: "48px",
+            background: "#111",
+            color: "#fff",
+            border: "none",
+            cursor: "pointer"
           }}
         >
           Войти
         </button>
 
-        <p style={{marginTop:"18px", fontSize:"13px", color:"#777"}}>
+        <p
+          style={{
+            marginTop: "18px",
+            fontSize: "13px",
+            color: "#777"
+          }}
+        >
           demo:
           admin@mail.com / 1234
         </p>
       </div>
     </main>
   );
-}
+          }
