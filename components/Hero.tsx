@@ -1,37 +1,26 @@
 export default function Hero() {
   return (
     <section className="hero">
-      <div className="left">
-        <p className="badge">Оригинальные детали из Европы</p>
+      <div className="heroLeft">
+        <h1>Подбор автозапчастей из Европы</h1>
 
-        <h1>
-          Подбор автозапчастей
-          <br />
-          по VIN номеру
-        </h1>
-
-        <p className="sub">
-          BMW • Audi • Mercedes • VW • Skoda
+        <p>
+          Быстро. Надёжно. Доставка в Казахстан.
         </p>
 
-        <input
-          className="vin"
-          placeholder="Введите VIN код автомобиля..."
-        />
+        <input placeholder="Введите VIN номер" />
+        <input placeholder="Какая деталь нужна?" />
 
-        <button className="cta">
-          Подобрать детали
-        </button>
+        <button>ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ</button>
 
-        <div className="trust">
-          <span>✔ Доставка в Казахстан</span>
-          <span>✔ Гарантия</span>
-          <span>✔ Быстрый ответ</span>
+        <div className="messengers">
+          <span>WhatsApp</span>
+          <span>Telegram</span>
         </div>
       </div>
 
-      <div className="right">
-        <img src="/audi.jpg" alt="Audi" className="car" />
+      <div className="heroRight">
+        <img src="/audi.jpg" alt="Audi" />
       </div>
     </section>
   );
