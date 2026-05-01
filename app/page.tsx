@@ -22,170 +22,217 @@ export default function HomePage() {
   }
 
   return (
-    <main
-      style={{
-        fontFamily: "Arial, Helvetica, sans-serif",
-        background: "#ffffff",
-        color: "#111111"
-      }}
-    >
-      {/* HEADER */}
-      <header className="topHeader">
-        <div className="logo">AutoParts EU</div>
+    <>
+      <main className="page">
 
-        <nav className="desktopMenu">
-          <a href="#">Как это работает</a>
-          <a href="#">Доставка</a>
-          <a href="#">Контакты</a>
-        </nav>
+        {/* HEADER */}
+        <header className="header">
+          <div className="container headerRow">
 
-        <Link href="/login" className="cabinetBtn">
-          Личный кабинет
-        </Link>
-      </header>
+            <div className="logo">
+              AutoParts EU
+            </div>
 
-      {/* HERO */}
-      <section className="heroWrap">
+            <nav className="nav">
+              <a href="#">Как это работает</a>
+              <a href="#">Доставка</a>
+              <a href="#">Контакты</a>
+            </nav>
 
-        {/* IMAGE */}
-        <div className="heroImage" />
+            <Link href="/login" className="loginBtn">
+              Личный кабинет
+            </Link>
 
-        {/* CONTENT */}
-        <div className="heroContent">
-
-          <p className="heroMini">
-            ПОДБОР ПО VIN И НОМЕРУ ДЕТАЛИ
-          </p>
-
-          <h1>
-            Подбор автозапчастей
-            <br />
-            из Европы
-          </h1>
-
-          <p className="heroText">
-            Оригинальные и качественные аналоги.
-            Быстро. Надёжно. Доставка в Казахстан.
-          </p>
-
-          <input
-            placeholder="Введите VIN номер"
-            value={vin}
-            onChange={(e) => setVin(e.target.value)}
-          />
-
-          <input
-            placeholder="Какая деталь нужна?"
-            value={part}
-            onChange={(e) => setPart(e.target.value)}
-          />
-
-          <input
-            placeholder="Телефон"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
-
-          <button onClick={sendLead}>
-            ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ
-          </button>
-
-          <div className="socials">
-            WhatsApp · Telegram
           </div>
+        </header>
 
-        </div>
-      </section>
+        {/* HERO */}
+        <section className="hero">
+          <div className="container heroGrid">
 
-      {/* HOW */}
-      <section className="howBlock">
-        <h2>Как это работает</h2>
+            {/* LEFT */}
+            <div className="heroContent">
 
-        <div className="howGrid">
-          <div>1. Оставляете заявку</div>
-          <div>2. Мы ищем запчасть</div>
-          <div>3. Согласовываем цену</div>
-          <div>4. Отправляем</div>
-        </div>
-      </section>
+              <div className="miniText">
+                ПОДБОР ПО VIN И НОМЕРУ ДЕТАЛИ
+              </div>
 
-      {/* FOOTER */}
-      <footer className="footer">
-        © 2026 AutoParts EU
-      </footer>
+              <h1>
+                Подбор автозапчастей
+                <br />
+                из Европы
+              </h1>
+
+              <p>
+                Оригинальные и качественные аналоги.
+                Быстро. Надёжно. Доставка в Казахстан.
+              </p>
+
+              <input
+                placeholder="Введите VIN номер"
+                value={vin}
+                onChange={(e) => setVin(e.target.value)}
+              />
+
+              <input
+                placeholder="Какая деталь нужна?"
+                value={part}
+                onChange={(e) => setPart(e.target.value)}
+              />
+
+              <input
+                placeholder="Телефон"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+
+              <button onClick={sendLead}>
+                ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ
+              </button>
+
+              <div className="socials">
+                WhatsApp · Telegram
+              </div>
+
+            </div>
+
+            {/* RIGHT */}
+            <div className="heroImage"></div>
+
+          </div>
+        </section>
+
+        {/* HOW */}
+        <section className="how">
+          <div className="container">
+
+            <h2>Как это работает</h2>
+
+            <div className="howGrid">
+              <div>1. Оставляете заявку</div>
+              <div>2. Мы ищем запчасть</div>
+              <div>3. Согласовываем цену</div>
+              <div>4. Отправляем</div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* FOOTER */}
+        <footer className="footer">
+          <div className="container">
+            © 2026 AutoParts EU
+          </div>
+        </footer>
+
+      </main>
 
       <style jsx>{`
         * {
           box-sizing: border-box;
+          margin: 0;
+          padding: 0;
         }
 
-        .topHeader {
+        body {
+          margin: 0;
+        }
+
+        .page {
+          font-family: Arial, Helvetica, sans-serif;
+          background: #ffffff;
+          color: #111111;
+          overflow-x: hidden;
+        }
+
+        .container {
+          width: 100%;
+          max-width: 1440px;
+          margin: 0 auto;
+          padding-left: 24px;
+          padding-right: 24px;
+        }
+
+        /* HEADER */
+
+        .header {
+          border-bottom: 1px solid #e5e5e5;
+          background: #ffffff;
+        }
+
+        .headerRow {
           height: 78px;
-          padding: 0 22px;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          border-bottom: 1px solid #e5e5e5;
-          background: #fff;
+          gap: 20px;
         }
 
         .logo {
           font-size: 30px;
           font-weight: 700;
+          white-space: nowrap;
         }
 
-        .desktopMenu {
+        .nav {
           display: flex;
           gap: 28px;
+          flex: 1;
+          justify-content: center;
         }
 
-        .desktopMenu a {
+        .nav a {
           text-decoration: none;
           color: #111;
+          font-size: 15px;
         }
 
-        .cabinetBtn {
+        .loginBtn {
           text-decoration: none;
           color: #111;
           border: 1px solid #111;
           padding: 12px 18px;
+          white-space: nowrap;
         }
 
-        .heroWrap {
+        /* HERO */
+
+        .hero {
+          background: #ffffff;
+        }
+
+        .heroGrid {
           display: grid;
           grid-template-columns: 1fr 1fr;
           min-height: calc(100vh - 78px);
         }
 
-        .heroImage {
-          background: url('/audi.jpg') center/cover no-repeat;
-        }
-
         .heroContent {
           background: #050505;
-          color: #fff;
-          padding: 70px;
+          color: #ffffff;
+          padding: 72px;
           display: flex;
           flex-direction: column;
           justify-content: center;
         }
 
-        .heroMini {
-          color: #999;
+        .miniText {
+          color: #8f8f8f;
           font-size: 13px;
           margin-bottom: 18px;
         }
 
         .heroContent h1 {
           font-size: 58px;
-          line-height: 1.08;
+          line-height: 1.06;
           margin-bottom: 18px;
         }
 
-        .heroText {
+        .heroContent p {
           color: #bdbdbd;
-          margin-bottom: 26px;
+          font-size: 18px;
           line-height: 1.5;
+          margin-bottom: 24px;
         }
 
         .heroContent input {
@@ -194,28 +241,37 @@ export default function HomePage() {
           margin-bottom: 12px;
           padding: 0 14px;
           font-size: 16px;
+          outline: none;
         }
 
         .heroContent button {
           height: 56px;
           border: none;
           background: #ffffff;
-          color: #111;
+          color: #111111;
           font-weight: 700;
           cursor: pointer;
           margin-top: 4px;
         }
 
         .socials {
-          margin-top: 16px;
-          color: #bbb;
+          margin-top: 18px;
+          color: #bdbdbd;
         }
 
-        .howBlock {
-          padding: 70px 40px;
+        .heroImage {
+          background: url('/audi.jpg') center center / cover no-repeat;
+          min-height: 640px;
         }
 
-        .howBlock h2 {
+        /* HOW */
+
+        .how {
+          padding: 72px 0;
+          background: #ffffff;
+        }
+
+        .how h2 {
           font-size: 34px;
           margin-bottom: 28px;
         }
@@ -229,62 +285,102 @@ export default function HomePage() {
         .howGrid div {
           border: 1px solid #e5e5e5;
           padding: 24px;
+          min-height: 110px;
+          display: flex;
+          align-items: center;
         }
 
+        /* FOOTER */
+
         .footer {
-          padding: 30px 40px;
           border-top: 1px solid #e5e5e5;
+          padding: 28px 0;
+        }
+
+        /* TABLET */
+
+        @media (max-width: 1100px) {
+          .heroContent {
+            padding: 48px;
+          }
+
+          .heroContent h1 {
+            font-size: 46px;
+          }
+
+          .nav {
+            gap: 18px;
+          }
         }
 
         /* MOBILE */
 
         @media (max-width: 900px) {
-          .topHeader {
-            padding: 0 16px;
-            height: 70px;
+
+          .headerRow {
+            height: auto;
+            padding-top: 14px;
+            padding-bottom: 14px;
+            flex-wrap: wrap;
           }
 
           .logo {
-            font-size: 22px;
+            font-size: 24px;
+            width: 100%;
           }
 
-          .desktopMenu {
-            display: none;
+          .nav {
+            order: 3;
+            width: 100%;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 10px;
           }
 
-          .cabinetBtn {
+          .nav a {
+            font-size: 13px;
+          }
+
+          .loginBtn {
             padding: 10px 12px;
             font-size: 14px;
           }
 
-          .heroWrap {
+          .heroGrid {
             grid-template-columns: 1fr;
+            min-height: auto;
           }
 
           .heroImage {
-            height: 280px;
             order: 1;
+            height: 280px;
+            min-height: auto;
           }
 
           .heroContent {
             order: 2;
-            padding: 26px;
+            padding: 28px 20px;
           }
 
           .heroContent h1 {
-            font-size: 42px;
-            margin-bottom: 16px;
+            font-size: 40px;
+            line-height: 1.1;
           }
 
-          .heroText {
+          .heroContent p {
             font-size: 16px;
           }
 
-          .howBlock {
-            padding: 36px 18px;
+          .heroContent input,
+          .heroContent button {
+            height: 52px;
           }
 
-          .howBlock h2 {
+          .how {
+            padding: 42px 0;
+          }
+
+          .how h2 {
             font-size: 28px;
           }
 
@@ -292,11 +388,11 @@ export default function HomePage() {
             grid-template-columns: 1fr;
           }
 
-          .footer {
-            padding: 24px 18px;
+          .howGrid div {
+            min-height: auto;
           }
         }
       `}</style>
-    </main>
+    </>
   );
 }
