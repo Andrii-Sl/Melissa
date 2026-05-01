@@ -5,20 +5,17 @@ import Link from "next/link";
 
 export default function HomePage() {
   const [vin, setVin] = useState("");
-  const [part, setPart] = useState("");
-  const [phone, setPhone] = useState("");
+  const [request, setRequest] = useState("");
 
   function sendLead() {
-    if (!vin || !part || !phone) {
-      alert("Заполните все поля");
+    if (!vin) {
+      alert("Введите VIN или номер детали");
       return;
     }
 
-    alert("Заявка отправлена!");
-
+    alert("Заявка отправлена");
     setVin("");
-    setPart("");
-    setPhone("");
+    setRequest("");
   }
 
   return (
@@ -29,19 +26,30 @@ export default function HomePage() {
         <header className="header">
           <div className="container headerRow">
 
-            <div className="logo">
-              AutoParts EU
+            <div className="brandWrap">
+              <div className="brand">AutoParts EU</div>
+              <div className="brandSub">
+                ПОДБОР И ДОСТАВКА ЗАПЧАСТЕЙ ИЗ ЕВРОПЫ
+              </div>
             </div>
 
             <nav className="nav">
-              <a href="#">Как это работает</a>
-              <a href="#">Доставка</a>
-              <a href="#">Контакты</a>
+              <a href="#">О КОМПАНИИ</a>
+              <a href="#">КАК ЭТО РАБОТАЕТ</a>
+              <a href="#">ГАРАНТИЯ</a>
+              <a href="#">ДОСТАВКА</a>
+              <a href="#">КОНТАКТЫ</a>
             </nav>
 
-            <Link href="/login" className="loginBtn">
-              Личный кабинет
-            </Link>
+            <div className="rightMenu">
+              <span>WhatsApp</span>
+              <span>Telegram</span>
+              <span>info@autoparts.eu</span>
+
+              <Link href="/login" className="loginBtn">
+                ЛИЧНЫЙ КАБИНЕТ
+              </Link>
+            </div>
 
           </div>
         </header>
@@ -51,10 +59,10 @@ export default function HomePage() {
           <div className="container heroGrid">
 
             {/* LEFT */}
-            <div className="heroContent">
+            <div className="heroLeft">
 
-              <div className="miniText">
-                ПОДБОР ПО VIN И НОМЕРУ ДЕТАЛИ
+              <div className="heroMini">
+                ПОДБОР ПО VIN ИЛИ НОМЕРУ ДЕТАЛИ
               </div>
 
               <h1>
@@ -64,66 +72,92 @@ export default function HomePage() {
               </h1>
 
               <p>
-                Оригинальные и качественные аналоги.
-                Быстро. Надёжно. Доставка в Казахстан.
+                Оригинальные и качественные аналоги
+                для европейских автомобилей.
+                Быстро, надежно, с гарантией.
               </p>
 
               <input
-                placeholder="Введите VIN номер"
+                placeholder="Введите VIN или номер детали"
                 value={vin}
                 onChange={(e) => setVin(e.target.value)}
               />
 
               <input
-                placeholder="Какая деталь нужна?"
-                value={part}
-                onChange={(e) => setPart(e.target.value)}
-              />
-
-              <input
-                placeholder="Телефон"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Опишите ваш запрос (необязательно)"
+                value={request}
+                onChange={(e) => setRequest(e.target.value)}
               />
 
               <button onClick={sendLead}>
                 ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ
               </button>
 
-              <div className="socials">
-                WhatsApp · Telegram
+              <div className="heroBtns">
+                <a href="#">Написать в WhatsApp</a>
+                <a href="#">Написать в Telegram</a>
               </div>
 
             </div>
 
             {/* RIGHT */}
-            <div className="heroImage"></div>
+            <div className="heroRight"></div>
 
           </div>
         </section>
 
         {/* HOW */}
-        <section className="how">
+        <section className="steps">
           <div className="container">
 
-            <h2>Как это работает</h2>
+            <h2>КАК ЭТО РАБОТАЕТ</h2>
 
-            <div className="howGrid">
-              <div>1. Оставляете заявку</div>
-              <div>2. Мы ищем запчасть</div>
-              <div>3. Согласовываем цену</div>
-              <div>4. Отправляем</div>
+            <div className="stepsGrid">
+              <div>1. Ваш запрос</div>
+              <div>2. Подбор и проверка</div>
+              <div>3. Предложение</div>
+              <div>4. Оплата</div>
+              <div>5. Доставка</div>
+              <div>6. Вы получаете</div>
             </div>
 
           </div>
         </section>
 
-        {/* FOOTER */}
-        <footer className="footer">
-          <div className="container">
-            © 2026 AutoParts EU
+        {/* FEATURES */}
+        <section className="features">
+          <div className="container featuresGrid">
+
+            <div>
+              <h3>Подбор по VIN</h3>
+              <p>
+                Точность подбора до 98% по каталогам производителей.
+              </p>
+            </div>
+
+            <div>
+              <h3>Поставки из Европы</h3>
+              <p>
+                Работаем с проверенными поставщиками.
+              </p>
+            </div>
+
+            <div>
+              <h3>Гарантия качества</h3>
+              <p>
+                Проверка деталей перед отправкой.
+              </p>
+            </div>
+
+            <div>
+              <h3>Регулярная доставка</h3>
+              <p>
+                Быстрая доставка в Казахстан.
+              </p>
+            </div>
+
           </div>
-        </footer>
+        </section>
 
       </main>
 
@@ -134,182 +168,222 @@ export default function HomePage() {
           padding: 0;
         }
 
-        body {
-          margin: 0;
-        }
-
         .page {
           font-family: Arial, Helvetica, sans-serif;
-          background: #ffffff;
-          color: #111111;
+          color: #111;
+          background: #fff;
           overflow-x: hidden;
         }
 
         .container {
-          width: 100%;
-          max-width: 1440px;
+          max-width: 1500px;
           margin: 0 auto;
-          padding-left: 24px;
-          padding-right: 24px;
+          padding: 0 22px;
         }
 
         /* HEADER */
 
         .header {
-          border-bottom: 1px solid #e5e5e5;
-          background: #ffffff;
+          border-bottom: 1px solid #ececec;
+          background: #fff;
         }
 
         .headerRow {
-          height: 78px;
+          min-height: 92px;
           display: flex;
           align-items: center;
           justify-content: space-between;
           gap: 20px;
         }
 
-        .logo {
-          font-size: 30px;
+        .brand {
+          font-size: 28px;
           font-weight: 700;
-          white-space: nowrap;
+        }
+
+        .brandSub {
+          font-size: 11px;
+          margin-top: 6px;
+          color: #666;
         }
 
         .nav {
           display: flex;
-          gap: 28px;
-          flex: 1;
-          justify-content: center;
+          gap: 26px;
         }
 
         .nav a {
           text-decoration: none;
           color: #111;
-          font-size: 15px;
+          font-size: 13px;
+        }
+
+        .rightMenu {
+          display: flex;
+          align-items: center;
+          gap: 18px;
+          font-size: 14px;
         }
 
         .loginBtn {
           text-decoration: none;
           color: #111;
-          border: 1px solid #111;
-          padding: 12px 18px;
-          white-space: nowrap;
+          border: 1px solid #c40000;
+          padding: 14px 20px;
         }
 
         /* HERO */
 
-        .hero {
-          background: #ffffff;
-        }
-
         .heroGrid {
           display: grid;
-          grid-template-columns: 1fr 1fr;
-          min-height: calc(100vh - 78px);
+          grid-template-columns: 560px 1fr;
+          min-height: 640px;
         }
 
-        .heroContent {
-          background: #050505;
-          color: #ffffff;
-          padding: 72px;
+        .heroLeft {
+          background: linear-gradient(135deg,#050505,#111);
+          color: #fff;
+          padding: 56px 46px;
           display: flex;
           flex-direction: column;
           justify-content: center;
         }
 
-        .miniText {
-          color: #8f8f8f;
-          font-size: 13px;
-          margin-bottom: 18px;
+        .heroMini {
+          color: #d10000;
+          font-size: 14px;
+          margin-bottom: 22px;
         }
 
-        .heroContent h1 {
-          font-size: 58px;
-          line-height: 1.06;
-          margin-bottom: 18px;
+        .heroLeft h1 {
+          font-size: 64px;
+          line-height: 1.02;
+          margin-bottom: 22px;
         }
 
-        .heroContent p {
-          color: #bdbdbd;
+        .heroLeft p {
+          color: #c7c7c7;
+          line-height: 1.6;
+          margin-bottom: 26px;
           font-size: 18px;
-          line-height: 1.5;
-          margin-bottom: 24px;
         }
 
-        .heroContent input {
-          height: 54px;
-          border: none;
-          margin-bottom: 12px;
-          padding: 0 14px;
-          font-size: 16px;
-          outline: none;
-        }
-
-        .heroContent button {
+        .heroLeft input {
           height: 56px;
+          margin-bottom: 14px;
+          padding: 0 16px;
+          border: 1px solid #2d2d2d;
+          background: rgba(255,255,255,0.05);
+          color: #fff;
+          font-size: 16px;
+        }
+
+        .heroLeft button {
+          height: 58px;
           border: none;
-          background: #ffffff;
-          color: #111111;
+          background: #d50000;
+          color: #fff;
           font-weight: 700;
+          font-size: 18px;
           cursor: pointer;
           margin-top: 4px;
         }
 
-        .socials {
-          margin-top: 18px;
-          color: #bdbdbd;
+        .heroBtns {
+          display: flex;
+          gap: 12px;
+          margin-top: 16px;
         }
 
-        .heroImage {
-          background: url('/audi.jpg') center center / cover no-repeat;
-          min-height: 640px;
+        .heroBtns a {
+          flex: 1;
+          text-align: center;
+          padding: 14px;
+          text-decoration: none;
+          color: #fff;
+          background: #1e1e1e;
+          border: 1px solid #2e2e2e;
+          font-size: 14px;
         }
 
-        /* HOW */
-
-        .how {
-          padding: 72px 0;
-          background: #ffffff;
+        .heroRight {
+          background: url('/audi.jpg') center/cover no-repeat;
         }
 
-        .how h2 {
-          font-size: 34px;
-          margin-bottom: 28px;
+        /* STEPS */
+
+        .steps {
+          padding: 56px 0;
+          text-align: center;
         }
 
-        .howGrid {
+        .steps h2 {
+          font-size: 38px;
+          margin-bottom: 34px;
+        }
+
+        .stepsGrid {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 18px;
+          grid-template-columns: repeat(6,1fr);
+          gap: 14px;
         }
 
-        .howGrid div {
-          border: 1px solid #e5e5e5;
-          padding: 24px;
-          min-height: 110px;
+        .stepsGrid div {
+          border: 1px solid #ececec;
+          padding: 24px 12px;
+          font-size: 15px;
+          min-height: 96px;
           display: flex;
           align-items: center;
+          justify-content: center;
         }
 
-        /* FOOTER */
+        /* FEATURES */
 
-        .footer {
-          border-top: 1px solid #e5e5e5;
-          padding: 28px 0;
+        .features {
+          padding-bottom: 60px;
+        }
+
+        .featuresGrid {
+          background: linear-gradient(135deg,#040404,#111);
+          color: #fff;
+          display: grid;
+          grid-template-columns: repeat(4,1fr);
+        }
+
+        .featuresGrid div {
+          padding: 36px 26px;
+          border-right: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .featuresGrid div:last-child {
+          border-right: none;
+        }
+
+        .featuresGrid h3 {
+          color: #ff2020;
+          margin-bottom: 14px;
+          font-size: 24px;
+        }
+
+        .featuresGrid p {
+          color: #c9c9c9;
+          line-height: 1.6;
         }
 
         /* TABLET */
 
-        @media (max-width: 1100px) {
-          .heroContent {
-            padding: 48px;
-          }
-
-          .heroContent h1 {
-            font-size: 46px;
-          }
-
+        @media (max-width: 1200px) {
           .nav {
-            gap: 18px;
+            display: none;
+          }
+
+          .heroGrid {
+            grid-template-columns: 1fr 1fr;
+          }
+
+          .heroLeft h1 {
+            font-size: 52px;
           }
         }
 
@@ -318,78 +392,63 @@ export default function HomePage() {
         @media (max-width: 900px) {
 
           .headerRow {
-            height: auto;
-            padding-top: 14px;
-            padding-bottom: 14px;
+            padding: 18px 0;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 14px;
+          }
+
+          .rightMenu {
             flex-wrap: wrap;
-          }
-
-          .logo {
-            font-size: 24px;
-            width: 100%;
-          }
-
-          .nav {
-            order: 3;
-            width: 100%;
-            justify-content: space-between;
             gap: 10px;
-            margin-top: 10px;
-          }
-
-          .nav a {
             font-size: 13px;
-          }
-
-          .loginBtn {
-            padding: 10px 12px;
-            font-size: 14px;
           }
 
           .heroGrid {
             grid-template-columns: 1fr;
-            min-height: auto;
           }
 
-          .heroImage {
-            order: 1;
+          .heroRight {
             height: 280px;
-            min-height: auto;
+            order: 1;
           }
 
-          .heroContent {
+          .heroLeft {
             order: 2;
             padding: 28px 20px;
           }
 
-          .heroContent h1 {
-            font-size: 40px;
-            line-height: 1.1;
+          .heroLeft h1 {
+            font-size: 42px;
           }
 
-          .heroContent p {
+          .heroLeft p {
             font-size: 16px;
           }
 
-          .heroContent input,
-          .heroContent button {
-            height: 52px;
+          .heroBtns {
+            flex-direction: column;
           }
 
-          .how {
-            padding: 42px 0;
+          .steps {
+            padding: 38px 0;
           }
 
-          .how h2 {
+          .steps h2 {
             font-size: 28px;
           }
 
-          .howGrid {
+          .stepsGrid {
             grid-template-columns: 1fr;
           }
 
-          .howGrid div {
-            min-height: auto;
+          .featuresGrid {
+            grid-template-columns: 1fr;
+          }
+
+          .featuresGrid div {
+            border-right: none;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
           }
         }
       `}</style>
