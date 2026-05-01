@@ -1,24 +1,27 @@
 export default function Hero() {
   return (
-    <section style={{padding:"80px 40px"}}>
-      <h1 style={{fontSize:"56px",marginBottom:"20px"}}>
-        Подбор автозапчастей из Европы
-      </h1>
+    <section className="hero">
+      <div className="heroLeft">
+        <p className="badge">Премиум маркетплейс Европы</p>
 
-      <p style={{fontSize:"20px",color:"#666",marginBottom:"30px"}}>
-        VIN подбор, оригинальные детали, доставка по Европе.
-      </p>
+        <h1>
+          Подбор автозапчастей
+          <br />
+          по VIN коду
+        </h1>
 
-      <input
-        placeholder="Введите VIN"
-        style={{
-          width:"100%",
-          maxWidth:"500px",
-          padding:"18px",
-          border:"1px solid #ddd",
-          borderRadius:"12px"
-        }}
-      />
+        <p className="sub">
+          BMW • Audi • Mercedes • VW • Skoda
+        </p>
+
+        <input placeholder="Введите VIN номер..." className="vinInput" />
+
+        <button className="cta">Подобрать детали</button>
+      </div>
+
+      <div className="heroRight">
+        <img src="/audi.jpg" alt="Audi" className="heroCar" />
+      </div>
     </section>
   );
 }
