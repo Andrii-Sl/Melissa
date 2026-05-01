@@ -1,11 +1,23 @@
+"use client";
+
 import "../panel.css";
 import LogoutButton from "@/components/LogoutButton";
 import { orders } from "@/data/orders";
-import { leads } from "@/data/leads";
+import {
+  leads,
+  updateLeadStatus
+} from "@/data/leads";
 
 export default function AdminPage() {
+
+  function changeStatus(id: number, status: string) {
+    updateLeadStatus(id, status);
+    location.reload();
+  }
+
   return (
     <main className="panelLayout">
+
       <aside className="sidebar">
         <div className="brand">AutoParts EU</div>
 
@@ -21,37 +33,18 @@ export default function AdminPage() {
       </aside>
 
       <section className="content">
+
         <div className="topbar">
           <h1>Админ кабинет</h1>
 
-          <div style={{ display: "flex", gap: "10px" }}>
+          <div style={{display:"flex", gap:"10px"}}>
             <div className="userBox">Владелец</div>
             <LogoutButton />
           </div>
         </div>
 
-        {/* KPI */}
-        <div className="stats">
-          <div className="card">
-            <h3>Всего заказов</h3>
-            <strong>{orders.length}</strong>
-          </div>
-
-          <div className="card">
-            <h3>Заявок</h3>
-            <strong>{leads.length}</strong>
-          </div>
-
-          <div className="card">
-            <h3>Новых</h3>
-            <strong>
-              {leads.filter((l) => l.status === "Новая").length}
-            </strong>
-          </div>
-        </div>
-
-        {/* LEADS */}
-        <div className="tableWrap" style={{ marginBottom: "24px" }}>
+        {/* Заявки */}
+        <div className="tableWrap" style={{marginBottom:"24px"}}>
           <table>
             <thead>
               <tr>
@@ -68,14 +61,31 @@ export default function AdminPage() {
                   <td>{lead.vin}</td>
                   <td>{lead.part}</td>
                   <td>{lead.phone}</td>
-                  <td>{lead.status}</td>
+
+                  <td>
+                    <select
+                      value={lead.status}
+                      onChange={(e)=>
+                        changeStatus(
+                          lead.id,
+                          e.target.value
+                        )
+                      }
+                    >
+                      <option>Новая</option>
+                      <option>В работе</option>
+                      <option>Отправлено поставщику</option>
+                      <option>Закрыта</option>
+                    </select>
+                  </td>
+
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        {/* ORDERS */}
+        {/* Заказы */}
         <div className="tableWrap">
           <table>
             <thead>
@@ -99,9 +109,12 @@ export default function AdminPage() {
                 </tr>
               ))}
             </tbody>
+
           </table>
         </div>
+
       </section>
+
     </main>
   );
-              }
+}
