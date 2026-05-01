@@ -1,97 +1,90 @@
-import "./dashboard.css";
+import "../panel.css";
 
 export default function DashboardPage() {
   return (
-    <main className="dashboard">
+    <main className="panelLayout">
+
       {/* Sidebar */}
       <aside className="sidebar">
         <div className="brand">AutoParts EU</div>
 
-        <nav>
+        <nav className="menu">
           <a className="active">Мои заказы</a>
-          <a>Подбор по VIN</a>
+          <a>Новый запрос</a>
           <a>Мои автомобили</a>
           <a>Сообщения</a>
-          <a>Избранное</a>
+          <a>Документы</a>
           <a>Профиль</a>
         </nav>
       </aside>
 
       {/* Content */}
       <section className="content">
+
         <div className="topbar">
           <h1>Личный кабинет</h1>
-          <button>Новый запрос</button>
+          <div className="userBox">Андрей</div>
         </div>
 
-        <div className="cards">
+        {/* Stats */}
+        <div className="stats">
+
           <div className="card">
-            <span>Активных заказов</span>
+            <h3>Активных заказов</h3>
             <strong>3</strong>
           </div>
 
           <div className="card">
-            <span>Доставлено</span>
+            <h3>Доставлено</h3>
             <strong>12</strong>
           </div>
 
           <div className="card">
-            <span>Сэкономлено</span>
+            <h3>Экономия</h3>
             <strong>€740</strong>
           </div>
+
         </div>
 
-        <div className="orders">
-          <h2>Последние заказы</h2>
+        {/* Orders */}
+        <div className="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Заказ</th>
+                <th>Деталь</th>
+                <th>Статус</th>
+                <th>Сумма</th>
+              </tr>
+            </thead>
 
-          <div className="order">
-            <div>
-              <strong>Тормозные колодки BMW X5</strong>
-              <p>Заказ #1024</p>
-            </div>
+            <tbody>
+              <tr>
+                <td>#1024</td>
+                <td>Тормозные колодки BMW X5</td>
+                <td><span className="badge">В пути</span></td>
+                <td>€180</td>
+              </tr>
 
-            <span className="status progress">В пути</span>
-          </div>
+              <tr>
+                <td>#1021</td>
+                <td>Фильтр Audi A6</td>
+                <td><span className="badge">Доставлен</span></td>
+                <td>€45</td>
+              </tr>
 
-          <div className="order">
-            <div>
-              <strong>Фильтр Audi A6</strong>
-              <p>Заказ #1021</p>
-            </div>
-
-            <span className="status done">Доставлен</span>
-          </div>
-
-          <div className="order">
-            <div>
-              <strong>Амортизатор Mercedes</strong>
-              <p>Заказ #1018</p>
-            </div>
-
-            <span className="status pending">В обработке</span>
-          </div>
+              <tr>
+                <td>#1018</td>
+                <td>Амортизатор Mercedes</td>
+                <td><span className="badge">Обработка</span></td>
+                <td>€220</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+
       </section>
 
-      {/* Right Panel */}
-      <aside className="profile">
-        <div className="user">
-          <h3>Андрей</h3>
-          <p>Клиент с 2026</p>
-        </div>
-
-        <div className="box">
-          <h4>Мои авто</h4>
-          <p>Audi A6</p>
-          <p>BMW X5</p>
-        </div>
-
-        <div className="box">
-          <h4>Поддержка</h4>
-          <p>WhatsApp</p>
-          <p>Telegram</p>
-        </div>
-      </aside>
     </main>
   );
-            }
+          }
