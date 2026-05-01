@@ -1,10 +1,10 @@
 import "../panel.css";
+import LogoutButton from "@/components/LogoutButton";
 
 export default function SupplierPage() {
   return (
     <main className="panelLayout">
 
-      {/* Sidebar */}
       <aside className="sidebar">
         <div className="brand">AutoParts EU</div>
 
@@ -19,15 +19,17 @@ export default function SupplierPage() {
         </nav>
       </aside>
 
-      {/* Content */}
       <section className="content">
 
         <div className="topbar">
           <h1>Panel Dostawcy</h1>
-          <div className="userBox">Dostawca</div>
+
+          <div style={{ display:"flex", gap:"10px" }}>
+            <div className="userBox">Dostawca</div>
+            <LogoutButton />
+          </div>
         </div>
 
-        {/* Stats */}
         <div className="stats">
 
           <div className="card">
@@ -47,7 +49,6 @@ export default function SupplierPage() {
 
         </div>
 
-        {/* Table */}
         <div className="tableWrap">
           <table>
             <thead>
@@ -88,4 +89,4 @@ export default function SupplierPage() {
 
     </main>
   );
-              }
+      }
