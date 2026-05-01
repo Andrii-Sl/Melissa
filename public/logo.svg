@@ -1,0 +1,9 @@
+<svg width="320" height="90" viewBox="0 0 320 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M35 28C75 5 150 5 205 20C235 28 255 30 285 30" stroke="#D10000" stroke-width="4" stroke-linecap="round"/>
+<circle cx="78" cy="34" r="3" fill="#D10000"/>
+<circle cx="245" cy="34" r="3" fill="#D10000"/>
+<text x="10" y="62" font-family="Arial" font-size="28" font-weight="700" fill="#111">Auto</text>
+<text x="82" y="62" font-family="Arial" font-size="28" font-weight="700" fill="#D10000">Parts</text>
+<text x="170" y="62" font-family="Arial" font-size="28" font-weight="700" fill="#111">EU</text>
+<text x="12" y="82" font-family="Arial" font-size="10" fill="#666">ПОДБОР И ДОСТАВКА ЗАПЧАСТЕЙ ИЗ ЕВРОПЫ</text>
+</svg>
