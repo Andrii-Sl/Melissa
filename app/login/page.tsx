@@ -1,68 +1,60 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
 export default function LoginPage() {
+  const router = useRouter();
+  const [role, setRole] = useState("client");
+
+  function enter() {
+    document.cookie = `role=${role}; path=/`;
+
+    if (role === "admin") router.push("/admin");
+    if (role === "supplier") router.push("/supplier");
+    if (role === "client") router.push("/dashboard");
+  }
+
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "#ffffff",
-        fontFamily: "Arial"
-      }}
-    >
-      <div
-        style={{
-          width: "420px",
-          border: "1px solid #e5e5e5",
-          padding: "40px",
-          background: "#fff"
-        }}
-      >
-        <h1 style={{ marginBottom: "24px", fontSize: "28px" }}>
-          AutoParts EU
-        </h1>
+    <main style={{
+      minHeight:"100vh",
+      display:"flex",
+      justifyContent:"center",
+      alignItems:"center"
+    }}>
+      <div style={{
+        width:"420px",
+        border:"1px solid #ddd",
+        padding:"40px"
+      }}>
+        <h1 style={{marginBottom:"20px"}}>Вход</h1>
 
-        <input
-          placeholder="Email"
+        <select
+          value={role}
+          onChange={(e)=>setRole(e.target.value)}
           style={{
-            width: "100%",
-            height: "48px",
-            marginBottom: "14px",
-            padding: "0 12px",
-            border: "1px solid #ddd"
+            width:"100%",
+            height:"46px",
+            marginBottom:"16px"
           }}
-        />
-
-        <input
-          placeholder="Пароль"
-          type="password"
-          style={{
-            width: "100%",
-            height: "48px",
-            marginBottom: "18px",
-            padding: "0 12px",
-            border: "1px solid #ddd"
-          }}
-        />
+        >
+          <option value="client">Клиент</option>
+          <option value="admin">Админ</option>
+          <option value="supplier">Dostawca</option>
+        </select>
 
         <button
+          onClick={enter}
           style={{
-            width: "100%",
-            height: "48px",
-            background: "#111",
-            color: "#fff",
-            border: "none",
-            cursor: "pointer"
+            width:"100%",
+            height:"46px",
+            background:"#111",
+            color:"#fff",
+            border:"none"
           }}
         >
           Войти
         </button>
-
-        <p style={{ marginTop: "18px", color: "#666", fontSize: "14px" }}>
-          Клиент → /dashboard  
-          Админ → /admin  
-          Поставщик → /supplier
-        </p>
       </div>
     </main>
   );
