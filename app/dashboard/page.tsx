@@ -1,10 +1,10 @@
 import "../panel.css";
+import LogoutButton from "@/components/LogoutButton";
 
 export default function DashboardPage() {
   return (
     <main className="panelLayout">
 
-      {/* Sidebar */}
       <aside className="sidebar">
         <div className="brand">AutoParts EU</div>
 
@@ -18,15 +18,17 @@ export default function DashboardPage() {
         </nav>
       </aside>
 
-      {/* Content */}
       <section className="content">
 
         <div className="topbar">
           <h1>Личный кабинет</h1>
-          <div className="userBox">Андрей</div>
+
+          <div style={{ display:"flex", gap:"10px" }}>
+            <div className="userBox">Андрей</div>
+            <LogoutButton />
+          </div>
         </div>
 
-        {/* Stats */}
         <div className="stats">
 
           <div className="card">
@@ -46,7 +48,6 @@ export default function DashboardPage() {
 
         </div>
 
-        {/* Orders */}
         <div className="tableWrap">
           <table>
             <thead>
@@ -61,30 +62,4 @@ export default function DashboardPage() {
             <tbody>
               <tr>
                 <td>#1024</td>
-                <td>Тормозные колодки BMW X5</td>
-                <td><span className="badge">В пути</span></td>
-                <td>€180</td>
-              </tr>
-
-              <tr>
-                <td>#1021</td>
-                <td>Фильтр Audi A6</td>
-                <td><span className="badge">Доставлен</span></td>
-                <td>€45</td>
-              </tr>
-
-              <tr>
-                <td>#1018</td>
-                <td>Амортизатор Mercedes</td>
-                <td><span className="badge">Обработка</span></td>
-                <td>€220</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-      </section>
-
-    </main>
-  );
-          }
+                <td
