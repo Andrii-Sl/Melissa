@@ -14,3 +14,11 @@ export function addLead(lead: any) {
     ...lead
   });
 }
+
+export function updateLeadStatus(id: number, status: string) {
+  const lead = leads.find((item) => item.id === id);
+
+  if (lead) {
+    lead.status = status;
+  }
+}
