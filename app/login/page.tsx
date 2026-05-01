@@ -1,60 +1,102 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [role, setRole] = useState("client");
 
-  function enter() {
-    document.cookie = `role=${role}; path=/`;
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    if (role === "admin") router.push("/admin");
-    if (role === "supplier") router.push("/supplier");
-    if (role === "client") router.push("/dashboard");
+  function login() {
+
+    if (email === "admin@mail.com" && password === "1234") {
+      document.cookie = "role=admin; path=/";
+      router.push("/admin");
+      return;
+    }
+
+    if (email === "client@mail.com" && password === "1234") {
+      document.cookie = "role=client; path=/";
+      router.push("/dashboard");
+      return;
+    }
+
+    if (email === "supplier@mail.com" && password === "1234") {
+      document.cookie = "role=supplier; path=/";
+      router.push("/supplier");
+      return;
+    }
+
+    alert("Неверный логин или пароль");
   }
 
   return (
-    <main style={{
-      minHeight:"100vh",
-      display:"flex",
-      justifyContent:"center",
-      alignItems:"center"
-    }}>
-      <div style={{
-        width:"420px",
-        border:"1px solid #ddd",
-        padding:"40px"
-      }}>
-        <h1 style={{marginBottom:"20px"}}>Вход</h1>
+    <main
+      style={{
+        minHeight:"100vh",
+        display:"flex",
+        justifyContent:"center",
+        alignItems:"center",
+        background:"#fff",
+        fontFamily:"Arial"
+      }}
+    >
+      <div
+        style={{
+          width:"420px",
+          border:"1px solid #ddd",
+          padding:"40px"
+        }}
+      >
+        <h1 style={{marginBottom:"24px"}}>Вход</h1>
 
-        <select
-          value={role}
-          onChange={(e)=>setRole(e.target.value)}
+        <input
+          placeholder="Email"
+          value={email}
+          onChange={(e)=>setEmail(e.target.value)}
           style={{
             width:"100%",
-            height:"46px",
-            marginBottom:"16px"
+            height:"48px",
+            marginBottom:"14px",
+            border:"1px solid #ddd",
+            padding:"0 12px"
           }}
-        >
-          <option value="client">Клиент</option>
-          <option value="admin">Админ</option>
-          <option value="supplier">Dostawca</option>
-        </select>
+        />
+
+        <input
+          type="password"
+          placeholder="Пароль"
+          value={password}
+          onChange={(e)=>setPassword(e.target.value)}
+          style={{
+            width:"100%",
+            height:"48px",
+            marginBottom:"18px",
+            border:"1px solid #ddd",
+            padding:"0 12px"
+          }}
+        />
 
         <button
-          onClick={enter}
+          onClick={login}
           style={{
             width:"100%",
-            height:"46px",
+            height:"48px",
             background:"#111",
             color:"#fff",
-            border:"none"
+            border:"none",
+            cursor:"pointer"
           }}
         >
           Войти
         </button>
+
+        <p style={{marginTop:"18px", fontSize:"13px", color:"#777"}}>
+          demo:
+          admin@mail.com / 1234
+        </p>
       </div>
     </main>
   );
