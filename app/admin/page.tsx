@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import "../panel.css";
 import LogoutButton from "@/components/LogoutButton";
 import { orders } from "@/data/orders";
@@ -9,11 +10,24 @@ import {
 } from "@/data/leads";
 
 export default function AdminPage() {
+  const [search, setSearch] = useState("");
 
   function changeStatus(id: number, status: string) {
     updateLeadStatus(id, status);
     location.reload();
   }
+
+  const filteredLeads = leads.filter((lead) =>
+    `${lead.vin} ${lead.part} ${lead.phone}`
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
+
+  const filteredOrders = orders.filter((order) =>
+    `${order.client} ${order.item} ${order.id}`
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
 
   return (
     <main className="panelLayout">
@@ -38,7 +52,19 @@ export default function AdminPage() {
           <h1>Админ кабинет</h1>
 
           <div style={{display:"flex", gap:"10px"}}>
+            <input
+              placeholder="Поиск..."
+              value={search}
+              onChange={(e)=>setSearch(e.target.value)}
+              style={{
+                height:"42px",
+                padding:"0 12px",
+                border:"1px solid #ddd"
+              }}
+            />
+
             <div className="userBox">Владелец</div>
+
             <LogoutButton />
           </div>
         </div>
@@ -56,7 +82,7 @@ export default function AdminPage() {
             </thead>
 
             <tbody>
-              {leads.map((lead) => (
+              {filteredLeads.map((lead) => (
                 <tr key={lead.id}>
                   <td>{lead.vin}</td>
                   <td>{lead.part}</td>
@@ -99,7 +125,7 @@ export default function AdminPage() {
             </thead>
 
             <tbody>
-              {orders.map((order) => (
+              {filteredOrders.map((order) => (
                 <tr key={order.id}>
                   <td>{order.id}</td>
                   <td>{order.client}</td>
@@ -109,7 +135,6 @@ export default function AdminPage() {
                 </tr>
               ))}
             </tbody>
-
           </table>
         </div>
 
@@ -117,4 +142,4 @@ export default function AdminPage() {
 
     </main>
   );
-}
+              }
