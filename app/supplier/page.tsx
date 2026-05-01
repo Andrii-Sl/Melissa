@@ -1,7 +1,10 @@
 import "../panel.css";
 import LogoutButton from "@/components/LogoutButton";
+import { orders } from "@/data/orders";
 
 export default function SupplierPage() {
+  const supplierOrders = orders;
+
   return (
     <main className="panelLayout">
 
@@ -24,7 +27,7 @@ export default function SupplierPage() {
         <div className="topbar">
           <h1>Panel Dostawcy</h1>
 
-          <div style={{ display:"flex", gap:"10px" }}>
+          <div style={{display:"flex", gap:"10px"}}>
             <div className="userBox">Dostawca</div>
             <LogoutButton />
           </div>
@@ -33,18 +36,26 @@ export default function SupplierPage() {
         <div className="stats">
 
           <div className="card">
-            <h3>Nowe zamówienia</h3>
-            <strong>9</strong>
+            <h3>Wszystkie zamówienia</h3>
+            <strong>{supplierOrders.length}</strong>
+          </div>
+
+          <div className="card">
+            <h3>Nowe</h3>
+            <strong>
+              {supplierOrders.filter(
+                o => o.status === "Новая заявка"
+              ).length}
+            </strong>
           </div>
 
           <div className="card">
             <h3>W realizacji</h3>
-            <strong>16</strong>
-          </div>
-
-          <div className="card">
-            <h3>Wysłane</h3>
-            <strong>28</strong>
+            <strong>
+              {supplierOrders.filter(
+                o => o.status === "В пути"
+              ).length}
+            </strong>
           </div>
 
         </div>
@@ -61,27 +72,20 @@ export default function SupplierPage() {
             </thead>
 
             <tbody>
-              <tr>
-                <td>#3101</td>
-                <td>Klocki hamulcowe BMW X5</td>
-                <td><span className="badge">Nowe</span></td>
-                <td>€160</td>
-              </tr>
-
-              <tr>
-                <td>#3098</td>
-                <td>Filtr Audi A6</td>
-                <td><span className="badge">Wysłane</span></td>
-                <td>€42</td>
-              </tr>
-
-              <tr>
-                <td>#3092</td>
-                <td>Amortyzator Mercedes</td>
-                <td><span className="badge">Produkcja</span></td>
-                <td>€215</td>
-              </tr>
+              {supplierOrders.map((order) => (
+                <tr key={order.id}>
+                  <td>{order.id}</td>
+                  <td>{order.item}</td>
+                  <td>
+                    <span className="badge">
+                      {order.status}
+                    </span>
+                  </td>
+                  <td>{order.total}</td>
+                </tr>
+              ))}
             </tbody>
+
           </table>
         </div>
 
@@ -89,4 +93,4 @@ export default function SupplierPage() {
 
     </main>
   );
-      }
+}
