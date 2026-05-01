@@ -3,16 +3,17 @@ import Link from "next/link";
 export default function Header() {
   return (
     <header className="header">
-      <div className="brand">
-        <img src="/logo.png" alt="logo" className="logo" />
-        <span>AutoParts EU</span>
-      </div>
+      <div className="logo">AutoParts EU</div>
 
       <nav className="nav">
-        <Link href="/">Главная</Link>
-        <Link href="/dashboard">Кабинет</Link>
-        <Link href="/admin">Admin</Link>
+        <a href="#">Как это работает</a>
+        <a href="#">Доставка</a>
+        <a href="#">Контакты</a>
       </nav>
+
+      <Link href="/dashboard" className="cabinetBtn">
+        Личный кабинет
+      </Link>
     </header>
   );
 }
