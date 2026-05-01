@@ -15,9 +15,10 @@ export default function LogoutButton() {
     <button
       onClick={logout}
       style={{
+        height:"42px",
+        padding:"0 16px",
         border:"1px solid #ddd",
         background:"#fff",
-        padding:"10px 14px",
         cursor:"pointer"
       }}
     >
