@@ -123,27 +123,12 @@ export default function HomePage() {
               ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ
             </a>
 
-            <div className={styles.payments}>
-              <span className={styles.payText}>
-                Принимаем оплату:
-              </span>
-
-              <div className={styles.payIcons}>
-                <img
-                  src="/visa.png"
-                  alt="Visa"
-                />
-
-                <img
-                  src="/mastercard.png"
-                  alt="MasterCard"
-                />
-
-                <img
-                  src="/paypal.png"
-                  alt="PayPal"
-                />
-              </div>
+            <div className={styles.paymentsBanner}>
+              <img
+                src="/payments-banner.png"
+                alt="Способы оплаты"
+                className={styles.paymentsImg}
+              />
             </div>
 
           </div>
