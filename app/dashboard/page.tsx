@@ -32,6 +32,24 @@ export default function DashboardPage() {
     router.push("/");
   }
 
+  const requests = [
+    {
+      id: 1045,
+      part: "Audi A6 — тормозной диск",
+      status: "Новый"
+    },
+    {
+      id: 1046,
+      part: "BMW X5 — масляный фильтр",
+      status: "В обработке"
+    },
+    {
+      id: 1047,
+      part: "Mercedes E220 — амортизатор",
+      status: "Ожидает цену"
+    }
+  ];
+
   return (
     <main className={styles.page}>
       <header className={styles.header}>
@@ -68,16 +86,45 @@ export default function DashboardPage() {
             ЛИЧНЫЙ КАБИНЕТ
           </div>
 
-          <h1>Здравствуйте</h1>
+          <div className={styles.topRow}>
+            <div>
+              <h1>Мои заявки</h1>
 
-          <p className={styles.text}>
-            Здесь будут ваши заявки,
-            статусы и история заказов.
-          </p>
+              <p className={styles.text}>
+                Отслеживайте статусы и цены.
+              </p>
+            </div>
 
-          <a href="/offer" className={styles.newBtn}>
-            + Новый запрос
-          </a>
+            <a
+              href="/offer"
+              className={styles.newBtn}
+            >
+              + Новый запрос
+            </a>
+          </div>
+
+          <div className={styles.list}>
+            {requests.map((item) => (
+              <div
+                key={item.id}
+                className={styles.card}
+              >
+                <div className={styles.cardTop}>
+                  <strong>
+                    #{item.id}
+                  </strong>
+
+                  <span className={styles.badge}>
+                    {item.status}
+                  </span>
+                </div>
+
+                <div className={styles.part}>
+                  {item.part}
+                </div>
+              </div>
+            ))}
+          </div>
 
         </div>
       </section>
