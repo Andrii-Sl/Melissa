@@ -1,0 +1,196 @@
+.page{
+  min-height:100svh;
+  background:#f7f7f7;
+  font-family:Arial, Helvetica, sans-serif;
+  color:#111111;
+}
+
+.container{
+  width:100%;
+  max-width:1440px;
+  margin:0 auto;
+  padding:0 14px;
+}
+
+/* HEADER */
+
+.header{
+  height:78px;
+  background:#ffffff;
+  border-bottom:1px solid #ececec;
+}
+
+.header .container{
+  height:78px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  gap:12px;
+}
+
+.logoImg{
+  width:190px;
+  height:auto;
+  display:block;
+}
+
+.exitBtn{
+  text-decoration:none;
+  color:#111111;
+  border:1px solid #d10000;
+  padding:9px 12px;
+  font-size:13px;
+}
+
+/* CONTENT */
+
+.content{
+  padding:28px 0 60px;
+}
+
+.label{
+  color:#d10000;
+  font-size:12px;
+  margin-bottom:10px;
+}
+
+h1{
+  margin:0 0 22px;
+  font-size:34px;
+}
+
+.stats{
+  display:grid;
+  gap:12px;
+  margin-bottom:28px;
+}
+
+.statCard{
+  background:#ffffff;
+  padding:18px;
+  border:1px solid #ececec;
+}
+
+.statCard span{
+  display:block;
+  color:#666666;
+  font-size:14px;
+  margin-bottom:10px;
+}
+
+.statCard strong{
+  font-size:34px;
+}
+
+.topRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:14px;
+}
+
+.topRow h2{
+  margin:0;
+  font-size:22px;
+}
+
+.topRow a{
+  text-decoration:none;
+  color:#d10000;
+  font-size:14px;
+}
+
+.orders{
+  display:grid;
+  gap:12px;
+}
+
+.order{
+  background:#ffffff;
+  border:1px solid #ececec;
+  padding:16px;
+  text-decoration:none;
+  color:#111111;
+  display:grid;
+  gap:10px;
+}
+
+.order strong{
+  font-size:18px;
+}
+
+.order p{
+  margin:4px 0 0;
+  font-size:14px;
+}
+
+.order span{
+  color:#d10000;
+  font-size:13px;
+}
+
+/* DESKTOP */
+
+@media(min-width:901px){
+
+.container{
+  padding:0 28px;
+}
+
+.header{
+  height:92px;
+}
+
+.header .container{
+  height:92px;
+}
+
+.logoImg{
+  width:420px;
+}
+
+.exitBtn{
+  padding:13px 18px;
+  font-size:14px;
+}
+
+.content{
+  padding:44px 0 70px;
+}
+
+h1{
+  font-size:52px;
+}
+
+.stats{
+  grid-template-columns:repeat(4,1fr);
+}
+
+.statCard{
+  padding:26px;
+}
+
+.statCard strong{
+  font-size:48px;
+}
+
+.orders{
+  gap:16px;
+}
+
+.order{
+  grid-template-columns:220px 1fr;
+  align-items:center;
+  padding:20px;
+}
+
+.order strong{
+  font-size:22px;
+}
+
+.order p{
+  font-size:16px;
+}
+
+}
