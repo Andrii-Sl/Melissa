@@ -5,7 +5,6 @@ export default function HomePage() {
     <main className={styles.page}>
       <header className={styles.header}>
         <div className={styles.container}>
-
           <a href="/" className={styles.logoWrap}>
             <img
               src="/logo-final.png"
@@ -21,14 +20,12 @@ export default function HomePage() {
               Кабинет
             </a>
           </div>
-
         </div>
       </header>
 
       <section className={styles.hero}>
         <div className={styles.overlay}>
           <div className={styles.heroBox}>
-
             <div className={styles.miniTitle}>
               ПОДБОР ПО VIN И НОМЕРУ ДЕТАЛИ
             </div>
@@ -58,8 +55,29 @@ export default function HomePage() {
             </button>
 
             <div className={styles.socials}>
-              <a href="#">WhatsApp</a>
-              <a href="#">Telegram</a>
+              <a href="tel:+77000000000">📞</a>
+
+              <a
+                href="https://wa.me/77000000000"
+                target="_blank"
+              >
+                WA
+              </a>
+
+              <a href="viber://chat?number=%2B77000000000">
+                VI
+              </a>
+
+              <a
+                href="https://t.me/yourname"
+                target="_blank"
+              >
+                TG
+              </a>
+
+              <a href="mailto:info@autoparts-eu.com">
+                ✉
+              </a>
             </div>
 
             <div className={styles.payments}>
@@ -69,7 +87,7 @@ export default function HomePage() {
 
               <div className={styles.payIcons}>
                 <img src="/visa.png" alt="Visa" />
-                <img src="/mc.png" alt="MasterCard" />
+                <img src="/mastercard.png" alt="MasterCard" />
                 <img src="/paypal.png" alt="PayPal" />
               </div>
             </div>
