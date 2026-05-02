@@ -1,30 +1,27 @@
 import styles from "./login.module.css";
-import Link from "next/link";
 
 export default function LoginPage() {
   return (
     <main className={styles.page}>
 
-      {/* HEADER */}
       <header className={styles.header}>
         <div className={styles.container}>
 
-          <Link href="/" className={styles.logoWrap}>
+          <a href="/" className={styles.logoWrap}>
             <img
-              src="/logo.svg"
+              src="/logo-final.png"
               alt="AutoParts EU"
               className={styles.logoImg}
             />
-          </Link>
+          </a>
 
-          <Link href="/" className={styles.backBtn}>
+          <a href="/" className={styles.backBtn}>
             На главную
-          </Link>
+          </a>
 
         </div>
       </header>
 
-      {/* BODY */}
       <section className={styles.hero}>
         <div className={styles.overlay}>
 
@@ -34,24 +31,15 @@ export default function LoginPage() {
               ДОБРО ПОЖАЛОВАТЬ
             </div>
 
-            <h1>
-              Вход в личный кабинет
-            </h1>
+            <h1>Вход в личный кабинет</h1>
 
             <p>
-              Управляйте заявками, заказами
-              и статусами в одном месте.
+              Управляйте заявками, заказами и статусами
+              в одном месте.
             </p>
 
-            <input
-              type="email"
-              placeholder="E-mail"
-            />
-
-            <input
-              type="password"
-              placeholder="Пароль"
-            />
+            <input type="email" placeholder="E-mail" />
+            <input type="password" placeholder="Пароль" />
 
             <button className={styles.loginBtn}>
               ВОЙТИ
