@@ -15,8 +15,6 @@
   padding:0 14px;
 }
 
-/* HEADER */
-
 .header{
   height:78px;
   background:#ffffff;
@@ -34,15 +32,12 @@
 .logoWrap{
   display:flex;
   align-items:center;
-  text-decoration:none;
-  min-width:0;
 }
 
 .logoImg{
   width:260px;
   height:auto;
   max-width:62vw;
-  object-fit:contain;
   display:block;
 }
 
@@ -50,7 +45,6 @@
   display:flex;
   align-items:center;
   gap:8px;
-  flex-shrink:0;
 }
 
 .burger{
@@ -59,9 +53,7 @@
   border:none;
   background:none;
   font-size:30px;
-  line-height:1;
   cursor:pointer;
-  color:#111111;
 }
 
 .loginBtn{
@@ -70,10 +62,7 @@
   border:1px solid #d10000;
   padding:10px 14px;
   font-size:14px;
-  white-space:nowrap;
 }
-
-/* HERO */
 
 .hero{
   min-height:calc(100svh - 78px);
@@ -91,18 +80,150 @@
 }
 
 .heroBox{
-  padding:18px 14px 24px 14px;
+  min-height:calc(100svh - 78px);
+  padding:18px 14px 24px;
   display:flex;
   flex-direction:column;
   justify-content:center;
-  min-height:calc(100svh - 78px);
 }
 
 .miniTitle{
   color:#ff2b2b;
   font-size:11px;
-  letter-spacing:.5px;
   margin-bottom:10px;
 }
 
-.hero
+.heroBox h1{
+  color:#ffffff;
+  font-size:42px;
+  line-height:1.03;
+  margin:0 0 12px;
+}
+
+.heroBox p{
+  color:#dddddd;
+  font-size:15px;
+  margin:0 0 14px;
+}
+
+.trustRow{
+  display:grid;
+  gap:6px;
+  margin-bottom:14px;
+}
+
+.trustRow span{
+  color:#ffffff;
+  font-size:14px;
+}
+
+.heroBox input{
+  width:100%;
+  height:48px;
+  margin-bottom:10px;
+  padding:0 14px;
+  border:none;
+}
+
+.cta{
+  width:100%;
+  height:50px;
+  border:none;
+  background:#d10000;
+  color:#ffffff;
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+.socials{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.socials a{
+  text-decoration:none;
+  text-align:center;
+  padding:13px 10px;
+  background:#111111;
+  color:#ffffff;
+}
+
+.payments{
+  margin-top:14px;
+}
+
+.payText{
+  color:#ffffff;
+  font-size:13px;
+  display:block;
+  margin-bottom:8px;
+}
+
+.payIcons{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.payIcons img{
+  height:28px;
+  background:#ffffff;
+  padding:4px 8px;
+  border-radius:6px;
+}
+
+@media(min-width:901px){
+
+.container{
+  padding:0 28px;
+}
+
+.header{
+  height:92px;
+}
+
+.header .container{
+  height:92px;
+}
+
+.logoImg{
+  width:460px;
+  max-width:100%;
+}
+
+.hero{
+  min-height:760px;
+}
+
+.overlay{
+  min-height:760px;
+}
+
+.heroBox{
+  width:620px;
+  min-height:760px;
+  padding:40px 0 40px 28px;
+}
+
+.heroBox h1{
+  font-size:70px;
+}
+
+.heroBox p{
+  font-size:19px;
+}
+
+.heroBox input{
+  height:58px;
+}
+
+.cta{
+  height:58px;
+}
+
+.payIcons img{
+  height:34px;
+}
+
+}
