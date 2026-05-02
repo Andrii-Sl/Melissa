@@ -91,7 +91,7 @@ export default function DashboardPage() {
               <h1>Мои заявки</h1>
 
               <p className={styles.text}>
-                Отслеживайте статусы и цены.
+                Нажмите на заявку для просмотра.
               </p>
             </div>
 
@@ -105,8 +105,9 @@ export default function DashboardPage() {
 
           <div className={styles.list}>
             {requests.map((item) => (
-              <div
+              <a
                 key={item.id}
+                href={`/dashboard/request/${item.id}`}
                 className={styles.card}
               >
                 <div className={styles.cardTop}>
@@ -122,7 +123,7 @@ export default function DashboardPage() {
                 <div className={styles.part}>
                   {item.part}
                 </div>
-              </div>
+              </a>
             ))}
           </div>
 
