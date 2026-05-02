@@ -1,0 +1,219 @@
+.page{
+  min-height:100svh;
+  background:#ffffff;
+  font-family:Arial, Helvetica, sans-serif;
+  color:#111111;
+  overflow-x:hidden;
+}
+
+.container{
+  width:100%;
+  max-width:1440px;
+  margin:0 auto;
+  padding:0 14px;
+}
+
+/* HEADER */
+
+.header{
+  height:78px;
+  background:#ffffff;
+  border-bottom:1px solid #ececec;
+}
+
+.header .container{
+  height:78px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+
+.logoWrap{
+  display:flex;
+  align-items:center;
+}
+
+.logoImg{
+  width:190px;
+  height:auto;
+  display:block;
+}
+
+.rightSide{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.burger{
+  width:38px;
+  height:38px;
+  border:none;
+  background:none;
+  font-size:28px;
+  cursor:pointer;
+}
+
+.homeBtn{
+  text-decoration:none;
+  color:#111111;
+  border:1px solid #d10000;
+  padding:9px 10px;
+  font-size:13px;
+  white-space:nowrap;
+}
+
+/* CONTENT */
+
+.content{
+  padding:24px 0 40px;
+}
+
+.label{
+  color:#d10000;
+  font-size:12px;
+  margin-bottom:8px;
+}
+
+.topBlock h1{
+  font-size:32px;
+  line-height:1.1;
+  margin:0 0 10px;
+}
+
+.topBlock p{
+  color:#666666;
+  font-size:15px;
+  margin:0 0 18px;
+}
+
+.newBtn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  background:#d10000;
+  color:#ffffff;
+  height:52px;
+  font-weight:700;
+  margin-bottom:20px;
+}
+
+.grid{
+  display:grid;
+  gap:16px;
+}
+
+.card{
+  border:1px solid #ececec;
+  padding:18px;
+  background:#ffffff;
+}
+
+.cardTitle{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:14px;
+}
+
+.request{
+  display:grid;
+  gap:4px;
+  padding:12px 0;
+  border-bottom:1px solid #f1f1f1;
+}
+
+.request:last-child{
+  border-bottom:none;
+}
+
+.request span{
+  font-size:14px;
+}
+
+.request small{
+  color:#777777;
+  font-size:13px;
+}
+
+.statRow{
+  padding:10px 0;
+  border-bottom:1px solid #f3f3f3;
+  font-size:14px;
+}
+
+.statRow:last-child{
+  border-bottom:none;
+}
+
+/* DESKTOP */
+
+@media(min-width:901px){
+
+.container{
+  padding:0 28px;
+}
+
+.header{
+  height:92px;
+}
+
+.header .container{
+  height:92px;
+}
+
+.logoImg{
+  width:460px;
+}
+
+.homeBtn{
+  padding:13px 18px;
+  font-size:14px;
+}
+
+.content{
+  padding:40px 0 60px;
+}
+
+.topBlock{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:30px;
+  margin-bottom:28px;
+}
+
+.topBlock h1{
+  font-size:48px;
+}
+
+.topBlock p{
+  font-size:17px;
+  margin:0;
+}
+
+.newBtn{
+  width:240px;
+  margin:0;
+}
+
+.grid{
+  grid-template-columns:2fr 1fr 1fr;
+  gap:22px;
+}
+
+.card{
+  padding:24px;
+}
+
+.cardTitle{
+  font-size:20px;
+}
+
+.request span,
+.statRow{
+  font-size:15px;
+}
+
+}
