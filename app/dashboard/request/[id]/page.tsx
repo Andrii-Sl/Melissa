@@ -1,12 +1,25 @@
 import styles from "./request.module.css";
 
 export default function RequestDetailsPage() {
+  const currentStep = 3;
+
+  const steps = [
+    "Новый",
+    "Подбор",
+    "Цена готова",
+    "Оплачен",
+    "Отправлен"
+  ];
+
   return (
     <main className={styles.page}>
       <header className={styles.header}>
         <div className={styles.container}>
 
-          <a href="/dashboard" className={styles.backBtn}>
+          <a
+            href="/dashboard"
+            className={styles.backBtn}
+          >
             ← Назад
           </a>
 
@@ -39,20 +52,37 @@ export default function RequestDetailsPage() {
             </div>
 
             <div className={styles.info}>
+
               <h1>
                 Тормозной диск передний
               </h1>
 
               <div className={styles.status}>
-                Статус: В обработке
+                Статус: Цена готова
+              </div>
+
+              <div className={styles.tracker}>
+                {steps.map((step, index) => (
+                  <div
+                    key={step}
+                    className={
+                      index <= currentStep
+                        ? styles.stepActive
+                        : styles.step
+                    }
+                  >
+                    <span></span>
+                    {step}
+                  </div>
+                ))}
               </div>
 
               <div className={styles.row}>
-                Цена: —
+                Цена: 129 €
               </div>
 
               <div className={styles.row}>
-                Наличие: —
+                Наличие: Есть
               </div>
 
               <div className={styles.row}>
@@ -60,12 +90,13 @@ export default function RequestDetailsPage() {
               </div>
 
               <div className={styles.row}>
-                Менеджер: Идёт подбор
+                Менеджер: Готово к оплате
               </div>
 
               <button className={styles.payBtn}>
                 ОПЛАТИТЬ
               </button>
+
             </div>
 
           </div>
