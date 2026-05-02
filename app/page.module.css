@@ -1,43 +1,63 @@
-/* HEADER CONTAINER */
+.page{
+  margin:0;
+  padding:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:#ffffff;
+  color:#111111;
+  min-height:100svh;
+  overflow-x:hidden;
+}
+
+.container{
+  width:100%;
+  max-width:1440px;
+  margin:0 auto;
+  padding:0 10px;
+}
+
+/* HEADER */
+
+.header{
+  height:78px;
+  background:#ffffff;
+  border-bottom:1px solid #ececec;
+}
+
 .header .container{
   height:78px;
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:6px;
-  padding:0 10px;
   overflow:hidden;
 }
 
-/* LOGO */
+.logoWrap{
+  display:flex;
+  align-items:center;
+}
+
 .logoImg{
   width:190px;
   height:auto;
   display:block;
-  flex-shrink:1;
 }
 
-/* RIGHT SIDE */
 .rightSide{
   display:flex;
   align-items:center;
   gap:6px;
-  flex-shrink:0;
 }
 
-/* BURGER */
 .burger{
   width:38px;
   height:38px;
   border:none;
   background:none;
   font-size:28px;
-  line-height:1;
   cursor:pointer;
-  color:#111111;
 }
 
-/* CABINET BUTTON */
 .loginBtn{
   text-decoration:none;
   color:#111111;
@@ -45,4 +65,189 @@
   padding:9px 10px;
   font-size:13px;
   white-space:nowrap;
+}
+
+/* HERO */
+
+.hero{
+  min-height:calc(100svh - 78px);
+  background:url('/hero.jpg') center center/cover no-repeat;
+}
+
+.overlay{
+  min-height:calc(100svh - 78px);
+  background:linear-gradient(
+    180deg,
+    rgba(0,0,0,.22) 0%,
+    rgba(0,0,0,.72) 42%,
+    rgba(0,0,0,.90) 100%
+  );
+}
+
+.heroBox{
+  min-height:calc(100svh - 78px);
+  padding:18px 14px 24px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.miniTitle{
+  color:#ff2b2b;
+  font-size:11px;
+  margin-bottom:10px;
+}
+
+.heroBox h1{
+  color:#ffffff;
+  font-size:42px;
+  line-height:1.03;
+  margin:0 0 12px;
+}
+
+.heroBox p{
+  color:#dddddd;
+  font-size:15px;
+  margin:0 0 14px;
+}
+
+.trustRow{
+  display:grid;
+  gap:6px;
+  margin-bottom:14px;
+}
+
+.trustRow span{
+  color:#ffffff;
+  font-size:14px;
+}
+
+.heroBox input{
+  width:100%;
+  height:48px;
+  margin-bottom:10px;
+  padding:0 14px;
+  border:none;
+}
+
+.cta{
+  width:100%;
+  height:50px;
+  border:none;
+  background:#d10000;
+  color:#ffffff;
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+/* CONTACT ICONS */
+
+.socials{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+}
+
+.socials a{
+  text-decoration:none;
+  text-align:center;
+  height:52px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#111111;
+  color:#ffffff;
+  border:1px solid rgba(255,255,255,.14);
+  font-size:16px;
+  font-weight:700;
+  border-radius:4px;
+}
+
+.socials a:hover{
+  background:#d10000;
+}
+
+/* PAYMENTS */
+
+.payments{
+  margin-top:14px;
+}
+
+.payText{
+  color:#ffffff;
+  font-size:13px;
+  display:block;
+  margin-bottom:8px;
+}
+
+.payIcons{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.payIcons img{
+  height:28px;
+  background:#ffffff;
+  padding:4px 8px;
+  border-radius:6px;
+}
+
+@media(min-width:901px){
+
+.container{
+  padding:0 28px;
+}
+
+.header{
+  height:92px;
+}
+
+.header .container{
+  height:92px;
+}
+
+.logoImg{
+  width:460px;
+}
+
+.hero{
+  min-height:760px;
+}
+
+.overlay{
+  min-height:760px;
+}
+
+.heroBox{
+  width:620px;
+  min-height:760px;
+  padding:40px 0 40px 28px;
+}
+
+.heroBox h1{
+  font-size:70px;
+}
+
+.heroBox p{
+  font-size:19px;
+}
+
+.heroBox input{
+  height:58px;
+}
+
+.cta{
+  height:58px;
+}
+
+.socials a{
+  height:56px;
+  font-size:17px;
+}
+
+.payIcons img{
+  height:34px;
+}
+
 }
