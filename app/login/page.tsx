@@ -1,129 +1,72 @@
-"use client";
-
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { users } from "@/data/users";
+import styles from "./login.module.css";
+import Link from "next/link";
 
 export default function LoginPage() {
-  const router = useRouter();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  function login() {
-    const user = users.find(
-      (u) =>
-        u.email === email &&
-        u.password === password
-    );
-
-    if (!user) {
-      alert("Неверный логин или пароль");
-      return;
-    }
-
-    document.cookie = `role=${user.role}; path=/`;
-
-    if (user.role === "admin") {
-      router.push("/admin");
-      return;
-    }
-
-    if (user.role === "client") {
-      router.push("/dashboard");
-      return;
-    }
-
-    if (user.role === "supplier") {
-      router.push("/supplier");
-      return;
-    }
-  }
-
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "#ffffff",
-        fontFamily: "Arial"
-      }}
-    >
-      <div
-        style={{
-          width: "420px",
-          border: "1px solid #ddd",
-          padding: "40px",
-          background: "#fff"
-        }}
-      >
-        <h1
-          style={{
-            marginBottom: "24px",
-            fontSize: "28px"
-          }}
-        >
-          Вход
-        </h1>
+    <main className={styles.page}>
 
-        <input
-          placeholder="Email"
-          value={email}
-          onChange={(e) =>
-            setEmail(e.target.value)
-          }
-          style={{
-            width: "100%",
-            height: "48px",
-            marginBottom: "14px",
-            border: "1px solid #ddd",
-            padding: "0 12px"
-          }}
-        />
+      {/* HEADER */}
+      <header className={styles.header}>
+        <div className={styles.container}>
 
-        <input
-          type="password"
-          placeholder="Пароль"
-          value={password}
-          onChange={(e) =>
-            setPassword(e.target.value)
-          }
-          style={{
-            width: "100%",
-            height: "48px",
-            marginBottom: "18px",
-            border: "1px solid #ddd",
-            padding: "0 12px"
-          }}
-        />
+          <Link href="/" className={styles.logoWrap}>
+            <img
+              src="/logo.svg"
+              alt="AutoParts EU"
+              className={styles.logoImg}
+            />
+          </Link>
 
-        <button
-          onClick={login}
-          style={{
-            width: "100%",
-            height: "48px",
-            background: "#111",
-            color: "#fff",
-            border: "none",
-            cursor: "pointer"
-          }}
-        >
-          Войти
-        </button>
+          <Link href="/" className={styles.backBtn}>
+            На главную
+          </Link>
 
-        <p
-          style={{
-            marginTop: "18px",
-            fontSize: "13px",
-            color: "#777"
-          }}
-        >
-          demo:
-          admin@mail.com / 1234
-        </p>
-      </div>
+        </div>
+      </header>
+
+      {/* BODY */}
+      <section className={styles.hero}>
+        <div className={styles.overlay}>
+
+          <div className={styles.card}>
+
+            <div className={styles.titleMini}>
+              ДОБРО ПОЖАЛОВАТЬ
+            </div>
+
+            <h1>
+              Вход в личный кабинет
+            </h1>
+
+            <p>
+              Управляйте заявками, заказами
+              и статусами в одном месте.
+            </p>
+
+            <input
+              type="email"
+              placeholder="E-mail"
+            />
+
+            <input
+              type="password"
+              placeholder="Пароль"
+            />
+
+            <button className={styles.loginBtn}>
+              ВОЙТИ
+            </button>
+
+            <div className={styles.links}>
+              <a href="#">Регистрация</a>
+              <a href="#">Забыли пароль?</a>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
     </main>
   );
-          }
+}
