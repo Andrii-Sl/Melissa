@@ -76,17 +76,23 @@
   margin-bottom:10px;
 }
 
+.topRow{
+  display:grid;
+  gap:16px;
+  margin-bottom:22px;
+}
+
 .content h1{
   font-size:34px;
   line-height:1.1;
-  margin:0 0 12px;
+  margin:0 0 10px;
 }
 
 .text{
   color:#666666;
   font-size:15px;
   line-height:1.5;
-  margin:0 0 22px;
+  margin:0;
 }
 
 .newBtn{
@@ -99,6 +105,37 @@
   color:#ffffff;
   text-decoration:none;
   font-weight:700;
+}
+
+.list{
+  display:grid;
+  gap:14px;
+}
+
+.card{
+  border:1px solid #ececec;
+  padding:18px;
+  background:#ffffff;
+}
+
+.cardTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.badge{
+  background:#111111;
+  color:#ffffff;
+  padding:6px 10px;
+  font-size:12px;
+}
+
+.part{
+  font-size:15px;
+  line-height:1.4;
 }
 
 /* DESKTOP */
@@ -135,18 +172,34 @@
   padding:42px 0 60px;
 }
 
+.topRow{
+  grid-template-columns:1fr 260px;
+  align-items:end;
+}
+
 .content h1{
   font-size:52px;
 }
 
 .text{
   font-size:18px;
-  max-width:700px;
 }
 
 .newBtn{
-  width:260px;
   height:58px;
+}
+
+.list{
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+}
+
+.card{
+  padding:22px;
+}
+
+.part{
+  font-size:16px;
 }
 
 }
