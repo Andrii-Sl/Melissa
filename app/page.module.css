@@ -8,8 +8,6 @@
   overflow-x:hidden;
 }
 
-/* CONTAINER */
-
 .container{
   width:100%;
   max-width:1440px;
@@ -41,9 +39,9 @@
 }
 
 .logoImg{
-  height:44px;
-  width:auto;
-  max-width:220px;
+  width:260px;
+  height:auto;
+  max-width:62vw;
   object-fit:contain;
   display:block;
 }
@@ -73,7 +71,6 @@
   padding:10px 14px;
   font-size:14px;
   white-space:nowrap;
-  border-radius:2px;
 }
 
 /* HERO */
@@ -108,166 +105,4 @@
   margin-bottom:10px;
 }
 
-.heroBox h1{
-  color:#ffffff;
-  font-size:42px;
-  line-height:1.03;
-  margin:0 0 12px 0;
-}
-
-.heroBox p{
-  color:#dddddd;
-  font-size:15px;
-  line-height:1.45;
-  margin:0 0 14px 0;
-}
-
-/* TRUST */
-
-.trustRow{
-  display:grid;
-  gap:6px;
-  margin-bottom:14px;
-}
-
-.trustRow span{
-  color:#ffffff;
-  font-size:14px;
-}
-
-/* FORM */
-
-.heroBox input{
-  width:100%;
-  height:48px;
-  border:none;
-  outline:none;
-  margin-bottom:10px;
-  padding:0 14px;
-  font-size:15px;
-  color:#111111;
-  background:#ffffff;
-}
-
-.cta{
-  width:100%;
-  height:50px;
-  border:none;
-  cursor:pointer;
-  background:#d10000;
-  color:#ffffff;
-  font-size:15px;
-  font-weight:700;
-  margin-bottom:10px;
-}
-
-.socials{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-.socials a{
-  text-decoration:none;
-  text-align:center;
-  padding:13px 10px;
-  background:#111111;
-  color:#ffffff;
-  border:1px solid rgba(255,255,255,.15);
-  font-size:14px;
-}
-
-/* DESKTOP */
-
-@media(min-width:901px){
-
-.container{
-  padding:0 28px;
-}
-
-.header{
-  height:92px;
-}
-
-.header .container{
-  height:92px;
-}
-
-.logoImg{
-  height:58px;
-  max-width:430px;
-}
-
-.burger{
-  width:52px;
-  height:52px;
-  font-size:36px;
-}
-
-.loginBtn{
-  padding:14px 20px;
-  font-size:15px;
-}
-
-.hero{
-  min-height:760px;
-}
-
-.overlay{
-  min-height:760px;
-  background:linear-gradient(
-    90deg,
-    rgba(0,0,0,.88) 0%,
-    rgba(0,0,0,.72) 40%,
-    rgba(0,0,0,.16) 72%,
-    rgba(0,0,0,0) 100%
-  );
-}
-
-.heroBox{
-  width:620px;
-  min-height:760px;
-  padding:40px 0 40px 28px;
-}
-
-.miniTitle{
-  font-size:14px;
-  margin-bottom:18px;
-}
-
-.heroBox h1{
-  font-size:70px;
-  margin-bottom:18px;
-}
-
-.heroBox p{
-  font-size:19px;
-  margin-bottom:18px;
-}
-
-.trustRow{
-  gap:10px;
-  margin-bottom:18px;
-}
-
-.trustRow span{
-  font-size:15px;
-}
-
-.heroBox input{
-  height:58px;
-  margin-bottom:14px;
-  font-size:16px;
-}
-
-.cta{
-  height:58px;
-  font-size:16px;
-}
-
-.socials a{
-  padding:16px;
-  font-size:15px;
-}
-
-}
+.hero
