@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
+import Footer from "../../components/Footer";
 import styles from "./dashboard.module.css";
 
 export default function DashboardPage() {
@@ -129,6 +130,8 @@ export default function DashboardPage() {
 
         </div>
       </section>
+
+      <Footer />
     </main>
   );
 }
