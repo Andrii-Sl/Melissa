@@ -62,6 +62,18 @@ export default function HomePage() {
               <a href="#">Telegram</a>
             </div>
 
+            <div className={styles.payments}>
+              <span className={styles.payText}>
+                Принимаем оплату:
+              </span>
+
+              <div className={styles.payIcons}>
+                <img src="/visa.png" alt="Visa" />
+                <img src="/mastercard.png" alt="MasterCard" />
+                <img src="/paypal.png" alt="PayPal" />
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
