@@ -3,10 +3,8 @@
   background:#ffffff;
   font-family:Arial, Helvetica, sans-serif;
   color:#111111;
-  overflow:hidden;
+  overflow-x:hidden;
 }
-
-/* CONTAINER */
 
 .container{
   width:100%;
@@ -36,14 +34,13 @@
 .logoWrap{
   display:flex;
   align-items:center;
-  text-decoration:none;
   min-width:0;
 }
 
 .logoImg{
-  width:230px;
+  width:260px;
   height:auto;
-  max-width:58vw;
+  max-width:62vw;
   object-fit:contain;
   display:block;
 }
@@ -52,10 +49,9 @@
   text-decoration:none;
   color:#111111;
   border:1px solid #d10000;
-  padding:9px 12px;
+  padding:10px 14px;
   font-size:13px;
   white-space:nowrap;
-  border-radius:2px;
 }
 
 /* HERO */
@@ -95,7 +91,7 @@
 .card h1{
   font-size:30px;
   line-height:1.1;
-  margin:0 0 10px 0;
+  margin:0 0 12px 0;
 }
 
 .card p{
@@ -161,7 +157,7 @@
 }
 
 .logoImg{
-  width:430px;
+  width:460px;
   height:auto;
   max-width:100%;
 }
