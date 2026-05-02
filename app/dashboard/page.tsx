@@ -1,10 +1,42 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "../../lib/supabase";
 import styles from "./dashboard.module.css";
 
 export default function DashboardPage() {
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  async function checkUser() {
+    const {
+      data: { session }
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      router.push("/login");
+      return;
+    }
+
+    setEmail(session.user.email || "");
+  }
+
+  async function logout() {
+    await supabase.auth.signOut();
+    router.push("/");
+  }
+
   return (
     <main className={styles.page}>
       <header className={styles.header}>
         <div className={styles.container}>
+
           <a href="/" className={styles.logoWrap}>
             <img
               src="/logo-final.png"
@@ -14,86 +46,38 @@ export default function DashboardPage() {
           </a>
 
           <div className={styles.rightSide}>
-            <button className={styles.burger}>☰</button>
+            <span className={styles.userMail}>
+              {email}
+            </span>
 
-            <a href="/" className={styles.homeBtn}>
-              На главную
-            </a>
+            <button
+              onClick={logout}
+              className={styles.logoutBtn}
+            >
+              Выйти
+            </button>
           </div>
+
         </div>
       </header>
 
       <section className={styles.content}>
         <div className={styles.container}>
 
-          <div className={styles.topBlock}>
-            <div>
-              <div className={styles.label}>
-                ЛИЧНЫЙ КАБИНЕТ
-              </div>
-
-              <h1>Здравствуйте, Клиент</h1>
-
-              <p>
-                Управляйте запросами и отслеживайте
-                статусы заказов.
-              </p>
-            </div>
-
-            <a href="/offer" className={styles.newBtn}>
-              + Новый запрос
-            </a>
+          <div className={styles.label}>
+            ЛИЧНЫЙ КАБИНЕТ
           </div>
 
-          <div className={styles.grid}>
+          <h1>Здравствуйте</h1>
 
-            <div className={styles.card}>
-              <div className={styles.cardTitle}>
-                Мои заявки
-              </div>
+          <p className={styles.text}>
+            Здесь будут ваши заявки,
+            статусы и история заказов.
+          </p>
 
-              <div className={styles.request}>
-                <strong>#1045</strong>
-                <span>Audi A6 — тормозной диск</span>
-                <small>Статус: В обработке</small>
-              </div>
-
-              <div className={styles.request}>
-                <strong>#1046</strong>
-                <span>BMW X5 — фильтр масла</span>
-                <small>Статус: Ожидает цену</small>
-              </div>
-            </div>
-
-            <div className={styles.card}>
-              <div className={styles.cardTitle}>
-                История заказов
-              </div>
-
-              <div className={styles.statRow}>
-                Выполнено заказов: 12
-              </div>
-
-              <div className={styles.statRow}>
-                Последний заказ: 14.05.2026
-              </div>
-            </div>
-
-            <div className={styles.card}>
-              <div className={styles.cardTitle}>
-                Профиль
-              </div>
-
-              <div className={styles.statRow}>
-                Email: client@mail.com
-              </div>
-
-              <div className={styles.statRow}>
-                Телефон: +49 000 0000
-              </div>
-            </div>
-
-          </div>
+          <a href="/offer" className={styles.newBtn}>
+            + Новый запрос
+          </a>
 
         </div>
       </section>
