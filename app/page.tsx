@@ -1,10 +1,45 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "../lib/supabase";
 import styles from "./page.module.css";
 
 export default function HomePage() {
+  const router = useRouter();
+
+  const [vin, setVin] = useState("");
+  const [phone, setPhone] = useState("");
+
+  async function sendRequest() {
+    if (!vin || !phone) {
+      alert("Заполните данные");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("requests")
+      .insert([
+        {
+          vin_or_part: vin,
+          phone: phone,
+          status: "pre_auth"
+        }
+      ]);
+
+    if (error) {
+      alert("Ошибка отправки");
+      return;
+    }
+
+    router.push("/offer");
+  }
+
   return (
     <main className={styles.page}>
       <header className={styles.header}>
         <div className={styles.container}>
+
           <a href="/" className={styles.logoWrap}>
             <img
               src="/logo-final.png"
@@ -20,12 +55,14 @@ export default function HomePage() {
               Кабинет
             </a>
           </div>
+
         </div>
       </header>
 
       <section className={styles.hero}>
         <div className={styles.overlay}>
           <div className={styles.heroBox}>
+
             <div className={styles.miniTitle}>
               ПОДБОР ПО VIN И НОМЕРУ ДЕТАЛИ
             </div>
@@ -47,24 +84,24 @@ export default function HomePage() {
               <span>✔ Гарантия качества</span>
             </div>
 
-            <input placeholder="VIN или номер детали" />
-            <input placeholder="Телефон / WhatsApp" />
+            <input
+              placeholder="VIN или номер детали"
+              value={vin}
+              onChange={(e) => setVin(e.target.value)}
+            />
 
-            <a href="/offer" className={styles.cta}>
+            <input
+              placeholder="Телефон / WhatsApp"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+
+            <button
+              className={styles.cta}
+              onClick={sendRequest}
+            >
               ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ
-            </a>
-
-            <div className={styles.payments}>
-              <span className={styles.payText}>
-                Принимаем оплату:
-              </span>
-
-              <div className={styles.payIcons}>
-                <img src="/visa.png" alt="Visa" />
-                <img src="/mastercard.png" alt="MasterCard" />
-                <img src="/paypal.png" alt="PayPal" />
-              </div>
-            </div>
+            </button>
 
           </div>
         </div>
