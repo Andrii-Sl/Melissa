@@ -1,6 +1,55 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "../../lib/supabase";
 import styles from "./login.module.css";
 
 export default function LoginPage() {
+  const router = useRouter();
+
+  const [mode, setMode] = useState("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  async function handleAuth() {
+    if (!email || !password) {
+      alert("Введите данные");
+      return;
+    }
+
+    if (mode === "login") {
+      const { error } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      router.push("/dashboard");
+    }
+
+    if (mode === "register") {
+      const { error } =
+        await supabase.auth.signUp({
+          email,
+          password
+        });
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      alert("Регистрация успешна");
+      router.push("/dashboard");
+    }
+  }
+
   return (
     <main className={styles.page}>
       <header className={styles.header}>
@@ -27,35 +76,67 @@ export default function LoginPage() {
           <div className={styles.card}>
 
             <div className={styles.titleMini}>
-              ДОБРО ПОЖАЛОВАТЬ
+              {mode === "login"
+                ? "ВХОД"
+                : "РЕГИСТРАЦИЯ"}
             </div>
 
             <h1>
-              Вход в личный кабинет
+              {mode === "login"
+                ? "Личный кабинет"
+                : "Создать аккаунт"}
             </h1>
 
             <p>
-              Управляйте заявками, заказами и статусами
+              Управляйте заявками и заказами
               в одном месте.
             </p>
 
             <input
               type="email"
               placeholder="E-mail"
+              value={email}
+              onChange={(e) =>
+                setEmail(e.target.value)
+              }
             />
 
             <input
               type="password"
               placeholder="Пароль"
+              value={password}
+              onChange={(e) =>
+                setPassword(e.target.value)
+              }
             />
 
-            <button className={styles.loginBtn}>
-              ВОЙТИ
+            <button
+              className={styles.loginBtn}
+              onClick={handleAuth}
+            >
+              {mode === "login"
+                ? "ВОЙТИ"
+                : "ЗАРЕГИСТРИРОВАТЬСЯ"}
             </button>
 
             <div className={styles.links}>
-              <a href="#">Регистрация</a>
-              <a href="#">Забыли пароль?</a>
+              {mode === "login" ? (
+                <button
+                  onClick={() =>
+                    setMode("register")
+                  }
+                >
+                  Регистрация
+                </button>
+              ) : (
+                <button
+                  onClick={() =>
+                    setMode("login")
+                  }
+                >
+                  Уже есть аккаунт?
+                </button>
+              )}
             </div>
 
           </div>
