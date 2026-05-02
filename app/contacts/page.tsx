@@ -83,7 +83,7 @@ export default function ContactsPage() {
 
             <div className={styles.card}>
               <h3>Регионы работы</h3>
-              <p>ЕС / Украина / СНГ</p>
+              <p>Казахстан / СНГ</p>
             </div>
 
           </div>
