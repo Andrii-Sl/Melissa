@@ -130,10 +130,15 @@
   border:none;
 }
 
+/* CTA */
+
 .cta{
   width:100%;
   height:50px;
-  border:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
   background:#d10000;
   color:#ffffff;
   font-weight:700;
@@ -163,10 +168,6 @@
   border-radius:4px;
 }
 
-.socials a:hover{
-  background:#d10000;
-}
-
 /* PAYMENTS */
 
 .payments{
@@ -192,6 +193,8 @@
   padding:4px 8px;
   border-radius:6px;
 }
+
+/* DESKTOP */
 
 @media(min-width:901px){
 
@@ -239,6 +242,7 @@
 
 .cta{
   height:58px;
+  font-size:16px;
 }
 
 .socials a{
