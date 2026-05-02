@@ -1,41 +1,41 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 220" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 220" fill="none">
 
-  <!-- CAR SILHOUETTE -->
+  <!-- CAR BODY -->
   <path
-    d="M55 128
-       C95 90,145 76,235 76
-       C280 76,330 84,378 102
-       C408 112,430 118,458 120
-       C430 118,402 108,382 94
-       C350 70,318 56,260 50
-       C188 42,120 58,76 94
-       C56 110,46 122,55 128Z"
+    d="M58 132
+       C92 98 148 74 248 74
+       C318 74 382 92 430 122
+       C446 132 462 136 486 136
+       C468 126 452 112 434 96
+       C392 58 332 42 254 42
+       C168 42 102 66 66 102
+       C50 118 44 128 58 132Z"
     fill="#111111"
   />
 
-  <!-- RED TOP LINE -->
+  <!-- RED ROOF / SPEED LINE -->
   <path
-    d="M228 54
-       C320 48,392 68,452 112
-       C430 104,402 92,382 78
-       C344 54,300 44,228 54Z"
+    d="M250 48
+       C338 42 408 68 476 126
+       C452 118 426 102 402 84
+       C360 54 314 42 250 48Z"
     fill="#d10000"
   />
 
-  <!-- FRONT LIGHT -->
+  <!-- HEADLIGHT -->
   <path
-    d="M88 116
-       C108 104,132 100,158 102
-       C136 108,118 118,92 124Z"
+    d="M94 116
+       C112 104 134 100 158 102
+       C138 110 120 120 96 126Z"
     fill="#ffffff"
   />
 
-  <!-- BRAND TEXT -->
+  <!-- TEXT -->
   <text
-    x="500"
-    y="118"
+    x="520"
+    y="108"
     font-family="Arial, Helvetica, sans-serif"
-    font-size="68"
+    font-size="64"
     font-weight="700"
     fill="#111111"
   >
@@ -43,10 +43,10 @@
   </text>
 
   <text
-    x="665"
-    y="118"
+    x="690"
+    y="108"
     font-family="Arial, Helvetica, sans-serif"
-    font-size="68"
+    font-size="64"
     font-weight="700"
     fill="#d10000"
   >
@@ -54,10 +54,10 @@
   </text>
 
   <text
-    x="840"
-    y="118"
+    x="905"
+    y="108"
     font-family="Arial, Helvetica, sans-serif"
-    font-size="68"
+    font-size="64"
     font-weight="700"
     fill="#111111"
   >
@@ -66,10 +66,10 @@
 
   <!-- SUBTITLE -->
   <text
-    x="500"
-    y="162"
+    x="520"
+    y="150"
     font-family="Arial, Helvetica, sans-serif"
-    font-size="24"
+    font-size="22"
     fill="#666666"
   >
     ПОДБОР И ДОСТАВКА ЗАПЧАСТЕЙ ИЗ ЕВРОПЫ
