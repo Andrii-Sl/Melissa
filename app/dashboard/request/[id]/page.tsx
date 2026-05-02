@@ -1,0 +1,77 @@
+import styles from "./request.module.css";
+
+export default function RequestDetailsPage() {
+  return (
+    <main className={styles.page}>
+      <header className={styles.header}>
+        <div className={styles.container}>
+
+          <a href="/dashboard" className={styles.backBtn}>
+            ← Назад
+          </a>
+
+          <a href="/" className={styles.logoWrap}>
+            <img
+              src="/logo-final.png"
+              alt="AutoParts EU"
+              className={styles.logoImg}
+            />
+          </a>
+
+        </div>
+      </header>
+
+      <section className={styles.content}>
+        <div className={styles.container}>
+
+          <div className={styles.label}>
+            ЗАЯВКА #1045
+          </div>
+
+          <div className={styles.grid}>
+
+            <div className={styles.photoWrap}>
+              <img
+                src="/part.jpg"
+                alt="Деталь"
+                className={styles.photo}
+              />
+            </div>
+
+            <div className={styles.info}>
+              <h1>
+                Тормозной диск передний
+              </h1>
+
+              <div className={styles.status}>
+                Статус: В обработке
+              </div>
+
+              <div className={styles.row}>
+                Цена: —
+              </div>
+
+              <div className={styles.row}>
+                Наличие: —
+              </div>
+
+              <div className={styles.row}>
+                Доставка: 7-10 дней
+              </div>
+
+              <div className={styles.row}>
+                Менеджер: Идёт подбор
+              </div>
+
+              <button className={styles.payBtn}>
+                ОПЛАТИТЬ
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+    </main>
+  );
+}
