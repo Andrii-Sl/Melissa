@@ -1,30 +1,32 @@
 import styles from "./page.module.css";
-import Image from "next/image";
 import Link from "next/link";
 
 export default function HomePage() {
   return (
     <main className={styles.page}>
+
       {/* HEADER */}
       <header className={styles.header}>
         <div className={styles.container}>
+
           <Link href="/" className={styles.logoWrap}>
-            <Image
-              src="/logo.svg"
+            <img
+              src="/logo.png"
               alt="AutoParts EU"
-              width={210}
-              height={58}
-              priority
+              className={styles.logoImg}
             />
           </Link>
 
           <div className={styles.rightSide}>
-            <button className={styles.burger}>☰</button>
+            <button className={styles.burger}>
+              ☰
+            </button>
 
             <Link href="/login" className={styles.loginBtn}>
               Кабинет
             </Link>
           </div>
+
         </div>
       </header>
 
@@ -72,6 +74,7 @@ export default function HomePage() {
 
         </div>
       </section>
+
     </main>
   );
 }
