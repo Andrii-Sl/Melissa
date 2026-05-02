@@ -1,3 +1,5 @@
+import Menu from "../../components/Menu";
+import Footer from "../../components/Footer";
 import styles from "./contacts.module.css";
 
 export default function ContactsPage() {
@@ -6,9 +8,7 @@ export default function ContactsPage() {
       <header className={styles.header}>
         <div className={styles.container}>
 
-          <button className={styles.burger}>
-            ☰
-          </button>
+          <Menu />
 
           <a href="/" className={styles.logoWrap}>
             <img
@@ -31,6 +31,7 @@ export default function ContactsPage() {
       <section className={styles.hero}>
         <div className={styles.overlay}>
           <div className={styles.heroInner}>
+
             <div className={styles.label}>
               КОНТАКТЫ
             </div>
@@ -45,6 +46,7 @@ export default function ContactsPage() {
               Консультации, подбор деталей,
               сопровождение заказа и поддержка.
             </p>
+
           </div>
         </div>
       </section>
@@ -115,6 +117,8 @@ export default function ContactsPage() {
 
         </div>
       </section>
+
+      <Footer />
     </main>
   );
 }
