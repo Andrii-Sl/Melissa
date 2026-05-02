@@ -1,7 +1,8 @@
+import Footer from "../../../../components/Footer";
 import styles from "./request.module.css";
 
 export default function RequestDetailsPage() {
-  const currentStep = 3;
+  const currentStep = 2;
 
   const steps = [
     "Новый",
@@ -86,7 +87,7 @@ export default function RequestDetailsPage() {
               </div>
 
               <div className={styles.row}>
-                Доставка: 7-10 дней
+                Доставка: 7–10 дней
               </div>
 
               <div className={styles.row}>
@@ -103,6 +104,8 @@ export default function RequestDetailsPage() {
 
         </div>
       </section>
+
+      <Footer />
     </main>
   );
 }
