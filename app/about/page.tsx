@@ -1,3 +1,5 @@
+import Menu from "../../components/Menu";
+import Footer from "../../components/Footer";
 import styles from "./about.module.css";
 
 export default function AboutPage() {
@@ -6,9 +8,7 @@ export default function AboutPage() {
       <header className={styles.header}>
         <div className={styles.container}>
 
-          <button className={styles.burger}>
-            ☰
-          </button>
+          <Menu />
 
           <a href="/" className={styles.logoWrap}>
             <img
@@ -31,6 +31,7 @@ export default function AboutPage() {
       <section className={styles.hero}>
         <div className={styles.overlay}>
           <div className={styles.heroInner}>
+
             <div className={styles.label}>
               О КОМПАНИИ
             </div>
@@ -44,11 +45,12 @@ export default function AboutPage() {
             </h1>
 
             <p>
-              Мы подбираем оригинальные детали и
-              качественные аналоги для европейских
-              автомобилей с прямыми поставками от
-              проверенных партнёров.
+              Мы подбираем оригинальные детали
+              и качественные аналоги для
+              европейских автомобилей с прямыми
+              поставками от проверенных партнёров.
             </p>
+
           </div>
         </div>
       </section>
@@ -61,8 +63,8 @@ export default function AboutPage() {
             <div className={styles.card}>
               <h3>Что мы делаем</h3>
               <p>
-                Подбор деталей по VIN, OEM номеру
-                или запросу клиента.
+                Подбор деталей по VIN,
+                OEM номеру или запросу клиента.
               </p>
             </div>
 
@@ -95,6 +97,8 @@ export default function AboutPage() {
 
         </div>
       </section>
+
+      <Footer />
     </main>
   );
 }
