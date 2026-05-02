@@ -89,8 +89,51 @@
   color:#ffffff;
   padding:8px 12px;
   font-size:13px;
-  margin-bottom:16px;
+  margin-bottom:18px;
 }
+
+/* TRACKER */
+
+.tracker{
+  display:grid;
+  gap:10px;
+  margin-bottom:18px;
+}
+
+.step,
+.stepActive{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:14px;
+}
+
+.step span,
+.stepActive span{
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  display:block;
+}
+
+.step span{
+  border:2px solid #cccccc;
+}
+
+.stepActive span{
+  background:#d10000;
+}
+
+.step{
+  color:#999999;
+}
+
+.stepActive{
+  color:#111111;
+  font-weight:700;
+}
+
+/* ROWS */
 
 .row{
   padding:12px 0;
@@ -151,6 +194,11 @@
 
 .info h1{
   font-size:48px;
+}
+
+.step,
+.stepActive{
+  font-size:15px;
 }
 
 .row{
