@@ -54,32 +54,6 @@ export default function HomePage() {
               ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ
             </a>
 
-            <div className={styles.socials}>
-              <a href="tel:+77000000000">📞</a>
-
-              <a
-                href="https://wa.me/77000000000"
-                target="_blank"
-              >
-                WA
-              </a>
-
-              <a href="viber://chat?number=%2B77000000000">
-                VI
-              </a>
-
-              <a
-                href="https://t.me/yourname"
-                target="_blank"
-              >
-                TG
-              </a>
-
-              <a href="mailto:info@autoparts-eu.com">
-                ✉
-              </a>
-            </div>
-
             <div className={styles.payments}>
               <span className={styles.payText}>
                 Принимаем оплату:
