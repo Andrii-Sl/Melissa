@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
+import Footer from "../../components/Footer";
 import styles from "./login.module.css";
 
 export default function LoginPage() {
@@ -45,7 +46,6 @@ export default function LoginPage() {
         return;
       }
 
-      alert("Регистрация успешна");
       router.push("/dashboard");
     }
   }
@@ -63,7 +63,10 @@ export default function LoginPage() {
             />
           </a>
 
-          <a href="/" className={styles.backBtn}>
+          <a
+            href="/"
+            className={styles.backBtn}
+          >
             На главную
           </a>
 
@@ -72,7 +75,6 @@ export default function LoginPage() {
 
       <section className={styles.hero}>
         <div className={styles.overlay}>
-
           <div className={styles.card}>
 
             <div className={styles.titleMini}>
@@ -88,7 +90,7 @@ export default function LoginPage() {
             </h1>
 
             <p>
-              Управляйте заявками и заказами
+              Управляйте заявками
               в одном месте.
             </p>
 
@@ -140,9 +142,10 @@ export default function LoginPage() {
             </div>
 
           </div>
-
         </div>
       </section>
+
+      <Footer />
     </main>
   );
 }
