@@ -40,7 +40,6 @@ export default function HowItWorksPage() {
     <main className={styles.page}>
       <header className={styles.header}>
         <div className={styles.container}>
-
           <Menu />
 
           <a href="/" className={styles.logoWrap}>
@@ -51,20 +50,15 @@ export default function HowItWorksPage() {
             />
           </a>
 
-          <a
-            href="/dashboard"
-            className={styles.loginBtn}
-          >
+          <a href="/dashboard" className={styles.loginBtn}>
             Кабинет
           </a>
-
         </div>
       </header>
 
       <section className={styles.hero}>
         <div className={styles.overlay}>
           <div className={styles.heroInner}>
-
             <div className={styles.label}>
               КАК ЭТО РАБОТАЕТ
             </div>
@@ -72,4 +66,40 @@ export default function HowItWorksPage() {
             <h1>
               Простой процесс
               <br />
-              заказа
+              заказа деталей
+            </h1>
+
+            <p>
+              От запроса до доставки —
+              прозрачный и понятный путь
+              для каждого клиента.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.content}>
+        <div className={styles.container}>
+          <div className={styles.grid}>
+            {steps.map((item) => (
+              <div
+                key={item.n}
+                className={styles.card}
+              >
+                <div className={styles.num}>
+                  {item.n}
+                </div>
+
+                <h3>{item.title}</h3>
+
+                <p>{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </main>
+  );
+}
