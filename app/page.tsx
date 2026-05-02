@@ -50,9 +50,9 @@ export default function HomePage() {
             <input placeholder="VIN или номер детали" />
             <input placeholder="Телефон / WhatsApp" />
 
-            <button className={styles.cta}>
+            <a href="/offer" className={styles.cta}>
               ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ
-            </button>
+            </a>
 
             <div className={styles.socials}>
               <a href="tel:+77000000000">📞</a>
