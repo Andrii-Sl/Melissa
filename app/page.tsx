@@ -1,39 +1,34 @@
 import styles from "./page.module.css";
-import Link from "next/link";
 
 export default function HomePage() {
   return (
     <main className={styles.page}>
-
       {/* HEADER */}
       <header className={styles.header}>
         <div className={styles.container}>
-
-          <Link href="/" className={styles.logoWrap}>
+          <a href="/" className={styles.logoWrap}>
             <img
               src="/logo.png"
               alt="AutoParts EU"
               className={styles.logoImg}
             />
-          </Link>
+          </a>
 
           <div className={styles.rightSide}>
             <button className={styles.burger}>
               ☰
             </button>
 
-            <Link href="/login" className={styles.loginBtn}>
+            <a href="/login" className={styles.loginBtn}>
               Кабинет
-            </Link>
+            </a>
           </div>
-
         </div>
       </header>
 
       {/* HERO */}
       <section className={styles.hero}>
         <div className={styles.overlay}>
-
           <div className={styles.heroBox}>
 
             <div className={styles.miniTitle}>
@@ -57,9 +52,15 @@ export default function HomePage() {
               <span>✔ Гарантия качества</span>
             </div>
 
-            <input placeholder="VIN или номер детали" />
+            <input
+              type="text"
+              placeholder="VIN или номер детали"
+            />
 
-            <input placeholder="Телефон / WhatsApp" />
+            <input
+              type="text"
+              placeholder="Телефон / WhatsApp"
+            />
 
             <button className={styles.cta}>
               ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ
@@ -71,10 +72,8 @@ export default function HomePage() {
             </div>
 
           </div>
-
         </div>
       </section>
-
     </main>
   );
 }
