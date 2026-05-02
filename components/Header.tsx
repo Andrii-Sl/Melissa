@@ -1,9 +1,19 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Header() {
   return (
     <header className="header">
-      <div className="logo">AutoParts EU</div>
+
+      <div className="logo">
+        <Image
+          src="/logo.png"
+          alt="AutoParts EU"
+          width={260}
+          height={60}
+          priority
+        />
+      </div>
 
       <nav className="nav">
         <a href="#">Как это работает</a>
@@ -14,6 +24,7 @@ export default function Header() {
       <Link href="/dashboard" className="cabinetBtn">
         Личный кабинет
       </Link>
+
     </header>
   );
 }
