@@ -1,67 +1,164 @@
-<section className={styles.hero}>
-  <div className={styles.overlay}>
+import styles from "./page.module.css";
+import Image from "next/image";
+import Link from "next/link";
 
-    <div className={styles.heroBox}>
+export default function HomePage() {
+  return (
+    <main className={styles.page}>
 
-      <div className={styles.miniTitle}>
-        ПОДБОР ПО VIN ИЛИ НОМЕРУ ДЕТАЛИ
-      </div>
+      {/* HEADER */}
+      <header className={styles.header}>
+        <div className={styles.container}>
 
-      <h1>
-        Автозапчасти из Европы
-        <br />
-        с гарантией
-      </h1>
+          <Link href="/" className={styles.logoWrap}>
+            <Image
+              src="/logo.svg"
+              alt="AutoParts EU"
+              width={240}
+              height={70}
+              priority
+            />
+          </Link>
 
-      <p>
-        Оригинальные и качественные аналоги
-        для Audi, BMW, Mercedes, Volkswagen
-        и других марок.
-      </p>
+          <nav className={styles.nav}>
+            <a href="#">О компании</a>
+            <a href="#">Как это работает</a>
+            <a href="#">Гарантия</a>
+            <a href="#">Доставка</a>
+            <a href="#">Контакты</a>
+          </nav>
 
-      <div className={styles.trustList}>
+          <div className={styles.rightSide}>
+            <button className={styles.burger}>☰</button>
 
-        <span>✔ Ответ за 15 минут</span>
+            <Link href="/login" className={styles.loginBtn}>
+              Личный кабинет
+            </Link>
+          </div>
 
-        <span>✔ Доставка 7–14 дней</span>
+        </div>
+      </header>
 
-        <span>✔ Фото перед отправкой</span>
+      {/* HERO */}
+      <section className={styles.hero}>
+        <div className={styles.overlay}>
 
-      </div>
+          <div className={styles.heroBox}>
 
-      <input
-        type="text"
-        placeholder="Введите VIN или номер детали"
-      />
+            <div className={styles.miniTitle}>
+              ПОДБОР ПО VIN ИЛИ НОМЕРУ ДЕТАЛИ
+            </div>
 
-      <input
-        type="text"
-        placeholder="Телефон / WhatsApp"
-      />
+            <h1>
+              Автозапчасти из Европы
+              <br />
+              с гарантией
+            </h1>
 
-      <button className={styles.cta}>
-        УЗНАТЬ ЦЕНУ ЗА 15 МИНУТ
-      </button>
+            <p>
+              Оригинальные и качественные аналоги
+              для Audi, BMW, Mercedes, Volkswagen
+              и других марок.
+            </p>
 
-      <div className={styles.socials}>
+            <div className={styles.trustRow}>
+              <span>✔ Ответ за 15 минут</span>
+              <span>✔ Доставка 7–14 дней</span>
+              <span>✔ Фото перед отправкой</span>
+            </div>
 
-        <a
-          href="https://wa.me/77000000000"
-          target="_blank"
-        >
-          WhatsApp
-        </a>
+            <input placeholder="Введите VIN или номер детали" />
+            <input placeholder="Телефон / WhatsApp" />
 
-        <a
-          href="https://t.me/yourtelegram"
-          target="_blank"
-        >
-          Telegram
-        </a>
+            <button className={styles.cta}>
+              УЗНАТЬ ЦЕНУ ЗА 15 МИНУТ
+            </button>
 
-      </div>
+            <div className={styles.socials}>
+              <a href="#">WhatsApp</a>
+              <a href="#">Telegram</a>
+            </div>
 
-    </div>
+          </div>
 
-  </div>
-</section>
+        </div>
+      </section>
+
+      {/* SOCIAL PROOF */}
+      <section className={styles.stats}>
+        <div className={styles.container}>
+
+          <div className={styles.statsGrid}>
+
+            <div>
+              <strong>500+</strong>
+              <span>довольных клиентов</span>
+            </div>
+
+            <div>
+              <strong>1200+</strong>
+              <span>успешных заказов</span>
+            </div>
+
+            <div>
+              <strong>4.9★</strong>
+              <span>рейтинг сервиса</span>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* HOW */}
+      <section className={styles.steps}>
+        <div className={styles.container}>
+
+          <h2>КАК ЭТО РАБОТАЕТ</h2>
+
+          <div className={styles.stepsGrid}>
+            <div>1. Заявка</div>
+            <div>2. Подбор</div>
+            <div>3. Предложение</div>
+            <div>4. Оплата</div>
+            <div>5. Доставка</div>
+            <div>6. Получение</div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* FEATURES */}
+      <section className={styles.features}>
+        <div className={styles.container}>
+
+          <div className={styles.featuresGrid}>
+
+            <div>
+              <h3>Подбор по VIN</h3>
+              <p>Точность подбора до 98%</p>
+            </div>
+
+            <div>
+              <h3>Поставки из Европы</h3>
+              <p>Работаем с проверенными поставщиками</p>
+            </div>
+
+            <div>
+              <h3>Гарантия качества</h3>
+              <p>Проверка перед отправкой</p>
+            </div>
+
+            <div>
+              <h3>Регулярная доставка</h3>
+              <p>Быстро в Казахстан</p>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  );
+        }
