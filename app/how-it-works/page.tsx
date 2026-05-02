@@ -1,3 +1,5 @@
+import Menu from "../../components/Menu";
+import Footer from "../../components/Footer";
 import styles from "./how.module.css";
 
 export default function HowItWorksPage() {
@@ -39,9 +41,7 @@ export default function HowItWorksPage() {
       <header className={styles.header}>
         <div className={styles.container}>
 
-          <button className={styles.burger}>
-            ☰
-          </button>
+          <Menu />
 
           <a href="/" className={styles.logoWrap}>
             <img
@@ -64,6 +64,7 @@ export default function HowItWorksPage() {
       <section className={styles.hero}>
         <div className={styles.overlay}>
           <div className={styles.heroInner}>
+
             <div className={styles.label}>
               КАК ЭТО РАБОТАЕТ
             </div>
@@ -71,40 +72,4 @@ export default function HowItWorksPage() {
             <h1>
               Простой процесс
               <br />
-              заказа деталей
-            </h1>
-
-            <p>
-              От запроса до доставки —
-              прозрачный и понятный путь
-              для каждого клиента.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className={styles.content}>
-        <div className={styles.container}>
-
-          <div className={styles.grid}>
-            {steps.map((item) => (
-              <div
-                key={item.n}
-                className={styles.card}
-              >
-                <div className={styles.num}>
-                  {item.n}
-                </div>
-
-                <h3>{item.title}</h3>
-
-                <p>{item.text}</p>
-              </div>
-            ))}
-          </div>
-
-        </div>
-      </section>
-    </main>
-  );
-}
+              заказа
