@@ -2,14 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import Footer from "../components/Footer";
 import styles from "./page.module.css";
 
 export default function HomePage() {
-  const [menuOpen, setMenuOpen] =
-    useState(false);
-
-  const [cabinetLink, setCabinetLink] =
-    useState("/login");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [cabinetLink, setCabinetLink] = useState("/login");
 
   useEffect(() => {
     checkUser();
@@ -22,6 +20,8 @@ export default function HomePage() {
 
     if (session) {
       setCabinetLink("/dashboard");
+    } else {
+      setCabinetLink("/login");
     }
   }
 
@@ -32,9 +32,7 @@ export default function HomePage() {
 
           <button
             className={styles.burger}
-            onClick={() =>
-              setMenuOpen(true)
-            }
+            onClick={() => setMenuOpen(true)}
           >
             ☰
           </button>
@@ -61,28 +59,27 @@ export default function HomePage() {
         <>
           <div
             className={styles.overlayMenu}
-            onClick={() =>
-              setMenuOpen(false)
-            }
+            onClick={() => setMenuOpen(false)}
           />
 
           <aside className={styles.menu}>
             <button
               className={styles.closeBtn}
-              onClick={() =>
-                setMenuOpen(false)
-              }
+              onClick={() => setMenuOpen(false)}
             >
               ✕
             </button>
 
             <a href="/about">О компании</a>
+
             <a href="/how-it-works">
               Как работает сервис
             </a>
+
             <a href="/schedule">
               Расписание поставок
             </a>
+
             <a href="/contacts">
               Контакты
             </a>
@@ -106,10 +103,17 @@ export default function HomePage() {
 
             <p>
               Оригинальные детали и качественные
-              аналоги для европейских авто.
+              аналоги для европейских автомобилей.
             </p>
 
+            <div className={styles.trustRow}>
+              <span>✔ Подбор по VIN</span>
+              <span>✔ Поставщики Европы</span>
+              <span>✔ Гарантия качества</span>
+            </div>
+
             <input placeholder="VIN или номер детали" />
+
             <input placeholder="Телефон / WhatsApp" />
 
             <a
@@ -119,9 +123,34 @@ export default function HomePage() {
               ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ
             </a>
 
+            <div className={styles.payments}>
+              <span className={styles.payText}>
+                Принимаем оплату:
+              </span>
+
+              <div className={styles.payIcons}>
+                <img
+                  src="/visa.png"
+                  alt="Visa"
+                />
+
+                <img
+                  src="/mastercard.png"
+                  alt="MasterCard"
+                />
+
+                <img
+                  src="/paypal.png"
+                  alt="PayPal"
+                />
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
+
+      <Footer />
     </main>
   );
 }
