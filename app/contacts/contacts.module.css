@@ -1,0 +1,251 @@
+.page{
+  min-height:100svh;
+  background:#ffffff;
+  font-family:Arial, Helvetica, sans-serif;
+  color:#111111;
+  overflow-x:hidden;
+}
+
+.container{
+  width:100%;
+  max-width:1440px;
+  margin:0 auto;
+  padding:0 14px;
+}
+
+/* HEADER */
+
+.header{
+  height:78px;
+  background:#ffffff;
+  border-bottom:1px solid #ececec;
+}
+
+.header .container{
+  height:78px;
+  display:grid;
+  grid-template-columns:42px 1fr auto;
+  align-items:center;
+  gap:10px;
+}
+
+.burger{
+  width:42px;
+  height:42px;
+  border:none;
+  background:none;
+  font-size:28px;
+  padding:0;
+}
+
+.logoWrap{
+  display:flex;
+  align-items:center;
+}
+
+.logoImg{
+  width:190px;
+  height:auto;
+  display:block;
+}
+
+.loginBtn{
+  text-decoration:none;
+  color:#111111;
+  border:1px solid #d10000;
+  padding:9px 10px;
+  font-size:13px;
+  white-space:nowrap;
+}
+
+/* HERO */
+
+.hero{
+  background:url('/hero.jpg') center center/cover no-repeat;
+}
+
+.overlay{
+  background:linear-gradient(
+    180deg,
+    rgba(0,0,0,.35) 0%,
+    rgba(0,0,0,.75) 100%
+  );
+}
+
+.heroInner{
+  min-height:420px;
+  padding:34px 14px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.label{
+  color:#ff2b2b;
+  font-size:12px;
+  margin-bottom:12px;
+}
+
+.heroInner h1{
+  color:#ffffff;
+  font-size:42px;
+  line-height:1.03;
+  margin:0 0 14px;
+}
+
+.heroInner p{
+  color:#dddddd;
+  font-size:15px;
+  line-height:1.5;
+  margin:0;
+  max-width:620px;
+}
+
+/* CONTENT */
+
+.content{
+  padding:28px 0 44px;
+}
+
+.grid{
+  display:grid;
+  gap:14px;
+  margin-bottom:20px;
+}
+
+.card{
+  border:1px solid #ececec;
+  padding:18px;
+  background:#ffffff;
+}
+
+.card h3{
+  margin:0 0 10px;
+  font-size:20px;
+}
+
+.card p{
+  margin:0;
+  color:#666666;
+  font-size:15px;
+  line-height:1.5;
+}
+
+/* CLAIM */
+
+.claim{
+  border:1px solid #ececec;
+  padding:20px;
+  background:#fafafa;
+}
+
+.claimLabel{
+  color:#d10000;
+  font-size:12px;
+  margin-bottom:10px;
+}
+
+.claim h2{
+  margin:0 0 12px;
+  font-size:28px;
+  line-height:1.1;
+}
+
+.claim p{
+  margin:0 0 14px;
+  color:#666666;
+  font-size:15px;
+  line-height:1.5;
+}
+
+.claimMail{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+.note{
+  font-size:14px;
+  color:#666666;
+}
+
+/* DESKTOP */
+
+@media(min-width:901px){
+
+.container{
+  padding:0 28px;
+}
+
+.header{
+  height:92px;
+}
+
+.header .container{
+  height:92px;
+}
+
+.logoImg{
+  width:460px;
+}
+
+.loginBtn{
+  padding:13px 18px;
+  font-size:14px;
+}
+
+.heroInner{
+  min-height:560px;
+  padding:50px 28px;
+}
+
+.heroInner h1{
+  font-size:72px;
+}
+
+.heroInner p{
+  font-size:19px;
+}
+
+.content{
+  padding:50px 0 70px;
+}
+
+.grid{
+  grid-template-columns:repeat(3,1fr);
+  gap:22px;
+}
+
+.card{
+  padding:26px;
+}
+
+.card h3{
+  font-size:24px;
+}
+
+.card p{
+  font-size:16px;
+}
+
+.claim{
+  padding:30px;
+}
+
+.claim h2{
+  font-size:42px;
+}
+
+.claim p{
+  font-size:16px;
+}
+
+.claimMail{
+  font-size:24px;
+}
+
+.note{
+  font-size:15px;
+}
+
+}
