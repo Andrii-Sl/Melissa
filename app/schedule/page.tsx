@@ -1,114 +1,86 @@
-import Menu from "../../components/Menu";
-import Footer from "../../components/Footer";
-import styles from "./schedule.module.css";
+<section className={styles.content}>
+  <div className={styles.container}>
 
-export default function SchedulePage() {
-  const rows = [
-    {
-      country: "Германия",
-      day: "Среда",
-      eta: "7–10 дней"
-    },
-    {
-      country: "Польша",
-      day: "Понедельник / Четверг",
-      eta: "5–8 дней"
-    },
-    {
-      country: "Литва",
-      day: "Пятница",
-      eta: "4–7 дней"
-    },
-    {
-      country: "Нидерланды",
-      day: "По запросу",
-      eta: "7–12 дней"
-    },
-    {
-      country: "Италия",
-      day: "Вторник",
-      eta: "8–12 дней"
-    },
-    {
-      country: "Франция",
-      day: "По запросу",
-      eta: "8–14 дней"
-    }
-  ];
+    <div className={styles.card}>
+      <h2>Казахстан — все города</h2>
 
-  return (
-    <main className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.container}>
+      <p>
+        Доставка осуществляется на
+        таможенно-лицензионный склад
+        в Алматы, далее отправка
+        курьерской службой
+        на любой адрес страны.
+      </p>
+    </div>
 
-          <Menu />
+    <div className={styles.card}>
+      <h2>График поставок</h2>
 
-          <a href="/" className={styles.logoWrap}>
-            <img
-              src="/logo-final.png"
-              alt="AutoParts EU"
-              className={styles.logoImg}
-            />
-          </a>
+      <div className={styles.timeline}>
 
-          <a
-            href="/dashboard"
-            className={styles.loginBtn}
-          >
-            Кабинет
-          </a>
-
-        </div>
-      </header>
-
-      <section className={styles.hero}>
-        <div className={styles.overlay}>
-          <div className={styles.heroInner}>
-
-            <div className={styles.label}>
-              РАСПИСАНИЕ ПОСТАВОК
-            </div>
-
-            <h1>
-              График поступления
-              <br />
-              заказов из Европы
-            </h1>
-
+        <div className={styles.step}>
+          <span>1</span>
+          <div>
+            <strong>
+              Четверг – Четверг
+            </strong>
             <p>
-              Актуальные направления поставок
-              и средние сроки доставки.
+              Открыт пул заказов
+              на текущую отправку.
             </p>
-
           </div>
         </div>
-      </section>
 
-      <section className={styles.content}>
-        <div className={styles.container}>
-
-          <div className={styles.table}>
-            {rows.map((item) => (
-              <div
-                key={item.country}
-                className={styles.row}
-              >
-                <div>{item.country}</div>
-                <div>{item.day}</div>
-                <div>{item.eta}</div>
-              </div>
-            ))}
+        <div className={styles.step}>
+          <span>2</span>
+          <div>
+            <strong>
+              Четверг
+            </strong>
+            <p>
+              Оплаченные заказы
+              комплектуются,
+              проходят оформление
+              и отправляются
+              в Казахстан.
+            </p>
           </div>
-
-          <div className={styles.note}>
-            Средний срок доставки зависит
-            от бренда, наличия и типа товара.
-          </div>
-
         </div>
-      </section>
 
-      <Footer />
-    </main>
-  );
-}
+        <div className={styles.step}>
+          <span>3</span>
+          <div>
+            <strong>
+              Среда следующей недели
+            </strong>
+            <p>
+              После таможенной очистки
+              отправляем курьером
+              по всей территории
+              Казахстана.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div className={styles.card}>
+      <h2>Сроки доставки</h2>
+
+      <p>
+        Средний срок поставки —
+        <strong> 7 дней </strong>
+        с момента отгрузки
+        со склада в Польше.
+      </p>
+
+      <p>
+        Позиции отсутствующие
+        на складе согласовываются
+        индивидуально.
+      </p>
+    </div>
+
+  </div>
+</section>
