@@ -69,7 +69,7 @@ export default function HomePage() {
 
               <div className={styles.payIcons}>
                 <img src="/visa.png" alt="Visa" />
-                <img src="/mastercard.png" alt="MasterCard" />
+                <img src="/mc.png" alt="MasterCard" />
                 <img src="/paypal.png" alt="PayPal" />
               </div>
             </div>
