@@ -1,15 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "../lib/supabase";
 import styles from "./page.module.css";
 
 export default function HomePage() {
-  const router = useRouter();
+  const [menuOpen, setMenuOpen] =
+    useState(false);
 
-  const [vin, setVin] = useState("");
-  const [phone, setPhone] = useState("");
   const [cabinetLink, setCabinetLink] =
     useState("/login");
 
@@ -24,19 +22,22 @@ export default function HomePage() {
 
     if (session) {
       setCabinetLink("/dashboard");
-    } else {
-      setCabinetLink("/login");
     }
-  }
-
-  async function sendRequest() {
-    router.push("/offer");
   }
 
   return (
     <main className={styles.page}>
       <header className={styles.header}>
         <div className={styles.container}>
+
+          <button
+            className={styles.burger}
+            onClick={() =>
+              setMenuOpen(true)
+            }
+          >
+            ☰
+          </button>
 
           <a href="/" className={styles.logoWrap}>
             <img
@@ -46,21 +47,48 @@ export default function HomePage() {
             />
           </a>
 
-          <div className={styles.rightSide}>
-            <button className={styles.burger}>
-              ☰
-            </button>
-
-            <a
-              href={cabinetLink}
-              className={styles.loginBtn}
-            >
-              Кабинет
-            </a>
-          </div>
+          <a
+            href={cabinetLink}
+            className={styles.loginBtn}
+          >
+            Кабинет
+          </a>
 
         </div>
       </header>
+
+      {menuOpen && (
+        <>
+          <div
+            className={styles.overlayMenu}
+            onClick={() =>
+              setMenuOpen(false)
+            }
+          />
+
+          <aside className={styles.menu}>
+            <button
+              className={styles.closeBtn}
+              onClick={() =>
+                setMenuOpen(false)
+              }
+            >
+              ✕
+            </button>
+
+            <a href="/about">О компании</a>
+            <a href="/how-it-works">
+              Как работает сервис
+            </a>
+            <a href="/schedule">
+              Расписание поставок
+            </a>
+            <a href="/contacts">
+              Контакты
+            </a>
+          </aside>
+        </>
+      )}
 
       <section className={styles.hero}>
         <div className={styles.overlay}>
@@ -78,37 +106,18 @@ export default function HomePage() {
 
             <p>
               Оригинальные детали и качественные
-              аналоги для европейских автомобилей.
+              аналоги для европейских авто.
             </p>
 
-            <div className={styles.trustRow}>
-              <span>✔ Подбор по VIN</span>
-              <span>✔ Поставщики Европы</span>
-              <span>✔ Гарантия качества</span>
-            </div>
+            <input placeholder="VIN или номер детали" />
+            <input placeholder="Телефон / WhatsApp" />
 
-            <input
-              placeholder="VIN или номер детали"
-              value={vin}
-              onChange={(e) =>
-                setVin(e.target.value)
-              }
-            />
-
-            <input
-              placeholder="Телефон / WhatsApp"
-              value={phone}
-              onChange={(e) =>
-                setPhone(e.target.value)
-              }
-            />
-
-            <button
+            <a
+              href="/offer"
               className={styles.cta}
-              onClick={sendRequest}
             >
               ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ
-            </button>
+            </a>
 
           </div>
         </div>
