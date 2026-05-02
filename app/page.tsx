@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../lib/supabase";
 import styles from "./page.module.css";
@@ -10,28 +10,26 @@ export default function HomePage() {
 
   const [vin, setVin] = useState("");
   const [phone, setPhone] = useState("");
+  const [cabinetLink, setCabinetLink] =
+    useState("/login");
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  async function checkUser() {
+    const {
+      data: { session }
+    } = await supabase.auth.getSession();
+
+    if (session) {
+      setCabinetLink("/dashboard");
+    } else {
+      setCabinetLink("/login");
+    }
+  }
 
   async function sendRequest() {
-    if (!vin || !phone) {
-      alert("Заполните данные");
-      return;
-    }
-
-    const { error } = await supabase
-      .from("requests")
-      .insert([
-        {
-          vin_or_part: vin,
-          phone: phone,
-          status: "pre_auth"
-        }
-      ]);
-
-    if (error) {
-      alert("Ошибка отправки");
-      return;
-    }
-
     router.push("/offer");
   }
 
@@ -49,9 +47,14 @@ export default function HomePage() {
           </a>
 
           <div className={styles.rightSide}>
-            <button className={styles.burger}>☰</button>
+            <button className={styles.burger}>
+              ☰
+            </button>
 
-            <a href="/login" className={styles.loginBtn}>
+            <a
+              href={cabinetLink}
+              className={styles.loginBtn}
+            >
               Кабинет
             </a>
           </div>
@@ -74,8 +77,8 @@ export default function HomePage() {
             </h1>
 
             <p>
-              Оригинальные детали и качественные аналоги
-              для европейских автомобилей.
+              Оригинальные детали и качественные
+              аналоги для европейских автомобилей.
             </p>
 
             <div className={styles.trustRow}>
@@ -87,13 +90,17 @@ export default function HomePage() {
             <input
               placeholder="VIN или номер детали"
               value={vin}
-              onChange={(e) => setVin(e.target.value)}
+              onChange={(e) =>
+                setVin(e.target.value)
+              }
             />
 
             <input
               placeholder="Телефон / WhatsApp"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) =>
+                setPhone(e.target.value)
+              }
             />
 
             <button
