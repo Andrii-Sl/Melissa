@@ -116,6 +116,14 @@
   border:1px solid #ececec;
   padding:18px;
   background:#ffffff;
+  text-decoration:none;
+  color:#111111;
+  transition:.2s;
+}
+
+.card:hover{
+  border-color:#d10000;
+  transform:translateY(-2px);
 }
 
 .cardTop{
