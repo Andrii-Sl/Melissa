@@ -1,3 +1,5 @@
+import Menu from "../../components/Menu";
+import Footer from "../../components/Footer";
 import styles from "./schedule.module.css";
 
 export default function SchedulePage() {
@@ -39,9 +41,7 @@ export default function SchedulePage() {
       <header className={styles.header}>
         <div className={styles.container}>
 
-          <button className={styles.burger}>
-            ☰
-          </button>
+          <Menu />
 
           <a href="/" className={styles.logoWrap}>
             <img
@@ -64,6 +64,7 @@ export default function SchedulePage() {
       <section className={styles.hero}>
         <div className={styles.overlay}>
           <div className={styles.heroInner}>
+
             <div className={styles.label}>
               РАСПИСАНИЕ ПОСТАВОК
             </div>
@@ -78,6 +79,7 @@ export default function SchedulePage() {
               Актуальные направления поставок
               и средние сроки доставки.
             </p>
+
           </div>
         </div>
       </section>
@@ -99,12 +101,14 @@ export default function SchedulePage() {
           </div>
 
           <div className={styles.note}>
-            Средний срок доставки зависит от
-            бренда, наличия и типа товара.
+            Средний срок доставки зависит
+            от бренда, наличия и типа товара.
           </div>
 
         </div>
       </section>
+
+      <Footer />
     </main>
   );
 }
