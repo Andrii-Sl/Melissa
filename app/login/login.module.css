@@ -30,16 +30,21 @@
   display:flex;
   align-items:center;
   justify-content:space-between;
+  gap:10px;
 }
 
 .logoWrap{
   display:flex;
   align-items:center;
+  text-decoration:none;
+  min-width:0;
 }
 
 .logoImg{
-  height:44px;
-  width:auto;
+  width:230px;
+  height:auto;
+  max-width:58vw;
+  object-fit:contain;
   display:block;
 }
 
@@ -47,9 +52,10 @@
   text-decoration:none;
   color:#111111;
   border:1px solid #d10000;
-  padding:10px 14px;
+  padding:9px 12px;
   font-size:13px;
   white-space:nowrap;
+  border-radius:2px;
 }
 
 /* HERO */
@@ -155,7 +161,9 @@
 }
 
 .logoImg{
-  height:58px;
+  width:430px;
+  height:auto;
+  max-width:100%;
 }
 
 .backBtn{
