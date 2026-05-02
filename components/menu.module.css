@@ -1,0 +1,68 @@
+.burger{
+  width:42px;
+  height:42px;
+  border:none;
+  background:none;
+  font-size:28px;
+  cursor:pointer;
+  padding:0;
+}
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  z-index:90;
+}
+
+.menu{
+  position:fixed;
+  top:0;
+  right:0;
+  width:290px;
+  max-width:88vw;
+  height:100svh;
+  background:#ffffff;
+  z-index:100;
+  padding:22px 18px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  box-shadow:-10px 0 30px rgba(0,0,0,.12);
+}
+
+.close{
+  width:42px;
+  height:42px;
+  border:none;
+  background:#f5f5f5;
+  font-size:22px;
+  cursor:pointer;
+  margin-bottom:10px;
+  align-self:flex-end;
+}
+
+.menu a{
+  text-decoration:none;
+  color:#111111;
+  font-size:16px;
+  padding:14px 10px;
+  border-bottom:1px solid #f1f1f1;
+}
+
+.menu a:hover{
+  color:#d10000;
+}
+
+@media(min-width:901px){
+
+.menu{
+  width:360px;
+  padding:28px 24px;
+}
+
+.menu a{
+  font-size:18px;
+}
+
+}
