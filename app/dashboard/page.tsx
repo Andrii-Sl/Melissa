@@ -1,99 +1,102 @@
-import "../panel.css";
-import LogoutButton from "@/components/LogoutButton";
-import { orders } from "@/data/orders";
+import styles from "./dashboard.module.css";
 
 export default function DashboardPage() {
-  const myOrders = orders.filter(
-    (order) =>
-      order.client === "Иванов" ||
-      order.client === "Сергей"
-  );
-
   return (
-    <main className="panelLayout">
+    <main className={styles.page}>
+      <header className={styles.header}>
+        <div className={styles.container}>
+          <a href="/" className={styles.logoWrap}>
+            <img
+              src="/logo-final.png"
+              alt="AutoParts EU"
+              className={styles.logoImg}
+            />
+          </a>
 
-      <aside className="sidebar">
-        <div className="brand">AutoParts EU</div>
+          <div className={styles.rightSide}>
+            <button className={styles.burger}>☰</button>
 
-        <nav className="menu">
-          <a className="active">Мои заказы</a>
-          <a>Новый запрос</a>
-          <a>Мои автомобили</a>
-          <a>Сообщения</a>
-          <a>Документы</a>
-          <a>Профиль</a>
-        </nav>
-      </aside>
-
-      <section className="content">
-
-        <div className="topbar">
-          <h1>Личный кабинет</h1>
-
-          <div style={{display:"flex", gap:"10px"}}>
-            <div className="userBox">Андрей</div>
-            <LogoutButton />
+            <a href="/" className={styles.homeBtn}>
+              На главную
+            </a>
           </div>
         </div>
+      </header>
 
-        <div className="stats">
+      <section className={styles.content}>
+        <div className={styles.container}>
 
-          <div className="card">
-            <h3>Мои заказы</h3>
-            <strong>{myOrders.length}</strong>
+          <div className={styles.topBlock}>
+            <div>
+              <div className={styles.label}>
+                ЛИЧНЫЙ КАБИНЕТ
+              </div>
+
+              <h1>Здравствуйте, Клиент</h1>
+
+              <p>
+                Управляйте запросами и отслеживайте
+                статусы заказов.
+              </p>
+            </div>
+
+            <a href="/offer" className={styles.newBtn}>
+              + Новый запрос
+            </a>
           </div>
 
-          <div className="card">
-            <h3>В пути</h3>
-            <strong>
-              {myOrders.filter(
-                o => o.status === "В пути"
-              ).length}
-            </strong>
-          </div>
+          <div className={styles.grid}>
 
-          <div className="card">
-            <h3>Доставлено</h3>
-            <strong>
-              {myOrders.filter(
-                o => o.status === "Оплачен"
-              ).length}
-            </strong>
+            <div className={styles.card}>
+              <div className={styles.cardTitle}>
+                Мои заявки
+              </div>
+
+              <div className={styles.request}>
+                <strong>#1045</strong>
+                <span>Audi A6 — тормозной диск</span>
+                <small>Статус: В обработке</small>
+              </div>
+
+              <div className={styles.request}>
+                <strong>#1046</strong>
+                <span>BMW X5 — фильтр масла</span>
+                <small>Статус: Ожидает цену</small>
+              </div>
+            </div>
+
+            <div className={styles.card}>
+              <div className={styles.cardTitle}>
+                История заказов
+              </div>
+
+              <div className={styles.statRow}>
+                Выполнено заказов: 12
+              </div>
+
+              <div className={styles.statRow}>
+                Последний заказ: 14.05.2026
+              </div>
+            </div>
+
+            <div className={styles.card}>
+              <div className={styles.cardTitle}>
+                Профиль
+              </div>
+
+              <div className={styles.statRow}>
+                Email: client@mail.com
+              </div>
+
+              <div className={styles.statRow}>
+                Телефон: +49 000 0000
+              </div>
+            </div>
+
           </div>
 
         </div>
-
-        <div className="tableWrap">
-          <table>
-            <thead>
-              <tr>
-                <th>№</th>
-                <th>Товар</th>
-                <th>Статус</th>
-                <th>Сумма</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {myOrders.map((order) => (
-                <tr key={order.id}>
-                  <td>{order.id}</td>
-                  <td>{order.item}</td>
-                  <td>
-                    <span className="badge">
-                      {order.status}
-                    </span>
-                  </td>
-                  <td>{order.total}</td>
-                </tr>
-              ))}
-            </tbody>
-
-          </table>
-        </div>
-
       </section>
-
     </main>
   );
-          }
+}
