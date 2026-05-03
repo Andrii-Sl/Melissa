@@ -1,26 +1,31 @@
 .page{
-  min-height:100svh;
-  background:#111111;
-  font-family:Arial, Helvetica, sans-serif;
+  background:#000;
+  color:#fff;
+  min-height:100vh;
+  font-family:Arial,sans-serif;
 }
 
 .header{
   height:92px;
-  background:#ffffff;
+  background:#fff;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 22px;
+  padding:0 26px;
+}
+
+.burger{
+  border:none;
+  background:none;
+  font-size:42px;
+  cursor:pointer;
+  color:#000;
 }
 
 .logoWrap{
+  flex:1;
   display:flex;
-  align-items:center;
-  gap:12px;
-  text-decoration:none;
-  color:#111111;
-  font-size:18px;
-  font-weight:700;
+  justify-content:center;
 }
 
 .logo{
@@ -28,172 +33,176 @@
   width:auto;
 }
 
-.loginBtn{
-  height:48px;
-  padding:0 18px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border:1px solid #d10000;
-  color:#111111;
+.cabinet{
+  border:2px solid #d40000;
+  color:#111;
+  padding:16px 24px;
+  font-size:18px;
   text-decoration:none;
-  background:#ffffff;
-  font-size:16px;
+  background:#fff;
 }
 
 .hero{
-  min-height:calc(100svh - 92px);
-  background:url("/hero.jpg") center center/cover no-repeat;
+  background:url("/hero-audi.jpg")
+    center/cover no-repeat;
+  min-height:980px;
   position:relative;
 }
 
-.hero::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,.56);
+.overlay{
+  background:rgba(0,0,0,.58);
+  min-height:980px;
+  padding:70px 26px;
 }
 
-.content{
-  position:relative;
-  z-index:2;
-  max-width:1180px;
-  margin:0 auto;
-  padding:70px 22px;
-}
-
-.label{
-  color:#d10000;
-  font-size:12px;
-  letter-spacing:.08em;
-  margin-bottom:14px;
+.small{
+  color:#ff1d1d;
+  font-size:18px;
+  letter-spacing:2px;
+  margin-bottom:26px;
 }
 
 .title{
-  margin:0 0 18px;
-  max-width:760px;
-  font-size:74px;
-  line-height:.96;
-  color:#ffffff;
-  font-weight:700;
+  font-size:72px;
+  line-height:1.02;
+  font-weight:800;
+  margin:0 0 26px;
 }
 
-.text{
-  margin:0 0 28px;
-  max-width:620px;
-  color:#dddddd;
-  font-size:22px;
-  line-height:1.45;
+.desc{
+  font-size:28px;
+  color:#d9d9d9;
+  line-height:1.5;
+  margin-bottom:38px;
 }
 
 .form{
-  max-width:720px;
-  display:grid;
-  grid-template-columns:1fr 1fr auto;
-  gap:14px;
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+  max-width:620px;
 }
 
 .input{
-  height:66px;
+  height:88px;
   border:none;
-  padding:0 18px;
-  font-size:17px;
+  padding:0 26px;
+  font-size:30px;
+  color:#111;
 }
 
 .button{
-  height:66px;
-  padding:0 26px;
+  height:92px;
   border:none;
-  background:#d10000;
-  color:#ffffff;
-  font-size:16px;
+  background:#e00000;
+  color:#fff;
+  font-size:34px;
   font-weight:700;
   cursor:pointer;
 }
 
 .payments{
-  margin-top:34px;
+  display:flex;
+  gap:24px;
+  margin-top:38px;
+  align-items:center;
 }
 
 .payments img{
-  height:34px;
+  height:42px;
   width:auto;
 }
 
-.footer{
-  background:#ffffff;
-  color:#111111;
-  padding:20px 22px;
-  font-size:14px;
+.bottom{
+  background:#111;
+  padding:60px 24px;
+  display:grid;
+  gap:24px;
 }
 
-@media(max-width:900px){
-
-.title{
-  font-size:52px;
+.box{
+  background:#1b1b1b;
+  padding:28px;
+  border:1px solid #2b2b2b;
 }
 
-.text{
-  font-size:18px;
+.box h3{
+  margin:0 0 12px;
+  font-size:28px;
 }
 
-.form{
-  grid-template-columns:1fr;
-  max-width:520px;
+.box p{
+  margin:0;
+  font-size:22px;
+  color:#bcbcbc;
 }
 
-.button,
-.input{
-  width:100%;
-}
+@media(max-width:768px){
 
-}
+  .header{
+    height:78px;
+    padding:0 14px;
+  }
 
-@media(max-width:700px){
+  .burger{
+    font-size:34px;
+  }
 
-.header{
-  height:82px;
-  padding:0 14px;
-}
+  .logo{
+    height:28px;
+  }
 
-.logoWrap span{
-  display:none;
-}
+  .cabinet{
+    font-size:14px;
+    padding:10px 14px;
+  }
 
-.logo{
-  height:34px;
-}
+  .hero{
+    min-height:760px;
+  }
 
-.loginBtn{
-  height:44px;
-  padding:0 14px;
-  font-size:14px;
-}
+  .overlay{
+    min-height:760px;
+    padding:36px 18px;
+  }
 
-.hero{
-  min-height:calc(100svh - 82px);
-}
+  .small{
+    font-size:14px;
+  }
 
-.content{
-  padding:42px 14px;
-}
+  .title{
+    font-size:44px;
+  }
 
-.title{
-  font-size:38px;
-}
+  .desc{
+    font-size:18px;
+    margin-bottom:24px;
+  }
 
-.text{
-  font-size:16px;
-}
+  .input{
+    height:72px;
+    font-size:18px;
+  }
 
-.input,
-.button{
-  height:58px;
-  font-size:16px;
-}
+  .button{
+    height:76px;
+    font-size:20px;
+  }
 
-.payments img{
-  height:26px;
-}
+  .payments{
+    gap:14px;
+    flex-wrap:wrap;
+  }
 
+  .payments img{
+    height:28px;
+  }
+
+  .box h3{
+    font-size:22px;
+  }
+
+  .box p{
+    font-size:16px;
+  }
 }
