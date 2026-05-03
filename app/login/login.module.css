@@ -1,6 +1,7 @@
 .page{
   min-height:100svh;
-  background:url("/hero.jpg") center center/cover no-repeat;
+  background:#111111;
+  font-family:Arial, Helvetica, sans-serif;
 }
 
 .header{
@@ -15,6 +16,11 @@
 .logoWrap{
   display:flex;
   align-items:center;
+  gap:12px;
+  text-decoration:none;
+  color:#111111;
+  font-size:18px;
+  font-weight:700;
 }
 
 .logo{
@@ -29,24 +35,32 @@
   align-items:center;
   justify-content:center;
   border:1px solid #d10000;
+  background:#ffffff;
   color:#111111;
   text-decoration:none;
   font-size:16px;
-  background:#ffffff;
 }
 
 .hero{
   min-height:calc(100svh - 92px);
+  background:url("/hero.jpg") center center/cover no-repeat;
+  position:relative;
+}
+
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
   background:rgba(0,0,0,.56);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
 }
 
 .card{
+  position:relative;
+  z-index:2;
   width:100%;
   max-width:620px;
+  margin:0 auto;
+  top:60px;
   background:#ffffff;
   padding:42px 34px;
 }
@@ -60,7 +74,7 @@
 
 .title{
   margin:0 0 16px;
-  font-size:58px;
+  font-size:56px;
   line-height:1;
   font-weight:700;
   color:#111111;
@@ -115,6 +129,10 @@
   padding:0 14px;
 }
 
+.logoWrap span{
+  display:none;
+}
+
 .logo{
   height:34px;
 }
@@ -127,10 +145,10 @@
 
 .hero{
   min-height:calc(100svh - 82px);
-  padding:14px;
 }
 
 .card{
+  top:20px;
   padding:28px 20px;
 }
 
