@@ -1,15 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { supabase } from "../../../../lib/supabase";
-import Footer from "../../../../components/Footer";
+import { supabase } from "@/lib/supabase";
 import styles from "./request.module.css";
 
-export default function RequestPage() {
-  const params = useParams();
-  const id = params.id;
-
+export default function RequestPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const [item, setItem] =
     useState<any>(null);
 
@@ -22,16 +21,20 @@ export default function RequestPage() {
       await supabase
         .from("requests")
         .select("*")
-        .eq("id", id)
+        .eq("id", params.id)
         .single();
 
-    if (data) {
-      setItem(data);
-    }
+    setItem(data);
   }
 
   if (!item) {
-    return <div>Загрузка...</div>;
+    return (
+      <main className={styles.page}>
+        <div className={styles.wrap}>
+          Загрузка...
+        </div>
+      </main>
+    );
   }
 
   const steps = [
@@ -39,80 +42,81 @@ export default function RequestPage() {
     "В работе",
     "Цена готова",
     "Оплачено",
-    "Отправлено"
+    "Отправлено",
   ];
-
-  const currentStep =
-    steps.indexOf(item.status);
 
   return (
     <main className={styles.page}>
-      <section className={styles.content}>
-        <div className={styles.container}>
+      <section className={styles.wrap}>
 
-          <div className={styles.label}>
-            ЗАЯВКА #{item.id}
-          </div>
+        <a
+          href="/dashboard"
+          className={styles.back}
+        >
+          ← Назад в кабинет
+        </a>
 
-          <h1>Статус заказа</h1>
+        <div className={styles.label}>
+          ЗАЯВКА
+        </div>
 
-          <div className={styles.card}>
-            <p>
+        <h1 className={styles.title}>
+          #{item.id}
+        </h1>
+
+        <div className={styles.card}>
+
+          <p>
+            <strong>
               Деталь:
-              {" "}
-              {item.part_name ||
-                "-"}
-            </p>
+            </strong>{" "}
+            {item.part_name ||
+              "—"}
+          </p>
 
-            <p>
+          <p>
+            <strong>
               VIN:
-              {" "}
-              {item.vin || "-"}
-            </p>
+            </strong>{" "}
+            {item.vin || "—"}
+          </p>
 
-            <p>
+          <p>
+            <strong>
               Цена:
-              {" "}
-              {item.price
-                ? item.price +
-                  " €"
-                : "ожидается"}
-            </p>
+            </strong>{" "}
+            {item.price
+              ? item.price + " €"
+              : "ожидается"}
+          </p>
 
-            <p>
+          <p>
+            <strong>
               Комментарий:
-              {" "}
-              {item.manager_comment ||
-                "-"}
-            </p>
-
-            <div className={styles.tracker}>
-              {steps.map(
-                (
-                  step,
-                  index
-                ) => (
-                  <div
-                    key={step}
-                    className={
-                      index <=
-                      currentStep
-                        ? styles.active
-                        : styles.step
-                    }
-                  >
-                    {step}
-                  </div>
-                )
-              )}
-            </div>
-
-          </div>
+            </strong>{" "}
+            {item.manager_comment ||
+              "Нет комментария"}
+          </p>
 
         </div>
-      </section>
 
-      <Footer />
+        <div className={styles.steps}>
+          {steps.map((step) => (
+            <div
+              key={step}
+              className={
+                item.status ===
+                  step
+                  ? styles.active
+                  : styles.step
+              }
+            >
+              {step}
+            </div>
+          ))}
+        </div>
+
+      </section>
     </main>
   );
 }
