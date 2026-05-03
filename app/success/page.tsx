@@ -2,6 +2,13 @@ import Footer from "../../components/Footer";
 import styles from "./success.module.css";
 
 export default function SuccessPage() {
+  const message =
+    "Здравствуйте, я отправил заявку на сайте AutoParts EU";
+
+  const waLink =
+    "https://wa.me/77000000000?text=" +
+    encodeURIComponent(message);
+
   return (
     <main className={styles.page}>
       <section className={styles.hero}>
@@ -34,11 +41,11 @@ export default function SuccessPage() {
             </a>
 
             <a
-              href="https://wa.me/77000000000"
+              href={waLink}
               target="_blank"
               className={styles.waBtn}
             >
-              WhatsApp менеджера
+              Написать в WhatsApp
             </a>
 
             <a
