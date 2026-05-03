@@ -71,7 +71,8 @@ export default function LoginPage() {
     <main className={styles.page}>
       <div className={styles.overlay}>
 
-        <div className={styles.topBar}>
+        <header className={styles.topBar}>
+
           <Link
             href="/"
             className={styles.logoWrap}
@@ -87,40 +88,53 @@ export default function LoginPage() {
             </span>
           </Link>
 
-          <Link
-            href="/"
-            className={styles.homeBtn}
-          >
-            На главную
-          </Link>
-        </div>
+          <div className={styles.actions}>
 
-        <div className={styles.card}>
+            <Link
+              href="/"
+              className={styles.navBtn}
+            >
+              На главную
+            </Link>
+
+            <button
+              className={styles.navBtnRed}
+              onClick={() => {
+                setMode("login");
+                setStep("auth");
+              }}
+            >
+              Авторизация
+            </button>
+
+          </div>
+
+        </header>
+
+        <section className={styles.card}>
 
           <div className={styles.label}>
             {mode === "login"
-              ? "ВХОД"
+              ? "АВТОРИЗАЦИЯ"
               : "РЕГИСТРАЦИЯ"}
           </div>
 
           <h1 className={styles.title}>
             {mode === "login"
-              ? "Личный кабинет"
+              ? "Паспорт продукта"
               : "Создать аккаунт"}
           </h1>
 
           <p className={styles.text}>
-            Управляйте заявками
-            в одном месте.
+            Получите доступ к статусу
+            заявки, цене и деталям заказа.
           </p>
 
           {step === "auth" ? (
             <>
               {mode === "register" && (
                 <input
-                  className={
-                    styles.input
-                  }
+                  className={styles.input}
                   placeholder="Ваше имя"
                   value={name}
                   onChange={(e) =>
@@ -132,9 +146,7 @@ export default function LoginPage() {
               )}
 
               <input
-                className={
-                  styles.input
-                }
+                className={styles.input}
                 placeholder="+77001234567"
                 value={phone}
                 onChange={(e) =>
@@ -145,9 +157,7 @@ export default function LoginPage() {
               />
 
               <button
-                className={
-                  styles.button
-                }
+                className={styles.button}
                 onClick={sendOtp}
               >
                 {loading
@@ -158,20 +168,16 @@ export default function LoginPage() {
               </button>
 
               <button
-                className={
-                  styles.linkBtn
-                }
+                className={styles.linkBtn}
                 onClick={() =>
                   setMode(
-                    mode ===
-                      "login"
+                    mode === "login"
                       ? "register"
                       : "login"
                   )
                 }
               >
-                {mode ===
-                "login"
+                {mode === "login"
                   ? "Регистрация"
                   : "Уже есть аккаунт? Войти"}
               </button>
@@ -179,9 +185,7 @@ export default function LoginPage() {
           ) : (
             <>
               <input
-                className={
-                  styles.input
-                }
+                className={styles.input}
                 placeholder="Код из SMS"
                 value={code}
                 onChange={(e) =>
@@ -192,12 +196,8 @@ export default function LoginPage() {
               />
 
               <button
-                className={
-                  styles.button
-                }
-                onClick={
-                  verifyOtp
-                }
+                className={styles.button}
+                onClick={verifyOtp}
               >
                 {loading
                   ? "Проверка..."
@@ -206,7 +206,8 @@ export default function LoginPage() {
             </>
           )}
 
-        </div>
+        </section>
+
       </div>
     </main>
   );
