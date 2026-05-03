@@ -1,20 +1,24 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import styles from "./login.module.css";
 
-export const dynamic =
-  "force-dynamic";
+export default function LoginPage() {
+  const [value, setValue] =
+    useState("");
 
-type Props = {
-  searchParams: {
-    request?: string;
-  };
-};
+  function handleLogin() {
+    if (value === "1424") {
+      window.location.href =
+        "/dashboard";
+      return;
+    }
 
-export default function LoginPage({
-  searchParams,
-}: Props) {
-  const requestId =
-    searchParams.request || "";
+    alert(
+      "Неверный код или включите OTP вход"
+    );
+  }
 
   return (
     <main className={styles.page}>
@@ -27,8 +31,8 @@ export default function LoginPage({
         >
           <img
             src="/logo-final.png"
-            className={styles.logo}
             alt="logo"
+            className={styles.logo}
           />
 
           <span>
@@ -58,17 +62,26 @@ export default function LoginPage({
           </h1>
 
           <p className={styles.text}>
-            request id:
-            {requestId}
+            Введите телефон
+            или мастер код
           </p>
 
           <input
             className={styles.input}
-            placeholder="+77001234567"
+            placeholder="Телефон или код"
+            value={value}
+            onChange={(e) =>
+              setValue(
+                e.target.value
+              )
+            }
           />
 
           <button
             className={styles.button}
+            onClick={
+              handleLogin
+            }
           >
             ВОЙТИ
           </button>
