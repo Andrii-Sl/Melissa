@@ -5,16 +5,51 @@
 
 .overlay{
   min-height:100svh;
-  background:rgba(0,0,0,.55);
+  background:rgba(0,0,0,.58);
+  padding:22px;
+}
+
+.topBar{
+  max-width:1180px;
+  margin:0 auto 34px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+
+.logoWrap{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  text-decoration:none;
+  color:#ffffff;
+  font-size:18px;
+  font-weight:700;
+}
+
+.logo{
+  width:42px;
+  height:42px;
+  object-fit:contain;
+}
+
+.homeBtn{
+  height:46px;
+  padding:0 18px;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:20px;
+  text-decoration:none;
+  color:#ffffff;
+  border:1px solid rgba(255,255,255,.45);
+  font-size:15px;
 }
 
 .card{
   width:100%;
   max-width:520px;
+  margin:0 auto;
   background:#ffffff;
   padding:34px 28px;
 }
@@ -74,17 +109,27 @@
   color:#111111;
   font-size:18px;
   cursor:pointer;
-  margin-bottom:18px;
-}
-
-.back{
-  display:inline-block;
-  text-decoration:none;
-  color:#111111;
-  font-size:16px;
 }
 
 @media(max-width:700px){
+
+.overlay{
+  padding:14px;
+}
+
+.topBar{
+  margin-bottom:24px;
+}
+
+.logoWrap span{
+  display:none;
+}
+
+.homeBtn{
+  height:42px;
+  padding:0 14px;
+  font-size:14px;
+}
 
 .card{
   padding:28px 20px;
