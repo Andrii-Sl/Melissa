@@ -1,0 +1,121 @@
+.page{
+  min-height:100svh;
+  font-family:Arial, Helvetica, sans-serif;
+  background:#ffffff;
+  color:#111111;
+}
+
+.hero{
+  min-height:100svh;
+  background:url('/hero.jpg') center center/cover no-repeat;
+}
+
+.overlay{
+  min-height:100svh;
+  background:linear-gradient(
+    180deg,
+    rgba(0,0,0,.22) 0%,
+    rgba(0,0,0,.72) 42%,
+    rgba(0,0,0,.90) 100%
+  );
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px 14px;
+}
+
+.card{
+  width:100%;
+  max-width:620px;
+  background:#ffffff;
+  padding:30px 22px;
+  text-align:center;
+}
+
+.icon{
+  width:72px;
+  height:72px;
+  margin:0 auto 16px;
+  border-radius:50%;
+  background:#d10000;
+  color:#ffffff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:34px;
+  font-weight:700;
+}
+
+.label{
+  color:#d10000;
+  font-size:12px;
+  margin-bottom:10px;
+}
+
+.card h1{
+  margin:0 0 14px;
+  font-size:36px;
+  line-height:1.05;
+}
+
+.card p{
+  margin:0 0 24px;
+  color:#666666;
+  font-size:15px;
+  line-height:1.6;
+}
+
+.mainBtn,
+.waBtn{
+  width:100%;
+  height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  font-size:16px;
+  font-weight:700;
+  margin-bottom:12px;
+}
+
+.mainBtn{
+  background:#d10000;
+  color:#ffffff;
+}
+
+.waBtn{
+  border:1px solid #111111;
+  color:#111111;
+}
+
+.backLink{
+  display:inline-block;
+  margin-top:10px;
+  color:#666666;
+  text-decoration:none;
+  font-size:14px;
+}
+
+/* DESKTOP */
+
+@media(min-width:901px){
+
+.card{
+  padding:44px;
+}
+
+.card h1{
+  font-size:56px;
+}
+
+.card p{
+  font-size:18px;
+}
+
+.mainBtn,
+.waBtn{
+  height:60px;
+  font-size:18px;
+}
+
+}
