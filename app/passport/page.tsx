@@ -18,20 +18,26 @@ export default function PassportPage() {
   const [search, setSearch] =
     useState("");
 
+  const [loading, setLoading] =
+    useState(false);
+
   const [result, setResult] =
     useState(false);
 
   async function handleSearch() {
-    if (!search) return;
+    if (!search) {
+      alert("Введите название детали");
+      return;
+    }
 
-    setResult(true);
+    setLoading(true);
 
     await supabase
       .from("requests")
       .insert([
         {
-          vin,
-          phone,
+          vin: vin,
+          phone: phone,
           part_query: search,
           product_name:
             "Brembo Brake Pads",
@@ -40,6 +46,9 @@ export default function PassportPage() {
           status: "new",
         },
       ]);
+
+    setResult(true);
+    setLoading(false);
   }
 
   return (
@@ -53,9 +62,10 @@ export default function PassportPage() {
         >
           <img
             src="/logo-final.png"
+            alt="AutoParts EU"
             className={styles.logo}
-            alt="logo"
           />
+
           <span>
             AutoParts EU
           </span>
@@ -75,8 +85,9 @@ export default function PassportPage() {
         <div className={styles.grid}>
 
           <div className={styles.card}>
+
             <div className={styles.label}>
-              ПАСПОРТ АВТО
+              ПАСПОРТ АВТОМОБИЛЯ
             </div>
 
             <h1 className={styles.title}>
@@ -94,11 +105,13 @@ export default function PassportPage() {
                 {phone}
               </p>
             </div>
+
           </div>
 
           <div className={styles.card}>
+
             <div className={styles.label}>
-              ПОИСК ДЕТАЛИ
+              ЗАПРОС ЗАПЧАСТИ
             </div>
 
             <h2 className={styles.sub}>
@@ -107,7 +120,7 @@ export default function PassportPage() {
 
             <input
               className={styles.input}
-              placeholder="Введите название детали"
+              placeholder="Например: тормозные колодки"
               value={search}
               onChange={(e) =>
                 setSearch(
@@ -122,8 +135,11 @@ export default function PassportPage() {
                 handleSearch
               }
             >
-              ИСКАТЬ
+              {loading
+                ? "ПОИСК..."
+                : "ИСКАТЬ"}
             </button>
+
           </div>
 
         </div>
@@ -134,15 +150,17 @@ export default function PassportPage() {
               styles.result
             }
           >
+
             <img
               src="/product.jpg"
+              alt="product"
               className={
                 styles.photo
               }
-              alt="product"
             />
 
             <div>
+
               <div
                 className={
                   styles.label
@@ -166,9 +184,8 @@ export default function PassportPage() {
 
               <p>
                 Подходит:
-                Audi /
-                Volkswagen /
-                Skoda
+                Audi A4 /
+                A5 / Q5
               </p>
 
               <p>
@@ -189,6 +206,7 @@ export default function PassportPage() {
               </Link>
 
             </div>
+
           </div>
         )}
 
