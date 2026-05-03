@@ -1,95 +1,148 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { supabase } from "../../lib/supabase";
 import styles from "./login.module.css";
 
 export default function LoginPage() {
-  const [value, setValue] =
-    useState("");
+  const router = useRouter();
 
-  function handleLogin() {
-    if (value === "1424") {
-      window.location.href =
-        "/dashboard";
+  const [mode, setMode] = useState("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  async function handleAuth() {
+    if (!email || !password) {
+      alert("Введите данные");
       return;
     }
 
-    alert(
-      "Неверный код или включите OTP вход"
-    );
+    if (mode === "login") {
+      const { error } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      router.push("/dashboard");
+    }
+
+    if (mode === "register") {
+      const { error } =
+        await supabase.auth.signUp({
+          email,
+          password
+        });
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      alert("Регистрация успешна");
+      router.push("/dashboard");
+    }
   }
 
   return (
     <main className={styles.page}>
-
       <header className={styles.header}>
+        <div className={styles.container}>
 
-        <Link
-          href="/"
-          className={styles.logoWrap}
-        >
-          <img
-            src="/logo-final.png"
-            alt="logo"
-            className={styles.logo}
-          />
+          <a href="/" className={styles.logoWrap}>
+            <img
+              src="/logo-final.png"
+              alt="AutoParts EU"
+              className={styles.logoImg}
+            />
+          </a>
 
-          <span>
-            AutoParts EU
-          </span>
-        </Link>
+          <a href="/" className={styles.backBtn}>
+            На главную
+          </a>
 
-        <Link
-          href="/"
-          className={styles.homeBtn}
-        >
-          На главную
-        </Link>
-
+        </div>
       </header>
 
       <section className={styles.hero}>
+        <div className={styles.overlay}>
 
-        <div className={styles.card}>
+          <div className={styles.card}>
 
-          <div className={styles.label}>
-            ВХОД
+            <div className={styles.titleMini}>
+              {mode === "login"
+                ? "ВХОД"
+                : "РЕГИСТРАЦИЯ"}
+            </div>
+
+            <h1>
+              {mode === "login"
+                ? "Личный кабинет"
+                : "Создать аккаунт"}
+            </h1>
+
+            <p>
+              Управляйте заявками и заказами
+              в одном месте.
+            </p>
+
+            <input
+              type="email"
+              placeholder="E-mail"
+              value={email}
+              onChange={(e) =>
+                setEmail(e.target.value)
+              }
+            />
+
+            <input
+              type="password"
+              placeholder="Пароль"
+              value={password}
+              onChange={(e) =>
+                setPassword(e.target.value)
+              }
+            />
+
+            <button
+              className={styles.loginBtn}
+              onClick={handleAuth}
+            >
+              {mode === "login"
+                ? "ВОЙТИ"
+                : "ЗАРЕГИСТРИРОВАТЬСЯ"}
+            </button>
+
+            <div className={styles.links}>
+              {mode === "login" ? (
+                <button
+                  onClick={() =>
+                    setMode("register")
+                  }
+                >
+                  Регистрация
+                </button>
+              ) : (
+                <button
+                  onClick={() =>
+                    setMode("login")
+                  }
+                >
+                  Уже есть аккаунт?
+                </button>
+              )}
+            </div>
+
           </div>
 
-          <h1 className={styles.title}>
-            Личный кабинет
-          </h1>
-
-          <p className={styles.text}>
-            Введите телефон
-            или мастер код
-          </p>
-
-          <input
-            className={styles.input}
-            placeholder="Телефон или код"
-            value={value}
-            onChange={(e) =>
-              setValue(
-                e.target.value
-              )
-            }
-          />
-
-          <button
-            className={styles.button}
-            onClick={
-              handleLogin
-            }
-          >
-            ВОЙТИ
-          </button>
-
         </div>
-
       </section>
-
     </main>
   );
 }
