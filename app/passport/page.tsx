@@ -2,21 +2,49 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 import styles from "./passport.module.css";
 
 export default function PassportPage() {
   const [search, setSearch] =
     useState("");
 
-  const vin = "WAUZZZ8K9DA123456";
+  const [result, setResult] =
+    useState(false);
+
+  const vin =
+    "WAUZZZ8K9DA123456";
+
+  const phone =
+    "+77001234567";
 
   const car = {
     brand: "Audi",
     model: "A4 B8",
     year: "2013",
     engine: "2.0 TDI",
-    fuel: "Diesel",
   };
+
+  async function handleSearch() {
+    if (!search) return;
+
+    setResult(true);
+
+    await supabase
+      .from("requests")
+      .insert([
+        {
+          vin: vin,
+          phone: phone,
+          part_query: search,
+          product_name:
+            "Brembo Brake Pads",
+          part_number:
+            "P85120",
+          status: "new",
+        },
+      ]);
+  }
 
   return (
     <main className={styles.page}>
@@ -54,7 +82,7 @@ export default function PassportPage() {
           <div className={styles.card}>
 
             <div className={styles.label}>
-              ПАСПОРТ АВТОМОБИЛЯ
+              ПАСПОРТ АВТО
             </div>
 
             <h1 className={styles.title}>
@@ -62,10 +90,20 @@ export default function PassportPage() {
             </h1>
 
             <div className={styles.info}>
-              <p><strong>VIN:</strong> {vin}</p>
-              <p><strong>Год:</strong> {car.year}</p>
-              <p><strong>Двигатель:</strong> {car.engine}</p>
-              <p><strong>Топливо:</strong> {car.fuel}</p>
+              <p>
+                <strong>VIN:</strong>{" "}
+                {vin}
+              </p>
+
+              <p>
+                <strong>Год:</strong>{" "}
+                {car.year}
+              </p>
+
+              <p>
+                <strong>Двигатель:</strong>{" "}
+                {car.engine}
+              </p>
             </div>
 
           </div>
@@ -73,16 +111,16 @@ export default function PassportPage() {
           <div className={styles.card}>
 
             <div className={styles.label}>
-              ЗАПРОС ЗАПЧАСТИ
+              ПОИСК ДЕТАЛИ
             </div>
 
             <h2 className={styles.sub}>
-              Поиск через TecDoc
+              TecDoc Search
             </h2>
 
             <input
               className={styles.input}
-              placeholder="Например: тормозные колодки"
+              placeholder="Введите название детали"
               value={search}
               onChange={(e) =>
                 setSearch(
@@ -93,6 +131,9 @@ export default function PassportPage() {
 
             <button
               className={styles.button}
+              onClick={
+                handleSearch
+              }
             >
               ИСКАТЬ
             </button>
@@ -100,6 +141,69 @@ export default function PassportPage() {
           </div>
 
         </div>
+
+        {result && (
+          <div
+            className={
+              styles.result
+            }
+          >
+            <img
+              src="/product.jpg"
+              className={
+                styles.photo
+              }
+              alt="product"
+            />
+
+            <div>
+              <div
+                className={
+                  styles.label
+                }
+              >
+                НАЙДЕНО
+              </div>
+
+              <h3
+                className={
+                  styles.product
+                }
+              >
+                Brembo Brake Pads
+              </h3>
+
+              <p>
+                Артикул:
+                P85120
+              </p>
+
+              <p>
+                Подходит:
+                Audi A4 B8 /
+                A5 / Q5
+              </p>
+
+              <p>
+                Цена: —
+              </p>
+
+              <p>
+                Наличие: —
+              </p>
+
+              <Link
+                href="/login"
+                className={
+                  styles.authBtn
+                }
+              >
+                Пройти авторизацию
+              </Link>
+
+            </div>
+          </div>
+        )}
 
       </section>
 
