@@ -1,9 +1,17 @@
+"use client";
+
+import { useSearchParams } from "next/navigation";
 import Footer from "../../components/Footer";
 import styles from "./success.module.css";
 
 export default function SuccessPage() {
+  const params = useSearchParams();
+
+  const id =
+    params.get("id") || "";
+
   const message =
-    "Здравствуйте, я отправил заявку на сайте AutoParts EU";
+    `Здравствуйте, я отправил заявку №${id} на сайте AutoParts EU`;
 
   const waLink =
     "https://wa.me/77000000000?text=" +
@@ -28,8 +36,18 @@ export default function SuccessPage() {
             </h1>
 
             <p>
-              Менеджер свяжется с вами
-              в ближайшее время после
+              Ваша заявка
+              {" "}
+              <strong>
+                №{id}
+              </strong>
+              {" "}
+              успешно создана.
+            </p>
+
+            <p>
+              Менеджер свяжется
+              с вами после
               обработки запроса.
             </p>
 
