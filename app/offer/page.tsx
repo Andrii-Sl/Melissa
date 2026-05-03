@@ -51,7 +51,12 @@ export default function OfferPage() {
 
     alert("Заявка отправлена");
 
-    router.push("/login");
+    localStorage.setItem(
+      "phone",
+      phone
+    );
+
+    router.push("/success");
   }
 
   return (
