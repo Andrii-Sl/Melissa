@@ -2,41 +2,46 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import styles from "./login.module.css";
 
 export default function LoginPage() {
-  const [phone, setPhone] = useState("");
-  const [name, setName] = useState("");
-  const [code, setCode] = useState("");
+  const params = useSearchParams();
+
+  const requestId =
+    params.get("request");
+
+  const [phone, setPhone] =
+    useState("");
+
+  const [name, setName] =
+    useState("");
+
+  const [code, setCode] =
+    useState("");
 
   const [step, setStep] =
-    useState<"auth" | "verify">("auth");
+    useState<"auth" | "verify">(
+      "auth"
+    );
 
   const [mode, setMode] =
     useState<"login" | "register">(
       "login"
     );
 
-  const [loading, setLoading] =
-    useState(false);
-
   async function sendOtp() {
     if (!phone) return;
-
-    setLoading(true);
 
     await supabase.auth.signInWithOtp({
       phone,
     });
 
     setStep("verify");
-    setLoading(false);
   }
 
   async function verifyOtp() {
-    setLoading(true);
-
     const { data, error } =
       await supabase.auth.verifyOtp({
         phone,
@@ -44,22 +49,41 @@ export default function LoginPage() {
         type: "sms",
       });
 
-    if (!error && data.user) {
-      if (mode === "register") {
+    if (
+      !error &&
+      data.user
+    ) {
+      const userId =
+        data.user.id;
+
+      if (
+        mode ===
+        "register"
+      ) {
         await supabase
           .from("profiles")
           .upsert({
-            user_id: data.user.id,
+            user_id: userId,
             phone,
             full_name: name,
           });
       }
 
+      if (requestId) {
+        await supabase
+          .from("requests")
+          .update({
+            user_id: userId,
+          })
+          .eq(
+            "id",
+            requestId
+          );
+      }
+
       window.location.href =
         "/dashboard";
     }
-
-    setLoading(false);
   }
 
   return (
@@ -76,6 +100,9 @@ export default function LoginPage() {
             alt="logo"
             className={styles.logo}
           />
+          <span>
+            AutoParts EU
+          </span>
         </Link>
 
         <Link
@@ -88,50 +115,128 @@ export default function LoginPage() {
       </header>
 
       <section className={styles.hero}>
+
         <div className={styles.card}>
 
           <div className={styles.label}>
-            {mode === "login"
+            {mode ===
+            "login"
               ? "ВХОД"
               : "РЕГИСТРАЦИЯ"}
           </div>
 
           <h1 className={styles.title}>
-            {mode === "login"
+            {mode ===
+            "login"
               ? "Личный кабинет"
-              : "Регистрация"}
+              : "Создать аккаунт"}
           </h1>
 
           <p className={styles.text}>
-            Управляйте заявками
-            в одном месте.
+            Доступ к цене,
+            наличию и статусу
+            заявки.
           </p>
 
           {step === "auth" ? (
             <>
-              {mode === "register" && (
+              {mode ===
+                "register" && (
                 <input
-                  className={styles.input}
+                  className={
+                    styles.input
+                  }
                   placeholder="Ваше имя"
                   value={name}
                   onChange={(e) =>
                     setName(
-                      e.target.value
+                      e.target
+                        .value
                     )
                   }
                 />
               )}
 
               <input
-                className={styles.input}
+                className={
+                  styles.input
+                }
                 placeholder="+77001234567"
                 value={phone}
                 onChange={(e) =>
                   setPhone(
-                    e.target.value
+                    e.target
+                      .value
                   )
                 }
               />
 
               <button
-                className={styles.button}
+                className={
+                  styles.button
+                }
+                onClick={
+                  sendOtp
+                }
+              >
+                {mode ===
+                "login"
+                  ? "ВОЙТИ"
+                  : "РЕГИСТРАЦИЯ"}
+              </button>
+
+              <button
+                className={
+                  styles.linkBtn
+                }
+                onClick={() =>
+                  setMode(
+                    mode ===
+                      "login"
+                      ? "register"
+                      : "login"
+                  )
+                }
+              >
+                {mode ===
+                "login"
+                  ? "Регистрация"
+                  : "Уже есть аккаунт? Вход"}
+              </button>
+            </>
+          ) : (
+            <>
+              <input
+                className={
+                  styles.input
+                }
+                placeholder="Код из SMS"
+                value={code}
+                onChange={(e) =>
+                  setCode(
+                    e.target
+                      .value
+                  )
+                }
+              />
+
+              <button
+                className={
+                  styles.button
+                }
+                onClick={
+                  verifyOtp
+                }
+              >
+                Подтвердить
+              </button>
+            </>
+          )}
+
+        </div>
+
+      </section>
+
+    </main>
+  );
+}
