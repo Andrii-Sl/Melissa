@@ -1,65 +1,48 @@
-"use client";
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
+import styles from "./passport.module.css";
 
 export const dynamic =
   "force-dynamic";
 
-import { useState } from "react";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { supabase } from "@/lib/supabase";
-import styles from "./passport.module.css";
+type Props = {
+  searchParams: {
+    vin?: string;
+    phone?: string;
+  };
+};
 
-export default function PassportPage() {
-  const params =
-    useSearchParams();
-
+export default function PassportPage({
+  searchParams,
+}: Props) {
   const vin =
-    params.get("vin") || "";
+    searchParams.vin || "";
 
   const phone =
-    params.get("phone") || "";
+    searchParams.phone || "";
 
-  const [search, setSearch] =
-    useState("");
+  async function createLead(
+    formData: FormData
+  ) {
+    "use server";
 
-  const [loading, setLoading] =
-    useState(false);
+    const query =
+      String(
+        formData.get("query")
+      ) || "";
 
-  const [result, setResult] =
-    useState(false);
+    if (!query) return;
 
-  const [requestId, setRequestId] =
-    useState<number | null>(null);
-
-  async function handleSearch() {
-    if (!search) return;
-
-    setLoading(true);
-
-    const { data } =
-      await supabase
-        .from("requests")
-        .insert([
-          {
-            vin,
-            phone,
-            part_query: search,
-            product_name:
-              "Brembo Brake Pads",
-            part_number:
-              "P85120",
-            status: "new",
-          },
-        ])
-        .select()
-        .single();
-
-    if (data) {
-      setRequestId(data.id);
-      setResult(true);
-    }
-
-    setLoading(false);
+    await supabase
+      .from("requests")
+      .insert([
+        {
+          vin,
+          phone,
+          part_query: query,
+          status: "new",
+        },
+      ]);
   }
 
   return (
@@ -96,6 +79,7 @@ export default function PassportPage() {
         <div className={styles.grid}>
 
           <div className={styles.card}>
+
             <div className={styles.label}>
               ПАСПОРТ АВТО
             </div>
@@ -115,9 +99,11 @@ export default function PassportPage() {
                 {phone}
               </p>
             </div>
+
           </div>
 
           <div className={styles.card}>
+
             <div className={styles.label}>
               ПОИСК ДЕТАЛИ
             </div>
@@ -126,72 +112,26 @@ export default function PassportPage() {
               TecDoc Search
             </h2>
 
-            <input
-              className={styles.input}
-              placeholder="Введите название детали"
-              value={search}
-              onChange={(e) =>
-                setSearch(
-                  e.target.value
-                )
-              }
-            />
+            <form action={createLead}>
 
-            <button
-              className={styles.button}
-              onClick={
-                handleSearch
-              }
-            >
-              {loading
-                ? "ПОИСК..."
-                : "ИСКАТЬ"}
-            </button>
+              <input
+                name="query"
+                className={styles.input}
+                placeholder="Введите название детали"
+              />
+
+              <button
+                className={styles.button}
+                type="submit"
+              >
+                ИСКАТЬ
+              </button>
+
+            </form>
+
           </div>
 
         </div>
-
-        {result && (
-          <div className={styles.result}>
-
-            <img
-              src="/product.jpg"
-              alt="product"
-              className={styles.photo}
-            />
-
-            <div>
-
-              <div className={styles.label}>
-                НАЙДЕНО
-              </div>
-
-              <h3 className={styles.product}>
-                Brembo Brake Pads
-              </h3>
-
-              <p>Артикул: P85120</p>
-
-              <p>
-                Подходит:
-                Audi A4 / A5 / Q5
-              </p>
-
-              <p>Цена: —</p>
-
-              <p>Наличие: —</p>
-
-              <Link
-                href={`/login?request=${requestId}`}
-                className={styles.authBtn}
-              >
-                Пройти авторизацию
-              </Link>
-
-            </div>
-
-          </div>
-        )}
 
       </section>
 
