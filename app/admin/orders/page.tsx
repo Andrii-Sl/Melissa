@@ -1,37 +1,30 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { supabase } from "../../../lib/supabase";
 import Footer from "../../../components/Footer";
 import styles from "./orders.module.css";
 
 export default function AdminOrdersPage() {
-  const orders = [
-    {
-      id: 1045,
-      client: "Александр",
-      phone: "+7 700 000 0001",
-      part: "Audi A6 тормозной диск",
-      status: "Новая"
-    },
-    {
-      id: 1046,
-      client: "Руслан",
-      phone: "+7 700 000 0002",
-      part: "BMW X5 фильтр",
-      status: "В работе"
-    },
-    {
-      id: 1047,
-      client: "Игорь",
-      phone: "+7 700 000 0003",
-      part: "Mercedes амортизатор",
-      status: "Цена готова"
-    },
-    {
-      id: 1048,
-      client: "Данияр",
-      phone: "+7 700 000 0004",
-      part: "VW Passat рычаг",
-      status: "Отправлено"
+  const [orders, setOrders] = useState<any[]>([]);
+
+  useEffect(() => {
+    loadOrders();
+  }, []);
+
+  async function loadOrders() {
+    const { data, error } =
+      await supabase
+        .from("requests")
+        .select("*")
+        .order("id", {
+          ascending: false
+        });
+
+    if (!error && data) {
+      setOrders(data);
     }
-  ];
+  }
 
   return (
     <main className={styles.page}>
@@ -83,18 +76,24 @@ export default function AdminOrdersPage() {
                 </div>
 
                 <p>
-                  {item.client}
+                  {item.client_name || "Без имени"}
                 </p>
 
                 <p>
-                  {item.phone}
+                  {item.phone || "-"}
                 </p>
 
                 <p>
-                  {item.part}
+                  {item.part_name || item.vin || "-"}
                 </p>
               </a>
             ))}
+
+            {orders.length === 0 && (
+              <div className={styles.card}>
+                Пока нет заявок
+              </div>
+            )}
           </div>
 
         </div>
