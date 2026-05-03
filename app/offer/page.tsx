@@ -1,133 +1,352 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "../../lib/supabase";
-import Footer from "../../components/Footer";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 import styles from "./offer.module.css";
 
+type Item = {
+  description: string;
+  number: string;
+};
+
 export default function OfferPage() {
-  const router = useRouter();
+  const params =
+    useSearchParams();
+
+  const vin =
+    params.get("vin") || "";
+
+  const phone =
+    params.get("phone") || "";
 
   const [name, setName] =
     useState("");
 
-  const [phone, setPhone] =
+  const [surname, setSurname] =
     useState("");
 
-  const [vin, setVin] =
+  const [items, setItems] =
+    useState<Item[]>([
+      {
+        description: "",
+        number: "",
+      },
+    ]);
+
+  const [done, setDone] =
+    useState(false);
+
+  const [requestId, setRequestId] =
     useState("");
 
-  const [part, setPart] =
-    useState("");
+  function addItem() {
+    setItems([
+      ...items,
+      {
+        description: "",
+        number: "",
+      },
+    ]);
+  }
 
-  const [comment, setComment] =
-    useState("");
+  function updateItem(
+    index: number,
+    field:
+      | "description"
+      | "number",
+    value: string
+  ) {
+    const copy = [...items];
+    copy[index][field] =
+      value;
+    setItems(copy);
+  }
 
-  async function sendRequest() {
-    if (!phone) {
-      alert("Введите телефон");
-      return;
-    }
-
-    const {
-      data: { session }
-    } =
-      await supabase.auth.getSession();
-
-    const userId =
-      session?.user?.id || null;
-
-    const { data, error } =
+  async function sendForm() {
+    const { data } =
       await supabase
         .from("requests")
         .insert([
           {
-            user_id: userId,
-            client_name: name,
-            phone,
+            full_name:
+              name +
+              " " +
+              surname,
             vin,
-            part_name: part,
-            comment,
-            status: "Новая"
-          }
+            phone,
+            status: "new",
+          },
         ])
         .select()
         .single();
 
-    if (error || !data) {
-      alert("Ошибка отправки");
-      return;
+    if (!data) return;
+
+    for (const item of items) {
+      await supabase
+        .from(
+          "request_items"
+        )
+        .insert([
+          {
+            request_id:
+              data.id,
+            description:
+              item.description,
+            part_number:
+              item.number,
+          },
+        ]);
     }
 
-    router.push(
-      "/success?id=" + data.id
+    setRequestId(
+      String(data.id)
+    );
+
+    setDone(true);
+  }
+
+  if (done) {
+    return (
+      <main
+        className={
+          styles.page
+        }
+      >
+        <div
+          className={
+            styles.success
+          }
+        >
+          <h1>
+            Благодарим!
+          </h1>
+
+          <p>
+            Ваш запрос №
+            {requestId}
+            принят.
+          </p>
+
+          <p>
+            Информацию о
+            стоимости и
+            наличии мы
+            сообщим в
+            личном кабинете.
+          </p>
+
+          <p>
+            Вы будете
+            уведомлены
+            по SMS.
+          </p>
+
+          <Link
+            href="/login"
+            className={
+              styles.button
+            }
+          >
+            Личный кабинет
+          </Link>
+
+        </div>
+      </main>
     );
   }
 
   return (
     <main className={styles.page}>
-      <section className={styles.content}>
-        <div className={styles.box}>
 
-          <div className={styles.label}>
-            НОВАЯ ЗАЯВКА
+      <header
+        className={
+          styles.header
+        }
+      >
+
+        <Link
+          href="/"
+          className={
+            styles.logoWrap
+          }
+        >
+          <img
+            src="/logo-final.png"
+            className={
+              styles.logo
+            }
+            alt="logo"
+          />
+
+          <span>
+            AutoParts EU
+          </span>
+        </Link>
+
+        <Link
+          href="/"
+          className={
+            styles.homeBtn
+          }
+        >
+          На главную
+        </Link>
+
+      </header>
+
+      <section
+        className={
+          styles.hero
+        }
+      >
+
+        <div
+          className={
+            styles.card
+          }
+        >
+
+          <div
+            className={
+              styles.label
+            }
+          >
+            ЗАПРОС ЗАПЧАСТЕЙ
           </div>
 
-          <h1>
-            Получить предложение
+          <h1
+            className={
+              styles.title
+            }
+          >
+            Отправить запрос
           </h1>
 
           <input
-            placeholder="Ваше имя"
+            className={
+              styles.input
+            }
+            placeholder="Имя"
             value={name}
             onChange={(e) =>
-              setName(e.target.value)
+              setName(
+                e.target
+                  .value
+              )
             }
           />
 
           <input
-            placeholder="Телефон *"
-            value={phone}
+            className={
+              styles.input
+            }
+            placeholder="Фамилия"
+            value={surname}
             onChange={(e) =>
-              setPhone(e.target.value)
+              setSurname(
+                e.target
+                  .value
+              )
             }
           />
 
           <input
-            placeholder="VIN код"
+            className={
+              styles.input
+            }
             value={vin}
-            onChange={(e) =>
-              setVin(e.target.value)
-            }
+            readOnly
           />
 
           <input
-            placeholder="Название детали"
-            value={part}
-            onChange={(e) =>
-              setPart(e.target.value)
+            className={
+              styles.input
             }
+            value={phone}
+            readOnly
           />
 
-          <textarea
-            placeholder="Комментарий"
-            value={comment}
-            onChange={(e) =>
-              setComment(e.target.value)
-            }
-          />
+          {items.map(
+            (
+              item,
+              index
+            ) => (
+              <div
+                key={index}
+                className={
+                  styles.row
+                }
+              >
+
+                <input
+                  className={
+                    styles.input
+                  }
+                  placeholder="Описание детали"
+                  value={
+                    item.description
+                  }
+                  onChange={(e) =>
+                    updateItem(
+                      index,
+                      "description",
+                      e.target
+                        .value
+                    )
+                  }
+                />
+
+                <input
+                  className={
+                    styles.input
+                  }
+                  placeholder="Каталожный номер"
+                  value={
+                    item.number
+                  }
+                  onChange={(e) =>
+                    updateItem(
+                      index,
+                      "number",
+                      e.target
+                        .value
+                    )
+                  }
+                />
+
+              </div>
+            )
+          )}
 
           <button
-            onClick={sendRequest}
+            className={
+              styles.plus
+            }
+            onClick={
+              addItem
+            }
           >
-            ОТПРАВИТЬ
+            +
+          </button>
+
+          <button
+            className={
+              styles.button
+            }
+            onClick={
+              sendForm
+            }
+          >
+            ВЫСЛАТЬ ЗАПРОС
           </button>
 
         </div>
+
       </section>
 
-      <Footer />
     </main>
   );
 }
