@@ -30,7 +30,7 @@ export default function OfferPage() {
       return;
     }
 
-    const { error } =
+    const { data, error } =
       await supabase
         .from("requests")
         .insert([
@@ -42,21 +42,23 @@ export default function OfferPage() {
             comment,
             status: "Новая"
           }
-        ]);
+        ])
+        .select()
+        .single();
 
-    if (error) {
+    if (error || !data) {
       alert("Ошибка отправки");
       return;
     }
-
-    alert("Заявка отправлена");
 
     localStorage.setItem(
       "phone",
       phone
     );
 
-    router.push("/success");
+    router.push(
+      "/success?id=" + data.id
+    );
   }
 
   return (
