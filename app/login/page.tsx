@@ -9,139 +9,104 @@ import styles from "./login.module.css";
 export default function LoginPage() {
   const router = useRouter();
 
-  const [mode, setMode] = useState("login");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [phone, setPhone] =
+    useState("");
 
-  async function handleAuth() {
-    if (!email || !password) {
-      alert("Введите данные");
+  const [code, setCode] =
+    useState("");
+
+  const [step, setStep] =
+    useState(1);
+
+  async function sendCode() {
+    const { error } =
+      await supabase.auth.signInWithOtp({
+        phone
+      });
+
+    if (error) {
+      alert(error.message);
       return;
     }
 
-    if (mode === "login") {
-      const { error } =
-        await supabase.auth.signInWithPassword({
-          email,
-          password
-        });
+    alert("Код отправлен");
+    setStep(2);
+  }
 
-      if (error) {
-        alert(error.message);
-        return;
-      }
+  async function verifyCode() {
+    const { error } =
+      await supabase.auth.verifyOtp({
+        phone,
+        token: code,
+        type: "sms"
+      });
 
-      router.push("/dashboard");
+    if (error) {
+      alert(error.message);
+      return;
     }
 
-    if (mode === "register") {
-      const { error } =
-        await supabase.auth.signUp({
-          email,
-          password
-        });
-
-      if (error) {
-        alert(error.message);
-        return;
-      }
-
-      router.push("/dashboard");
-    }
+    router.push("/dashboard");
   }
 
   return (
     <main className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.container}>
-
-          <a href="/" className={styles.logoWrap}>
-            <img
-              src="/logo-final.png"
-              alt="AutoParts EU"
-              className={styles.logoImg}
-            />
-          </a>
-
-          <a
-            href="/"
-            className={styles.backBtn}
-          >
-            На главную
-          </a>
-
-        </div>
-      </header>
-
       <section className={styles.hero}>
         <div className={styles.overlay}>
-          <div className={styles.card}>
 
+          <div className={styles.card}>
             <div className={styles.titleMini}>
-              {mode === "login"
-                ? "ВХОД"
-                : "РЕГИСТРАЦИЯ"}
+              PHONE LOGIN
             </div>
 
             <h1>
-              {mode === "login"
-                ? "Личный кабинет"
-                : "Создать аккаунт"}
+              Личный кабинет
             </h1>
 
-            <p>
-              Управляйте заявками
-              в одном месте.
-            </p>
-
-            <input
-              type="email"
-              placeholder="E-mail"
-              value={email}
-              onChange={(e) =>
-                setEmail(e.target.value)
-              }
-            />
-
-            <input
-              type="password"
-              placeholder="Пароль"
-              value={password}
-              onChange={(e) =>
-                setPassword(e.target.value)
-              }
-            />
-
-            <button
-              className={styles.loginBtn}
-              onClick={handleAuth}
-            >
-              {mode === "login"
-                ? "ВОЙТИ"
-                : "ЗАРЕГИСТРИРОВАТЬСЯ"}
-            </button>
-
-            <div className={styles.links}>
-              {mode === "login" ? (
-                <button
-                  onClick={() =>
-                    setMode("register")
+            {step === 1 && (
+              <>
+                <input
+                  placeholder="+77771234567"
+                  value={phone}
+                  onChange={(e) =>
+                    setPhone(
+                      e.target.value
+                    )
                   }
-                >
-                  Регистрация
-                </button>
-              ) : (
+                />
+
                 <button
-                  onClick={() =>
-                    setMode("login")
-                  }
+                  className={styles.loginBtn}
+                  onClick={sendCode}
                 >
-                  Уже есть аккаунт?
+                  Получить код
                 </button>
-              )}
-            </div>
+              </>
+            )}
+
+            {step === 2 && (
+              <>
+                <input
+                  placeholder="Код из SMS"
+                  value={code}
+                  onChange={(e) =>
+                    setCode(
+                      e.target.value
+                    )
+                  }
+                />
+
+                <button
+                  className={styles.loginBtn}
+                  onClick={verifyCode}
+                >
+                  Войти
+                </button>
+              </>
+            )}
 
           </div>
+
         </div>
       </section>
 
