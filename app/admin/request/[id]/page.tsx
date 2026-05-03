@@ -1,7 +1,65 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { supabase } from "../../../../lib/supabase";
 import Footer from "../../../../components/Footer";
 import styles from "./request.module.css";
 
 export default function AdminRequestPage() {
+  const params = useParams();
+  const id = params.id;
+
+  const [item, setItem] = useState<any>(null);
+
+  const [status, setStatus] =
+    useState("Новая");
+
+  const [price, setPrice] =
+    useState("");
+
+  const [comment, setComment] =
+    useState("");
+
+  useEffect(() => {
+    loadRequest();
+  }, []);
+
+  async function loadRequest() {
+    const { data } =
+      await supabase
+        .from("requests")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+    if (data) {
+      setItem(data);
+      setStatus(data.status || "Новая");
+      setPrice(data.price || "");
+      setComment(
+        data.manager_comment || ""
+      );
+    }
+  }
+
+  async function saveRequest() {
+    await supabase
+      .from("requests")
+      .update({
+        status,
+        price,
+        manager_comment: comment
+      })
+      .eq("id", id);
+
+    alert("Сохранено");
+  }
+
+  if (!item) {
+    return <div>Загрузка...</div>;
+  }
+
   return (
     <main className={styles.page}>
       <header className={styles.header}>
@@ -29,7 +87,7 @@ export default function AdminRequestPage() {
         <div className={styles.container}>
 
           <div className={styles.label}>
-            ЗАЯВКА #1045
+            ЗАЯВКА #{item.id}
           </div>
 
           <h1>Карточка клиента</h1>
@@ -38,42 +96,50 @@ export default function AdminRequestPage() {
 
             <div className={styles.card}>
               <h3>Клиент</h3>
-              <p>Александр</p>
+              <p>
+                {item.client_name ||
+                  "Без имени"}
+              </p>
 
               <h3>Телефон</h3>
-              <p>+7 700 000 0001</p>
+              <p>
+                {item.phone || "-"}
+              </p>
 
               <h3>Email</h3>
-              <p>alex@mail.com</p>
+              <p>
+                {item.email || "-"}
+              </p>
             </div>
 
             <div className={styles.card}>
-              <h3>Запрос</h3>
-              <p>
-                Audi A6 / VIN:
-                WAUZZZ4F...
-              </p>
+              <h3>VIN</h3>
+              <p>{item.vin || "-"}</p>
 
               <h3>Деталь</h3>
               <p>
-                Тормозной диск
-                передний
+                {item.part_name || "-"}
               </p>
 
               <h3>Комментарий</h3>
               <p>
-                Нужна быстрая доставка
+                {item.comment || "-"}
               </p>
             </div>
 
             <div className={styles.card}>
               <h3>CRM</h3>
 
-              <label>
-                Статус
-              </label>
+              <label>Статус</label>
 
-              <select>
+              <select
+                value={status}
+                onChange={(e) =>
+                  setStatus(
+                    e.target.value
+                  )
+                }
+              >
                 <option>
                   Новая
                 </option>
@@ -96,7 +162,12 @@ export default function AdminRequestPage() {
               </label>
 
               <input
-                placeholder="129"
+                value={price}
+                onChange={(e) =>
+                  setPrice(
+                    e.target.value
+                  )
+                }
               />
 
               <label>
@@ -104,12 +175,22 @@ export default function AdminRequestPage() {
               </label>
 
               <textarea
-                placeholder="Написать клиенту..."
+                value={comment}
+                onChange={(e) =>
+                  setComment(
+                    e.target.value
+                  )
+                }
               />
 
-              <button>
+              <button
+                onClick={
+                  saveRequest
+                }
+              >
                 СОХРАНИТЬ
               </button>
+
             </div>
 
           </div>
