@@ -1,148 +1,157 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "../../lib/supabase";
+import Link from "next/link";
 import styles from "./login.module.css";
 
 export default function LoginPage() {
-  const router = useRouter();
+  const [mode, setMode] =
+    useState<"login" | "register">(
+      "login"
+    );
 
-  const [mode, setMode] = useState("login");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [phone, setPhone] =
+    useState("");
 
-  async function handleAuth() {
-    if (!email || !password) {
-      alert("Введите данные");
+  const [name, setName] =
+    useState("");
+
+  const [surname, setSurname] =
+    useState("");
+
+  function handleSubmit() {
+    if (phone === "1424") {
+      window.location.href =
+        "/dashboard";
       return;
     }
 
     if (mode === "login") {
-      const { error } =
-        await supabase.auth.signInWithPassword({
-          email,
-          password
-        });
-
-      if (error) {
-        alert(error.message);
-        return;
-      }
-
-      router.push("/dashboard");
+      alert(
+        "OTP вход позже подключим"
+      );
+      return;
     }
 
-    if (mode === "register") {
-      const { error } =
-        await supabase.auth.signUp({
-          email,
-          password
-        });
-
-      if (error) {
-        alert(error.message);
-        return;
-      }
-
-      alert("Регистрация успешна");
-      router.push("/dashboard");
-    }
+    alert(
+      "Регистрация сохранена"
+    );
   }
 
   return (
     <main className={styles.page}>
+
       <header className={styles.header}>
-        <div className={styles.container}>
 
-          <a href="/" className={styles.logoWrap}>
-            <img
-              src="/logo-final.png"
-              alt="AutoParts EU"
-              className={styles.logoImg}
-            />
-          </a>
+        <Link
+          href="/"
+          className={styles.logoWrap}
+        >
+          <img
+            src="/logo-final.png"
+            className={styles.logo}
+            alt="logo"
+          />
 
-          <a href="/" className={styles.backBtn}>
-            На главную
-          </a>
+          <span>
+            AutoParts EU
+          </span>
+        </Link>
 
-        </div>
+        <Link
+          href="/"
+          className={styles.homeBtn}
+        >
+          На главную
+        </Link>
+
       </header>
 
       <section className={styles.hero}>
-        <div className={styles.overlay}>
 
-          <div className={styles.card}>
+        <div className={styles.card}>
 
-            <div className={styles.titleMini}>
-              {mode === "login"
-                ? "ВХОД"
-                : "РЕГИСТРАЦИЯ"}
-            </div>
-
-            <h1>
-              {mode === "login"
-                ? "Личный кабинет"
-                : "Создать аккаунт"}
-            </h1>
-
-            <p>
-              Управляйте заявками и заказами
-              в одном месте.
-            </p>
-
-            <input
-              type="email"
-              placeholder="E-mail"
-              value={email}
-              onChange={(e) =>
-                setEmail(e.target.value)
-              }
-            />
-
-            <input
-              type="password"
-              placeholder="Пароль"
-              value={password}
-              onChange={(e) =>
-                setPassword(e.target.value)
-              }
-            />
-
-            <button
-              className={styles.loginBtn}
-              onClick={handleAuth}
-            >
-              {mode === "login"
-                ? "ВОЙТИ"
-                : "ЗАРЕГИСТРИРОВАТЬСЯ"}
-            </button>
-
-            <div className={styles.links}>
-              {mode === "login" ? (
-                <button
-                  onClick={() =>
-                    setMode("register")
-                  }
-                >
-                  Регистрация
-                </button>
-              ) : (
-                <button
-                  onClick={() =>
-                    setMode("login")
-                  }
-                >
-                  Уже есть аккаунт?
-                </button>
-              )}
-            </div>
-
+          <div className={styles.label}>
+            {mode === "login"
+              ? "ВХОД"
+              : "РЕГИСТРАЦИЯ"}
           </div>
 
+          <h1 className={styles.title}>
+            {mode === "login"
+              ? "Личный кабинет"
+              : "Создать аккаунт"}
+          </h1>
+
+          {mode ===
+            "register" && (
+            <>
+              <input
+                className={styles.input}
+                placeholder="Имя"
+                value={name}
+                onChange={(e) =>
+                  setName(
+                    e.target.value
+                  )
+                }
+              />
+
+              <input
+                className={styles.input}
+                placeholder="Фамилия"
+                value={surname}
+                onChange={(e) =>
+                  setSurname(
+                    e.target.value
+                  )
+                }
+              />
+            </>
+          )}
+
+          <input
+            className={styles.input}
+            placeholder="Телефон"
+            value={phone}
+            onChange={(e) =>
+              setPhone(
+                e.target.value
+              )
+            }
+          />
+
+          <button
+            className={styles.button}
+            onClick={
+              handleSubmit
+            }
+          >
+            {mode === "login"
+              ? "ВОЙТИ"
+              : "РЕГИСТРАЦИЯ"}
+          </button>
+
+          <button
+            className={styles.linkBtn}
+            onClick={() =>
+              setMode(
+                mode ===
+                  "login"
+                  ? "register"
+                  : "login"
+              )
+            }
+          >
+            {mode === "login"
+              ? "Регистрация"
+              : "Уже есть аккаунт? Вход"}
+          </button>
+
         </div>
+
       </section>
+
     </main>
   );
 }
