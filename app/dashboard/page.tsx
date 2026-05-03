@@ -2,137 +2,118 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import styles from "./dashboard.module.css";
+import styles from "./request.module.css";
 
-export default function DashboardPage() {
-  const [user, setUser] = useState<any>(null);
-  const [profile, setProfile] =
+export default function RequestPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const [item, setItem] =
     useState<any>(null);
 
-  const [orders, setOrders] =
-    useState<any[]>([]);
-
   useEffect(() => {
-    loadData();
+    loadRequest();
   }, []);
 
-  async function loadData() {
-    const {
-      data: { session },
-    } =
-      await supabase.auth.getSession();
-
-    if (!session) {
-      window.location.href =
-        "/login";
-      return;
-    }
-
-    const currentUser =
-      session.user;
-
-    setUser(currentUser);
-
-    const { data: p } =
-      await supabase
-        .from("profiles")
-        .select("*")
-        .eq(
-          "user_id",
-          currentUser.id
-        )
-        .single();
-
-    setProfile(p);
-
-    const { data: r } =
+  async function loadRequest() {
+    const { data } =
       await supabase
         .from("requests")
         .select("*")
-        .eq(
-          "user_id",
-          currentUser.id
-        )
-        .order("id", {
-          ascending: false,
-        });
+        .eq("id", params.id)
+        .single();
 
-    setOrders(r || []);
+    setItem(data);
   }
 
-  async function logout() {
-    await supabase.auth.signOut();
-
-    window.location.href =
-      "/";
+  if (!item) {
+    return (
+      <main className={styles.page}>
+        <div className={styles.wrap}>
+          Загрузка...
+        </div>
+      </main>
+    );
   }
+
+  const steps = [
+    "Новая",
+    "В работе",
+    "Цена готова",
+    "Оплачено",
+    "Отправлено",
+  ];
 
   return (
     <main className={styles.page}>
       <section className={styles.wrap}>
 
-        <div className={styles.top}>
-          <div>
-            <div className={styles.label}>
-              ЛИЧНЫЙ КАБИНЕТ
-            </div>
+        <a
+          href="/dashboard"
+          className={styles.back}
+        >
+          ← Назад в кабинет
+        </a>
 
-            <h1 className={styles.title}>
-              {profile?.full_name ||
-                "Клиент"}
-            </h1>
-
-            <p className={styles.phone}>
-              {profile?.phone ||
-                user?.phone}
-            </p>
-          </div>
-
-          <button
-            onClick={logout}
-            className={
-              styles.logout
-            }
-          >
-            Выйти
-          </button>
+        <div className={styles.label}>
+          ЗАЯВКА
         </div>
 
-        <div className={styles.list}>
-          {orders.map((item) => (
-            <a
-              key={item.id}
-              href={`/dashboard/request/${item.id}`}
-              className={
-                styles.card
-              }
-            >
-              <strong>
-                Заявка #
-                {item.id}
-              </strong>
+        <h1 className={styles.title}>
+          #{item.id}
+        </h1>
 
-              <p>
-                {item.part_name ||
-                  item.vin ||
-                  "Запрос"}
-              </p>
+        <div className={styles.card}>
 
-              <span>
-                {item.status}
-              </span>
-            </a>
-          ))}
+          <p>
+            <strong>
+              Деталь:
+            </strong>{" "}
+            {item.part_name ||
+              "—"}
+          </p>
 
-          {orders.length === 0 && (
+          <p>
+            <strong>
+              VIN:
+            </strong>{" "}
+            {item.vin || "—"}
+          </p>
+
+          <p>
+            <strong>
+              Цена:
+            </strong>{" "}
+            {item.price
+              ? item.price + " €"
+              : "ожидается"}
+          </p>
+
+          <p>
+            <strong>
+              Комментарий:
+            </strong>{" "}
+            {item.manager_comment ||
+              "Нет комментария"}
+          </p>
+
+        </div>
+
+        <div className={styles.steps}>
+          {steps.map((step) => (
             <div
+              key={step}
               className={
-                styles.empty
+                item.status ===
+                  step
+                  ? styles.active
+                  : styles.step
               }
             >
-              У вас пока нет заявок
+              {step}
             </div>
-          )}
+          ))}
         </div>
 
       </section>
