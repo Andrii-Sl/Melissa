@@ -22,10 +22,7 @@ export default function LoginPage() {
     useState(false);
 
   async function sendOtp() {
-    if (!phone) {
-      alert("Введите телефон");
-      return;
-    }
+    if (!phone) return;
 
     setLoading(true);
 
@@ -60,8 +57,6 @@ export default function LoginPage() {
 
       window.location.href =
         "/dashboard";
-    } else {
-      alert("Неверный код");
     }
 
     setLoading(false);
@@ -69,65 +64,47 @@ export default function LoginPage() {
 
   return (
     <main className={styles.page}>
-      <div className={styles.overlay}>
 
-        <header className={styles.topBar}>
+      <header className={styles.header}>
 
-          <Link
-            href="/"
-            className={styles.logoWrap}
-          >
-            <img
-              src="/logo-final.png"
-              alt="AutoParts EU"
-              className={styles.logo}
-            />
+        <Link
+          href="/"
+          className={styles.logoWrap}
+        >
+          <img
+            src="/logo-final.png"
+            alt="logo"
+            className={styles.logo}
+          />
+        </Link>
 
-            <span>
-              AutoParts EU
-            </span>
-          </Link>
+        <Link
+          href="/"
+          className={styles.homeBtn}
+        >
+          На главную
+        </Link>
 
-          <div className={styles.actions}>
+      </header>
 
-            <Link
-              href="/"
-              className={styles.navBtn}
-            >
-              На главную
-            </Link>
-
-            <button
-              className={styles.navBtnRed}
-              onClick={() => {
-                setMode("login");
-                setStep("auth");
-              }}
-            >
-              Авторизация
-            </button>
-
-          </div>
-
-        </header>
-
-        <section className={styles.card}>
+      <section className={styles.hero}>
+        <div className={styles.card}>
 
           <div className={styles.label}>
             {mode === "login"
-              ? "АВТОРИЗАЦИЯ"
+              ? "ВХОД"
               : "РЕГИСТРАЦИЯ"}
           </div>
 
           <h1 className={styles.title}>
             {mode === "login"
-              ? "Паспорт продукта"
-              : "Создать аккаунт"}
+              ? "Личный кабинет"
+              : "Регистрация"}
           </h1>
 
           <p className={styles.text}>
-            Получите доступ к статусу
-            заявки, цене и деталям заказа.
+            Управляйте заявками
+            в одном месте.
           </p>
 
           {step === "auth" ? (
@@ -158,57 +135,3 @@ export default function LoginPage() {
 
               <button
                 className={styles.button}
-                onClick={sendOtp}
-              >
-                {loading
-                  ? "Отправка..."
-                  : mode === "login"
-                  ? "ВОЙТИ"
-                  : "ЗАРЕГИСТРИРОВАТЬСЯ"}
-              </button>
-
-              <button
-                className={styles.linkBtn}
-                onClick={() =>
-                  setMode(
-                    mode === "login"
-                      ? "register"
-                      : "login"
-                  )
-                }
-              >
-                {mode === "login"
-                  ? "Регистрация"
-                  : "Уже есть аккаунт? Войти"}
-              </button>
-            </>
-          ) : (
-            <>
-              <input
-                className={styles.input}
-                placeholder="Код из SMS"
-                value={code}
-                onChange={(e) =>
-                  setCode(
-                    e.target.value
-                  )
-                }
-              />
-
-              <button
-                className={styles.button}
-                onClick={verifyOtp}
-              >
-                {loading
-                  ? "Проверка..."
-                  : "ПОДТВЕРДИТЬ"}
-              </button>
-            </>
-          )}
-
-        </section>
-
-      </div>
-    </main>
-  );
-}
