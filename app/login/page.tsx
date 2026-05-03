@@ -70,6 +70,31 @@ export default function LoginPage() {
   return (
     <main className={styles.page}>
       <div className={styles.overlay}>
+
+        <div className={styles.topBar}>
+          <Link
+            href="/"
+            className={styles.logoWrap}
+          >
+            <img
+              src="/logo-final.png"
+              alt="AutoParts EU"
+              className={styles.logo}
+            />
+
+            <span>
+              AutoParts EU
+            </span>
+          </Link>
+
+          <Link
+            href="/"
+            className={styles.homeBtn}
+          >
+            На главную
+          </Link>
+        </div>
+
         <div className={styles.card}>
 
           <div className={styles.label}>
@@ -85,7 +110,8 @@ export default function LoginPage() {
           </h1>
 
           <p className={styles.text}>
-            Управляйте заявками в одном месте.
+            Управляйте заявками
+            в одном месте.
           </p>
 
           {step === "auth" ? (
@@ -179,13 +205,6 @@ export default function LoginPage() {
               </button>
             </>
           )}
-
-          <Link
-            href="/"
-            className={styles.back}
-          >
-            ← На главную
-          </Link>
 
         </div>
       </div>
