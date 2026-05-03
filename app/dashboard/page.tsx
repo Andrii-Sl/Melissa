@@ -1,124 +1,141 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "../../lib/supabase";
-import Footer from "../../components/Footer";
+import { supabase } from "@/lib/supabase";
 import styles from "./dashboard.module.css";
 
 export default function DashboardPage() {
-  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] =
+    useState<any>(null);
 
   const [orders, setOrders] =
     useState<any[]>([]);
 
-  const [phone, setPhone] =
-    useState("");
-
   useEffect(() => {
-    checkUser();
+    loadData();
   }, []);
 
-  async function checkUser() {
+  async function loadData() {
     const {
-      data: { session }
+      data: { session },
     } =
       await supabase.auth.getSession();
 
     if (!session) {
-      router.push("/login");
+      window.location.href =
+        "/login";
       return;
     }
 
-    const userPhone =
-      session.user.phone || "";
+    const currentUser =
+      session.user;
 
-    setPhone(userPhone);
+    setUser(currentUser);
 
-    loadOrders(userPhone);
-  }
+    const { data: p } =
+      await supabase
+        .from("profiles")
+        .select("*")
+        .eq(
+          "user_id",
+          currentUser.id
+        )
+        .single();
 
-  async function loadOrders(
-    userPhone: string
-  ) {
-    const { data } =
+    setProfile(p);
+
+    const { data: r } =
       await supabase
         .from("requests")
         .select("*")
-        .eq("phone", userPhone)
+        .eq(
+          "user_id",
+          currentUser.id
+        )
         .order("id", {
-          ascending: false
+          ascending: false,
         });
 
-    if (data) {
-      setOrders(data);
-    }
+    setOrders(r || []);
   }
 
   async function logout() {
     await supabase.auth.signOut();
-    router.push("/");
+
+    window.location.href =
+      "/";
   }
 
   return (
     <main className={styles.page}>
-      <section className={styles.content}>
-        <div className={styles.container}>
+      <section className={styles.wrap}>
 
-          <div className={styles.topBar}>
-            <div>
-              <div className={styles.label}>
-                ЛИЧНЫЙ КАБИНЕТ
-              </div>
-
-              <h1>Мои заявки</h1>
-
-              <p>
-                {phone}
-              </p>
+        <div className={styles.top}>
+          <div>
+            <div className={styles.label}>
+              ЛИЧНЫЙ КАБИНЕТ
             </div>
 
-            <button
-              onClick={logout}
-            >
-              Выйти
-            </button>
+            <h1 className={styles.title}>
+              {profile?.full_name ||
+                "Клиент"}
+            </h1>
+
+            <p className={styles.phone}>
+              {profile?.phone ||
+                user?.phone}
+            </p>
           </div>
 
-          <div className={styles.list}>
-            {orders.map((item) => (
-              <a
-                key={item.id}
-                href={`/dashboard/request/${item.id}`}
-                className={styles.card}
-              >
-                <strong>
-                  #{item.id}
-                </strong>
-
-                <p>
-                  {item.part_name ||
-                    item.vin ||
-                    "Запрос"}
-                </p>
-
-                <span>
-                  {item.status}
-                </span>
-              </a>
-            ))}
-
-            {orders.length === 0 && (
-              <div className={styles.card}>
-                Пока заявок нет
-              </div>
-            )}
-          </div>
-
+          <button
+            onClick={logout}
+            className={
+              styles.logout
+            }
+          >
+            Выйти
+          </button>
         </div>
-      </section>
 
-      <Footer />
+        <div className={styles.list}>
+          {orders.map((item) => (
+            <a
+              key={item.id}
+              href={`/dashboard/request/${item.id}`}
+              className={
+                styles.card
+              }
+            >
+              <strong>
+                Заявка #
+                {item.id}
+              </strong>
+
+              <p>
+                {item.part_name ||
+                  item.vin ||
+                  "Запрос"}
+              </p>
+
+              <span>
+                {item.status}
+              </span>
+            </a>
+          ))}
+
+          {orders.length === 0 && (
+            <div
+              className={
+                styles.empty
+              }
+            >
+              У вас пока нет заявок
+            </div>
+          )}
+        </div>
+
+      </section>
     </main>
   );
 }
