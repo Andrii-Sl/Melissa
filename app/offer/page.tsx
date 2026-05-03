@@ -2,24 +2,30 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import styles from "./offer.module.css";
+
+type Props = {
+  searchParams: {
+    vin?: string;
+    phone?: string;
+  };
+};
 
 type Item = {
   description: string;
   number: string;
 };
 
-export default function OfferPage() {
-  const params =
-    useSearchParams();
+export default function OfferPage({
+  searchParams,
+}: Props) {
 
   const vin =
-    params.get("vin") || "";
+    searchParams.vin || "";
 
   const phone =
-    params.get("phone") || "";
+    searchParams.phone || "";
 
   const [name, setName] =
     useState("");
@@ -65,6 +71,7 @@ export default function OfferPage() {
   }
 
   async function sendForm() {
+
     const { data } =
       await supabase
         .from("requests")
@@ -110,16 +117,9 @@ export default function OfferPage() {
 
   if (done) {
     return (
-      <main
-        className={
-          styles.page
-        }
-      >
-        <div
-          className={
-            styles.success
-          }
-        >
+      <main className={styles.page}>
+        <div className={styles.success}>
+
           <h1>
             Благодарим!
           </h1>
@@ -132,23 +132,18 @@ export default function OfferPage() {
 
           <p>
             Информацию о
-            стоимости и
-            наличии мы
-            сообщим в
-            личном кабинете.
+            стоимости и наличии
+            мы сообщим в личном
+            кабинете.
           </p>
 
           <p>
-            Вы будете
-            уведомлены
-            по SMS.
+            Вы получите SMS.
           </p>
 
           <Link
             href="/login"
-            className={
-              styles.button
-            }
+            className={styles.button}
           >
             Личный кабинет
           </Link>
@@ -161,23 +156,15 @@ export default function OfferPage() {
   return (
     <main className={styles.page}>
 
-      <header
-        className={
-          styles.header
-        }
-      >
+      <header className={styles.header}>
 
         <Link
           href="/"
-          className={
-            styles.logoWrap
-          }
+          className={styles.logoWrap}
         >
           <img
             src="/logo-final.png"
-            className={
-              styles.logo
-            }
+            className={styles.logo}
             alt="logo"
           />
 
@@ -188,83 +175,55 @@ export default function OfferPage() {
 
         <Link
           href="/"
-          className={
-            styles.homeBtn
-          }
+          className={styles.homeBtn}
         >
           На главную
         </Link>
 
       </header>
 
-      <section
-        className={
-          styles.hero
-        }
-      >
+      <section className={styles.hero}>
 
-        <div
-          className={
-            styles.card
-          }
-        >
+        <div className={styles.card}>
 
-          <div
-            className={
-              styles.label
-            }
-          >
-            ЗАПРОС ЗАПЧАСТЕЙ
+          <div className={styles.label}>
+            ЗАПРОС
           </div>
 
-          <h1
-            className={
-              styles.title
-            }
-          >
+          <h1 className={styles.title}>
             Отправить запрос
           </h1>
 
           <input
-            className={
-              styles.input
-            }
+            className={styles.input}
             placeholder="Имя"
             value={name}
             onChange={(e) =>
               setName(
-                e.target
-                  .value
+                e.target.value
               )
             }
           />
 
           <input
-            className={
-              styles.input
-            }
+            className={styles.input}
             placeholder="Фамилия"
             value={surname}
             onChange={(e) =>
               setSurname(
-                e.target
-                  .value
+                e.target.value
               )
             }
           />
 
           <input
-            className={
-              styles.input
-            }
+            className={styles.input}
             value={vin}
             readOnly
           />
 
           <input
-            className={
-              styles.input
-            }
+            className={styles.input}
             value={phone}
             readOnly
           />
@@ -276,43 +235,31 @@ export default function OfferPage() {
             ) => (
               <div
                 key={index}
-                className={
-                  styles.row
-                }
+                className={styles.row}
               >
 
                 <input
-                  className={
-                    styles.input
-                  }
+                  className={styles.input}
                   placeholder="Описание детали"
-                  value={
-                    item.description
-                  }
+                  value={item.description}
                   onChange={(e) =>
                     updateItem(
                       index,
                       "description",
-                      e.target
-                        .value
+                      e.target.value
                     )
                   }
                 />
 
                 <input
-                  className={
-                    styles.input
-                  }
+                  className={styles.input}
                   placeholder="Каталожный номер"
-                  value={
-                    item.number
-                  }
+                  value={item.number}
                   onChange={(e) =>
                     updateItem(
                       index,
                       "number",
-                      e.target
-                        .value
+                      e.target.value
                     )
                   }
                 />
@@ -322,23 +269,15 @@ export default function OfferPage() {
           )}
 
           <button
-            className={
-              styles.plus
-            }
-            onClick={
-              addItem
-            }
+            className={styles.plus}
+            onClick={addItem}
           >
             +
           </button>
 
           <button
-            className={
-              styles.button
-            }
-            onClick={
-              sendForm
-            }
+            className={styles.button}
+            onClick={sendForm}
           >
             ВЫСЛАТЬ ЗАПРОС
           </button>
