@@ -5,20 +5,16 @@
   color:#111111;
 }
 
-.content{
-  padding:30px 14px 60px;
-}
-
-.container{
-  width:100%;
-  max-width:1100px;
+.wrap{
+  max-width:1180px;
   margin:0 auto;
+  padding:40px 18px 70px;
 }
 
-.topBar{
+.top{
   display:grid;
-  gap:14px;
-  margin-bottom:24px;
+  gap:18px;
+  margin-bottom:28px;
 }
 
 .label{
@@ -30,57 +26,55 @@
 
 .title{
   margin:0;
-  font-size:34px;
+  font-size:42px;
   line-height:1.05;
   font-weight:700;
 }
 
 .phone{
-  margin:8px 0 0;
+  margin:10px 0 0;
   color:#666666;
-  font-size:15px;
+  font-size:16px;
 }
 
-.logoutBtn{
-  height:52px;
-  border:1px solid #d10000;
+.logout{
+  height:56px;
+  border:1px solid #111111;
   background:#ffffff;
   color:#111111;
-  font-size:15px;
+  font-size:16px;
   font-weight:700;
-  padding:0 16px;
+  padding:0 22px;
   cursor:pointer;
 }
 
 .list{
   display:grid;
-  gap:14px;
+  gap:16px;
 }
 
 .card{
   display:block;
   background:#ffffff;
   border:1px solid #e7e7e7;
-  padding:18px;
+  padding:20px;
   text-decoration:none;
   color:#111111;
 }
 
 .card strong{
   display:block;
-  font-size:20px;
+  font-size:22px;
   margin-bottom:10px;
 }
 
 .card p{
-  margin:0 0 10px;
-  color:#333333;
+  margin:0 0 12px;
   font-size:15px;
-  line-height:1.45;
+  color:#333333;
 }
 
 .card span{
-  display:inline-block;
   color:#d10000;
   font-size:14px;
   font-weight:700;
@@ -89,51 +83,24 @@
 .empty{
   background:#ffffff;
   border:1px solid #e7e7e7;
-  padding:22px;
-  color:#666666;
+  padding:24px;
   text-align:center;
+  color:#666666;
 }
 
 @media(min-width:901px){
 
-.content{
-  padding:50px 28px 80px;
-}
-
-.topBar{
+.top{
   grid-template-columns:1fr auto;
   align-items:end;
-  gap:20px;
 }
 
 .title{
-  font-size:52px;
-}
-
-.phone{
-  font-size:16px;
-}
-
-.logoutBtn{
-  height:56px;
-  padding:0 22px;
+  font-size:56px;
 }
 
 .list{
   grid-template-columns:repeat(2,1fr);
-  gap:18px;
-}
-
-.card{
-  padding:22px;
-}
-
-.card strong{
-  font-size:24px;
-}
-
-.card p{
-  font-size:16px;
 }
 
 }
