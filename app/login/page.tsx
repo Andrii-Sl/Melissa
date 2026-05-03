@@ -1,5 +1,8 @@
 "use client";
 
+export const dynamic =
+  "force-dynamic";
+
 import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -7,7 +10,8 @@ import { supabase } from "@/lib/supabase";
 import styles from "./login.module.css";
 
 export default function LoginPage() {
-  const params = useSearchParams();
+  const params =
+    useSearchParams();
 
   const requestId =
     params.get("request");
@@ -49,10 +53,7 @@ export default function LoginPage() {
         type: "sms",
       });
 
-    if (
-      !error &&
-      data.user
-    ) {
+    if (!error && data.user) {
       const userId =
         data.user.id;
 
@@ -88,7 +89,6 @@ export default function LoginPage() {
 
   return (
     <main className={styles.page}>
-
       <header className={styles.header}>
 
         <Link
@@ -97,8 +97,8 @@ export default function LoginPage() {
         >
           <img
             src="/logo-final.png"
-            alt="logo"
             className={styles.logo}
+            alt="logo"
           />
           <span>
             AutoParts EU
@@ -115,37 +115,26 @@ export default function LoginPage() {
       </header>
 
       <section className={styles.hero}>
-
         <div className={styles.card}>
 
           <div className={styles.label}>
-            {mode ===
-            "login"
+            {mode === "login"
               ? "ВХОД"
               : "РЕГИСТРАЦИЯ"}
           </div>
 
           <h1 className={styles.title}>
-            {mode ===
-            "login"
+            {mode === "login"
               ? "Личный кабинет"
-              : "Создать аккаунт"}
+              : "Регистрация"}
           </h1>
-
-          <p className={styles.text}>
-            Доступ к цене,
-            наличию и статусу
-            заявки.
-          </p>
 
           {step === "auth" ? (
             <>
               {mode ===
                 "register" && (
                 <input
-                  className={
-                    styles.input
-                  }
+                  className={styles.input}
                   placeholder="Ваше имя"
                   value={name}
                   onChange={(e) =>
@@ -158,9 +147,7 @@ export default function LoginPage() {
               )}
 
               <input
-                className={
-                  styles.input
-                }
+                className={styles.input}
                 placeholder="+77001234567"
                 value={phone}
                 onChange={(e) =>
@@ -172,23 +159,16 @@ export default function LoginPage() {
               />
 
               <button
-                className={
-                  styles.button
-                }
-                onClick={
-                  sendOtp
-                }
+                className={styles.button}
+                onClick={sendOtp}
               >
-                {mode ===
-                "login"
+                {mode === "login"
                   ? "ВОЙТИ"
                   : "РЕГИСТРАЦИЯ"}
               </button>
 
               <button
-                className={
-                  styles.linkBtn
-                }
+                className={styles.linkBtn}
                 onClick={() =>
                   setMode(
                     mode ===
@@ -198,8 +178,7 @@ export default function LoginPage() {
                   )
                 }
               >
-                {mode ===
-                "login"
+                {mode === "login"
                   ? "Регистрация"
                   : "Уже есть аккаунт? Вход"}
               </button>
@@ -207,9 +186,7 @@ export default function LoginPage() {
           ) : (
             <>
               <input
-                className={
-                  styles.input
-                }
+                className={styles.input}
                 placeholder="Код из SMS"
                 value={code}
                 onChange={(e) =>
@@ -221,9 +198,7 @@ export default function LoginPage() {
               />
 
               <button
-                className={
-                  styles.button
-                }
+                className={styles.button}
                 onClick={
                   verifyOtp
                 }
@@ -234,9 +209,7 @@ export default function LoginPage() {
           )}
 
         </div>
-
       </section>
-
     </main>
   );
 }
