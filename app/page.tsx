@@ -1,59 +1,27 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
 
 export default function HomePage() {
-  const [vin, setVin] =
-    useState("");
-
-  const [phone, setPhone] =
-    useState("");
-
-  function handleSubmit(
-    e: React.FormEvent
-  ) {
-    e.preventDefault();
-
-    if (!vin || !phone) {
-      alert(
-        "Введите VIN и телефон"
-      );
-      return;
-    }
-
-    window.location.href =
-      `/passport?vin=${encodeURIComponent(
-        vin
-      )}&phone=${encodeURIComponent(
-        phone
-      )}`;
-  }
-
   return (
     <main className={styles.page}>
 
       <header className={styles.header}>
 
-        <Link
-          href="/"
-          className={styles.logoWrap}
-        >
+        <button className={styles.burger}>
+          ☰
+        </button>
+
+        <div className={styles.logoWrap}>
           <img
             src="/logo-final.png"
             alt="logo"
             className={styles.logo}
           />
-
-          <span>
-            AutoParts EU
-          </span>
-        </Link>
+        </div>
 
         <Link
           href="/login"
-          className={styles.loginBtn}
+          className={styles.cabinet}
         >
           Кабинет
         </Link>
@@ -62,18 +30,20 @@ export default function HomePage() {
 
       <section className={styles.hero}>
 
-        <div className={styles.content}>
+        <div className={styles.overlay}>
 
-          <div className={styles.label}>
-            ОРИГИНАЛЬНЫЕ ЗАПЧАСТИ ИЗ ЕВРОПЫ
-          </div>
+          <p className={styles.small}>
+            ОРИГИНАЛЬНЫЕ
+            ЗАПЧАСТИ ИЗ ЕВРОПЫ
+          </p>
 
           <h1 className={styles.title}>
             Подбор запчастей
+            <br />
             по VIN-коду
           </h1>
 
-          <p className={styles.text}>
+          <p className={styles.desc}>
             Audi, BMW,
             Mercedes-Benz,
             Volkswagen,
@@ -81,57 +51,64 @@ export default function HomePage() {
           </p>
 
           <form
-            onSubmit={
-              handleSubmit
-            }
+            action="/passport"
             className={styles.form}
           >
-
             <input
-              className={styles.input}
+              name="vin"
               placeholder="Введите VIN код"
-              value={vin}
-              onChange={(e) =>
-                setVin(
-                  e.target.value
-                )
-              }
+              className={styles.input}
             />
 
             <input
-              className={styles.input}
+              name="phone"
               placeholder="+77001234567"
-              value={phone}
-              onChange={(e) =>
-                setPhone(
-                  e.target.value
-                )
-              }
+              className={styles.input}
             />
 
             <button
-              type="submit"
               className={styles.button}
             >
               Получить предложение
             </button>
-
           </form>
 
           <div className={styles.payments}>
-            <img
-              src="/payments.png"
-              alt="payments"
-            />
+            <img src="/visa.png" />
+            <img src="/mc.png" />
+            <img src="/paypal.png" />
           </div>
 
         </div>
 
       </section>
 
-      <footer className={styles.footer}>
-        © AutoParts EU
-      </footer>
+      <section className={styles.bottom}>
+
+        <div className={styles.box}>
+          <h3>Гарантия</h3>
+          <p>
+            Только проверенные
+            поставщики ЕС
+          </p>
+        </div>
+
+        <div className={styles.box}>
+          <h3>Доставка</h3>
+          <p>
+            Авиа / Авто /
+            Экспресс
+          </p>
+        </div>
+
+        <div className={styles.box}>
+          <h3>Поддержка</h3>
+          <p>
+            WhatsApp 24/7
+          </p>
+        </div>
+
+      </section>
 
     </main>
   );
