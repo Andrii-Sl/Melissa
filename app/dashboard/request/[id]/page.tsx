@@ -1,103 +1,110 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { supabase } from "../../../../lib/supabase";
 import Footer from "../../../../components/Footer";
 import styles from "./request.module.css";
 
-export default function RequestDetailsPage() {
-  const currentStep = 2;
+export default function RequestPage() {
+  const params = useParams();
+  const id = params.id;
+
+  const [item, setItem] =
+    useState<any>(null);
+
+  useEffect(() => {
+    loadRequest();
+  }, []);
+
+  async function loadRequest() {
+    const { data } =
+      await supabase
+        .from("requests")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+    if (data) {
+      setItem(data);
+    }
+  }
+
+  if (!item) {
+    return <div>Загрузка...</div>;
+  }
 
   const steps = [
-    "Новый",
-    "Подбор",
+    "Новая",
+    "В работе",
     "Цена готова",
-    "Оплачен",
-    "Отправлен"
+    "Оплачено",
+    "Отправлено"
   ];
+
+  const currentStep =
+    steps.indexOf(item.status);
 
   return (
     <main className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.container}>
-
-          <a
-            href="/dashboard"
-            className={styles.backBtn}
-          >
-            ← Назад
-          </a>
-
-          <a href="/" className={styles.logoWrap}>
-            <img
-              src="/logo-final.png"
-              alt="AutoParts EU"
-              className={styles.logoImg}
-            />
-          </a>
-
-        </div>
-      </header>
-
       <section className={styles.content}>
         <div className={styles.container}>
 
           <div className={styles.label}>
-            ЗАЯВКА #1045
+            ЗАЯВКА #{item.id}
           </div>
 
-          <div className={styles.grid}>
+          <h1>Статус заказа</h1>
 
-            <div className={styles.photoWrap}>
-              <img
-                src="/part.jpg"
-                alt="Деталь"
-                className={styles.photo}
-              />
-            </div>
+          <div className={styles.card}>
+            <p>
+              Деталь:
+              {" "}
+              {item.part_name ||
+                "-"}
+            </p>
 
-            <div className={styles.info}>
+            <p>
+              VIN:
+              {" "}
+              {item.vin || "-"}
+            </p>
 
-              <h1>
-                Тормозной диск передний
-              </h1>
+            <p>
+              Цена:
+              {" "}
+              {item.price
+                ? item.price +
+                  " €"
+                : "ожидается"}
+            </p>
 
-              <div className={styles.status}>
-                Статус: Цена готова
-              </div>
+            <p>
+              Комментарий:
+              {" "}
+              {item.manager_comment ||
+                "-"}
+            </p>
 
-              <div className={styles.tracker}>
-                {steps.map((step, index) => (
+            <div className={styles.tracker}>
+              {steps.map(
+                (
+                  step,
+                  index
+                ) => (
                   <div
                     key={step}
                     className={
-                      index <= currentStep
-                        ? styles.stepActive
+                      index <=
+                      currentStep
+                        ? styles.active
                         : styles.step
                     }
                   >
-                    <span></span>
                     {step}
                   </div>
-                ))}
-              </div>
-
-              <div className={styles.row}>
-                Цена: 129 €
-              </div>
-
-              <div className={styles.row}>
-                Наличие: Есть
-              </div>
-
-              <div className={styles.row}>
-                Доставка: 7–10 дней
-              </div>
-
-              <div className={styles.row}>
-                Менеджер: Готово к оплате
-              </div>
-
-              <button className={styles.payBtn}>
-                ОПЛАТИТЬ
-              </button>
-
+                )
+              )}
             </div>
 
           </div>
