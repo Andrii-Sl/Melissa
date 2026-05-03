@@ -2,28 +2,24 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import styles from "./passport.module.css";
 
 export default function PassportPage() {
+  const params = useSearchParams();
+
+  const vin =
+    params.get("vin") || "";
+
+  const phone =
+    params.get("phone") || "";
+
   const [search, setSearch] =
     useState("");
 
   const [result, setResult] =
     useState(false);
-
-  const vin =
-    "WAUZZZ8K9DA123456";
-
-  const phone =
-    "+77001234567";
-
-  const car = {
-    brand: "Audi",
-    model: "A4 B8",
-    year: "2013",
-    engine: "2.0 TDI",
-  };
 
   async function handleSearch() {
     if (!search) return;
@@ -34,8 +30,8 @@ export default function PassportPage() {
       .from("requests")
       .insert([
         {
-          vin: vin,
-          phone: phone,
+          vin,
+          phone,
           part_query: search,
           product_name:
             "Brembo Brake Pads",
@@ -60,7 +56,6 @@ export default function PassportPage() {
             className={styles.logo}
             alt="logo"
           />
-
           <span>
             AutoParts EU
           </span>
@@ -80,13 +75,12 @@ export default function PassportPage() {
         <div className={styles.grid}>
 
           <div className={styles.card}>
-
             <div className={styles.label}>
               ПАСПОРТ АВТО
             </div>
 
             <h1 className={styles.title}>
-              {car.brand} {car.model}
+              Проверка VIN
             </h1>
 
             <div className={styles.info}>
@@ -96,20 +90,13 @@ export default function PassportPage() {
               </p>
 
               <p>
-                <strong>Год:</strong>{" "}
-                {car.year}
-              </p>
-
-              <p>
-                <strong>Двигатель:</strong>{" "}
-                {car.engine}
+                <strong>Телефон:</strong>{" "}
+                {phone}
               </p>
             </div>
-
           </div>
 
           <div className={styles.card}>
-
             <div className={styles.label}>
               ПОИСК ДЕТАЛИ
             </div>
@@ -137,7 +124,6 @@ export default function PassportPage() {
             >
               ИСКАТЬ
             </button>
-
           </div>
 
         </div>
@@ -180,8 +166,9 @@ export default function PassportPage() {
 
               <p>
                 Подходит:
-                Audi A4 B8 /
-                A5 / Q5
+                Audi /
+                Volkswagen /
+                Skoda
               </p>
 
               <p>
