@@ -15,7 +15,7 @@ export default function HomePage() {
 
   async function checkUser() {
     const {
-      data: { session }
+      data: { session },
     } = await supabase.auth.getSession();
 
     if (session) {
@@ -37,7 +37,10 @@ export default function HomePage() {
             ☰
           </button>
 
-          <a href="/" className={styles.logoWrap}>
+          <a
+            href="/"
+            className={styles.logoWrap}
+          >
             <img
               src="/logo-final.png"
               alt="AutoParts EU"
@@ -59,18 +62,24 @@ export default function HomePage() {
         <>
           <div
             className={styles.overlayMenu}
-            onClick={() => setMenuOpen(false)}
+            onClick={() =>
+              setMenuOpen(false)
+            }
           />
 
           <aside className={styles.menu}>
             <button
               className={styles.closeBtn}
-              onClick={() => setMenuOpen(false)}
+              onClick={() =>
+                setMenuOpen(false)
+              }
             >
               ✕
             </button>
 
-            <a href="/about">О компании</a>
+            <a href="/about">
+              О компании
+            </a>
 
             <a href="/how-it-works">
               Как работает сервис
@@ -102,26 +111,47 @@ export default function HomePage() {
             </h1>
 
             <p>
-              Оригинальные детали и качественные
-              аналоги для европейских автомобилей.
+              Оригинальные детали и
+              качественные аналоги
+              для европейских
+              автомобилей.
             </p>
 
             <div className={styles.trustRow}>
-              <span>✔ Подбор по VIN</span>
-              <span>✔ Поставщики Европы</span>
-              <span>✔ Гарантия качества</span>
+              <span>
+                ✔ Подбор по VIN
+              </span>
+
+              <span>
+                ✔ Поставщики Европы
+              </span>
+
+              <span>
+                ✔ Гарантия качества
+              </span>
             </div>
 
-            <input placeholder="VIN или номер детали" />
-
-            <input placeholder="Телефон / WhatsApp" />
-
-            <a
-              href="/offer"
-              className={styles.cta}
+            <form
+              action="/offer"
+              className={styles.offerForm}
             >
-              ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ
-            </a>
+              <input
+                name="vin"
+                placeholder="VIN или номер детали"
+              />
+
+              <input
+                name="phone"
+                placeholder="Телефон / WhatsApp"
+              />
+
+              <button
+                type="submit"
+                className={styles.cta}
+              >
+                ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ
+              </button>
+            </form>
 
             <div className={styles.paymentsBanner}>
               <img
