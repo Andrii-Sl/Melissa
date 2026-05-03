@@ -34,24 +34,41 @@
   object-fit:contain;
 }
 
-.homeBtn{
+.actions{
+  display:flex;
+  gap:10px;
+}
+
+.navBtn,
+.navBtnRed{
   height:46px;
   padding:0 18px;
   display:flex;
   align-items:center;
   justify-content:center;
   text-decoration:none;
+  font-size:15px;
+  border:none;
+  cursor:pointer;
+}
+
+.navBtn{
   color:#ffffff;
   border:1px solid rgba(255,255,255,.45);
-  font-size:15px;
+  background:transparent;
+}
+
+.navBtnRed{
+  background:#d10000;
+  color:#ffffff;
 }
 
 .card{
   width:100%;
-  max-width:520px;
+  max-width:560px;
   margin:0 auto;
   background:#ffffff;
-  padding:34px 28px;
+  padding:36px 30px;
 }
 
 .label{
@@ -63,7 +80,7 @@
 
 .title{
   margin:0 0 14px;
-  font-size:48px;
+  font-size:52px;
   line-height:1;
   font-weight:700;
   color:#111111;
@@ -107,7 +124,7 @@
   border:none;
   padding:0;
   color:#111111;
-  font-size:18px;
+  font-size:17px;
   cursor:pointer;
 }
 
@@ -118,17 +135,22 @@
 }
 
 .topBar{
-  margin-bottom:24px;
+  margin-bottom:22px;
 }
 
 .logoWrap span{
   display:none;
 }
 
-.homeBtn{
+.actions{
+  gap:8px;
+}
+
+.navBtn,
+.navBtnRed{
   height:42px;
-  padding:0 14px;
-  font-size:14px;
+  padding:0 12px;
+  font-size:13px;
 }
 
 .card{
@@ -136,7 +158,7 @@
 }
 
 .title{
-  font-size:34px;
+  font-size:36px;
 }
 
 .text{
