@@ -20,7 +20,6 @@ type Item = {
 export default function OfferPage({
   searchParams,
 }: Props) {
-
   const vin =
     searchParams.vin || "";
 
@@ -47,6 +46,9 @@ export default function OfferPage({
   const [requestId, setRequestId] =
     useState("");
 
+  const [loading, setLoading] =
+    useState(false);
+
   function addItem() {
     setItems([
       ...items,
@@ -71,100 +73,216 @@ export default function OfferPage({
   }
 
   async function sendForm() {
+    if (loading) return;
 
-    const { data } =
-      await supabase
-        .from("requests")
-        .insert([
-          {
-            full_name:
-              name +
-              " " +
-              surname,
-            vin,
-            phone,
-            status: "new",
-          },
-        ])
-        .select()
-        .single();
+    setLoading(true);
 
-    if (!data) return;
+    try {
+      const fullName =
+        (
+          name +
+          " " +
+          surname
+        ).trim();
 
-    for (const item of items) {
-      await supabase
+      /* 1. Ищем клиента */
+      let profileId =
+        null;
+
+      const {
+        data:
+          existingUser,
+      } = await supabase
         .from(
-          "request_items"
+          "profiles"
         )
-        .insert([
-          {
-            request_id:
-              data.id,
-            description:
-              item.description,
-            part_number:
-              item.number,
-          },
-        ]);
+        .select(
+          "id"
+        )
+        .eq(
+          "phone",
+          phone
+        )
+        .maybeSingle();
+
+      if (
+        existingUser
+      ) {
+        profileId =
+          existingUser.id;
+      } else {
+        /* 2. Создаём клиента */
+        const {
+          data:
+            newUser,
+        } =
+          await supabase
+            .from(
+              "profiles"
+            )
+            .insert([
+              {
+                full_name:
+                  fullName,
+                phone:
+                  phone,
+              },
+            ])
+            .select(
+              "id"
+            )
+            .single();
+
+        profileId =
+          newUser?.id;
+      }
+
+      /* 3. Создаём заявку */
+      const {
+        data:
+          request,
+      } =
+        await supabase
+          .from(
+            "requests"
+          )
+          .insert([
+            {
+              profile_id:
+                profileId,
+              vin,
+              phone,
+              status:
+                "new",
+            },
+          ])
+          .select()
+          .single();
+
+      if (!request)
+        return;
+
+      /* 4. Позиции */
+      const cleanItems =
+        items.filter(
+          (item) =>
+            item.description ||
+            item.number
+        );
+
+      if (
+        cleanItems.length
+      ) {
+        await supabase
+          .from(
+            "request_items"
+          )
+          .insert(
+            cleanItems.map(
+              (
+                item
+              ) => ({
+                request_id:
+                  request.id,
+                description:
+                  item.description,
+                part_number:
+                  item.number,
+              })
+            )
+          );
+      }
+
+      setRequestId(
+        String(
+          request.id
+        )
+      );
+
+      setDone(true);
+    } finally {
+      setLoading(false);
     }
-
-    setRequestId(
-      String(data.id)
-    );
-
-    setDone(true);
   }
+
+  /* SUCCESS SCREEN */
 
   if (done) {
     return (
-      <main className={styles.page}>
-        <div className={styles.success}>
-
+      <main
+        className={
+          styles.page
+        }
+      >
+        <div
+          className={
+            styles.success
+          }
+        >
           <h1>
             Благодарим!
           </h1>
 
           <p>
             Ваш запрос №
-            {requestId}
+            {
+              requestId
+            }{" "}
             принят.
           </p>
 
           <p>
             Информацию о
-            стоимости и наличии
-            мы сообщим в личном
-            кабинете.
+            стоимости и
+            наличии мы
+            сообщим в
+            личном кабинете
+            нашего сервиса.
           </p>
 
           <p>
-            Вы получите SMS.
+            Вы будете
+            уведомлены
+            по SMS.
           </p>
 
           <Link
             href="/login"
-            className={styles.button}
+            className={
+              styles.button
+            }
           >
             Личный кабинет
           </Link>
-
         </div>
       </main>
     );
   }
 
+  /* FORM */
+
   return (
-    <main className={styles.page}>
-
-      <header className={styles.header}>
-
+    <main
+      className={
+        styles.page
+      }
+    >
+      <header
+        className={
+          styles.header
+        }
+      >
         <Link
           href="/"
-          className={styles.logoWrap}
+          className={
+            styles.logoWrap
+          }
         >
           <img
             src="/logo-final.png"
-            className={styles.logo}
+            className={
+              styles.logo
+            }
             alt="logo"
           />
 
@@ -175,55 +293,86 @@ export default function OfferPage({
 
         <Link
           href="/"
-          className={styles.homeBtn}
+          className={
+            styles.homeBtn
+          }
         >
           На главную
         </Link>
-
       </header>
 
-      <section className={styles.hero}>
-
-        <div className={styles.card}>
-
-          <div className={styles.label}>
+      <section
+        className={
+          styles.hero
+        }
+      >
+        <div
+          className={
+            styles.card
+          }
+        >
+          <div
+            className={
+              styles.label
+            }
+          >
             ЗАПРОС
           </div>
 
-          <h1 className={styles.title}>
+          <h1
+            className={
+              styles.title
+            }
+          >
             Отправить запрос
           </h1>
 
           <input
-            className={styles.input}
+            className={
+              styles.input
+            }
             placeholder="Имя"
             value={name}
-            onChange={(e) =>
+            onChange={(
+              e
+            ) =>
               setName(
-                e.target.value
+                e.target
+                  .value
               )
             }
           />
 
           <input
-            className={styles.input}
+            className={
+              styles.input
+            }
             placeholder="Фамилия"
-            value={surname}
-            onChange={(e) =>
+            value={
+              surname
+            }
+            onChange={(
+              e
+            ) =>
               setSurname(
-                e.target.value
+                e.target
+                  .value
               )
             }
           />
 
           <input
-            className={styles.input}
+            className={
+              styles.input
+            }
             value={vin}
             readOnly
           />
 
           <input
-            className={styles.input}
+            className={
+              styles.input
+            }
             value={phone}
             readOnly
           />
@@ -234,58 +383,81 @@ export default function OfferPage({
               index
             ) => (
               <div
-                key={index}
-                className={styles.row}
+                key={
+                  index
+                }
+                className={
+                  styles.row
+                }
               >
-
                 <input
-                  className={styles.input}
+                  className={
+                    styles.input
+                  }
                   placeholder="Описание детали"
-                  value={item.description}
-                  onChange={(e) =>
+                  value={
+                    item.description
+                  }
+                  onChange={(
+                    e
+                  ) =>
                     updateItem(
                       index,
                       "description",
-                      e.target.value
+                      e.target
+                        .value
                     )
                   }
                 />
 
                 <input
-                  className={styles.input}
+                  className={
+                    styles.input
+                  }
                   placeholder="Каталожный номер"
-                  value={item.number}
-                  onChange={(e) =>
+                  value={
+                    item.number
+                  }
+                  onChange={(
+                    e
+                  ) =>
                     updateItem(
                       index,
                       "number",
-                      e.target.value
+                      e.target
+                        .value
                     )
                   }
                 />
-
               </div>
             )
           )}
 
           <button
-            className={styles.plus}
-            onClick={addItem}
+            className={
+              styles.plus
+            }
+            onClick={
+              addItem
+            }
           >
             +
           </button>
 
           <button
-            className={styles.button}
-            onClick={sendForm}
+            className={
+              styles.button
+            }
+            onClick={
+              sendForm
+            }
           >
-            ВЫСЛАТЬ ЗАПРОС
+            {loading
+              ? "ОТПРАВКА..."
+              : "ВЫСЛАТЬ ЗАПРОС"}
           </button>
-
         </div>
-
       </section>
-
     </main>
   );
 }
