@@ -1,5 +1,8 @@
 "use client";
 
+export const dynamic =
+  "force-dynamic";
+
 import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -7,7 +10,8 @@ import { supabase } from "@/lib/supabase";
 import styles from "./passport.module.css";
 
 export default function PassportPage() {
-  const params = useSearchParams();
+  const params =
+    useSearchParams();
 
   const vin =
     params.get("vin") || "";
@@ -52,9 +56,9 @@ export default function PassportPage() {
 
     if (data) {
       setRequestId(data.id);
+      setResult(true);
     }
 
-    setResult(true);
     setLoading(false);
   }
 
@@ -69,9 +73,10 @@ export default function PassportPage() {
         >
           <img
             src="/logo-final.png"
-            className={styles.logo}
             alt="logo"
+            className={styles.logo}
           />
+
           <span>
             AutoParts EU
           </span>
@@ -101,11 +106,13 @@ export default function PassportPage() {
 
             <div className={styles.info}>
               <p>
-                <strong>VIN:</strong> {vin}
+                <strong>VIN:</strong>{" "}
+                {vin}
               </p>
 
               <p>
-                <strong>Телефон:</strong> {phone}
+                <strong>Телефон:</strong>{" "}
+                {phone}
               </p>
             </div>
           </div>
@@ -149,8 +156,8 @@ export default function PassportPage() {
 
             <img
               src="/product.jpg"
-              className={styles.photo}
               alt="product"
+              className={styles.photo}
             />
 
             <div>
