@@ -30,11 +30,20 @@ export default function OfferPage() {
       return;
     }
 
+    const {
+      data: { session }
+    } =
+      await supabase.auth.getSession();
+
+    const userId =
+      session?.user?.id || null;
+
     const { data, error } =
       await supabase
         .from("requests")
         .insert([
           {
+            user_id: userId,
             client_name: name,
             phone,
             vin,
@@ -50,11 +59,6 @@ export default function OfferPage() {
       alert("Ошибка отправки");
       return;
     }
-
-    localStorage.setItem(
-      "phone",
-      phone
-    );
 
     router.push(
       "/success?id=" + data.id
