@@ -15,14 +15,25 @@ export default function DashboardPage() {
   const [searchPhone, setSearchPhone] =
     useState("");
 
-  async function loadOrders() {
-    if (!phone) return;
+  useEffect(() => {
+    const saved =
+      localStorage.getItem("phone");
 
+    if (saved) {
+      setPhone(saved);
+      setSearchPhone(saved);
+      loadOrders(saved);
+    }
+  }, []);
+
+  async function loadOrders(
+    targetPhone: string
+  ) {
     const { data } =
       await supabase
         .from("requests")
         .select("*")
-        .eq("phone", phone)
+        .eq("phone", targetPhone)
         .order("id", {
           ascending: false
         });
@@ -32,15 +43,16 @@ export default function DashboardPage() {
     }
   }
 
-  useEffect(() => {
-    const saved =
-      localStorage.getItem("phone");
+  function handleSearch() {
+    setPhone(searchPhone);
 
-    if (saved) {
-      setPhone(saved);
-      setSearchPhone(saved);
-    }
-  }, []);
+    localStorage.setItem(
+      "phone",
+      searchPhone
+    );
+
+    loadOrders(searchPhone);
+  }
 
   return (
     <main className={styles.page}>
@@ -64,18 +76,7 @@ export default function DashboardPage() {
           />
 
           <button
-            onClick={() => {
-              setPhone(
-                searchPhone
-              );
-
-              localStorage.setItem(
-                "phone",
-                searchPhone
-              );
-
-              loadOrders();
-            }}
+            onClick={handleSearch}
           >
             ПОКАЗАТЬ
           </button>
@@ -93,7 +94,8 @@ export default function DashboardPage() {
 
                 <p>
                   {item.part_name ||
-                    item.vin}
+                    item.vin ||
+                    "Запрос"}
                 </p>
 
                 <span>
@@ -101,6 +103,12 @@ export default function DashboardPage() {
                 </span>
               </a>
             ))}
+
+            {orders.length === 0 && (
+              <div className={styles.card}>
+                Пока заявок нет
+              </div>
+            )}
           </div>
 
         </div>
