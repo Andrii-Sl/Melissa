@@ -1,116 +1,118 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "../../lib/supabase";
-import Footer from "../../components/Footer";
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 import styles from "./login.module.css";
 
 export default function LoginPage() {
-  const router = useRouter();
+  const [phone, setPhone] = useState("");
+  const [code, setCode] = useState("");
+  const [step, setStep] = useState<"auth" | "verify">("auth");
+  const [mode, setMode] = useState<"login" | "register">("login");
+  const [loading, setLoading] = useState(false);
 
-  const [phone, setPhone] =
-    useState("");
+  async function sendOtp() {
+    setLoading(true);
 
-  const [code, setCode] =
-    useState("");
+    await supabase.auth.signInWithOtp({
+      phone,
+    });
 
-  const [step, setStep] =
-    useState(1);
-
-  async function sendCode() {
-    const { error } =
-      await supabase.auth.signInWithOtp({
-        phone
-      });
-
-    if (error) {
-      alert(error.message);
-      return;
-    }
-
-    alert("Код отправлен");
-    setStep(2);
+    setStep("verify");
+    setLoading(false);
   }
 
-  async function verifyCode() {
-    const { error } =
-      await supabase.auth.verifyOtp({
-        phone,
-        token: code,
-        type: "sms"
-      });
+  async function verifyOtp() {
+    setLoading(true);
 
-    if (error) {
-      alert(error.message);
-      return;
+    const { error } = await supabase.auth.verifyOtp({
+      phone,
+      token: code,
+      type: "sms",
+    });
+
+    setLoading(false);
+
+    if (!error) {
+      window.location.href = "/dashboard";
+    } else {
+      alert("Неверный код");
     }
-
-    router.push("/dashboard");
   }
 
   return (
     <main className={styles.page}>
-      <section className={styles.hero}>
-        <div className={styles.overlay}>
-
-          <div className={styles.card}>
-            <div className={styles.titleMini}>
-              PHONE LOGIN
-            </div>
-
-            <h1>
-              Личный кабинет
-            </h1>
-
-            {step === 1 && (
-              <>
-                <input
-                  placeholder="+77771234567"
-                  value={phone}
-                  onChange={(e) =>
-                    setPhone(
-                      e.target.value
-                    )
-                  }
-                />
-
-                <button
-                  className={styles.loginBtn}
-                  onClick={sendCode}
-                >
-                  Получить код
-                </button>
-              </>
-            )}
-
-            {step === 2 && (
-              <>
-                <input
-                  placeholder="Код из SMS"
-                  value={code}
-                  onChange={(e) =>
-                    setCode(
-                      e.target.value
-                    )
-                  }
-                />
-
-                <button
-                  className={styles.loginBtn}
-                  onClick={verifyCode}
-                >
-                  Войти
-                </button>
-              </>
-            )}
-
+      <div className={styles.overlay}>
+        <div className={styles.card}>
+          <div className={styles.label}>
+            {mode === "login" ? "ВХОД" : "РЕГИСТРАЦИЯ"}
           </div>
 
-        </div>
-      </section>
+          <h1 className={styles.title}>
+            {mode === "login" ? "Личный кабинет" : "Создать аккаунт"}
+          </h1>
 
-      <Footer />
+          <p className={styles.text}>
+            Управляйте заявками в одном месте.
+          </p>
+
+          {step === "auth" ? (
+            <>
+              <input
+                className={styles.input}
+                placeholder="+77001234567"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+
+              <button
+                className={styles.button}
+                onClick={sendOtp}
+                disabled={loading}
+              >
+                {loading
+                  ? "Отправка..."
+                  : mode === "login"
+                  ? "ВОЙТИ"
+                  : "ЗАРЕГИСТРИРОВАТЬСЯ"}
+              </button>
+
+              <button
+                className={styles.linkBtn}
+                onClick={() =>
+                  setMode(mode === "login" ? "register" : "login")
+                }
+              >
+                {mode === "login"
+                  ? "Регистрация"
+                  : "Уже есть аккаунт? Войти"}
+              </button>
+            </>
+          ) : (
+            <>
+              <input
+                className={styles.input}
+                placeholder="Код из SMS"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+              />
+
+              <button
+                className={styles.button}
+                onClick={verifyOtp}
+                disabled={loading}
+              >
+                {loading ? "Проверка..." : "ПОДТВЕРДИТЬ"}
+              </button>
+            </>
+          )}
+
+          <Link href="/" className={styles.back}>
+            ← На главную
+          </Link>
+        </div>
+      </div>
     </main>
   );
 }
