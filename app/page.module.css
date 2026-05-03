@@ -1,12 +1,11 @@
 .page{
-  background:#000;
-  color:#fff;
   min-height:100vh;
+  background:#000;
   font-family:Arial,sans-serif;
 }
 
 .header{
-  height:92px;
+  height:110px;
   background:#fff;
   display:flex;
   align-items:center;
@@ -14,195 +13,143 @@
   padding:0 26px;
 }
 
-.burger{
-  border:none;
-  background:none;
-  font-size:42px;
-  cursor:pointer;
-  color:#000;
-}
-
-.logoWrap{
-  flex:1;
-  display:flex;
-  justify-content:center;
-}
-
 .logo{
-  height:42px;
-  width:auto;
+  width:230px;
+  height:auto;
 }
 
 .cabinet{
-  border:2px solid #d40000;
+  border:2px solid #d30000;
   color:#111;
-  padding:16px 24px;
-  font-size:18px;
   text-decoration:none;
+  padding:18px 24px;
+  font-size:22px;
   background:#fff;
 }
 
 .hero{
   background:url("/hero-audi.jpg")
-    center/cover no-repeat;
-  min-height:980px;
-  position:relative;
+    center center/cover no-repeat;
+  min-height:1180px;
 }
 
 .overlay{
-  background:rgba(0,0,0,.58);
-  min-height:980px;
-  padding:70px 26px;
+  background:rgba(0,0,0,.55);
+  min-height:1180px;
+  padding:52px 26px;
 }
 
-.small{
-  color:#ff1d1d;
+.top{
+  color:#e00000;
   font-size:18px;
   letter-spacing:2px;
-  margin-bottom:26px;
+  margin:0 0 28px;
 }
 
 .title{
-  font-size:72px;
+  color:#fff;
+  font-size:78px;
   line-height:1.02;
   font-weight:800;
-  margin:0 0 26px;
+  margin:0 0 30px;
 }
 
 .desc{
+  color:#d0d0d0;
   font-size:28px;
-  color:#d9d9d9;
   line-height:1.5;
-  margin-bottom:38px;
+  margin:0 0 42px;
 }
 
 .form{
   display:flex;
   flex-direction:column;
   gap:22px;
-  max-width:620px;
 }
 
 .input{
-  height:88px;
+  height:110px;
+  background:#fff;
   border:none;
-  padding:0 26px;
-  font-size:30px;
-  color:#111;
+  padding:0 28px;
+  font-size:28px;
+  color:#444;
 }
 
 .button{
-  height:92px;
+  height:110px;
   border:none;
   background:#e00000;
   color:#fff;
-  font-size:34px;
+  font-size:30px;
   font-weight:700;
-  cursor:pointer;
+  text-transform:uppercase;
 }
 
 .payments{
-  display:flex;
-  gap:24px;
-  margin-top:38px;
-  align-items:center;
-}
-
-.payments img{
-  height:42px;
-  width:auto;
-}
-
-.bottom{
-  background:#111;
-  padding:60px 24px;
-  display:grid;
-  gap:24px;
-}
-
-.box{
-  background:#1b1b1b;
-  padding:28px;
-  border:1px solid #2b2b2b;
-}
-
-.box h3{
-  margin:0 0 12px;
-  font-size:28px;
-}
-
-.box p{
-  margin:0;
+  margin-top:46px;
+  color:#888;
   font-size:22px;
-  color:#bcbcbc;
 }
 
+/* mobile */
 @media(max-width:768px){
 
   .header{
-    height:78px;
-    padding:0 14px;
-  }
-
-  .burger{
-    font-size:34px;
+    height:92px;
+    padding:0 16px;
   }
 
   .logo{
-    height:28px;
+    width:150px;
   }
 
   .cabinet{
-    font-size:14px;
-    padding:10px 14px;
+    font-size:16px;
+    padding:14px 18px;
   }
 
   .hero{
-    min-height:760px;
+    min-height:860px;
   }
 
   .overlay{
-    min-height:760px;
-    padding:36px 18px;
+    min-height:860px;
+    padding:34px 18px;
   }
 
-  .small{
+  .top{
     font-size:14px;
+    margin-bottom:20px;
   }
 
   .title{
-    font-size:44px;
+    font-size:54px;
+    margin-bottom:22px;
   }
 
   .desc{
     font-size:18px;
-    margin-bottom:24px;
+    margin-bottom:28px;
+  }
+
+  .form{
+    gap:14px;
   }
 
   .input{
-    height:72px;
+    height:76px;
     font-size:18px;
+    padding:0 18px;
   }
 
   .button{
-    height:76px;
-    font-size:20px;
+    height:78px;
+    font-size:18px;
   }
 
   .payments{
-    gap:14px;
-    flex-wrap:wrap;
-  }
-
-  .payments img{
-    height:28px;
-  }
-
-  .box h3{
-    font-size:22px;
-  }
-
-  .box p{
-    font-size:16px;
+    margin-top:28px;
+    font-size:18px;
   }
 }
