@@ -58,12 +58,30 @@ export default function EnHomePage() {
             />
           </a>
 
-          <a
-            href={cabinetLink}
-            className={styles.loginBtn}
-          >
-            Account
-          </a>
+          <div className={styles.rightSide}>
+
+            <a
+              href="/"
+              className={styles.langBtn}
+            >
+              RU
+            </a>
+
+            <a
+              href="/en"
+              className={styles.langBtn}
+            >
+              EN
+            </a>
+
+            <a
+              href={cabinetLink}
+              className={styles.loginBtn}
+            >
+              Account
+            </a>
+
+          </div>
 
         </div>
       </header>
@@ -102,10 +120,6 @@ export default function EnHomePage() {
             <a href="/en/contacts">
               Contacts
             </a>
-
-            <a href="/">
-              RU Version
-            </a>
           </aside>
         </>
       )}
@@ -125,10 +139,8 @@ export default function EnHomePage() {
             </h1>
 
             <p>
-              Genuine parts and
-              quality aftermarket
-              components for
-              European cars.
+              Genuine parts and quality aftermarket
+              components for European vehicles.
             </p>
 
             <div className={styles.trustRow}>
