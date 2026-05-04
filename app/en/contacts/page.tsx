@@ -1,5 +1,5 @@
-import Menu from "../../components/Menu";
-import Footer from "../../components/Footer";
+import Menu from "@/components/Menu";
+import Footer from "@/components/Footer";
 import styles from "../../contacts/contacts.module.css";
 
 export default function EnContactsPage() {
@@ -18,10 +18,7 @@ export default function EnContactsPage() {
             />
           </a>
 
-          <a
-            href="/dashboard"
-            className={styles.loginBtn}
-          >
+          <a href="/dashboard" className={styles.loginBtn}>
             Account
           </a>
 
@@ -37,14 +34,11 @@ export default function EnContactsPage() {
             </div>
 
             <h1>
-              Get in touch with us
-              <br />
-              in a convenient way
+              Contact us
             </h1>
 
             <p>
-              консультации, подбор деталей,
-              сопровождение заказа и поддержка.
+              We are ready to help you.
             </p>
 
           </div>
@@ -62,57 +56,10 @@ export default function EnContactsPage() {
             </div>
 
             <div className={styles.card}>
-              <h3>WhatsApp</h3>
-              <p>+49 000 000 0000</p>
-            </div>
-
-            <div className={styles.card}>
-              <h3>Telegram</h3>
-              <p>@autopartseu</p>
-            </div>
-
-            <div className={styles.card}>
               <h3>Email</h3>
               <p>info@autoparts-eu.com</p>
             </div>
 
-            <div className={styles.card}>
-              <h3>Working hours</h3>
-              <p>Mon–Fri: 09:00 – 18:00</p>
-            </div>
-
-            <div className={styles.card}>
-              <h3>Regions</h3>
-              <p>Kazakhstan / CIS</p>
-            </div>
-
-          </div>
-
-          <div className={styles.claim}>
-            <div className={styles.claimLabel}>
-              WARRANTY / CLAIMS
-            </div>
-
-            <h2>
-              Warranty request
-              or return
-            </h2>
-
-            <p>
-              To submit a request,
-              send your order number,
-              photos of the part,
-              and a description of the issue.
-            </p>
-
-            <div className={styles.claimMail}>
-              claims@autoparts-eu.com
-            </div>
-
-            <div className={styles.note}>
-              Claims must be submitted
-              within 14 days after delivery.
-            </div>
           </div>
 
         </div>
