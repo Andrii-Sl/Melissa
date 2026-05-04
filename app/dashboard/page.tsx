@@ -22,7 +22,6 @@ export default function DashboardPage() {
   }, []);
 
   async function loadData() {
-    /* BUILD SAFE MASTER ACCESS */
     const urlParams =
       new URLSearchParams(
         window.location.search
@@ -33,7 +32,7 @@ export default function DashboardPage() {
         "master"
       );
 
-    /* MASTER MODE */
+    /* MASTER ACCESS */
     if (
       master ===
       "1424"
@@ -68,7 +67,7 @@ export default function DashboardPage() {
       return;
     }
 
-    /* NORMAL USER MODE */
+    /* NORMAL CLIENT */
     const {
       data: {
         session,
@@ -126,9 +125,44 @@ export default function DashboardPage() {
 
   async function logout() {
     await supabase.auth.signOut();
-
     window.location.href =
       "/";
+  }
+
+  function getStatus(
+    status: string
+  ) {
+    if (
+      status ===
+      "new"
+    )
+      return "🟡 Подбор";
+
+    if (
+      status ===
+      "found"
+    )
+      return "🟢 Найдено";
+
+    if (
+      status ===
+      "payment"
+    )
+      return "🔵 Ожидает оплаты";
+
+    if (
+      status ===
+      "shipping"
+    )
+      return "🟣 В пути";
+
+    if (
+      status ===
+      "done"
+    )
+      return "✅ Доставлено";
+
+    return status;
   }
 
   if (loading) {
@@ -194,7 +228,9 @@ export default function DashboardPage() {
                 </p>
 
                 <span>
-                  {item.status}
+                  {getStatus(
+                    item.status
+                  )}
                 </span>
               </a>
             )
