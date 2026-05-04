@@ -20,6 +20,7 @@ type Item = {
 export default function OfferPage({
   searchParams,
 }: Props) {
+
   const vin =
     searchParams.vin || "";
 
@@ -46,9 +47,6 @@ export default function OfferPage({
   const [requestId, setRequestId] =
     useState("");
 
-  const [loading, setLoading] =
-    useState(false);
-
   function addItem() {
     setItems([
       ...items,
@@ -73,391 +71,297 @@ export default function OfferPage({
   }
 
   async function sendForm() {
-    if (loading) return;
 
-    setLoading(true);
+    const fullName =
+      (
+        name +
+        " " +
+        surname
+      ).trim();
 
-    try {
-      const fullName =
-        (
-          name +
-          " " +
-          surname
-        ).trim();
+    let profileId =
+      null;
 
-      /* 1. Ищем клиента */
-      let profileId =
-        null;
+    const {
+      data:
+        existing,
+    } = await supabase
+      .from(
+        "profiles"
+      )
+      .select("id")
+      .eq(
+        "phone",
+        phone
+      )
+      .maybeSingle();
 
+    if (existing) {
+      profileId =
+        existing.id;
+    } else {
       const {
         data:
-          existingUser,
-      } = await supabase
-        .from(
-          "profiles"
-        )
-        .select(
-          "id"
-        )
-        .eq(
-          "phone",
-          phone
-        )
-        .maybeSingle();
-
-      if (
-        existingUser
-      ) {
-        profileId =
-          existingUser.id;
-      } else {
-        /* 2. Создаём клиента */
-        const {
-          data:
-            newUser,
-        } =
-          await supabase
-            .from(
-              "profiles"
-            )
-            .insert([
-              {
-                full_name:
-                  fullName,
-                phone:
-                  phone,
-              },
-            ])
-            .select(
-              "id"
-            )
-            .single();
-
-        profileId =
-          newUser?.id;
-      }
-
-      /* 3. Создаём заявку */
-      const {
-        data:
-          request,
+          user,
       } =
         await supabase
           .from(
-            "requests"
+            "profiles"
           )
           .insert([
             {
-              profile_id:
-                profileId,
-              vin,
+              full_name:
+                fullName,
               phone,
-              status:
-                "new",
             },
           ])
-          .select()
+          .select("id")
           .single();
 
-      if (!request)
-        return;
+      profileId =
+        user?.id;
+    }
 
-      /* 4. Позиции */
-      const cleanItems =
-        items.filter(
-          (item) =>
-            item.description ||
-            item.number
-        );
-
-      if (
-        cleanItems.length
-      ) {
-        await supabase
-          .from(
-            "request_items"
-          )
-          .insert(
-            cleanItems.map(
-              (
-                item
-              ) => ({
-                request_id:
-                  request.id,
-                description:
-                  item.description,
-                part_number:
-                  item.number,
-              })
-            )
-          );
-      }
-
-      setRequestId(
-        String(
-          request.id
+    const {
+      data:
+        request,
+    } =
+      await supabase
+        .from(
+          "requests"
         )
+        .insert([
+          {
+            profile_id:
+              profileId,
+            vin,
+            phone,
+            status:
+              "new",
+          },
+        ])
+        .select()
+        .single();
+
+    if (!request)
+      return;
+
+    const rows =
+      items.filter(
+        (x) =>
+          x.description ||
+          x.number
       );
 
-      setDone(true);
-    } finally {
-      setLoading(false);
+    if (
+      rows.length
+    ) {
+      await supabase
+        .from(
+          "request_items"
+        )
+        .insert(
+          rows.map(
+            (
+              item
+            ) => ({
+              request_id:
+                request.id,
+              description:
+                item.description,
+              part_number:
+                item.number,
+            })
+          )
+        );
     }
-  }
 
-  /* SUCCESS SCREEN */
+    setRequestId(
+      String(
+        request.id
+      )
+    );
+
+    setDone(true);
+  }
 
   if (done) {
     return (
-      <main
-        className={
-          styles.page
-        }
-      >
-        <div
-          className={
-            styles.success
-          }
-        >
-          <h1>
-            Благодарим!
-          </h1>
+      <main className={styles.page}>
+        <section className={styles.hero}>
+          <div className={styles.overlay}>
+            <div className={styles.card}>
 
-          <p>
-            Ваш запрос №
-            {
-              requestId
-            }{" "}
-            принят.
-          </p>
+              <h1 className={styles.title}>
+                Благодарим
+              </h1>
 
-          <p>
-            Информацию о
-            стоимости и
-            наличии мы
-            сообщим в
-            личном кабинете
-            нашего сервиса.
-          </p>
+              <p>
+                Ваш запрос №
+                {requestId}
+                принят.
+              </p>
 
-          <p>
-            Вы будете
-            уведомлены
-            по SMS.
-          </p>
+              <p>
+                Информацию о
+                стоимости и
+                наличии мы
+                сообщим в
+                личном кабинете.
+              </p>
 
-          <Link
-            href="/login"
-            className={
-              styles.button
-            }
-          >
-            Личный кабинет
-          </Link>
-        </div>
+              <Link
+                href="/login"
+                className={
+                  styles.button
+                }
+              >
+                Личный кабинет
+              </Link>
+
+            </div>
+          </div>
+        </section>
       </main>
     );
   }
 
-  /* FORM */
-
   return (
-    <main
-      className={
-        styles.page
-      }
-    >
-      <header
-        className={
-          styles.header
-        }
-      >
-        <Link
-          href="/"
-          className={
-            styles.logoWrap
-          }
-        >
-          <img
-            src="/logo-final.png"
-            className={
-              styles.logo
-            }
-            alt="logo"
-          />
+    <main className={styles.page}>
 
-          <span>
-            AutoParts EU
-          </span>
-        </Link>
+      <header className={styles.header}>
+
+        <img
+          src="/logo-final.png"
+          className={styles.logo}
+          alt="logo"
+        />
 
         <Link
           href="/"
-          className={
-            styles.homeBtn
-          }
+          className={styles.homeBtn}
         >
           На главную
         </Link>
+
       </header>
 
-      <section
-        className={
-          styles.hero
-        }
-      >
-        <div
-          className={
-            styles.card
-          }
-        >
-          <div
-            className={
-              styles.label
-            }
-          >
-            ЗАПРОС
+      <section className={styles.hero}>
+        <div className={styles.overlay}>
+
+          <div className={styles.card}>
+
+            <div className={styles.label}>
+              ЗАПРОС
+            </div>
+
+            <h1 className={styles.title}>
+              Отправить запрос
+            </h1>
+
+            <input
+              className={styles.input}
+              placeholder="Имя"
+              value={name}
+              onChange={(e) =>
+                setName(
+                  e.target.value
+                )
+              }
+            />
+
+            <input
+              className={styles.input}
+              placeholder="Фамилия"
+              value={surname}
+              onChange={(e) =>
+                setSurname(
+                  e.target.value
+                )
+              }
+            />
+
+            <input
+              className={styles.input}
+              value={vin}
+              readOnly
+            />
+
+            <input
+              className={styles.input}
+              value={phone}
+              readOnly
+            />
+
+            {items.map(
+              (
+                item,
+                index
+              ) => (
+                <div
+                  key={index}
+                  className={styles.row}
+                >
+
+                  <input
+                    className={styles.input}
+                    placeholder="Описание детали"
+                    value={
+                      item.description
+                    }
+                    onChange={(e) =>
+                      updateItem(
+                        index,
+                        "description",
+                        e.target
+                          .value
+                      )
+                    }
+                  />
+
+                  <input
+                    className={styles.input}
+                    placeholder="Каталожный номер"
+                    value={
+                      item.number
+                    }
+                    onChange={(e) =>
+                      updateItem(
+                        index,
+                        "number",
+                        e.target
+                          .value
+                      )
+                    }
+                  />
+
+                </div>
+              )
+            )}
+
+            <button
+              className={styles.plus}
+              onClick={
+                addItem
+              }
+            >
+              +
+            </button>
+
+            <button
+              className={styles.button}
+              onClick={
+                sendForm
+              }
+            >
+              ВЫСЛАТЬ ЗАПРОС
+            </button>
+
           </div>
 
-          <h1
-            className={
-              styles.title
-            }
-          >
-            Отправить запрос
-          </h1>
-
-          <input
-            className={
-              styles.input
-            }
-            placeholder="Имя"
-            value={name}
-            onChange={(
-              e
-            ) =>
-              setName(
-                e.target
-                  .value
-              )
-            }
-          />
-
-          <input
-            className={
-              styles.input
-            }
-            placeholder="Фамилия"
-            value={
-              surname
-            }
-            onChange={(
-              e
-            ) =>
-              setSurname(
-                e.target
-                  .value
-              )
-            }
-          />
-
-          <input
-            className={
-              styles.input
-            }
-            value={vin}
-            readOnly
-          />
-
-          <input
-            className={
-              styles.input
-            }
-            value={phone}
-            readOnly
-          />
-
-          {items.map(
-            (
-              item,
-              index
-            ) => (
-              <div
-                key={
-                  index
-                }
-                className={
-                  styles.row
-                }
-              >
-                <input
-                  className={
-                    styles.input
-                  }
-                  placeholder="Описание детали"
-                  value={
-                    item.description
-                  }
-                  onChange={(
-                    e
-                  ) =>
-                    updateItem(
-                      index,
-                      "description",
-                      e.target
-                        .value
-                    )
-                  }
-                />
-
-                <input
-                  className={
-                    styles.input
-                  }
-                  placeholder="Каталожный номер"
-                  value={
-                    item.number
-                  }
-                  onChange={(
-                    e
-                  ) =>
-                    updateItem(
-                      index,
-                      "number",
-                      e.target
-                        .value
-                    )
-                  }
-                />
-              </div>
-            )
-          )}
-
-          <button
-            className={
-              styles.plus
-            }
-            onClick={
-              addItem
-            }
-          >
-            +
-          </button>
-
-          <button
-            className={
-              styles.button
-            }
-            onClick={
-              sendForm
-            }
-          >
-            {loading
-              ? "ОТПРАВКА..."
-              : "ВЫСЛАТЬ ЗАПРОС"}
-          </button>
         </div>
       </section>
+
     </main>
   );
 }
