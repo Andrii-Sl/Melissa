@@ -25,6 +25,18 @@ export default function HomePage() {
     }
   }
 
+  /* 🔥 TEST SUPABASE */
+
+  async function testSupabase() {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .limit(1);
+
+    console.log("DATA:", data);
+    console.log("ERROR:", error);
+  }
+
   return (
     <main className={styles.page}>
       <header className={styles.header}>
@@ -71,6 +83,25 @@ export default function HomePage() {
             <a href="/how-it-works">Как работает сервис</a>
             <a href="/schedule">Расписание поставок</a>
             <a href="/contacts">Контакты</a>
+
+            {/* 🔥 TEST КНОПКА В МЕНЮ */}
+            {process.env.NODE_ENV === "development" && (
+              <button
+                onClick={testSupabase}
+                style={{
+                  marginTop: 20,
+                  padding: "14px",
+                  background: "#111",
+                  color: "#fff",
+                  border: "none",
+                  fontSize: "14px",
+                  cursor: "pointer"
+                }}
+              >
+                TEST SUPABASE
+              </button>
+            )}
+
           </aside>
         </>
       )}
