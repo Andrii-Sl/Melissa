@@ -1,5 +1,5 @@
-import Menu from "../../components/Menu";
-import Footer from "../../components/Footer";
+import Menu from "@/components/Menu";
+import Footer from "@/components/Footer";
 import styles from "../../schedule/schedule.module.css";
 
 export default function EnSchedulePage() {
@@ -18,10 +18,7 @@ export default function EnSchedulePage() {
             />
           </a>
 
-          <a
-            href="/dashboard"
-            className={styles.loginBtn}
-          >
+          <a href="/dashboard" className={styles.loginBtn}>
             Account
           </a>
 
@@ -37,15 +34,11 @@ export default function EnSchedulePage() {
             </div>
 
             <h1>
-              Order deliveries
-              <br />
-              from Europe
+              Delivery from Europe
             </h1>
 
             <p>
-              Current logistics process,
-              delivery flow and timing
-              across Kazakhstan.
+              Logistics and delivery process.
             </p>
 
           </div>
@@ -56,84 +49,47 @@ export default function EnSchedulePage() {
         <div className={styles.container}>
 
           <div className={styles.card}>
-            <h2>Kazakhstan — all cities</h2>
-
+            <h2>Kazakhstan</h2>
             <p>
-              Delivery is made to a customs warehouse
-              in Almaty, then shipped via courier
-              to any address in the country.
+              Delivery via Almaty warehouse,
+              then courier across the country.
             </p>
           </div>
 
           <div className={styles.card}>
-            <h2>Delivery timeline</h2>
+            <h2>Timeline</h2>
 
             <div className={styles.timeline}>
-
               <div className={styles.step}>
                 <span>1</span>
-
                 <div>
-                  <strong>
-                    Thursday – Thursday
-                  </strong>
-
-                  <p>
-                    Order pool is open
-                    for the current shipment cycle.
-                  </p>
+                  <strong>Thursday</strong>
+                  <p>Orders collected</p>
                 </div>
               </div>
 
               <div className={styles.step}>
                 <span>2</span>
-
                 <div>
-                  <strong>
-                    Thursday
-                  </strong>
-
-                  <p>
-                    Paid orders are processed,
-                    prepared, and shipped
-                    to Kazakhstan.
-                  </p>
+                  <strong>Shipment</strong>
+                  <p>Orders dispatched</p>
                 </div>
               </div>
 
               <div className={styles.step}>
                 <span>3</span>
-
                 <div>
-                  <strong>
-                    Wednesday (next week)
-                  </strong>
-
-                  <p>
-                    After customs clearance,
-                    orders are delivered by courier
-                    across Kazakhstan.
-                  </p>
+                  <strong>Next week</strong>
+                  <p>Delivery</p>
                 </div>
               </div>
-
             </div>
+
           </div>
 
           <div className={styles.card}>
             <h2>Delivery time</h2>
-
-            <p>
-              Average delivery time —
-              <strong> 7 days </strong>
-              from dispatch
-              from the warehouse in Poland.
-            </p>
-
-            <p>
-              Items not available in stock
-              are processed individually.
-            </p>
+            <p>Average: 7 days</p>
           </div>
 
         </div>
