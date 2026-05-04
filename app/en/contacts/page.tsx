@@ -1,24 +1,124 @@
-"use client";
+import Menu from "../../components/Menu";
+import Footer from "../../components/Footer";
+import styles from "../../contacts/contacts.module.css";
 
-import styles from "../../page.module.css";
-
-export default function EnContacts() {
+export default function EnContactsPage() {
   return (
     <main className={styles.page}>
+      <header className={styles.header}>
+        <div className={styles.container}>
+
+          <Menu />
+
+          <a href="/en" className={styles.logoWrap}>
+            <img
+              src="/logo-final.png"
+              alt="AutoParts EU"
+              className={styles.logoImg}
+            />
+          </a>
+
+          <a
+            href="/dashboard"
+            className={styles.loginBtn}
+          >
+            Account
+          </a>
+
+        </div>
+      </header>
+
       <section className={styles.hero}>
         <div className={styles.overlay}>
-          <div className={styles.heroBox}>
+          <div className={styles.heroInner}>
 
-            <h1>Contacts</h1>
+            <div className={styles.label}>
+              CONTACTS
+            </div>
+
+            <h1>
+              Get in touch with us
+              <br />
+              in a convenient way
+            </h1>
 
             <p>
-              Phone / WhatsApp: +48 XXX XXX XXX  
-              Email: info@autoparts-eu.com  
+              консультации, подбор деталей,
+              сопровождение заказа и поддержка.
             </p>
 
           </div>
         </div>
       </section>
+
+      <section className={styles.content}>
+        <div className={styles.container}>
+
+          <div className={styles.grid}>
+
+            <div className={styles.card}>
+              <h3>Phone</h3>
+              <p>+49 000 000 0000</p>
+            </div>
+
+            <div className={styles.card}>
+              <h3>WhatsApp</h3>
+              <p>+49 000 000 0000</p>
+            </div>
+
+            <div className={styles.card}>
+              <h3>Telegram</h3>
+              <p>@autopartseu</p>
+            </div>
+
+            <div className={styles.card}>
+              <h3>Email</h3>
+              <p>info@autoparts-eu.com</p>
+            </div>
+
+            <div className={styles.card}>
+              <h3>Working hours</h3>
+              <p>Mon–Fri: 09:00 – 18:00</p>
+            </div>
+
+            <div className={styles.card}>
+              <h3>Regions</h3>
+              <p>Kazakhstan / CIS</p>
+            </div>
+
+          </div>
+
+          <div className={styles.claim}>
+            <div className={styles.claimLabel}>
+              WARRANTY / CLAIMS
+            </div>
+
+            <h2>
+              Warranty request
+              or return
+            </h2>
+
+            <p>
+              To submit a request,
+              send your order number,
+              photos of the part,
+              and a description of the issue.
+            </p>
+
+            <div className={styles.claimMail}>
+              claims@autoparts-eu.com
+            </div>
+
+            <div className={styles.note}>
+              Claims must be submitted
+              within 14 days after delivery.
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <Footer />
     </main>
   );
 }
