@@ -6,11 +6,8 @@ import Footer from "../components/Footer";
 import styles from "./page.module.css";
 
 export default function HomePage() {
-  const [menuOpen, setMenuOpen] =
-    useState(false);
-
-  const [cabinetLink, setCabinetLink] =
-    useState("/login");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [cabinetLink, setCabinetLink] = useState("/login");
 
   useEffect(() => {
     checkUser();
@@ -19,18 +16,25 @@ export default function HomePage() {
   async function checkUser() {
     const {
       data: { session },
-    } =
-      await supabase.auth.getSession();
+    } = await supabase.auth.getSession();
 
     if (session) {
-      setCabinetLink(
-        "/dashboard"
-      );
+      setCabinetLink("/dashboard");
     } else {
-      setCabinetLink(
-        "/login"
-      );
+      setCabinetLink("/login");
     }
+  }
+
+  /* 🔥 ТЕСТ SUPABASE */
+
+  async function testSupabase() {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .limit(1);
+
+    console.log("DATA:", data);
+    console.log("ERROR:", error);
   }
 
   return (
@@ -40,17 +44,12 @@ export default function HomePage() {
 
           <button
             className={styles.burger}
-            onClick={() =>
-              setMenuOpen(true)
-            }
+            onClick={() => setMenuOpen(true)}
           >
             ☰
           </button>
 
-          <a
-            href="/"
-            className={styles.logoWrap}
-          >
+          <a href="/" className={styles.logoWrap}>
             <img
               src="/logo-final.png"
               alt="AutoParts EU"
@@ -58,10 +57,7 @@ export default function HomePage() {
             />
           </a>
 
-          <a
-            href={cabinetLink}
-            className={styles.loginBtn}
-          >
+          <a href={cabinetLink} className={styles.loginBtn}>
             Кабинет
           </a>
 
@@ -72,55 +68,21 @@ export default function HomePage() {
         <>
           <div
             className={styles.overlayMenu}
-            onClick={() =>
-              setMenuOpen(false)
-            }
+            onClick={() => setMenuOpen(false)}
           />
 
           <aside className={styles.menu}>
             <button
               className={styles.closeBtn}
-              onClick={() =>
-                setMenuOpen(false)
-              }
+              onClick={() => setMenuOpen(false)}
             >
               ✕
             </button>
 
-            <a href="/about">
-              О компании
-            </a>
-
-            <a href="/how-it-works">
-              Как работает сервис
-            </a>
-
-            <a href="/schedule">
-              Расписание поставок
-            </a>
-
-            <a href="/contacts">
-              Контакты
-            </a>
-
-            <div className={styles.langTitle}>
-              Язык
-            </div>
-
-            <a
-              href="/"
-              className={styles.langMenu}
-            >
-              🇷🇺 Русский
-            </a>
-
-            <a
-              href="/en"
-              className={styles.langMenu}
-            >
-              🇬🇧 English
-            </a>
-
+            <a href="/about">О компании</a>
+            <a href="/how-it-works">Как работает сервис</a>
+            <a href="/schedule">Расписание поставок</a>
+            <a href="/contacts">Контакты</a>
           </aside>
         </>
       )}
@@ -140,54 +102,54 @@ export default function HomePage() {
             </h1>
 
             <p>
-              Оригинальные детали и качественные аналоги
+              Оригинальные детали и
+              качественные аналоги
               для европейских автомобилей.
             </p>
 
             <div className={styles.trustRow}>
-              <span>
-                ✔ Подбор по VIN
-              </span>
-
-              <span>
-                ✔ Поставщики Европы
-              </span>
-
-              <span>
-                ✔ Гарантия качества
-              </span>
+              <span>✔ Подбор по VIN</span>
+              <span>✔ Поставщики Европы</span>
+              <span>✔ Гарантия качества</span>
             </div>
 
-            <form
-              action="/offer"
-              className={styles.offerForm}
-            >
+            <form action="/offer" className={styles.offerForm}>
               <input
                 name="vin"
                 placeholder="VIN или номер детали"
                 required
-                minLength={3}
               />
 
               <input
                 name="phone"
                 placeholder="Телефон / WhatsApp"
                 required
-                minLength={6}
               />
 
-              <button
-                type="submit"
-                className={styles.cta}
-              >
+              <button type="submit" className={styles.cta}>
                 ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ
               </button>
             </form>
 
+            {/* 🔥 КНОПКА ТЕСТА */}
+
+            <button
+              onClick={testSupabase}
+              style={{
+                marginTop: 10,
+                background: "#000",
+                color: "#fff",
+                padding: "10px",
+                width: "100%"
+              }}
+            >
+              TEST SUPABASE
+            </button>
+
             <div className={styles.paymentsBanner}>
               <img
                 src="/payments-banner.png"
-                alt="Оплата"
+                alt="Способы оплаты"
                 className={styles.paymentsImg}
               />
             </div>
