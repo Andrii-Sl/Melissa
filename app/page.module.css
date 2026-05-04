@@ -278,5 +278,23 @@
 .menu a{
   font-size:18px;
 }
+.rightSide{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.langBtn{
+  text-decoration:none;
+  color:#111111;
+  font-size:13px;
+  padding:6px 4px;
+  line-height:1;
+  white-space:nowrap;
+}
+
+.langBtn:hover{
+  color:#d10000;
+}
 
 }
