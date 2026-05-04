@@ -5,13 +5,13 @@ import Link from "next/link";
 import styles from "./login.module.css";
 
 export default function LoginPage() {
-  const [mode, setMode] =
-    useState<"login" | "register">(
-      "login"
-    );
-
   const [phone, setPhone] =
     useState("");
+
+  const [mode, setMode] =
+    useState<
+      "login" | "register"
+    >("login");
 
   const [name, setName] =
     useState("");
@@ -19,23 +19,14 @@ export default function LoginPage() {
   const [surname, setSurname] =
     useState("");
 
-  function handleSubmit() {
+  function submit() {
     if (phone === "1424") {
       window.location.href =
         "/dashboard";
       return;
     }
 
-    if (mode === "login") {
-      alert(
-        "OTP вход позже подключим"
-      );
-      return;
-    }
-
-    alert(
-      "Регистрация сохранена"
-    );
+    alert("Вход");
   }
 
   return (
@@ -43,20 +34,11 @@ export default function LoginPage() {
 
       <header className={styles.header}>
 
-        <Link
-          href="/"
-          className={styles.logoWrap}
-        >
-          <img
-            src="/logo-final.png"
-            className={styles.logo}
-            alt="logo"
-          />
-
-          <span>
-            AutoParts EU
-          </span>
-        </Link>
+        <img
+          src="/logo-final.png"
+          className={styles.logo}
+          alt="logo"
+        />
 
         <Link
           href="/"
@@ -68,88 +50,86 @@ export default function LoginPage() {
       </header>
 
       <section className={styles.hero}>
+        <div className={styles.overlay}>
 
-        <div className={styles.card}>
+          <div className={styles.card}>
 
-          <div className={styles.label}>
-            {mode === "login"
-              ? "ВХОД"
-              : "РЕГИСТРАЦИЯ"}
+            <div className={styles.label}>
+              {mode === "login"
+                ? "ВХОД"
+                : "РЕГИСТРАЦИЯ"}
+            </div>
+
+            <h1 className={styles.title}>
+              {mode === "login"
+                ? "Личный кабинет"
+                : "Регистрация"}
+            </h1>
+
+            {mode ===
+              "register" && (
+              <>
+                <input
+                  className={styles.input}
+                  placeholder="Имя"
+                  value={name}
+                  onChange={(e) =>
+                    setName(
+                      e.target.value
+                    )
+                  }
+                />
+
+                <input
+                  className={styles.input}
+                  placeholder="Фамилия"
+                  value={surname}
+                  onChange={(e) =>
+                    setSurname(
+                      e.target.value
+                    )
+                  }
+                />
+              </>
+            )}
+
+            <input
+              className={styles.input}
+              placeholder="Телефон"
+              value={phone}
+              onChange={(e) =>
+                setPhone(
+                  e.target.value
+                )
+              }
+            />
+
+            <button
+              className={styles.button}
+              onClick={submit}
+            >
+              ВОЙТИ
+            </button>
+
+            <button
+              className={styles.linkBtn}
+              onClick={() =>
+                setMode(
+                  mode ===
+                    "login"
+                    ? "register"
+                    : "login"
+                )
+              }
+            >
+              {mode === "login"
+                ? "Регистрация"
+                : "Назад ко входу"}
+            </button>
+
           </div>
 
-          <h1 className={styles.title}>
-            {mode === "login"
-              ? "Личный кабинет"
-              : "Создать аккаунт"}
-          </h1>
-
-          {mode ===
-            "register" && (
-            <>
-              <input
-                className={styles.input}
-                placeholder="Имя"
-                value={name}
-                onChange={(e) =>
-                  setName(
-                    e.target.value
-                  )
-                }
-              />
-
-              <input
-                className={styles.input}
-                placeholder="Фамилия"
-                value={surname}
-                onChange={(e) =>
-                  setSurname(
-                    e.target.value
-                  )
-                }
-              />
-            </>
-          )}
-
-          <input
-            className={styles.input}
-            placeholder="Телефон"
-            value={phone}
-            onChange={(e) =>
-              setPhone(
-                e.target.value
-              )
-            }
-          />
-
-          <button
-            className={styles.button}
-            onClick={
-              handleSubmit
-            }
-          >
-            {mode === "login"
-              ? "ВОЙТИ"
-              : "РЕГИСТРАЦИЯ"}
-          </button>
-
-          <button
-            className={styles.linkBtn}
-            onClick={() =>
-              setMode(
-                mode ===
-                  "login"
-                  ? "register"
-                  : "login"
-              )
-            }
-          >
-            {mode === "login"
-              ? "Регистрация"
-              : "Уже есть аккаунт? Вход"}
-          </button>
-
         </div>
-
       </section>
 
     </main>
