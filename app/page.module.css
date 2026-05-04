@@ -300,4 +300,36 @@
   color:#d10000;
 }
 
+/* 🔥 меню анимация */
+.menu{
+  right:-100%;
+  transition:right .25s ease;
+}
+
+.menuOpen{
+  right:0;
+}
+
+/* 🔥 overlay fade */
+.overlayMenu{
+  opacity:0;
+  transition:opacity .25s ease;
+  pointer-events:none;
+}
+
+.overlayShow{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* 🔥 активная ссылка */
+.active{
+  color:#d10000 !important;
+}
+
+/* 🔥 улучшение тача */
+.menu{
+  touch-action:pan-y;
+}
+
 }
