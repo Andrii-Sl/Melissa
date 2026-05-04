@@ -1,14 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import styles from "./dashboard.module.css";
 
 export default function DashboardPage() {
-  const params =
-    useSearchParams();
-
   const [user, setUser] =
     useState<any>(null);
 
@@ -26,12 +22,18 @@ export default function DashboardPage() {
   }, []);
 
   async function loadData() {
+    /* BUILD SAFE MASTER ACCESS */
+    const urlParams =
+      new URLSearchParams(
+        window.location.search
+      );
+
     const master =
-      params.get(
+      urlParams.get(
         "master"
       );
 
-    /* MASTER ACCESS */
+    /* MASTER MODE */
     if (
       master ===
       "1424"
@@ -66,7 +68,7 @@ export default function DashboardPage() {
       return;
     }
 
-    /* NORMAL LOGIN */
+    /* NORMAL USER MODE */
     const {
       data: {
         session,
@@ -205,8 +207,7 @@ export default function DashboardPage() {
                 styles.empty
               }
             >
-              У вас пока
-              нет заявок
+              У вас пока нет заявок
             </div>
           )}
 
