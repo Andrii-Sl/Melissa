@@ -20,11 +20,10 @@ type Item = {
 export default function OfferPage({
   searchParams,
 }: Props) {
-
   const vin =
     searchParams.vin || "";
 
-  const phone =
+  const startPhone =
     searchParams.phone || "";
 
   const [name, setName] =
@@ -32,6 +31,9 @@ export default function OfferPage({
 
   const [surname, setSurname] =
     useState("");
+
+  const [phone, setPhone] =
+    useState(startPhone);
 
   const [items, setItems] =
     useState<Item[]>([
@@ -41,11 +43,17 @@ export default function OfferPage({
       },
     ]);
 
-  const [done, setDone] =
+  const [code, setCode] =
+    useState("");
+
+  const [showCode, setShowCode] =
     useState(false);
 
-  const [requestId, setRequestId] =
-    useState("");
+  const [showSuccess, setShowSuccess] =
+    useState(false);
+
+  const [loading, setLoading] =
+    useState(false);
 
   function addItem() {
     setItems([
@@ -70,8 +78,61 @@ export default function OfferPage({
     setItems(copy);
   }
 
-  async function sendForm() {
+  /* SEND SMS */
 
+  async function sendRequest() {
+    setLoading(true);
+
+    const cleanPhone =
+      phone.trim();
+
+    const { error } =
+      await supabase.auth.signInWithOtp({
+        phone:
+          cleanPhone,
+      });
+
+    setLoading(false);
+
+    if (error) {
+      alert(
+        "Ошибка отправки SMS"
+      );
+      return;
+    }
+
+    setShowCode(true);
+  }
+
+  /* VERIFY SMS */
+
+  async function verifyCode() {
+    const cleanPhone =
+      phone.trim();
+
+    const { error } =
+      await supabase.auth.verifyOtp({
+        phone:
+          cleanPhone,
+        token:
+          code,
+        type:
+          "sms",
+      });
+
+    if (error) {
+      alert(
+        "Неверный код"
+      );
+      return;
+    }
+
+    await createRequest();
+  }
+
+  /* CREATE REQUEST ONLY AFTER SMS */
+
+  async function createRequest() {
     const fullName =
       (
         name +
@@ -85,16 +146,17 @@ export default function OfferPage({
     const {
       data:
         existing,
-    } = await supabase
-      .from(
-        "profiles"
-      )
-      .select("id")
-      .eq(
-        "phone",
-        phone
-      )
-      .maybeSingle();
+    } =
+      await supabase
+        .from(
+          "profiles"
+        )
+        .select("id")
+        .eq(
+          "phone",
+          phone
+        )
+        .maybeSingle();
 
     if (existing) {
       profileId =
@@ -112,7 +174,8 @@ export default function OfferPage({
             {
               full_name:
                 fullName,
-              phone,
+              phone:
+                phone,
             },
           ])
           .select("id")
@@ -148,9 +211,9 @@ export default function OfferPage({
 
     const rows =
       items.filter(
-        (x) =>
-          x.description ||
-          x.number
+        (item) =>
+          item.description ||
+          item.number
       );
 
     if (
@@ -176,16 +239,12 @@ export default function OfferPage({
         );
     }
 
-    setRequestId(
-      String(
-        request.id
-      )
-    );
-
-    setDone(true);
+    setShowSuccess(true);
   }
 
-  if (done) {
+  /* SUCCESS SCREEN */
+
+  if (showSuccess) {
     return (
       <main className={styles.page}>
         <section className={styles.hero}>
@@ -193,21 +252,15 @@ export default function OfferPage({
             <div className={styles.card}>
 
               <h1 className={styles.title}>
-                Благодарим
+                Заявка принята
               </h1>
 
               <p>
-                Ваш запрос №
-                {requestId}
-                принят.
-              </p>
-
-              <p>
-                Информацию о
-                стоимости и
-                наличии мы
-                сообщим в
-                личном кабинете.
+                Наше предложение
+                будет ждать вас
+                в личном кабинете
+                после получения
+                вами SMS.
               </p>
 
               <Link
@@ -225,6 +278,8 @@ export default function OfferPage({
       </main>
     );
   }
+
+  /* MAIN PAGE */
 
   return (
     <main className={styles.page}>
@@ -248,7 +303,6 @@ export default function OfferPage({
 
       <section className={styles.hero}>
         <div className={styles.overlay}>
-
           <div className={styles.card}>
 
             <div className={styles.label}>
@@ -290,7 +344,11 @@ export default function OfferPage({
             <input
               className={styles.input}
               value={phone}
-              readOnly
+              onChange={(e) =>
+                setPhone(
+                  e.target.value
+                )
+              }
             />
 
             {items.map(
@@ -302,7 +360,6 @@ export default function OfferPage({
                   key={index}
                   className={styles.row}
                 >
-
                   <input
                     className={styles.input}
                     placeholder="Описание детали"
@@ -334,7 +391,6 @@ export default function OfferPage({
                       )
                     }
                   />
-
                 </div>
               )
             )}
@@ -351,14 +407,43 @@ export default function OfferPage({
             <button
               className={styles.button}
               onClick={
-                sendForm
+                sendRequest
               }
             >
-              ВЫСЛАТЬ ЗАПРОС
+              {loading
+                ? "ОТПРАВКА..."
+                : "ВЫСЛАТЬ ЗАПРОС"}
             </button>
 
-          </div>
+            {showCode && (
+              <>
+                <input
+                  className={
+                    styles.input
+                  }
+                  placeholder="Код из SMS"
+                  value={code}
+                  onChange={(e) =>
+                    setCode(
+                      e.target.value
+                    )
+                  }
+                />
 
+                <button
+                  className={
+                    styles.button
+                  }
+                  onClick={
+                    verifyCode
+                  }
+                >
+                  ПОДТВЕРДИТЬ КОД
+                </button>
+              </>
+            )}
+
+          </div>
         </div>
       </section>
 
