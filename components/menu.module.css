@@ -65,4 +65,17 @@
   font-size:18px;
 }
 
+.langBlock {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.langBlock a {
+  font-size: 14px;
+}
+
 }
