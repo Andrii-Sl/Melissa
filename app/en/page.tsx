@@ -58,30 +58,12 @@ export default function EnHomePage() {
             />
           </a>
 
-          <div className={styles.rightSide}>
-
-            <a
-              href="/"
-              className={styles.langBtn}
-            >
-              RU
-            </a>
-
-            <a
-              href="/en"
-              className={styles.langBtn}
-            >
-              EN
-            </a>
-
-            <a
-              href={cabinetLink}
-              className={styles.loginBtn}
-            >
-              Account
-            </a>
-
-          </div>
+          <a
+            href={cabinetLink}
+            className={styles.loginBtn}
+          >
+            Account
+          </a>
 
         </div>
       </header>
@@ -120,6 +102,25 @@ export default function EnHomePage() {
             <a href="/en/contacts">
               Contacts
             </a>
+
+            <div className={styles.langTitle}>
+              Language
+            </div>
+
+            <a
+              href="/"
+              className={styles.langMenu}
+            >
+              🇷🇺 Russian
+            </a>
+
+            <a
+              href="/en"
+              className={styles.langMenu}
+            >
+              🇬🇧 English
+            </a>
+
           </aside>
         </>
       )}
