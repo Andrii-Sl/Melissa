@@ -1,204 +1,282 @@
 .page{
-  min-height:100vh;
+  margin:0;
+  padding:0;
+  font-family:Arial, Helvetica, sans-serif;
   background:#ffffff;
+  color:#111111;
+  min-height:100svh;
+  overflow-x:hidden;
+}
+
+.container{
+  width:100%;
+  max-width:1440px;
+  margin:0 auto;
+  padding:0 14px;
 }
 
 /* HEADER */
 
 .header{
+  height:78px;
   background:#ffffff;
-  border-bottom:1px solid #eee;
+  border-bottom:1px solid #ececec;
 }
 
-.container{
-  display:flex;
+.header .container{
+  height:78px;
+  display:grid;
+  grid-template-columns:42px 1fr auto;
   align-items:center;
-  justify-content:space-between;
-  padding:10px 12px;
+  gap:10px;
 }
 
 .burger{
-  font-size:24px;
-  background:none;
+  width:42px;
+  height:42px;
   border:none;
+  background:none;
+  font-size:28px;
+  cursor:pointer;
+  padding:0;
 }
 
 .logoWrap{
-  text-decoration:none;
+  display:flex;
+  align-items:center;
 }
 
 .logoImg{
-  height:36px;
+  width:190px;
+  height:auto;
+  display:block;
 }
 
 .loginBtn{
   text-decoration:none;
+  color:#111111;
   border:1px solid #d10000;
-  padding:8px 14px;
-  font-size:14px;
-  color:#111;
+  padding:9px 10px;
+  font-size:13px;
+  white-space:nowrap;
 }
 
 /* HERO */
 
 .hero{
-  height:100vh;
-  background:url("/hero.jpg") center/cover no-repeat;
+  min-height:calc(100svh - 78px);
+  background:url('/hero.jpg') center center/cover no-repeat;
 }
 
 .overlay{
-  background:rgba(0,0,0,.5);
-  height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  min-height:calc(100svh - 78px);
+  background:linear-gradient(
+    180deg,
+    rgba(0,0,0,.22) 0%,
+    rgba(0,0,0,.72) 42%,
+    rgba(0,0,0,.90) 100%
+  );
 }
 
 .heroBox{
-  max-width:480px;
-  width:100%;
-  padding:20px;
-  color:#fff;
+  min-height:calc(100svh - 78px);
+  padding:18px 14px 28px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
 }
 
 .miniTitle{
-  color:#ff4d4d;
-  font-size:12px;
+  color:#ff2b2b;
+  font-size:11px;
   margin-bottom:10px;
 }
 
 .heroBox h1{
-  font-size:34px;
-  line-height:1.1;
-  margin-bottom:10px;
+  color:#ffffff;
+  font-size:42px;
+  line-height:1.03;
+  margin:0 0 12px;
 }
 
 .heroBox p{
-  font-size:14px;
-  margin-bottom:16px;
+  color:#dddddd;
+  font-size:15px;
+  margin:0 0 14px;
 }
 
 .trustRow{
-  display:flex;
-  flex-direction:column;
+  display:grid;
   gap:6px;
   margin-bottom:14px;
 }
 
-.offerForm{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
+.trustRow span{
+  color:#ffffff;
+  font-size:14px;
 }
 
-.offerForm input{
+.heroBox input{
+  width:100%;
   height:48px;
+  margin-bottom:10px;
   padding:0 14px;
   border:none;
+  font-size:15px;
 }
 
 .cta{
-  height:52px;
+  width:100%;
+  height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  text-decoration:none;
   background:#d10000;
-  color:#fff;
-  border:none;
+  color:#ffffff;
+  font-size:16px;
   font-weight:700;
+  letter-spacing:.5px;
+  line-height:1;
+  margin:10px 0 14px;
+  padding:0 12px;
 }
 
+/* PAYMENT IMAGE */
+
 .paymentsBanner{
-  margin-top:20px;
-  text-align:center;
+  margin-top:12px;
+  width:100%;
 }
 
 .paymentsImg{
-  max-width:100%;
+  width:100%;
+  max-width:420px;
+  display:block;
+  border-radius:10px;
 }
 
 /* MENU */
-
-.menu{
-  position:fixed;
-  top:0;
-  right:-100%;
-  width:290px;
-  height:100vh;
-  background:#ffffff;
-  z-index:100;
-  padding:20px 14px;
-  display:flex;
-  flex-direction:column;
-  transition:right .25s ease;
-}
-
-.menuOpen{
-  right:0;
-}
-
-/* overlay */
 
 .overlayMenu{
   position:fixed;
   inset:0;
   background:rgba(0,0,0,.45);
   z-index:90;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .25s ease;
 }
 
-.overlayShow{
-  opacity:1;
-  pointer-events:auto;
+.menu{
+  position:fixed;
+  top:0;
+  right:0;
+  width:290px;
+  max-width:88vw;
+  height:100svh;
+  background:#ffffff;
+  z-index:100;
+  padding:22px 18px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  box-shadow:-10px 0 30px rgba(0,0,0,.12);
 }
-
-/* close button */
 
 .closeBtn{
-  width:40px;
-  height:40px;
-  background:#f3f3f3;
+  width:42px;
+  height:42px;
   border:none;
+  background:#f5f5f5;
   font-size:22px;
-  align-self:flex-end;
+  cursor:pointer;
   margin-bottom:10px;
+  align-self:flex-end;
 }
-
-/* menu links */
 
 .menu a{
   text-decoration:none;
-  color:#111;
-  font-size:15px;
-  padding:12px 10px;
+  color:#111111;
+  font-size:16px;
+  padding:14px 10px;
   border-bottom:1px solid #f1f1f1;
 }
 
-/* active */
-
-.active{
-  color:#d10000 !important;
+.menu a:hover{
+  color:#d10000;
 }
 
-/* language */
+/* DESKTOP */
 
-.langTitle{
-  margin-top:26px;
-  font-size:11px;
-  color:#999;
-  text-transform:uppercase;
-  padding:10px 10px 6px;
+@media(min-width:901px){
+
+.container{
+  padding:0 28px;
 }
 
-.langMenu{
-  text-decoration:none;
-  color:#111;
-  font-size:15px;
-  padding:12px 10px;
-  border-bottom:1px solid #f1f1f1;
+.header{
+  height:92px;
 }
 
-/* touch */
+.header .container{
+  height:92px;
+}
+
+.logoImg{
+  width:460px;
+}
+
+.loginBtn{
+  padding:13px 18px;
+  font-size:14px;
+}
+
+.hero{
+  min-height:760px;
+}
+
+.overlay{
+  min-height:760px;
+}
+
+.heroBox{
+  width:620px;
+  min-height:760px;
+  padding:40px 0 40px 28px;
+}
+
+.heroBox h1{
+  font-size:70px;
+}
+
+.heroBox p{
+  font-size:19px;
+}
+
+.heroBox input{
+  height:58px;
+  font-size:16px;
+}
+
+.cta{
+  height:62px;
+  font-size:18px;
+}
+
+.paymentsBanner{
+  margin-top:18px;
+}
+
+.paymentsImg{
+  max-width:520px;
+}
 
 .menu{
-  touch-action:pan-y;
+  width:360px;
+  padding:28px 24px;
+}
+
+.menu a{
+  font-size:18px;
+}
+
 }
