@@ -6,7 +6,6 @@ import { supabase } from "@/lib/supabase";
 import styles from "./offer.module.css";
 
 export default function OfferPage({ searchParams }: any) {
-
   const vin = searchParams?.vin || "";
   const startPhone = searchParams?.phone || "";
 
@@ -15,21 +14,20 @@ export default function OfferPage({ searchParams }: any) {
   const [phone, setPhone] = useState(startPhone);
 
   const [code, setCode] = useState(["", "", "", ""]);
-  const inputsRef = useRef<any[]>([]);
+
+  const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
   const [showModal, setShowModal] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
   const [loading, setLoading] = useState(false);
 
-  // 🔥 автофокус на имя
   const nameRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     nameRef.current?.focus();
   }, []);
 
-  // 🔥 ввод кода по ячейкам
   function handleCodeChange(value: string, index: number) {
     if (!/^\d?$/.test(value)) return;
 
@@ -42,7 +40,6 @@ export default function OfferPage({ searchParams }: any) {
     }
   }
 
-  // 🔥 отправка SMS
   async function sendSms() {
     setLoading(true);
 
@@ -53,14 +50,13 @@ export default function OfferPage({ searchParams }: any) {
     setLoading(false);
 
     if (error) {
-      alert("Ошибка SMS");
+      alert("Ошибка отправки SMS");
       return;
     }
 
     setShowModal(true);
   }
 
-  // 🔥 проверка кода
   async function verifyCode() {
     const token = code.join("");
 
@@ -84,7 +80,8 @@ export default function OfferPage({ searchParams }: any) {
     setShowSuccess(true);
   }
 
-  // 🔥 SUCCESS
+  /* SUCCESS SCREEN */
+
   if (showSuccess) {
     return (
       <main className={styles.page}>
@@ -112,10 +109,8 @@ export default function OfferPage({ searchParams }: any) {
 
   return (
     <main className={styles.page}>
-
       <section className={styles.hero}>
         <div className={styles.overlay}>
-
           <div className={styles.card}>
 
             <div className={styles.label}>
@@ -131,14 +126,18 @@ export default function OfferPage({ searchParams }: any) {
               className={styles.input}
               placeholder="Имя"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) =>
+                setName(e.target.value)
+              }
             />
 
             <input
               className={styles.input}
               placeholder="Фамилия"
               value={surname}
-              onChange={(e) => setSurname(e.target.value)}
+              onChange={(e) =>
+                setSurname(e.target.value)
+              }
             />
 
             <input
@@ -150,7 +149,9 @@ export default function OfferPage({ searchParams }: any) {
             <input
               className={styles.input}
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) =>
+                setPhone(e.target.value)
+              }
             />
 
             <input
@@ -167,18 +168,19 @@ export default function OfferPage({ searchParams }: any) {
               className={styles.button}
               onClick={sendSms}
             >
-              {loading ? "ОТПРАВКА..." : "ВЫСЛАТЬ ЗАПРОС"}
+              {loading
+                ? "ОТПРАВКА..."
+                : "ВЫСЛАТЬ ЗАПРОС"}
             </button>
 
           </div>
-
         </div>
       </section>
 
-      {/* 🔥 SMS MODAL */}
+      {/* SMS MODAL */}
+
       {showModal && (
         <div className={styles.modalBg}>
-
           <div className={styles.modal}>
 
             <h2>Введите код</h2>
@@ -187,11 +189,16 @@ export default function OfferPage({ searchParams }: any) {
               {code.map((digit, i) => (
                 <input
                   key={i}
-                  ref={(el) => (inputsRef.current[i] = el)}
+                  ref={(el) => {
+                    inputsRef.current[i] = el;
+                  }}
                   className={styles.codeInput}
                   value={digit}
                   onChange={(e) =>
-                    handleCodeChange(e.target.value, i)
+                    handleCodeChange(
+                      e.target.value,
+                      i
+                    )
                   }
                 />
               ))}
