@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { supabase } from "../lib/supabase";
 import Footer from "../components/Footer";
 import styles from "./page.module.css";
@@ -11,6 +12,12 @@ export default function HomePage() {
 
   const [cabinetLink, setCabinetLink] =
     useState("/login");
+
+  const pathname = usePathname();
+
+  const startX = useRef(0);
+  const currentX = useRef(0);
+  const isDragging = useRef(false);
 
   useEffect(() => {
     checkUser();
@@ -23,38 +30,59 @@ export default function HomePage() {
       await supabase.auth.getSession();
 
     if (session) {
-      setCabinetLink(
-        "/dashboard"
-      );
+      setCabinetLink("/dashboard");
     } else {
-      setCabinetLink(
-        "/login"
-      );
+      setCabinetLink("/login");
     }
+  }
+
+  /* 🔥 блок скролла */
+  useEffect(() => {
+    document.body.style.overflow =
+      menuOpen ? "hidden" : "auto";
+  }, [menuOpen]);
+
+  /* 🔥 свайп */
+  function onTouchStart(e: any) {
+    startX.current = e.touches[0].clientX;
+    isDragging.current = true;
+  }
+
+  function onTouchMove(e: any) {
+    if (!isDragging.current) return;
+    currentX.current =
+      e.touches[0].clientX;
+  }
+
+  function onTouchEnd() {
+    const diff =
+      startX.current - currentX.current;
+
+    if (diff > 80) {
+      setMenuOpen(false);
+    }
+
+    isDragging.current = false;
   }
 
   return (
     <main className={styles.page}>
+
       <header className={styles.header}>
         <div className={styles.container}>
 
           <button
             className={styles.burger}
-            onClick={() =>
-              setMenuOpen(true)
-            }
+            onClick={() => setMenuOpen(true)}
           >
             ☰
           </button>
 
-          <a
-            href="/"
-            className={styles.logoWrap}
-          >
+          <a href="/" className={styles.logoWrap}>
             <img
               src="/logo-final.png"
-              alt="AutoParts EU"
               className={styles.logoImg}
+              alt="logo"
             />
           </a>
 
@@ -68,131 +96,96 @@ export default function HomePage() {
         </div>
       </header>
 
-      {menuOpen && (
-        <>
-          <div
-            className={styles.overlayMenu}
-            onClick={() =>
-              setMenuOpen(false)
-            }
-          />
+      {/* overlay */}
+      <div
+        className={`${styles.overlayMenu} ${
+          menuOpen ? styles.overlayShow : ""
+        }`}
+        onClick={() => setMenuOpen(false)}
+      />
 
-          <aside className={styles.menu}>
-            <button
-              className={styles.closeBtn}
-              onClick={() =>
-                setMenuOpen(false)
-              }
-            >
-              ✕
-            </button>
+      {/* menu */}
+      <aside
+        className={`${styles.menu} ${
+          menuOpen ? styles.menuOpen : ""
+        }`}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
+        <button
+          className={styles.closeBtn}
+          onClick={() => setMenuOpen(false)}
+        >
+          ✕
+        </button>
 
-            <a href="/about">
-              О компании
-            </a>
+        <a
+          href="/about"
+          className={
+            pathname === "/about"
+              ? styles.active
+              : ""
+          }
+        >
+          О компании
+        </a>
 
-            <a href="/how-it-works">
-              Как работает сервис
-            </a>
+        <a
+          href="/how-it-works"
+          className={
+            pathname === "/how-it-works"
+              ? styles.active
+              : ""
+          }
+        >
+          Как работает сервис
+        </a>
 
-            <a href="/schedule">
-              Расписание поставок
-            </a>
+        <a
+          href="/schedule"
+          className={
+            pathname === "/schedule"
+              ? styles.active
+              : ""
+          }
+        >
+          Расписание поставок
+        </a>
 
-            <a href="/contacts">
-              Контакты
-            </a>
+        <a
+          href="/contacts"
+          className={
+            pathname === "/contacts"
+              ? styles.active
+              : ""
+          }
+        >
+          Контакты
+        </a>
 
-            <div className={styles.langTitle}>
-              Язык
-            </div>
+        <div className={styles.langTitle}>
+          Язык
+        </div>
 
-            <a
-              href="/"
-              className={styles.langMenu}
-            >
-              🇷🇺 Русский
-            </a>
+        <a
+          href="/"
+          className={styles.langMenu}
+        >
+          🇷🇺 Русский
+        </a>
 
-            <a
-              href="/en"
-              className={styles.langMenu}
-            >
-              🇬🇧 English
-            </a>
-
-          </aside>
-        </>
-      )}
+        <a
+          href="/en"
+          className={styles.langMenu}
+        >
+          🇬🇧 English
+        </a>
+      </aside>
 
       <section className={styles.hero}>
         <div className={styles.overlay}>
-          <div className={styles.heroBox}>
-
-            <div className={styles.miniTitle}>
-              ПОДБОР ПО VIN И НОМЕРУ ДЕТАЛИ
-            </div>
-
-            <h1>
-              Автозапчасти
-              <br />
-              из Европы
-            </h1>
-
-            <p>
-              Оригинальные детали и качественные аналоги
-              для европейских автомобилей.
-            </p>
-
-            <div className={styles.trustRow}>
-              <span>
-                ✔ Подбор по VIN
-              </span>
-
-              <span>
-                ✔ Поставщики Европы
-              </span>
-
-              <span>
-                ✔ Гарантия качества
-              </span>
-            </div>
-
-            <form
-              action="/offer"
-              className={styles.offerForm}
-            >
-              <input
-                name="vin"
-                placeholder="VIN или номер детали"
-                required
-                minLength={3}
-              />
-
-              <input
-                name="phone"
-                placeholder="Телефон / WhatsApp"
-                required
-                minLength={6}
-              />
-
-              <button
-                type="submit"
-                className={styles.cta}
-              >
-                ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ
-              </button>
-            </form>
-
-            <div className={styles.paymentsBanner}>
-              <img
-                src="/payments-banner.png"
-                alt="Оплата"
-                className={styles.paymentsImg}
-              />
-            </div>
-
-          </div>
+          <div className={styles.heroBox}></div>
         </div>
       </section>
 
