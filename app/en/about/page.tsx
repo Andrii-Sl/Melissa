@@ -1,5 +1,5 @@
-import Menu from "../../components/Menu";
-import Footer from "../../components/Footer";
+import Menu from "@/components/Menu";
+import Footer from "@/components/Footer";
 import styles from "../../about/about.module.css";
 
 export default function EnAboutPage() {
@@ -18,10 +18,7 @@ export default function EnAboutPage() {
             />
           </a>
 
-          <a
-            href="/dashboard"
-            className={styles.loginBtn}
-          >
+          <a href="/dashboard" className={styles.loginBtn}>
             Account
           </a>
 
@@ -56,13 +53,12 @@ export default function EnAboutPage() {
 
       <section className={styles.content}>
         <div className={styles.container}>
-
           <div className={styles.grid}>
 
             <div className={styles.card}>
               <h3>What we do</h3>
               <p>
-                подбор деталей по VIN, OEM number,
+                Selection of parts by VIN, OEM number,
                 or customer request.
               </p>
             </div>
@@ -71,29 +67,27 @@ export default function EnAboutPage() {
               <h3>Why choose us</h3>
               <p>
                 Trusted suppliers, transparent timelines,
-                and full customer support at every stage.
+                and support at every stage.
               </p>
             </div>
 
             <div className={styles.card}>
               <h3>Delivery coverage</h3>
               <p>
-                Delivery across Kazakhstan.
-                Main delivery to Almaty, then shipment
-                to any city via transport service.
+                Delivery across Kazakhstan with forwarding
+                via transport services.
               </p>
             </div>
 
             <div className={styles.card}>
               <h3>Our goal</h3>
               <p>
-                To make ordering auto parts simple,
-                fast, and cost-effective.
+                Make ordering auto parts simple,
+                fast and profitable.
               </p>
             </div>
 
           </div>
-
         </div>
       </section>
 
