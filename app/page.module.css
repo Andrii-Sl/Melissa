@@ -1,308 +1,132 @@
 .page{
-  margin:0;
-  padding:0;
-  font-family:Arial, Helvetica, sans-serif;
+  min-height:100vh;
   background:#ffffff;
-  color:#111111;
-  min-height:100svh;
-  overflow-x:hidden;
-}
-
-.container{
-  width:100%;
-  max-width:1440px;
-  margin:0 auto;
-  padding:0 14px;
 }
 
 /* HEADER */
 
 .header{
-  height:78px;
   background:#ffffff;
-  border-bottom:1px solid #ececec;
+  border-bottom:1px solid #eee;
 }
 
-.header .container{
-  height:78px;
-  display:grid;
-  grid-template-columns:42px 1fr auto;
+.container{
+  display:flex;
   align-items:center;
-  gap:10px;
+  justify-content:space-between;
+  padding:10px 12px;
 }
 
 .burger{
-  width:42px;
-  height:42px;
-  border:none;
+  font-size:24px;
   background:none;
-  font-size:28px;
-  cursor:pointer;
-  padding:0;
+  border:none;
 }
 
 .logoWrap{
-  display:flex;
-  align-items:center;
+  text-decoration:none;
 }
 
 .logoImg{
-  width:190px;
-  height:auto;
-  display:block;
+  height:36px;
 }
 
 .loginBtn{
   text-decoration:none;
-  color:#111111;
   border:1px solid #d10000;
-  padding:9px 10px;
-  font-size:13px;
-  white-space:nowrap;
+  padding:8px 14px;
+  font-size:14px;
+  color:#111;
 }
 
 /* HERO */
 
 .hero{
-  min-height:calc(100svh - 78px);
-  background:url('/hero.jpg') center center/cover no-repeat;
+  height:100vh;
+  background:url("/hero.jpg") center/cover no-repeat;
 }
 
 .overlay{
-  min-height:calc(100svh - 78px);
-  background:linear-gradient(
-    180deg,
-    rgba(0,0,0,.22) 0%,
-    rgba(0,0,0,.72) 42%,
-    rgba(0,0,0,.90) 100%
-  );
-}
-
-.heroBox{
-  min-height:calc(100svh - 78px);
-  padding:18px 14px 28px;
+  background:rgba(0,0,0,.5);
+  height:100%;
   display:flex;
-  flex-direction:column;
+  align-items:center;
   justify-content:center;
 }
 
+.heroBox{
+  max-width:480px;
+  width:100%;
+  padding:20px;
+  color:#fff;
+}
+
 .miniTitle{
-  color:#ff2b2b;
-  font-size:11px;
+  color:#ff4d4d;
+  font-size:12px;
   margin-bottom:10px;
 }
 
 .heroBox h1{
-  color:#ffffff;
-  font-size:42px;
-  line-height:1.03;
-  margin:0 0 12px;
+  font-size:34px;
+  line-height:1.1;
+  margin-bottom:10px;
 }
 
 .heroBox p{
-  color:#dddddd;
-  font-size:15px;
-  margin:0 0 14px;
+  font-size:14px;
+  margin-bottom:16px;
 }
 
 .trustRow{
-  display:grid;
+  display:flex;
+  flex-direction:column;
   gap:6px;
   margin-bottom:14px;
 }
 
-.trustRow span{
-  color:#ffffff;
-  font-size:14px;
+.offerForm{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
 }
 
-.heroBox input{
-  width:100%;
+.offerForm input{
   height:48px;
-  margin-bottom:10px;
   padding:0 14px;
   border:none;
-  font-size:15px;
 }
 
 .cta{
-  width:100%;
-  height:56px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  text-decoration:none;
+  height:52px;
   background:#d10000;
-  color:#ffffff;
-  font-size:16px;
+  color:#fff;
+  border:none;
   font-weight:700;
-  letter-spacing:.5px;
-  line-height:1;
-  margin:10px 0 14px;
-  padding:0 12px;
 }
 
-/* PAYMENT IMAGE */
-
 .paymentsBanner{
-  margin-top:12px;
-  width:100%;
+  margin-top:20px;
+  text-align:center;
 }
 
 .paymentsImg{
-  width:100%;
-  max-width:420px;
-  display:block;
-  border-radius:10px;
+  max-width:100%;
 }
 
 /* MENU */
 
-.overlayMenu{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.45);
-  z-index:90;
-}
-
 .menu{
   position:fixed;
   top:0;
-  right:0;
+  right:-100%;
   width:290px;
-  max-width:88vw;
-  height:100svh;
+  height:100vh;
   background:#ffffff;
   z-index:100;
-  padding:22px 18px;
+  padding:20px 14px;
   display:flex;
   flex-direction:column;
-  gap:8px;
-  box-shadow:-10px 0 30px rgba(0,0,0,.12);
-}
-
-.closeBtn{
-  width:42px;
-  height:42px;
-  border:none;
-  background:#f5f5f5;
-  font-size:22px;
-  cursor:pointer;
-  margin-bottom:10px;
-  align-self:flex-end;
-}
-
-.menu a{
-  text-decoration:none;
-  color:#111111;
-  font-size:16px;
-  padding:14px 10px;
-  border-bottom:1px solid #f1f1f1;
-}
-
-.menu a:hover{
-  color:#d10000;
-}
-
-/* DESKTOP */
-
-@media(min-width:901px){
-
-.container{
-  padding:0 28px;
-}
-
-.header{
-  height:92px;
-}
-
-.header .container{
-  height:92px;
-}
-
-.logoImg{
-  width:460px;
-}
-
-.loginBtn{
-  padding:13px 18px;
-  font-size:14px;
-}
-
-.hero{
-  min-height:760px;
-}
-
-.overlay{
-  min-height:760px;
-}
-
-.heroBox{
-  width:620px;
-  min-height:760px;
-  padding:40px 0 40px 28px;
-}
-
-.heroBox h1{
-  font-size:70px;
-}
-
-.heroBox p{
-  font-size:19px;
-}
-
-.heroBox input{
-  height:58px;
-  font-size:16px;
-}
-
-.cta{
-  height:62px;
-  font-size:18px;
-}
-
-.paymentsBanner{
-  margin-top:18px;
-}
-
-.paymentsImg{
-  max-width:520px;
-}
-
-.menu{
-  width:360px;
-  padding:28px 24px;
-}
-
-.menu a{
-  font-size:18px;
-}
-
-.langTitle{
-  margin-top:18px;
-  padding:12px 10px 6px;
-  font-size:12px;
-  color:#999999;
-  text-transform:uppercase;
-  letter-spacing:.6px;
-}
-
-.langMenu{
-  text-decoration:none;
-  color:#111111;
-  font-size:16px;
-  padding:14px 10px;
-  border-bottom:1px solid #f1f1f1;
-}
-
-.langMenu:hover{
-  color:#d10000;
-}
-
-/* 🔥 меню анимация */
-.menu{
-  right:-100%;
   transition:right .25s ease;
 }
 
@@ -310,11 +134,16 @@
   right:0;
 }
 
-/* 🔥 overlay fade */
+/* overlay */
+
 .overlayMenu{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  z-index:90;
   opacity:0;
-  transition:opacity .25s ease;
   pointer-events:none;
+  transition:opacity .25s ease;
 }
 
 .overlayShow{
@@ -322,14 +151,54 @@
   pointer-events:auto;
 }
 
-/* 🔥 активная ссылка */
+/* close button */
+
+.closeBtn{
+  width:40px;
+  height:40px;
+  background:#f3f3f3;
+  border:none;
+  font-size:22px;
+  align-self:flex-end;
+  margin-bottom:10px;
+}
+
+/* menu links */
+
+.menu a{
+  text-decoration:none;
+  color:#111;
+  font-size:15px;
+  padding:12px 10px;
+  border-bottom:1px solid #f1f1f1;
+}
+
+/* active */
+
 .active{
   color:#d10000 !important;
 }
 
-/* 🔥 улучшение тача */
-.menu{
-  touch-action:pan-y;
+/* language */
+
+.langTitle{
+  margin-top:26px;
+  font-size:11px;
+  color:#999;
+  text-transform:uppercase;
+  padding:10px 10px 6px;
 }
 
+.langMenu{
+  text-decoration:none;
+  color:#111;
+  font-size:15px;
+  padding:12px 10px;
+  border-bottom:1px solid #f1f1f1;
+}
+
+/* touch */
+
+.menu{
+  touch-action:pan-y;
 }
