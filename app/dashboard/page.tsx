@@ -1,11 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import styles from "./dashboard.module.css";
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<any>(null);
+  const params =
+    useSearchParams();
+
+  const [user, setUser] =
+    useState<any>(null);
+
   const [profile, setProfile] =
     useState<any>(null);
 
@@ -20,8 +26,51 @@ export default function DashboardPage() {
   }, []);
 
   async function loadData() {
+    const master =
+      params.get(
+        "master"
+      );
+
+    /* MASTER ACCESS */
+    if (
+      master ===
+      "1424"
+    ) {
+      setUser({
+        phone:
+          "MASTER",
+      });
+
+      setProfile({
+        full_name:
+          "Владелец",
+        phone:
+          "MASTER ACCESS",
+      });
+
+      const {
+        data: r,
+      } =
+        await supabase
+          .from(
+            "requests"
+          )
+          .select("*")
+          .order("id", {
+            ascending:
+              false,
+          });
+
+      setOrders(r || []);
+      setLoading(false);
+      return;
+    }
+
+    /* NORMAL LOGIN */
     const {
-      data: { session },
+      data: {
+        session,
+      },
     } =
       await supabase.auth.getSession();
 
@@ -36,9 +85,13 @@ export default function DashboardPage() {
 
     setUser(currentUser);
 
-    const { data: p } =
+    const {
+      data: p,
+    } =
       await supabase
-        .from("profiles")
+        .from(
+          "profiles"
+        )
         .select("*")
         .eq(
           "user_id",
@@ -48,16 +101,21 @@ export default function DashboardPage() {
 
     setProfile(p);
 
-    const { data: r } =
+    const {
+      data: r,
+    } =
       await supabase
-        .from("requests")
+        .from(
+          "requests"
+        )
         .select("*")
         .eq(
           "user_id",
           currentUser.id
         )
         .order("id", {
-          ascending: false,
+          ascending:
+            false,
         });
 
     setOrders(r || []);
@@ -87,6 +145,7 @@ export default function DashboardPage() {
 
         <div className={styles.top}>
           <div>
+
             <div className={styles.label}>
               ЛИЧНЫЙ КАБИНЕТ
             </div>
@@ -101,6 +160,7 @@ export default function DashboardPage() {
                 user?.phone ||
                 ""}
             </p>
+
           </div>
 
           <button
@@ -112,33 +172,44 @@ export default function DashboardPage() {
         </div>
 
         <div className={styles.list}>
-          {orders.map((item) => (
-            <a
-              key={item.id}
-              href={`/dashboard/request/${item.id}`}
-              className={styles.card}
+
+          {orders.map(
+            (item) => (
+              <a
+                key={item.id}
+                href={`/dashboard/request/${item.id}`}
+                className={styles.card}
+              >
+                <strong>
+                  Заявка #
+                  {item.id}
+                </strong>
+
+                <p>
+                  {item.part_name ||
+                    item.vin ||
+                    "Запрос"}
+                </p>
+
+                <span>
+                  {item.status}
+                </span>
+              </a>
+            )
+          )}
+
+          {orders.length ===
+            0 && (
+            <div
+              className={
+                styles.empty
+              }
             >
-              <strong>
-                Заявка #{item.id}
-              </strong>
-
-              <p>
-                {item.part_name ||
-                  item.vin ||
-                  "Запрос"}
-              </p>
-
-              <span>
-                {item.status}
-              </span>
-            </a>
-          ))}
-
-          {orders.length === 0 && (
-            <div className={styles.empty}>
-              У вас пока нет заявок
+              У вас пока
+              нет заявок
             </div>
           )}
+
         </div>
 
       </section>
