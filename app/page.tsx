@@ -6,8 +6,11 @@ import Footer from "../components/Footer";
 import styles from "./page.module.css";
 
 export default function HomePage() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [cabinetLink, setCabinetLink] = useState("/login");
+  const [menuOpen, setMenuOpen] =
+    useState(false);
+
+  const [cabinetLink, setCabinetLink] =
+    useState("/login");
 
   useEffect(() => {
     checkUser();
@@ -16,12 +19,17 @@ export default function HomePage() {
   async function checkUser() {
     const {
       data: { session },
-    } = await supabase.auth.getSession();
+    } =
+      await supabase.auth.getSession();
 
     if (session) {
-      setCabinetLink("/dashboard");
+      setCabinetLink(
+        "/dashboard"
+      );
     } else {
-      setCabinetLink("/login");
+      setCabinetLink(
+        "/login"
+      );
     }
   }
 
@@ -32,7 +40,9 @@ export default function HomePage() {
 
           <button
             className={styles.burger}
-            onClick={() => setMenuOpen(true)}
+            onClick={() =>
+              setMenuOpen(true)
+            }
           >
             ☰
           </button>
@@ -44,13 +54,17 @@ export default function HomePage() {
             <img
               src="/logo-final.png"
               alt="AutoParts EU"
-              className={styles.logoImg}
+              className={
+                styles.logoImg
+              }
             />
           </a>
 
           <a
             href={cabinetLink}
-            className={styles.loginBtn}
+            className={
+              styles.loginBtn
+            }
           >
             Кабинет
           </a>
@@ -61,7 +75,9 @@ export default function HomePage() {
       {menuOpen && (
         <>
           <div
-            className={styles.overlayMenu}
+            className={
+              styles.overlayMenu
+            }
             onClick={() =>
               setMenuOpen(false)
             }
@@ -69,7 +85,9 @@ export default function HomePage() {
 
           <aside className={styles.menu}>
             <button
-              className={styles.closeBtn}
+              className={
+                styles.closeBtn
+              }
               onClick={() =>
                 setMenuOpen(false)
               }
@@ -100,7 +118,11 @@ export default function HomePage() {
         <div className={styles.overlay}>
           <div className={styles.heroBox}>
 
-            <div className={styles.miniTitle}>
+            <div
+              className={
+                styles.miniTitle
+              }
+            >
               ПОДБОР ПО VIN И НОМЕРУ ДЕТАЛИ
             </div>
 
@@ -117,7 +139,11 @@ export default function HomePage() {
               автомобилей.
             </p>
 
-            <div className={styles.trustRow}>
+            <div
+              className={
+                styles.trustRow
+              }
+            >
               <span>
                 ✔ Подбор по VIN
               </span>
@@ -133,31 +159,45 @@ export default function HomePage() {
 
             <form
               action="/offer"
-              className={styles.offerForm}
+              className={
+                styles.offerForm
+              }
             >
               <input
                 name="vin"
                 placeholder="VIN или номер детали"
+                required
+                minLength={3}
               />
 
               <input
                 name="phone"
                 placeholder="Телефон / WhatsApp"
+                required
+                minLength={6}
               />
 
               <button
                 type="submit"
-                className={styles.cta}
+                className={
+                  styles.cta
+                }
               >
                 ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ
               </button>
             </form>
 
-            <div className={styles.paymentsBanner}>
+            <div
+              className={
+                styles.paymentsBanner
+              }
+            >
               <img
                 src="/payments-banner.png"
                 alt="Способы оплаты"
-                className={styles.paymentsImg}
+                className={
+                  styles.paymentsImg
+                }
               />
             </div>
 
