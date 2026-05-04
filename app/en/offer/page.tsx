@@ -1,82 +1,169 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import styles from "../../offer/offer.module.css";
 
-export default function EnOfferPage({ searchParams }: any) {
+type Props = {
+  searchParams: {
+    vin?: string;
+    phone?: string;
+  };
+};
 
-  const vin = searchParams?.vin || "";
-  const startPhone = searchParams?.phone || "";
+type Item = {
+  description: string;
+  number: string;
+};
+
+export default function EnOfferPage({
+  searchParams,
+}: Props) {
+  const vin = searchParams.vin || "";
+  const startPhone = searchParams.phone || "";
 
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [phone, setPhone] = useState(startPhone);
 
-  const [code, setCode] = useState(["", "", "", ""]);
-  const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
+  const [items, setItems] = useState<Item[]>([
+    {
+      description: "",
+      number: "",
+    },
+  ]);
 
-  const [showModal, setShowModal] = useState(false);
+  const [code, setCode] = useState("");
+  const [showCode, setShowCode] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-
   const [loading, setLoading] = useState(false);
 
-  const nameRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    nameRef.current?.focus();
-  }, []);
-
-  function handleCodeChange(value: string, index: number) {
-    if (!/^\d?$/.test(value)) return;
-
-    const newCode = [...code];
-    newCode[index] = value;
-    setCode(newCode);
-
-    if (value && index < 3) {
-      inputsRef.current[index + 1]?.focus();
-    }
+  function addItem() {
+    setItems([
+      ...items,
+      { description: "", number: "" },
+    ]);
   }
 
-  async function sendSms() {
+  function updateItem(
+    index: number,
+    field: "description" | "number",
+    value: string
+  ) {
+    const copy = [...items];
+    copy[index][field] = value;
+    setItems(copy);
+  }
+
+  /* SEND SMS */
+
+  async function sendRequest() {
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithOtp({
-      phone,
-    });
+    const cleanPhone = phone.trim();
+
+    const { error } =
+      await supabase.auth.signInWithOtp({
+        phone: cleanPhone,
+      });
 
     setLoading(false);
 
     if (error) {
-      alert("SMS error");
+      alert("SMS sending error");
       return;
     }
 
-    setShowModal(true);
+    setShowCode(true);
   }
 
+  /* VERIFY SMS */
+
   async function verifyCode() {
-    const token = code.join("");
+    const cleanPhone = phone.trim();
 
-    if (token.length < 4) {
-      alert("Enter code");
-      return;
-    }
-
-    const { error } = await supabase.auth.verifyOtp({
-      phone,
-      token,
-      type: "sms",
-    });
+    const { error } =
+      await supabase.auth.verifyOtp({
+        phone: cleanPhone,
+        token: code,
+        type: "sms",
+      });
 
     if (error) {
       alert("Invalid code");
       return;
     }
 
-    setShowModal(false);
+    await createRequest();
+  }
+
+  /* CREATE REQUEST */
+
+  async function createRequest() {
+    const fullName =
+      (name + " " + surname).trim();
+
+    let profileId = null;
+
+    const { data: existing } =
+      await supabase
+        .from("profiles")
+        .select("id")
+        .eq("phone", phone)
+        .maybeSingle();
+
+    if (existing) {
+      profileId = existing.id;
+    } else {
+      const { data: user } =
+        await supabase
+          .from("profiles")
+          .insert([
+            {
+              full_name: fullName,
+              phone: phone,
+            },
+          ])
+          .select("id")
+          .single();
+
+      profileId = user?.id;
+    }
+
+    const { data: request } =
+      await supabase
+        .from("requests")
+        .insert([
+          {
+            profile_id: profileId,
+            vin,
+            phone,
+            status: "new",
+          },
+        ])
+        .select()
+        .single();
+
+    if (!request) return;
+
+    const rows = items.filter(
+      (item) =>
+        item.description || item.number
+    );
+
+    if (rows.length) {
+      await supabase
+        .from("request_items")
+        .insert(
+          rows.map((item) => ({
+            request_id: request.id,
+            description: item.description,
+            part_number: item.number,
+          }))
+        );
+    }
+
     setShowSuccess(true);
   }
 
@@ -98,8 +185,11 @@ export default function EnOfferPage({ searchParams }: any) {
                 after SMS confirmation.
               </p>
 
-              <Link href="/en/login" className={styles.button}>
-                Go to account
+              <Link
+                href="/en/login"
+                className={styles.button}
+              >
+                Account
               </Link>
 
             </div>
@@ -109,12 +199,28 @@ export default function EnOfferPage({ searchParams }: any) {
     );
   }
 
+  /* MAIN */
+
   return (
     <main className={styles.page}>
 
+      <header className={styles.header}>
+        <img
+          src="/logo-final.png"
+          className={styles.logo}
+          alt="logo"
+        />
+
+        <Link
+          href="/en"
+          className={styles.homeBtn}
+        >
+          Home
+        </Link>
+      </header>
+
       <section className={styles.hero}>
         <div className={styles.overlay}>
-
           <div className={styles.card}>
 
             <div className={styles.label}>
@@ -126,7 +232,6 @@ export default function EnOfferPage({ searchParams }: any) {
             </h1>
 
             <input
-              ref={nameRef}
               className={styles.input}
               placeholder="First name"
               value={name}
@@ -158,66 +263,78 @@ export default function EnOfferPage({ searchParams }: any) {
               }
             />
 
-            <input
-              className={`${styles.input} ${styles.bold}`}
-              placeholder="Part description"
-            />
-
-            <input
-              className={styles.input}
-              placeholder="Part number"
-            />
-
-            <button
-              className={styles.button}
-              onClick={sendSms}
-            >
-              {loading ? "SENDING..." : "SEND REQUEST"}
-            </button>
-
-          </div>
-
-        </div>
-      </section>
-
-      {/* SMS MODAL */}
-
-      {showModal && (
-        <div className={styles.modalBg}>
-
-          <div className={styles.modal}>
-
-            <h2>Enter code</h2>
-
-            <div className={styles.codeRow}>
-              {code.map((digit, i) => (
+            {items.map((item, index) => (
+              <div
+                key={index}
+                className={styles.row}
+              >
                 <input
-                  key={i}
-                  ref={(el) => {
-                    inputsRef.current[i] = el;
-                  }}
-                  className={styles.codeInput}
-                  value={digit}
+                  className={styles.input}
+                  placeholder="Part description"
+                  value={item.description}
                   onChange={(e) =>
-                    handleCodeChange(
-                      e.target.value,
-                      i
+                    updateItem(
+                      index,
+                      "description",
+                      e.target.value
                     )
                   }
                 />
-              ))}
-            </div>
+
+                <input
+                  className={styles.input}
+                  placeholder="Part number"
+                  value={item.number}
+                  onChange={(e) =>
+                    updateItem(
+                      index,
+                      "number",
+                      e.target.value
+                    )
+                  }
+                />
+              </div>
+            ))}
+
+            <button
+              className={styles.plus}
+              onClick={addItem}
+            >
+              +
+            </button>
 
             <button
               className={styles.button}
-              onClick={verifyCode}
+              onClick={sendRequest}
             >
-              Confirm
+              {loading
+                ? "SENDING..."
+                : "SEND REQUEST"}
             </button>
+
+            {showCode && (
+              <>
+                <input
+                  className={styles.input}
+                  placeholder="SMS code"
+                  value={code}
+                  onChange={(e) =>
+                    setCode(e.target.value)
+                  }
+                />
+
+                <button
+                  className={styles.button}
+                  onClick={verifyCode}
+                >
+                  CONFIRM
+                </button>
+              </>
+            )}
 
           </div>
         </div>
-      )}
+      </section>
 
     </main>
   );
