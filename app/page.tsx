@@ -7,17 +7,13 @@ import Footer from "../components/Footer";
 import styles from "./page.module.css";
 
 export default function HomePage() {
-  const [menuOpen, setMenuOpen] =
-    useState(false);
-
-  const [cabinetLink, setCabinetLink] =
-    useState("/login");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [cabinetLink, setCabinetLink] = useState("/login");
 
   const pathname = usePathname();
 
   const startX = useRef(0);
   const currentX = useRef(0);
-  const isDragging = useRef(false);
 
   useEffect(() => {
     checkUser();
@@ -26,48 +22,34 @@ export default function HomePage() {
   async function checkUser() {
     const {
       data: { session },
-    } =
-      await supabase.auth.getSession();
+    } = await supabase.auth.getSession();
 
-    if (session) {
-      setCabinetLink("/dashboard");
-    } else {
-      setCabinetLink("/login");
-    }
+    setCabinetLink(session ? "/dashboard" : "/login");
   }
 
-  /* 🔥 блок скролла */
+  /* 🔥 блокируем скролл */
   useEffect(() => {
-    document.body.style.overflow =
-      menuOpen ? "hidden" : "auto";
+    document.body.style.overflow = menuOpen ? "hidden" : "auto";
   }, [menuOpen]);
 
   /* 🔥 свайп */
-  function onTouchStart(e: any) {
+  function handleTouchStart(e: any) {
     startX.current = e.touches[0].clientX;
-    isDragging.current = true;
   }
 
-  function onTouchMove(e: any) {
-    if (!isDragging.current) return;
-    currentX.current =
-      e.touches[0].clientX;
+  function handleTouchMove(e: any) {
+    currentX.current = e.touches[0].clientX;
   }
 
-  function onTouchEnd() {
-    const diff =
-      startX.current - currentX.current;
-
-    if (diff > 80) {
+  function handleTouchEnd() {
+    if (startX.current - currentX.current > 70) {
       setMenuOpen(false);
     }
-
-    isDragging.current = false;
   }
 
   return (
     <main className={styles.page}>
-
+      {/* HEADER */}
       <header className={styles.header}>
         <div className={styles.container}>
 
@@ -86,17 +68,14 @@ export default function HomePage() {
             />
           </a>
 
-          <a
-            href={cabinetLink}
-            className={styles.loginBtn}
-          >
+          <a href={cabinetLink} className={styles.loginBtn}>
             Кабинет
           </a>
 
         </div>
       </header>
 
-      {/* overlay */}
+      {/* OVERLAY */}
       <div
         className={`${styles.overlayMenu} ${
           menuOpen ? styles.overlayShow : ""
@@ -104,14 +83,14 @@ export default function HomePage() {
         onClick={() => setMenuOpen(false)}
       />
 
-      {/* menu */}
+      {/* MENU */}
       <aside
         className={`${styles.menu} ${
           menuOpen ? styles.menuOpen : ""
         }`}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         <button
           className={styles.closeBtn}
@@ -120,72 +99,40 @@ export default function HomePage() {
           ✕
         </button>
 
-        <a
-          href="/about"
-          className={
-            pathname === "/about"
-              ? styles.active
-              : ""
-          }
-        >
+        <a href="/about" className={pathname === "/about" ? styles.active : ""}>
           О компании
         </a>
 
-        <a
-          href="/how-it-works"
-          className={
-            pathname === "/how-it-works"
-              ? styles.active
-              : ""
-          }
-        >
+        <a href="/how-it-works" className={pathname === "/how-it-works" ? styles.active : ""}>
           Как работает сервис
         </a>
 
-        <a
-          href="/schedule"
-          className={
-            pathname === "/schedule"
-              ? styles.active
-              : ""
-          }
-        >
+        <a href="/schedule" className={pathname === "/schedule" ? styles.active : ""}>
           Расписание поставок
         </a>
 
-        <a
-          href="/contacts"
-          className={
-            pathname === "/contacts"
-              ? styles.active
-              : ""
-          }
-        >
+        <a href="/contacts" className={pathname === "/contacts" ? styles.active : ""}>
           Контакты
         </a>
 
-        <div className={styles.langTitle}>
-          Язык
-        </div>
+        <div className={styles.langTitle}>Язык</div>
 
-        <a
-          href="/"
-          className={styles.langMenu}
-        >
+        <a href="/" className={styles.langMenu}>
           🇷🇺 Русский
         </a>
 
-        <a
-          href="/en"
-          className={styles.langMenu}
-        >
+        <a href="/en" className={styles.langMenu}>
           🇬🇧 English
         </a>
+
       </aside>
 
+      {/* HERO */}
       <section className={styles.hero}>
         <div className={styles.overlay}>
-          <div className={styles.heroBox}></div>
+          <div className={styles.heroBox}>
+            {/* контент без изменений */}
+          </div>
         </div>
       </section>
 
