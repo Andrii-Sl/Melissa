@@ -1,5 +1,5 @@
-import Menu from "../../components/Menu";
-import Footer from "../../components/Footer";
+import Menu from "@/components/Menu";
+import Footer from "@/components/Footer";
 import styles from "../../how-it-works/how.module.css";
 
 export default function EnHowItWorksPage() {
@@ -7,32 +7,32 @@ export default function EnHowItWorksPage() {
     {
       n: "01",
       title: "Send request",
-      text: "Enter VIN, part number, or describe the required auto part."
+      text: "Enter VIN, part number or description."
     },
     {
       n: "02",
-      title: "Parts selection",
-      text: "We find original parts and high-quality alternatives."
+      title: "Selection",
+      text: "We find original and alternative parts."
     },
     {
       n: "03",
-      title: "Get an offer",
-      text: "We provide pricing, delivery time, and available options."
+      title: "Offer",
+      text: "You receive price and delivery time."
     },
     {
       n: "04",
-      title: "Order confirmation",
-      text: "After approval, we reserve the item with the supplier."
+      title: "Confirmation",
+      text: "We reserve the item after approval."
     },
     {
       n: "05",
       title: "Payment",
-      text: "Secure payment via bank card or PayPal."
+      text: "Secure payment by card or PayPal."
     },
     {
       n: "06",
       title: "Delivery",
-      text: "We ship your order and provide tracking updates."
+      text: "We ship and provide tracking."
     }
   ];
 
@@ -64,15 +64,14 @@ export default function EnHowItWorksPage() {
             </div>
 
             <h1>
-              Simple process
+              Simple ordering
               <br />
-              of ordering parts
+              process
             </h1>
 
             <p>
               From request to delivery —
-              a transparent and clear journey
-              for every customer.
+              clear and transparent.
             </p>
           </div>
         </div>
@@ -82,16 +81,11 @@ export default function EnHowItWorksPage() {
         <div className={styles.container}>
           <div className={styles.grid}>
             {steps.map((item) => (
-              <div
-                key={item.n}
-                className={styles.card}
-              >
+              <div key={item.n} className={styles.card}>
                 <div className={styles.num}>
                   {item.n}
                 </div>
-
                 <h3>{item.title}</h3>
-
                 <p>{item.text}</p>
               </div>
             ))}
