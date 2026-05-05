@@ -22,10 +22,29 @@ export default function Menu() {
           <div className={styles.overlay} onClick={close} />
 
           <div className={styles.popup}>
-            <button className={styles.close} onClick={close}>
-              ✕
-            </button>
+            
+            {/* 🔥 HEADER МЕНЮ */}
+            <div className={styles.top}>
+              <img
+                src="/logo-final.png"
+                alt="AutoParts EU"
+                className={styles.logo}
+              />
 
+              <button
+                className={styles.close}
+                onClick={close}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* 🔥 НАЗВАНИЕ */}
+            <div className={styles.brand}>
+              AutoParts EU
+            </div>
+
+            {/* МЕНЮ */}
             <nav className={styles.nav}>
               <a href="/" onClick={close}>Главная</a>
               <a href="/about" onClick={close}>О компании</a>
@@ -33,6 +52,7 @@ export default function Menu() {
               <a href="/schedule" onClick={close}>Поставки</a>
               <a href="/contacts" onClick={close}>Контакты</a>
             </nav>
+
           </div>
         </>
       )}
