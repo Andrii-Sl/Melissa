@@ -3,58 +3,39 @@
   background: none;
   border: none;
   cursor: pointer;
-
-  position: relative;
-  z-index: 10000;
   color: white;
 }
 
-/* затемнение */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  z-index: 9998;
-}
-
-/* меню */
 .popup {
-  position: fixed;
-  top: 70px;
-  left: 16px;
-  right: 16px;
+  position: absolute;
+  top: 60px;
+  left: 10px;
+  right: 10px;
 
   background: #fff;
-  border-radius: 16px;
+  border-radius: 12px;
   padding: 20px;
 
-  z-index: 9999;
-
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
-/* крестик */
 .close {
   position: absolute;
+  right: 10px;
   top: 10px;
-  right: 12px;
-  font-size: 20px;
-  background: none;
   border: none;
-  cursor: pointer;
+  background: none;
+  font-size: 20px;
 }
 
-/* ссылки */
 .nav {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
 .nav a {
-  font-size: 16px;
   text-decoration: none;
   color: #111;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
+  font-size: 16px;
 }
