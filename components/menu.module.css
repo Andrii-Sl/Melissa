@@ -1,81 +1,94 @@
-.burger{
-  width:42px;
-  height:42px;
-  border:none;
-  background:none;
-  font-size:28px;
-  cursor:pointer;
-  padding:0;
+.burger {
+  font-size: 26px;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.45);
-  z-index:90;
+/* затемнение */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 9;
 }
 
-.menu{
-  position:fixed;
-  top:0;
-  right:0;
-  width:290px;
-  max-width:88vw;
-  height:100svh;
-  background:#ffffff;
-  z-index:100;
-  padding:22px 18px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  box-shadow:-10px 0 30px rgba(0,0,0,.12);
+/* всплывающее меню */
+.popup {
+  position: fixed;
+  top: 70px;
+  left: 20px;
+  right: 20px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px;
+  z-index: 10;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
+  animation: fadeIn 0.2s ease;
 }
 
-.close{
-  width:42px;
-  height:42px;
-  border:none;
-  background:#f5f5f5;
-  font-size:22px;
-  cursor:pointer;
-  margin-bottom:10px;
-  align-self:flex-end;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.menu a{
-  text-decoration:none;
-  color:#111111;
-  font-size:16px;
-  padding:14px 10px;
-  border-bottom:1px solid #f1f1f1;
+/* крестик */
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-.menu a:hover{
-  color:#d10000;
-}
-
-@media(min-width:901px){
-
-.menu{
-  width:360px;
-  padding:28px 24px;
-}
-
-.menu a{
-  font-size:18px;
-}
-
-.langBlock {
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #eee;
+/* меню */
+.nav {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  margin-top: 10px;
 }
 
-.langBlock a {
+.nav a {
+  font-size: 16px;
+  font-weight: 500;
+  color: #111;
+  text-decoration: none;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #eee;
+}
+
+/* язык */
+.lang {
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+}
+
+.lang span {
+  font-size: 12px;
+  color: #888;
+}
+
+.lang div {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.lang a {
   font-size: 14px;
-}
-
+  font-weight: 500;
+  text-decoration: none;
+  color: #111;
 }
