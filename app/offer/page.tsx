@@ -172,7 +172,6 @@ export default function OfferPage({ searchParams }: Props) {
   return (
     <main className={styles.page}>
       
-      {/* 🔥 ЭТАЛОННЫЙ HEADER */}
       <header className={styles.header}>
         <div className={styles.headerInner}>
 
@@ -201,51 +200,77 @@ export default function OfferPage({ searchParams }: Props) {
               Отправить запрос
             </h1>
 
-            <input
-              className={styles.input}
-              placeholder="Имя"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+            {/* ИМЯ */}
+            <div className={styles.inputWrap}>
+              <input
+                className={styles.input}
+                placeholder=" "
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              <label>Имя</label>
+            </div>
 
-            <input
-              className={styles.input}
-              placeholder="Фамилия"
-              value={surname}
-              onChange={(e) => setSurname(e.target.value)}
-            />
+            {/* ФАМИЛИЯ */}
+            <div className={styles.inputWrap}>
+              <input
+                className={styles.input}
+                placeholder=" "
+                value={surname}
+                onChange={(e) => setSurname(e.target.value)}
+              />
+              <label>Фамилия</label>
+            </div>
 
-            <input
-              className={styles.input}
-              value={vin}
-              readOnly
-            />
+            {/* VIN */}
+            <div className={styles.inputWrap}>
+              <input
+                className={styles.input}
+                value={vin}
+                placeholder=" "
+                readOnly
+              />
+              <label>VIN / номер детали</label>
+            </div>
 
-            <input
-              className={styles.input}
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
+            {/* PHONE */}
+            <div className={styles.inputWrap}>
+              <input
+                className={styles.input}
+                placeholder=" "
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+              <label>Телефон / WhatsApp</label>
+            </div>
 
             {items.map((item, index) => (
               <div key={index} className={styles.row}>
-                <input
-                  className={styles.input}
-                  placeholder="Описание детали"
-                  value={item.description}
-                  onChange={(e) =>
-                    updateItem(index, "description", e.target.value)
-                  }
-                />
 
-                <input
-                  className={styles.input}
-                  placeholder="Каталожный номер"
-                  value={item.number}
-                  onChange={(e) =>
-                    updateItem(index, "number", e.target.value)
-                  }
-                />
+                <div className={styles.inputWrap}>
+                  <input
+                    className={styles.input}
+                    placeholder=" "
+                    value={item.description}
+                    onChange={(e) =>
+                      updateItem(index, "description", e.target.value)
+                    }
+                  />
+                  <label>Описание детали</label>
+                </div>
+
+                <div className={styles.inputWrap}>
+                  <input
+                    className={styles.input}
+                    placeholder=" "
+                    value={item.number}
+                    onChange={(e) =>
+                      updateItem(index, "number", e.target.value)
+                    }
+                  />
+                  <label>Каталожный номер</label>
+                </div>
+
               </div>
             ))}
 
@@ -259,12 +284,15 @@ export default function OfferPage({ searchParams }: Props) {
 
             {showCode && (
               <>
-                <input
-                  className={styles.input}
-                  placeholder="Код из SMS"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                />
+                <div className={styles.inputWrap}>
+                  <input
+                    className={styles.input}
+                    placeholder=" "
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                  />
+                  <label>Код из SMS</label>
+                </div>
 
                 <button
                   className={styles.button}
