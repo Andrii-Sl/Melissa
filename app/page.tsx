@@ -76,7 +76,7 @@ export default function HomePage() {
             <form action="/offer" className={styles.offerForm}>
               <input
                 name="vin"
-                placeholder="VIN или номер детали"
+                placeholder="VIN code автомобиля"
                 required
               />
 
