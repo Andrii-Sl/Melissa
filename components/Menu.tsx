@@ -5,43 +5,35 @@ import styles from "./menu.module.css";
 
 export default function Menu() {
   const [open, setOpen] = useState(false);
+  const close = () => setOpen(false);
 
   return (
     <>
       <button
         className={styles.burger}
         onClick={() => setOpen(true)}
+        aria-label="Menu"
       >
         ☰
       </button>
 
       {open && (
         <>
-          <div
-            className={styles.overlay}
-            onClick={() => setOpen(false)}
-          />
+          <div className={styles.overlay} onClick={close} />
 
-          <aside className={styles.menu}>
-            <button
-              className={styles.close}
-              onClick={() => setOpen(false)}
-            >
+          <div className={styles.popup}>
+            <button className={styles.close} onClick={close}>
               ✕
             </button>
 
-            <a href="/">Главная</a>
-            <a href="/about">О компании</a>
-            <a href="/how-it-works">
-              Как работает сервис
-            </a>
-            <a href="/schedule">
-              Расписание поставок
-            </a>
-            <a href="/contacts">
-              Контакты
-            </a>
-          </aside>
+            <nav className={styles.nav}>
+              <a href="/" onClick={close}>Главная</a>
+              <a href="/about" onClick={close}>О компании</a>
+              <a href="/how-it-works" onClick={close}>Как работает</a>
+              <a href="/schedule" onClick={close}>Поставки</a>
+              <a href="/contacts" onClick={close}>Контакты</a>
+            </nav>
+          </div>
         </>
       )}
     </>
