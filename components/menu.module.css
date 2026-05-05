@@ -8,7 +8,7 @@
   cursor:pointer;
 }
 
-/* 🔥 мягкое затемнение + blur */
+/* overlay */
 .overlay{
   position:fixed;
   inset:0;
@@ -19,7 +19,7 @@
   animation:fadeIn .2s ease;
 }
 
-/* 🔥 popup как карточка */
+/* popup */
 .popup{
   position:fixed;
   top:72px;
@@ -37,6 +37,26 @@
   animation:slideDown .22s ease;
 }
 
+/* 🔥 верх (логотип + крестик) */
+.top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+/* логотип */
+.logo{
+  height:32px;
+}
+
+/* название */
+.brand{
+  font-size:14px;
+  font-weight:600;
+  color:#555;
+  margin:6px 0 10px;
+}
+
 /* крестик */
 .close{
   width:34px;
@@ -50,9 +70,6 @@
   display:flex;
   align-items:center;
   justify-content:center;
-
-  margin-left:auto;
-  margin-bottom:10px;
 }
 
 /* ссылки */
@@ -71,20 +88,18 @@
   padding:12px 14px;
   border-radius:10px;
 
-  transition:all .15s ease;
+  transition:.15s;
 }
 
-/* hover = мягкая подсветка */
 .nav a:hover{
   background:#f6f6f6;
 }
 
-/* active = микро анимация */
 .nav a:active{
   transform:scale(.97);
 }
 
-/* 🔥 анимации */
+/* анимации */
 @keyframes fadeIn{
   from{opacity:0;}
   to{opacity:1;}
