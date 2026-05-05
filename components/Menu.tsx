@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./menu.module.css";
 
 export default function Menu() {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // 🔥 закрытие по клику вне
+  // закрытие по клику вне
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (
@@ -25,21 +25,23 @@ export default function Menu() {
   }, [open]);
 
   return (
-    <>
+    <div className={styles.wrap}>
       {/* BURGER */}
       <button
         className={styles.burger}
-        onClick={() => setOpen(!open)}
+        onClick={() => setOpen((v) => !v)}
+        aria-label="Menu"
       >
         ☰
       </button>
 
       {/* MENU */}
       {open && (
-        <div className={styles.popup} ref={menuRef}>
+        <div className={styles.menu} ref={menuRef}>
           <button
             className={styles.close}
             onClick={() => setOpen(false)}
+            aria-label="Close"
           >
             ✕
           </button>
@@ -52,6 +54,6 @@ export default function Menu() {
           </nav>
         </div>
       )}
-    </>
+    </div>
   );
 }
