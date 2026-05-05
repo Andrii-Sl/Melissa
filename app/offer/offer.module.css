@@ -17,44 +17,47 @@
   z-index:2;
 }
 
+/* 🔥 НОВЫЙ HEADER */
 .header{
-  height:96px;
   background:#ffffff;
+  border-bottom:1px solid #eee;
+}
+
+.headerInner{
+  height:64px;                 /* 🔥 фикс */
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 22px;
+  padding:0 16px;
 }
 
-.logoWrap{
+/* ЛОГО */
+.logo{
+  height:36px;                 /* 🔥 главный фикс */
+  width:auto;
+}
+
+/* КНОПКА */
+.homeBtn{
+  height:36px;                 /* 🔥 ровно как логотип */
+  padding:0 16px;
+
   display:flex;
   align-items:center;
-  gap:10px;
+
+  border:1px solid #ccc;
+  border-radius:6px;
+
+  font-size:14px;
+  color:#111;
   text-decoration:none;
-  color:#111111;
+
+  background:#fff;
 }
 
-.logo{
-  width:170px;
-  height:auto;
-}
-
-.logoWrap span{
-  font-size:18px;
-  font-weight:700;
-}
-
-.homeBtn{
-  text-decoration:none;
-  color:#111111;
-  border:2px solid #d40000;
-  padding:14px 18px;
-  background:#ffffff;
-  font-size:16px;
-}
-
+/* HERO */
 .hero{
-  min-height:calc(100vh - 96px);
+  min-height:calc(100vh - 64px); /* 🔥 под новый header */
   display:flex;
   align-items:center;
   justify-content:center;
@@ -148,29 +151,26 @@
   margin:0 0 14px;
 }
 
-/* mobile */
+/* 📱 MOBILE */
 @media(max-width:768px){
 
-  .header{
-    height:84px;
-    padding:0 14px;
+  .headerInner{
+    height:60px;
+    padding:0 12px;
   }
 
   .logo{
-    width:130px;
-  }
-
-  .logoWrap span{
-    display:none;
+    height:32px;
   }
 
   .homeBtn{
-    font-size:14px;
-    padding:10px 14px;
+    height:32px;
+    font-size:13px;
+    padding:0 12px;
   }
 
   .hero{
-    min-height:calc(100vh - 84px);
+    min-height:calc(100vh - 60px);
     padding:18px;
   }
 
