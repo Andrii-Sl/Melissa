@@ -1,106 +1,153 @@
 .page{
-  margin:0;
-  padding:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background:#fff;
-  min-height:100svh;
+  min-height:100vh;
+  background:url('/hero.jpg') center/cover no-repeat;
+  position:relative;
+  font-family:Arial,sans-serif;
 }
 
+.page::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.6);
+}
+
+.page > *{
+  position:relative;
+  z-index:2;
+}
+
+/* HEADER */
 .header{
-  height:78px;
   background:#fff;
-  border-bottom:1px solid #ececec;
+  border-bottom:1px solid #eee;
+}
+
+.headerInner{
+  height:64px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 14px;
+  padding:0 16px;
 }
 
 .logo{
-  width:190px;
-  height:auto;
+  height:36px;
 }
 
 .homeBtn{
-  text-decoration:none;
+  height:36px;
+  padding:0 16px;
+  display:flex;
+  align-items:center;
+  border:1px solid #ccc;
+  border-radius:6px;
+  font-size:14px;
   color:#111;
-  border:1px solid #d10000;
-  padding:9px 10px;
-  font-size:13px;
+  text-decoration:none;
+  background:#fff;
 }
 
+/* HERO */
 .hero{
-  min-height:calc(100svh - 78px);
-  background:url('/hero.jpg') center/cover no-repeat;
+  min-height:calc(100vh - 64px);
 }
 
 .overlay{
-  min-height:calc(100svh - 78px);
-  background:linear-gradient(
-    180deg,
-    rgba(0,0,0,.22) 0%,
-    rgba(0,0,0,.72) 42%,
-    rgba(0,0,0,.90) 100%
-  );
+  min-height:calc(100vh - 64px);
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:14px;
+  padding:16px;
 }
 
+/* CARD */
 .card{
   width:100%;
-  max-width:620px;
+  max-width:420px;
   background:#fff;
-  padding:22px;
+  padding:26px;
+  border-radius:12px;
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
 }
 
+/* TEXT */
 .label{
-  color:#ff2b2b;
-  font-size:11px;
+  color:#d40000;
+  font-size:12px;
   margin-bottom:10px;
 }
 
 .title{
-  font-size:42px;
-  margin:0 0 14px;
+  font-size:28px;
+  margin:0 0 18px;
+  font-weight:700;
+}
+
+/* 🔥 INPUT (как offer) */
+.inputWrap{
+  position:relative;
+  margin-bottom:12px;
 }
 
 .input{
   width:100%;
   height:48px;
-  margin-bottom:10px;
-  padding:0 14px;
+  padding:14px 12px 4px;
+  font-size:16px;
+
   border:1px solid #ddd;
-  font-size:15px;
+  border-radius:8px;
+  background:#f7f7f7;
+
+  outline:none;
+  transition:.15s;
 }
 
+.inputWrap label{
+  position:absolute;
+  left:12px;
+  top:14px;
+  font-size:14px;
+  color:#888;
+  pointer-events:none;
+  transition:.15s;
+}
+
+.input:focus{
+  background:#fff;
+  border-color:#d40000;
+}
+
+.input:focus + label,
+.input:not(:placeholder-shown) + label{
+  top:4px;
+  font-size:11px;
+  color:#d40000;
+}
+
+/* BUTTONS */
 .button{
   width:100%;
-  height:56px;
+  height:50px;
   border:none;
   background:#d10000;
   color:#fff;
   font-size:16px;
   font-weight:700;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.button:active{
+  transform:scale(.98);
 }
 
 .linkBtn{
   margin-top:12px;
   background:none;
   border:none;
-  font-size:15px;
-}
-
-@media(min-width:901px){
-
-.header{height:92px;padding:0 28px;}
-.logo{width:460px;}
-.homeBtn{padding:13px 18px;font-size:14px;}
-.hero,.overlay{min-height:760px;}
-.card{padding:34px;}
-.title{font-size:70px;}
-.input{height:58px;font-size:16px;}
-.button{height:62px;font-size:18px;}
-
+  font-size:14px;
+  cursor:pointer;
+  color:#333;
 }
