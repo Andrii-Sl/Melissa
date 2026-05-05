@@ -1,117 +1,242 @@
 /* BURGER */
+
 .burger{
-  width:40px;
-  height:40px;
+  width:42px;
+  height:42px;
+
   border:none;
   background:none;
-  font-size:22px;
+
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:5px;
+
   cursor:pointer;
+
+  padding:0;
 }
 
-/* overlay */
+/* полоски */
+
+.burger span{
+  width:24px;
+  height:2px;
+
+  background:#111;
+
+  border-radius:10px;
+
+  transition:.2s;
+}
+
+/* OVERLAY */
+
 .overlay{
   position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.25);
-  backdrop-filter: blur(4px);
+
+  top:64px;
+  left:0;
+  right:0;
+  bottom:0;
+
+  background:rgba(10,10,10,.08);
+
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+
   z-index:90;
 
   animation:fadeIn .2s ease;
 }
 
-/* popup */
+/* POPUP */
+
 .popup{
   position:fixed;
-  top:72px;
+
+  top:84px;
   left:16px;
   right:16px;
 
-  background:#fff;
-  border-radius:14px;
-  padding:16px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.96) 0%,
+      rgba(255,255,255,.92) 100%
+    );
+
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+
+  border:
+    1px solid rgba(255,255,255,.6);
+
+  border-radius:22px;
+
+  padding:18px;
 
   z-index:100;
 
-  box-shadow:0 18px 50px rgba(0,0,0,.18);
+  box-shadow:
+    0 30px 80px rgba(0,0,0,.12),
+    0 8px 24px rgba(0,0,0,.06);
 
-  animation:slideDown .22s ease;
+  animation:menuIn .24s ease;
 }
 
-/* 🔥 верх (логотип + крестик) */
+/* TOP */
+
 .top{
   display:flex;
   align-items:center;
   justify-content:space-between;
+
+  margin-bottom:14px;
 }
 
-/* логотип */
+/* BRAND */
+
+.brandWrap{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
 .logo{
-  height:32px;
-}
-
-/* название */
-.brand{
-  font-size:14px;
-  font-weight:600;
-  color:#555;
-  margin:6px 0 10px;
-}
-
-/* крестик */
-.close{
-  width:34px;
   height:34px;
+  width:auto;
+}
+
+.brandText{
+  font-size:14px;
+  font-weight:700;
+  color:#111;
+  letter-spacing:.2px;
+}
+
+/* CLOSE */
+
+.close{
+  width:36px;
+  height:36px;
+
   border:none;
-  background:#f4f4f4;
-  border-radius:10px;
+
+  background:
+    rgba(245,245,245,.9);
+
+  border-radius:12px;
+
   font-size:18px;
-  cursor:pointer;
 
   display:flex;
   align-items:center;
   justify-content:center;
-}
 
-/* ссылки */
-.nav{
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-}
-
-.nav a{
-  text-decoration:none;
-  color:#111;
-  font-size:15px;
-  font-weight:500;
-
-  padding:12px 14px;
-  border-radius:10px;
+  cursor:pointer;
 
   transition:.15s;
 }
 
-.nav a:hover{
-  background:#f6f6f6;
+.close:active{
+  transform:scale(.95);
 }
+
+/* NAV */
+
+.nav{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+/* LINKS */
+
+.nav a{
+  text-decoration:none;
+
+  display:flex;
+  flex-direction:column;
+
+  padding:12px 14px;
+
+  border-radius:14px;
+
+  transition:.18s;
+
+  position:relative;
+
+  overflow:hidden;
+}
+
+/* glow hover */
+
+.nav a:hover{
+  background:
+    rgba(245,245,245,.9);
+}
+
+/* active */
 
 .nav a:active{
-  transform:scale(.97);
+  transform:scale(.985);
 }
 
-/* анимации */
+/* title */
+
+.nav span{
+  font-size:15px;
+  font-weight:600;
+  color:#111;
+}
+
+/* subtitle */
+
+.nav small{
+  margin-top:2px;
+
+  font-size:11px;
+  color:#888;
+
+  letter-spacing:.2px;
+}
+
+/* ANIMATIONS */
+
 @keyframes fadeIn{
-  from{opacity:0;}
-  to{opacity:1;}
-}
-
-@keyframes slideDown{
   from{
     opacity:0;
-    transform:translateY(-8px);
   }
   to{
     opacity:1;
-    transform:translateY(0);
   }
+}
+
+@keyframes menuIn{
+  from{
+    opacity:0;
+    transform:
+      translateY(-10px)
+      scale(.98);
+  }
+
+  to{
+    opacity:1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+/* DESKTOP */
+
+@media(min-width:901px){
+
+.popup{
+  max-width:420px;
+  left:24px;
+  right:auto;
+}
+
 }
