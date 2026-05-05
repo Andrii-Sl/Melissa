@@ -1,71 +1,54 @@
-import Menu from "@/components/Menu";
-import Footer from "@/components/Footer";
-import styles from "../../contacts/contacts.module.css";
+"use client";
 
-export default function EnContactsPage() {
+import { useState } from "react";
+import styles from "./menu.module.css";
+
+export default function Menu() {
+  const [open, setOpen] = useState(false);
+
+  const close = () => setOpen(false);
+
   return (
-    <main className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.container}>
+    <>
+      {/* BURGER */}
+      <button
+        className={styles.burger}
+        aria-label="Open menu"
+        onClick={() => setOpen(true)}
+      >
+        ☰
+      </button>
 
-          <Menu />
+      {/* OVERLAY */}
+      {open && <div className={styles.overlay} onClick={close} />}
 
-          <a href="/en" className={styles.logoWrap}>
-            <img
-              src="/logo-final.png"
-              alt="AutoParts EU"
-              className={styles.logoImg}
-            />
-          </a>
+      {/* POPUP */}
+      {open && (
+        <div className={styles.popup}>
+          <button
+            className={styles.close}
+            aria-label="Close menu"
+            onClick={close}
+          >
+            ✕
+          </button>
 
-          <a href="/dashboard" className={styles.loginBtn}>
-            Account
-          </a>
+          <nav className={styles.nav}>
+            <a href="/about" onClick={close}>О компании</a>
+            <a href="/how-it-works" onClick={close}>Как работает</a>
+            <a href="/schedule" onClick={close}>Поставки</a>
+            <a href="/contacts" onClick={close}>Контакты</a>
+          </nav>
 
-        </div>
-      </header>
-
-      <section className={styles.hero}>
-        <div className={styles.overlay}>
-          <div className={styles.heroInner}>
-
-            <div className={styles.label}>
-              CONTACTS
+          <div className={styles.lang}>
+            <span className={styles.langTitle}>Language</span>
+            <div className={styles.langRow}>
+              <a href="/" onClick={close}>RU</a>
+              <a href="/en" onClick={close}>EN</a>
             </div>
-
-            <h1>
-              Contact us
-            </h1>
-
-            <p>
-              We are ready to help you.
-            </p>
-
           </div>
         </div>
-      </section>
-
-      <section className={styles.content}>
-        <div className={styles.container}>
-
-          <div className={styles.grid}>
-
-            <div className={styles.card}>
-              <h3>Phone</h3>
-              <p>+49 000 000 0000</p>
-            </div>
-
-            <div className={styles.card}>
-              <h3>Email</h3>
-              <p>info@autoparts-eu.com</p>
-            </div>
-
-          </div>
-
-        </div>
-      </section>
-
-      <Footer />
-    </main>
+      )}
+    </>
   );
 }
