@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import Footer from "../components/Footer";
+import Menu from "../components/Menu"; // 🔥 добавили
 import styles from "./page.module.css";
 
 export default function HomePage() {
-  const [menuOpen, setMenuOpen] = useState(false);
   const [cabinetLink, setCabinetLink] = useState("/login");
 
   useEffect(() => {
@@ -30,12 +30,8 @@ export default function HomePage() {
       <header className={styles.header}>
         <div className={styles.container}>
 
-          <button
-            className={styles.burger}
-            onClick={() => setMenuOpen(true)}
-          >
-            ☰
-          </button>
+          {/* 🔥 НОВОЕ МЕНЮ */}
+          <Menu />
 
           <a href="/" className={styles.logoWrap}>
             <img
@@ -51,29 +47,6 @@ export default function HomePage() {
 
         </div>
       </header>
-
-      {menuOpen && (
-        <>
-          <div
-            className={styles.overlayMenu}
-            onClick={() => setMenuOpen(false)}
-          />
-
-          <aside className={styles.menu}>
-            <button
-              className={styles.closeBtn}
-              onClick={() => setMenuOpen(false)}
-            >
-              ✕
-            </button>
-
-            <a href="/about">О компании</a>
-            <a href="/how-it-works">Как работает сервис</a>
-            <a href="/schedule">Расписание поставок</a>
-            <a href="/contacts">Контакты</a>
-          </aside>
-        </>
-      )}
 
       <section className={styles.hero}>
         <div className={styles.overlay}>
