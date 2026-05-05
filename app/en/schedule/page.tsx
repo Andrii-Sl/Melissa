@@ -1,5 +1,5 @@
-import Menu from "@/components/Menu";
-import Footer from "@/components/Footer";
+import Menu from "../../../components/Menu";
+import Footer from "../../../components/Footer";
 import styles from "../../schedule/schedule.module.css";
 
 export default function EnSchedulePage() {
