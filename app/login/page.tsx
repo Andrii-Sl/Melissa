@@ -43,17 +43,12 @@ export default function LoginPage() {
 
     setSmsError("");
 
-    /* 🔥 TEST LOGIN */
+    /* 🔥 MASTER LOGIN */
 
     if (phone === "1424") {
 
-      localStorage.setItem(
-        "fakeAuth",
-        "true"
-      );
-
       window.location.href =
-        "/dashboard";
+        "/dashboard?master=1424";
 
       return;
     }
@@ -140,7 +135,7 @@ export default function LoginPage() {
         return;
       }
 
-      /* 🔥 SESSION */
+      /* SESSION */
 
       const {
         data: sessionData,
