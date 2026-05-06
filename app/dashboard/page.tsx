@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 import styles from "./dashboard.module.css";
 
 export default function DashboardPage() {
+
   const [user, setUser] =
     useState<any>(null);
 
@@ -22,116 +23,189 @@ export default function DashboardPage() {
   }, []);
 
   async function loadData() {
-    const urlParams =
-      new URLSearchParams(
-        window.location.search
+
+    try {
+
+      /* 🔥 TEST LOGIN */
+
+      const fakeAuth =
+        localStorage.getItem(
+          "fakeAuth"
+        );
+
+      if (fakeAuth === "true") {
+
+        setUser({
+          phone:
+            "MASTER",
+        });
+
+        setProfile({
+          full_name:
+            "Владелец",
+          phone:
+            "MASTER ACCESS",
+        });
+
+        const {
+          data: r,
+        } =
+          await supabase
+            .from("requests")
+            .select("*")
+            .order("id", {
+              ascending:
+                false,
+            });
+
+        setOrders(r || []);
+
+        setLoading(false);
+
+        return;
+      }
+
+      /* 🔥 URL MASTER */
+
+      const urlParams =
+        new URLSearchParams(
+          window.location.search
+        );
+
+      const master =
+        urlParams.get(
+          "master"
+        );
+
+      if (
+        master ===
+        "1424"
+      ) {
+
+        setUser({
+          phone:
+            "MASTER",
+        });
+
+        setProfile({
+          full_name:
+            "Владелец",
+          phone:
+            "MASTER ACCESS",
+        });
+
+        const {
+          data: r,
+        } =
+          await supabase
+            .from("requests")
+            .select("*")
+            .order("id", {
+              ascending:
+                false,
+            });
+
+        setOrders(r || []);
+
+        setLoading(false);
+
+        return;
+      }
+
+      /* 🔥 NORMAL LOGIN */
+
+      const {
+        data: {
+          session,
+        },
+      } =
+        await supabase.auth.getSession();
+
+      console.log(
+        "SESSION:",
+        session
       );
 
-    const master =
-      urlParams.get(
-        "master"
-      );
+      /* no session */
 
-    /* MASTER ACCESS */
-    if (
-      master ===
-      "1424"
-    ) {
-      setUser({
-        phone:
-          "MASTER",
-      });
+      if (!session) {
 
-      setProfile({
-        full_name:
-          "Владелец",
-        phone:
-          "MASTER ACCESS",
-      });
+        window.location.href =
+          "/login";
+
+        return;
+      }
+
+      const currentUser =
+        session.user;
+
+      setUser(currentUser);
+
+      /* profile */
+
+      const {
+        data: p,
+      } =
+        await supabase
+          .from("profiles")
+          .select("*")
+          .eq(
+            "phone",
+            currentUser.phone
+          )
+          .maybeSingle();
+
+      setProfile(p);
+
+      /* requests */
 
       const {
         data: r,
       } =
         await supabase
-          .from(
-            "requests"
-          )
+          .from("requests")
           .select("*")
+          .eq(
+            "phone",
+            currentUser.phone
+          )
           .order("id", {
             ascending:
               false,
           });
 
       setOrders(r || []);
+
       setLoading(false);
-      return;
+
+    } catch (e) {
+
+      console.error(e);
+
+      setLoading(false);
     }
-
-    /* NORMAL CLIENT */
-    const {
-      data: {
-        session,
-      },
-    } =
-      await supabase.auth.getSession();
-
-    if (!session) {
-      window.location.href =
-        "/login";
-      return;
-    }
-
-    const currentUser =
-      session.user;
-
-    setUser(currentUser);
-
-    const {
-      data: p,
-    } =
-      await supabase
-        .from(
-          "profiles"
-        )
-        .select("*")
-        .eq(
-          "user_id",
-          currentUser.id
-        )
-        .maybeSingle();
-
-    setProfile(p);
-
-    const {
-      data: r,
-    } =
-      await supabase
-        .from(
-          "requests"
-        )
-        .select("*")
-        .eq(
-          "user_id",
-          currentUser.id
-        )
-        .order("id", {
-          ascending:
-            false,
-        });
-
-    setOrders(r || []);
-    setLoading(false);
   }
 
+  /* LOGOUT */
+
   async function logout() {
+
+    localStorage.removeItem(
+      "fakeAuth"
+    );
+
     await supabase.auth.signOut();
+
     window.location.href =
       "/";
   }
 
+  /* STATUS */
+
   function getStatus(
     status: string
   ) {
+
     if (
       status ===
       "new"
@@ -165,7 +239,10 @@ export default function DashboardPage() {
     return status;
   }
 
+  /* LOADING */
+
   if (loading) {
+
     return (
       <main className={styles.page}>
         <section className={styles.wrap}>
@@ -175,11 +252,17 @@ export default function DashboardPage() {
     );
   }
 
+  /* PAGE */
+
   return (
     <main className={styles.page}>
+
       <section className={styles.wrap}>
 
+        {/* TOP */}
+
         <div className={styles.top}>
+
           <div>
 
             <div className={styles.label}>
@@ -205,17 +288,22 @@ export default function DashboardPage() {
           >
             Выйти
           </button>
+
         </div>
+
+        {/* LIST */}
 
         <div className={styles.list}>
 
           {orders.map(
             (item) => (
+
               <a
                 key={item.id}
                 href={`/dashboard/request/${item.id}`}
                 className={styles.card}
               >
+
                 <strong>
                   Заявка #
                   {item.id}
@@ -232,12 +320,16 @@ export default function DashboardPage() {
                     item.status
                   )}
                 </span>
+
               </a>
             )
           )}
 
+          {/* EMPTY */}
+
           {orders.length ===
             0 && (
+
             <div
               className={
                 styles.empty
@@ -245,11 +337,13 @@ export default function DashboardPage() {
             >
               У вас пока нет заявок
             </div>
+
           )}
 
         </div>
 
       </section>
+
     </main>
   );
 }
