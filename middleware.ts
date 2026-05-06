@@ -11,20 +11,6 @@ export function middleware(
   const path =
     request.nextUrl.pathname;
 
-  const master =
-    request.nextUrl.searchParams.get(
-      "master"
-    );
-
-  /* 🔥 MASTER ACCESS */
-
-  if (
-    path.startsWith("/dashboard") &&
-    master === "1424"
-  ) {
-    return NextResponse.next();
-  }
-
   /* ADMIN */
 
   if (
@@ -55,20 +41,7 @@ export function middleware(
     );
   }
 
-  /* CLIENT */
-
-  if (
-    path.startsWith("/dashboard") &&
-    role !== "client"
-  ) {
-
-    return NextResponse.redirect(
-      new URL(
-        "/login",
-        request.url
-      )
-    );
-  }
+  /* 🔥 dashboard НЕ БЛОКИРУЕМ */
 
   return NextResponse.next();
 }
@@ -77,6 +50,5 @@ export const config = {
   matcher: [
     "/admin/:path*",
     "/supplier/:path*",
-    "/dashboard/:path*",
   ],
 };
