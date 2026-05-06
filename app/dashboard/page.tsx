@@ -65,7 +65,7 @@ export default function DashboardPage() {
         return;
       }
 
-      /* 🔥 URL MASTER */
+      /* 🔥 MASTER ACCESS */
 
       const urlParams =
         new URLSearchParams(
@@ -126,8 +126,6 @@ export default function DashboardPage() {
         session
       );
 
-      /* no session */
-
       if (!session) {
 
         window.location.href =
@@ -141,7 +139,7 @@ export default function DashboardPage() {
 
       setUser(currentUser);
 
-      /* profile */
+      /* PROFILE */
 
       const {
         data: p,
@@ -157,7 +155,7 @@ export default function DashboardPage() {
 
       setProfile(p);
 
-      /* requests */
+      /* REQUESTS */
 
       const {
         data: r,
@@ -291,7 +289,7 @@ export default function DashboardPage() {
 
         </div>
 
-        {/* LIST */}
+        {/* REQUESTS */}
 
         <div className={styles.list}>
 
