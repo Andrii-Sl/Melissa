@@ -35,7 +35,7 @@ export default function LoginPage() {
   const [smsError, setSmsError] =
     useState("");
 
-  /* SEND */
+  /* SUBMIT */
 
   async function submit() {
 
@@ -43,9 +43,12 @@ export default function LoginPage() {
 
     setSmsError("");
 
+    const cleanPhone =
+      phone.trim();
+
     /* 🔥 MASTER LOGIN */
 
-    if (phone === "1424") {
+    if (cleanPhone === "1424") {
 
       window.location.href =
         "/dashboard?master=1424";
@@ -53,10 +56,77 @@ export default function LoginPage() {
       return;
     }
 
-    try {
+    /* 🔥 TEST CLIENT */
 
-      const cleanPhone =
-        phone.trim();
+    if (
+      cleanPhone ===
+      "+48519000000"
+    ) {
+
+      try {
+
+        /* existing profile */
+
+        const {
+          data: existing,
+        } =
+          await supabase
+            .from("profiles")
+            .select("*")
+            .eq(
+              "phone",
+              cleanPhone
+            )
+            .maybeSingle();
+
+        /* create profile */
+
+        if (!existing) {
+
+          await supabase
+            .from("profiles")
+            .insert([
+              {
+                full_name:
+                  (
+                    name +
+                    " " +
+                    surname
+                  ).trim(),
+
+                phone:
+                  cleanPhone,
+              },
+            ]);
+        }
+
+        /* auth cookie */
+
+        document.cookie =
+          "role=client; path=/";
+
+        /* dashboard */
+
+        window.location.href =
+          "/dashboard";
+
+        return;
+
+      } catch (e) {
+
+        console.error(e);
+
+        setSmsError(
+          "Ошибка регистрации"
+        );
+
+        return;
+      }
+    }
+
+    /* 🔥 REAL SMS LOGIN */
+
+    try {
 
       const {
         error,
@@ -135,19 +205,12 @@ export default function LoginPage() {
         return;
       }
 
-      /* SESSION */
+      /* 🔥 COOKIE */
 
-      const {
-        data: sessionData,
-      } =
-        await supabase.auth.getSession();
+      document.cookie =
+        "role=client; path=/";
 
-      console.log(
-        "SESSION:",
-        sessionData
-      );
-
-      /* LOGIN */
+      /* 🔥 LOGIN */
 
       window.location.href =
         "/dashboard";
@@ -279,7 +342,9 @@ export default function LoginPage() {
             >
               {loading
                 ? "ОТПРАВКА..."
-                : "ВОЙТИ"}
+                : mode === "login"
+                ? "ВОЙТИ"
+                : "ЗАРЕГИСТРИРОВАТЬСЯ"}
             </button>
 
             {/* ERROR */}
