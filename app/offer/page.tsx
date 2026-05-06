@@ -17,124 +17,297 @@ type Item = {
   number: string;
 };
 
-export default function OfferPage({ searchParams }: Props) {
-  const vin = searchParams.vin || "";
-  const startPhone = searchParams.phone || "";
+export default function OfferPage({
+  searchParams,
+}: Props) {
 
-  const [name, setName] = useState("");
-  const [surname, setSurname] = useState("");
-  const [phone, setPhone] = useState(startPhone);
+  const vin =
+    searchParams.vin || "";
 
-  const [items, setItems] = useState<Item[]>([
-    { description: "", number: "" },
-  ]);
+  const startPhone =
+    searchParams.phone || "";
 
-  const [code, setCode] = useState("");
-  const [showCode, setShowCode] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [name, setName] =
+    useState("");
+
+  const [surname, setSurname] =
+    useState("");
+
+  const [phone, setPhone] =
+    useState(startPhone);
+
+  const [items, setItems] =
+    useState<Item[]>([
+      {
+        description: "",
+        number: "",
+      },
+    ]);
+
+  const [code, setCode] =
+    useState("");
+
+  const [showCode, setShowCode] =
+    useState(false);
+
+  const [showSuccess, setShowSuccess] =
+    useState(false);
+
+  const [loading, setLoading] =
+    useState(false);
+
+  /* ADD ITEM */
 
   function addItem() {
-    setItems([...items, { description: "", number: "" }]);
+    setItems([
+      ...items,
+      {
+        description: "",
+        number: "",
+      },
+    ]);
   }
+
+  /* UPDATE ITEM */
 
   function updateItem(
     index: number,
-    field: "description" | "number",
+    field:
+      | "description"
+      | "number",
     value: string
   ) {
     const copy = [...items];
-    copy[index][field] = value;
+
+    copy[index][field] =
+      value;
+
     setItems(copy);
   }
 
+  /* SEND SMS */
+
   async function sendRequest() {
+
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithOtp({
-      phone: phone.trim(),
-    });
+    try {
 
-    setLoading(false);
+      const cleanPhone =
+        phone.trim();
 
-    if (error) {
-      alert("Ошибка отправки SMS");
-      return;
+      console.log(
+        "PHONE:",
+        cleanPhone
+      );
+
+      const {
+        data,
+        error,
+      } =
+        await supabase.auth.signInWithOtp({
+          phone:
+            cleanPhone,
+        });
+
+      console.log(
+        "SUPABASE DATA:",
+        data
+      );
+
+      console.log(
+        "SUPABASE ERROR:",
+        error
+      );
+
+      setLoading(false);
+
+      if (error) {
+
+        alert(
+          error.message
+        );
+
+        return;
+      }
+
+      /* показать поле кода */
+
+      setShowCode(true);
+
+    } catch (e) {
+
+      console.error(e);
+
+      setLoading(false);
+
+      alert(
+        "Ошибка отправки SMS"
+      );
     }
-
-    setShowCode(true);
   }
+
+  /* VERIFY CODE */
 
   async function verifyCode() {
-    const { error } = await supabase.auth.verifyOtp({
-      phone: phone.trim(),
-      token: code,
-      type: "sms",
-    });
 
-    if (error) {
-      alert("Неверный код");
-      return;
+    try {
+
+      const {
+        error,
+      } =
+        await supabase.auth.verifyOtp({
+          phone:
+            phone.trim(),
+
+          token:
+            code,
+
+          type:
+            "sms",
+        });
+
+      console.log(
+        "VERIFY ERROR:",
+        error
+      );
+
+      if (error) {
+
+        alert(
+          error.message
+        );
+
+        return;
+      }
+
+      await createRequest();
+
+    } catch (e) {
+
+      console.error(e);
+
+      alert(
+        "Ошибка проверки кода"
+      );
     }
-
-    await createRequest();
   }
 
+  /* CREATE REQUEST */
+
   async function createRequest() {
-    const fullName = (name + " " + surname).trim();
 
-    let profileId = null;
+    const fullName =
+      (
+        name +
+        " " +
+        surname
+      ).trim();
 
-    const { data: existing } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("phone", phone)
-      .maybeSingle();
+    let profileId =
+      null;
+
+    /* existing profile */
+
+    const {
+      data: existing,
+    } =
+      await supabase
+        .from("profiles")
+        .select("id")
+        .eq(
+          "phone",
+          phone
+        )
+        .maybeSingle();
 
     if (existing) {
-      profileId = existing.id;
-    } else {
-      const { data: user } = await supabase
-        .from("profiles")
-        .insert([
-          {
-            full_name: fullName,
-            phone: phone,
-          },
-        ])
-        .select("id")
-        .single();
 
-      profileId = user?.id;
+      profileId =
+        existing.id;
+
+    } else {
+
+      /* create profile */
+
+      const {
+        data: user,
+      } =
+        await supabase
+          .from("profiles")
+          .insert([
+            {
+              full_name:
+                fullName,
+
+              phone:
+                phone,
+            },
+          ])
+          .select("id")
+          .single();
+
+      profileId =
+        user?.id;
     }
 
-    const { data: request } = await supabase
-      .from("requests")
-      .insert([
-        {
-          profile_id: profileId,
-          vin,
-          phone,
-          status: "new",
-        },
-      ])
-      .select()
-      .single();
+    /* create request */
 
-    if (!request) return;
+    const {
+      data: request,
+    } =
+      await supabase
+        .from("requests")
+        .insert([
+          {
+            profile_id:
+              profileId,
 
-    const rows = items.filter(
-      (item) => item.description || item.number
-    );
+            vin,
 
-    if (rows.length) {
-      await supabase.from("request_items").insert(
-        rows.map((item) => ({
-          request_id: request.id,
-          description: item.description,
-          part_number: item.number,
-        }))
+            phone,
+
+            status:
+              "new",
+          },
+        ])
+        .select()
+        .single();
+
+    if (!request)
+      return;
+
+    /* request items */
+
+    const rows =
+      items.filter(
+        (item) =>
+          item.description ||
+          item.number
       );
+
+    if (
+      rows.length
+    ) {
+
+      await supabase
+        .from("request_items")
+        .insert(
+          rows.map(
+            (
+              item
+            ) => ({
+              request_id:
+                request.id,
+
+              description:
+                item.description,
+
+              part_number:
+                item.number,
+            })
+          )
+        );
     }
 
     setShowSuccess(true);
@@ -143,24 +316,33 @@ export default function OfferPage({ searchParams }: Props) {
   /* SUCCESS */
 
   if (showSuccess) {
+
     return (
       <main className={styles.page}>
         <section className={styles.hero}>
           <div className={styles.overlay}>
+
             <div className={styles.card}>
+
               <h1 className={styles.title}>
                 Заявка принята
               </h1>
 
               <p>
                 Предложение появится
-                в личном кабинете после SMS.
+                в личном кабинете
+                после SMS.
               </p>
 
-              <Link href="/login" className={styles.button}>
+              <Link
+                href="/login"
+                className={styles.button}
+              >
                 Личный кабинет
               </Link>
+
             </div>
+
           </div>
         </section>
       </main>
@@ -171,8 +353,11 @@ export default function OfferPage({ searchParams }: Props) {
 
   return (
     <main className={styles.page}>
-      
+
+      {/* HEADER */}
+
       <header className={styles.header}>
+
         <div className={styles.headerInner}>
 
           <img
@@ -181,15 +366,23 @@ export default function OfferPage({ searchParams }: Props) {
             alt="logo"
           />
 
-          <Link href="/" className={styles.homeBtn}>
+          <Link
+            href="/"
+            className={styles.homeBtn}
+          >
             На главную
           </Link>
 
         </div>
+
       </header>
 
+      {/* HERO */}
+
       <section className={styles.hero}>
+
         <div className={styles.overlay}>
+
           <div className={styles.card}>
 
             <div className={styles.label}>
@@ -200,29 +393,40 @@ export default function OfferPage({ searchParams }: Props) {
               Отправить запрос
             </h1>
 
-            {/* ИМЯ */}
+            {/* NAME */}
+
             <div className={styles.inputWrap}>
               <input
                 className={styles.input}
                 placeholder=" "
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) =>
+                  setName(
+                    e.target.value
+                  )
+                }
               />
               <label>Имя</label>
             </div>
 
-            {/* ФАМИЛИЯ */}
+            {/* SURNAME */}
+
             <div className={styles.inputWrap}>
               <input
                 className={styles.input}
                 placeholder=" "
                 value={surname}
-                onChange={(e) => setSurname(e.target.value)}
+                onChange={(e) =>
+                  setSurname(
+                    e.target.value
+                  )
+                }
               />
               <label>Фамилия</label>
             </div>
 
             {/* VIN */}
+
             <div className={styles.inputWrap}>
               <input
                 className={styles.input}
@@ -230,68 +434,124 @@ export default function OfferPage({ searchParams }: Props) {
                 placeholder=" "
                 readOnly
               />
-              <label>VIN / номер детали</label>
+              <label>
+                VIN / номер детали
+              </label>
             </div>
 
             {/* PHONE */}
+
             <div className={styles.inputWrap}>
               <input
                 className={styles.input}
                 placeholder=" "
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) =>
+                  setPhone(
+                    e.target.value
+                  )
+                }
               />
-              <label>Телефон / WhatsApp</label>
+              <label>
+                Телефон / WhatsApp
+              </label>
             </div>
 
-            {items.map((item, index) => (
-              <div key={index} className={styles.row}>
+            {/* ITEMS */}
 
-                <div className={styles.inputWrap}>
-                  <input
-                    className={styles.input}
-                    placeholder=" "
-                    value={item.description}
-                    onChange={(e) =>
-                      updateItem(index, "description", e.target.value)
-                    }
-                  />
-                  <label>Описание детали</label>
+            {items.map(
+              (
+                item,
+                index
+              ) => (
+                <div
+                  key={index}
+                  className={styles.row}
+                >
+
+                  <div className={styles.inputWrap}>
+                    <input
+                      className={styles.input}
+                      placeholder=" "
+                      value={
+                        item.description
+                      }
+                      onChange={(e) =>
+                        updateItem(
+                          index,
+                          "description",
+                          e.target.value
+                        )
+                      }
+                    />
+                    <label>
+                      Описание детали
+                    </label>
+                  </div>
+
+                  <div className={styles.inputWrap}>
+                    <input
+                      className={styles.input}
+                      placeholder=" "
+                      value={
+                        item.number
+                      }
+                      onChange={(e) =>
+                        updateItem(
+                          index,
+                          "number",
+                          e.target.value
+                        )
+                      }
+                    />
+                    <label>
+                      Каталожный номер
+                    </label>
+                  </div>
+
                 </div>
+              )
+            )}
 
-                <div className={styles.inputWrap}>
-                  <input
-                    className={styles.input}
-                    placeholder=" "
-                    value={item.number}
-                    onChange={(e) =>
-                      updateItem(index, "number", e.target.value)
-                    }
-                  />
-                  <label>Каталожный номер</label>
-                </div>
+            {/* ADD ITEM */}
 
-              </div>
-            ))}
-
-            <button className={styles.plus} onClick={addItem}>
+            <button
+              className={styles.plus}
+              onClick={addItem}
+            >
               +
             </button>
 
-            <button className={styles.button} onClick={sendRequest}>
-              {loading ? "ОТПРАВКА..." : "ВЫСЛАТЬ ЗАПРОС"}
+            {/* SEND */}
+
+            <button
+              className={styles.button}
+              onClick={sendRequest}
+            >
+              {loading
+                ? "ОТПРАВКА..."
+                : "ВЫСЛАТЬ ЗАПРОС"}
             </button>
+
+            {/* SMS CODE */}
 
             {showCode && (
               <>
+
                 <div className={styles.inputWrap}>
                   <input
                     className={styles.input}
                     placeholder=" "
                     value={code}
-                    onChange={(e) => setCode(e.target.value)}
+                    onChange={(e) =>
+                      setCode(
+                        e.target.value
+                      )
+                    }
                   />
-                  <label>Код из SMS</label>
+                  <label>
+                    Код из SMS
+                  </label>
                 </div>
 
                 <button
@@ -300,11 +560,14 @@ export default function OfferPage({ searchParams }: Props) {
                 >
                   ПОДТВЕРДИТЬ КОД
                 </button>
+
               </>
             )}
 
           </div>
+
         </div>
+
       </section>
 
     </main>
