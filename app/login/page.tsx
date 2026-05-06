@@ -100,12 +100,12 @@ export default function LoginPage() {
             ]);
         }
 
-        /* auth cookie */
+        /* 🔥 CLIENT COOKIE */
 
         document.cookie =
-          "role=client; path=/";
+          "role=client; path=/; max-age=86400; SameSite=Lax";
 
-        /* dashboard */
+        /* 🔥 DASHBOARD */
 
         window.location.href =
           "/dashboard";
@@ -205,10 +205,10 @@ export default function LoginPage() {
         return;
       }
 
-      /* 🔥 COOKIE */
+      /* 🔥 CLIENT COOKIE */
 
       document.cookie =
-        "role=client; path=/";
+        "role=client; path=/; max-age=86400; SameSite=Lax";
 
       /* 🔥 LOGIN */
 
