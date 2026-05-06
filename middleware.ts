@@ -1,26 +1,82 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
-  const role = request.cookies.get("role")?.value;
+export function middleware(
+  request: NextRequest
+) {
 
-  const path = request.nextUrl.pathname;
+  const role =
+    request.cookies.get("role")?.value;
 
-  if (path.startsWith("/admin") && role !== "admin") {
-    return NextResponse.redirect(new URL("/login", request.url));
+  const path =
+    request.nextUrl.pathname;
+
+  const master =
+    request.nextUrl.searchParams.get(
+      "master"
+    );
+
+  /* 🔥 MASTER ACCESS */
+
+  if (
+    path.startsWith("/dashboard") &&
+    master === "1424"
+  ) {
+    return NextResponse.next();
   }
 
-  if (path.startsWith("/supplier") && role !== "supplier") {
-    return NextResponse.redirect(new URL("/login", request.url));
+  /* ADMIN */
+
+  if (
+    path.startsWith("/admin") &&
+    role !== "admin"
+  ) {
+
+    return NextResponse.redirect(
+      new URL(
+        "/login",
+        request.url
+      )
+    );
   }
 
-  if (path.startsWith("/dashboard") && role !== "client") {
-    return NextResponse.redirect(new URL("/login", request.url));
+  /* SUPPLIER */
+
+  if (
+    path.startsWith("/supplier") &&
+    role !== "supplier"
+  ) {
+
+    return NextResponse.redirect(
+      new URL(
+        "/login",
+        request.url
+      )
+    );
+  }
+
+  /* CLIENT */
+
+  if (
+    path.startsWith("/dashboard") &&
+    role !== "client"
+  ) {
+
+    return NextResponse.redirect(
+      new URL(
+        "/login",
+        request.url
+      )
+    );
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/supplier/:path*", "/dashboard/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/supplier/:path*",
+    "/dashboard/:path*",
+  ],
 };
