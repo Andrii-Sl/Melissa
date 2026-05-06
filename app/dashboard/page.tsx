@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import styles from "./dashboard.module.css";
 
@@ -12,11 +13,26 @@ export default function DashboardPage() {
   const [profile, setProfile] =
     useState<any>(null);
 
+  const [requests, setRequests] =
+    useState<any[]>([]);
+
+  const [offers, setOffers] =
+    useState<any[]>([]);
+
   const [orders, setOrders] =
     useState<any[]>([]);
 
   const [loading, setLoading] =
     useState(true);
+
+  const [vin, setVin] =
+    useState("");
+
+  const [part, setPart] =
+    useState("");
+
+  const [number, setNumber] =
+    useState("");
 
   useEffect(() => {
     loadData();
@@ -26,7 +42,7 @@ export default function DashboardPage() {
 
     try {
 
-      /* 🔥 MASTER ACCESS */
+      /* MASTER */
 
       const urlParams =
         new URLSearchParams(
@@ -56,7 +72,7 @@ export default function DashboardPage() {
         });
 
         const {
-          data: r,
+          data: req,
         } =
           await supabase
             .from("requests")
@@ -66,14 +82,14 @@ export default function DashboardPage() {
                 false,
             });
 
-        setOrders(r || []);
+        setRequests(req || []);
 
         setLoading(false);
 
         return;
       }
 
-      /* 🔥 SUPABASE SESSION */
+      /* SESSION */
 
       const {
         data: {
@@ -82,12 +98,7 @@ export default function DashboardPage() {
       } =
         await supabase.auth.getSession();
 
-      console.log(
-        "SESSION:",
-        session
-      );
-
-      /* 🔥 TEST CLIENT */
+      /* TEST CLIENT */
 
       if (!session) {
 
@@ -98,12 +109,12 @@ export default function DashboardPage() {
 
         if (role) {
 
-          setUser({
-            phone:
-              "+48519000000",
-          });
+          const phone =
+            "+48519000000";
 
-          /* profile */
+          setUser({
+            phone,
+          });
 
           const {
             data: p,
@@ -113,37 +124,73 @@ export default function DashboardPage() {
               .select("*")
               .eq(
                 "phone",
-                "+48519000000"
+                phone
               )
               .maybeSingle();
 
           setProfile(p);
 
-          /* requests */
+          /* REQUESTS */
 
           const {
-            data: r,
+            data: req,
           } =
             await supabase
               .from("requests")
               .select("*")
               .eq(
                 "phone",
-                "+48519000000"
+                phone
               )
               .order("id", {
                 ascending:
                   false,
               });
 
-          setOrders(r || []);
+          setRequests(req || []);
+
+          /* OFFERS */
+
+          const {
+            data: off,
+          } =
+            await supabase
+              .from("offers")
+              .select("*")
+              .eq(
+                "phone",
+                phone
+              )
+              .order("id", {
+                ascending:
+                  false,
+              });
+
+          setOffers(off || []);
+
+          /* ORDERS */
+
+          const {
+            data: ord,
+          } =
+            await supabase
+              .from("orders")
+              .select("*")
+              .eq(
+                "phone",
+                phone
+              )
+              .order("id", {
+                ascending:
+                  false,
+              });
+
+          setOrders(ord || []);
 
           setLoading(false);
 
           return;
         }
-
-        /* 🔥 NO AUTH */
 
         window.location.href =
           "/login";
@@ -151,14 +198,12 @@ export default function DashboardPage() {
         return;
       }
 
-      /* 🔥 NORMAL USER */
+      /* NORMAL USER */
 
       const currentUser =
         session.user;
 
       setUser(currentUser);
-
-      /* profile */
 
       const {
         data: p,
@@ -174,10 +219,10 @@ export default function DashboardPage() {
 
       setProfile(p);
 
-      /* requests */
+      /* REQUESTS */
 
       const {
-        data: r,
+        data: req,
       } =
         await supabase
           .from("requests")
@@ -191,7 +236,45 @@ export default function DashboardPage() {
               false,
           });
 
-      setOrders(r || []);
+      setRequests(req || []);
+
+      /* OFFERS */
+
+      const {
+        data: off,
+      } =
+        await supabase
+          .from("offers")
+          .select("*")
+          .eq(
+            "phone",
+            currentUser.phone
+          )
+          .order("id", {
+            ascending:
+              false,
+          });
+
+      setOffers(off || []);
+
+      /* ORDERS */
+
+      const {
+        data: ord,
+      } =
+        await supabase
+          .from("orders")
+          .select("*")
+          .eq(
+            "phone",
+            currentUser.phone
+          )
+          .order("id", {
+            ascending:
+              false,
+          });
+
+      setOrders(ord || []);
 
       setLoading(false);
 
@@ -200,6 +283,50 @@ export default function DashboardPage() {
       console.error(e);
 
       setLoading(false);
+    }
+  }
+
+  /* NEW REQUEST */
+
+  async function createRequest() {
+
+    if (!vin && !part)
+      return;
+
+    const phone =
+      profile?.phone ||
+      user?.phone;
+
+    const {
+      data,
+    } =
+      await supabase
+        .from("requests")
+        .insert([
+          {
+            vin,
+            phone,
+            part_name:
+              part,
+            part_number:
+              number,
+            status:
+              "new",
+          },
+        ])
+        .select()
+        .single();
+
+    if (data) {
+
+      setRequests([
+        data,
+        ...requests,
+      ]);
+
+      setVin("");
+      setPart("");
+      setNumber("");
     }
   }
 
@@ -218,66 +345,41 @@ export default function DashboardPage() {
 
   /* STATUS */
 
-  function getStatus(
+  function requestStatus(
     status: string
   ) {
 
-    if (
-      status ===
-      "new"
-    )
-      return "🟡 Подбор";
+    if (status === "new")
+      return "🟡 Новая";
 
-    if (
-      status ===
-      "found"
-    )
-      return "🟢 Найдено";
+    if (status === "search")
+      return "🔵 В подборе";
 
-    if (
-      status ===
-      "payment"
-    )
-      return "🔵 Ожидает оплаты";
-
-    if (
-      status ===
-      "shipping"
-    )
-      return "🟣 В пути";
-
-    if (
-      status ===
-      "done"
-    )
-      return "✅ Доставлено";
+    if (status === "found")
+      return "🟢 Предложение готово";
 
     return status;
   }
-
-  /* LOADING */
 
   if (loading) {
 
     return (
       <main className={styles.page}>
-        <section className={styles.wrap}>
+        <div className={styles.loading}>
           Загрузка...
-        </section>
+        </div>
       </main>
     );
   }
 
-  /* PAGE */
-
   return (
     <main className={styles.page}>
 
-      <section className={styles.wrap}>
+      {/* TOP */}
 
-        {/* TOP */}
+      <section className={styles.hero}>
 
-        <div className={styles.top}>
+        <div className={styles.topRow}>
 
           <div>
 
@@ -285,76 +387,229 @@ export default function DashboardPage() {
               ЛИЧНЫЙ КАБИНЕТ
             </div>
 
-            <h1 className={styles.title}>
+            <h1 className={styles.name}>
               {profile?.full_name ||
                 "Клиент"}
             </h1>
 
             <p className={styles.phone}>
               {profile?.phone ||
-                user?.phone ||
-                ""}
+                user?.phone}
             </p>
 
           </div>
 
           <button
-            onClick={logout}
             className={styles.logout}
+            onClick={logout}
           >
             Выйти
           </button>
 
         </div>
 
-        {/* REQUESTS */}
+      </section>
 
-        <div className={styles.list}>
+      {/* CREATE REQUEST */}
 
-          {orders.map(
-            (item) => (
+      <section className={styles.section}>
 
-              <a
-                key={item.id}
-                href={`/dashboard/request/${item.id}`}
-                className={styles.card}
-              >
+        <div className={styles.sectionTop}>
+          <h2>Новая заявка</h2>
+        </div>
 
-                <strong>
-                  Заявка #
-                  {item.id}
-                </strong>
+        <div className={styles.form}>
 
-                <p>
-                  {item.part_name ||
-                    item.vin ||
-                    "Запрос"}
-                </p>
+          <input
+            className={styles.input}
+            placeholder="VIN"
+            value={vin}
+            onChange={(e) =>
+              setVin(
+                e.target.value
+              )
+            }
+          />
 
-                <span>
-                  {getStatus(
-                    item.status
-                  )}
-                </span>
+          <input
+            className={styles.input}
+            placeholder="Описание детали"
+            value={part}
+            onChange={(e) =>
+              setPart(
+                e.target.value
+              )
+            }
+          />
 
-              </a>
-            )
-          )}
+          <input
+            className={styles.input}
+            placeholder="Каталожный номер"
+            value={number}
+            onChange={(e) =>
+              setNumber(
+                e.target.value
+              )
+            }
+          />
 
-          {/* EMPTY */}
+          <button
+            className={styles.createBtn}
+            onClick={createRequest}
+          >
+            + Создать заявку
+          </button>
 
-          {orders.length ===
-            0 && (
+        </div>
+
+      </section>
+
+      {/* REQUESTS */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionTop}>
+          <h2>Заявки</h2>
+        </div>
+
+        <div className={styles.grid}>
+
+          {requests.map((item) => (
 
             <div
-              className={
-                styles.empty
-              }
+              key={item.id}
+              className={styles.card}
             >
-              У вас пока нет заявок
-            </div>
 
-          )}
+              <strong>
+                {item.part_name ||
+                  "Запрос"}
+              </strong>
+
+              <p>
+                {item.vin ||
+                  "VIN не указан"}
+              </p>
+
+              <span>
+                {requestStatus(
+                  item.status
+                )}
+              </span>
+
+            </div>
+          ))}
+
+        </div>
+
+      </section>
+
+      {/* OFFERS */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionTop}>
+          <h2>Предложения</h2>
+        </div>
+
+        <div className={styles.grid}>
+
+          {offers.map((item) => (
+
+            <div
+              key={item.id}
+              className={styles.card}
+            >
+
+              <strong>
+                {item.brand}
+              </strong>
+
+              <p>
+                €{item.price}
+              </p>
+
+              <span>
+                {item.availability}
+              </span>
+
+              <button
+                className={styles.payBtn}
+              >
+                Оплатить
+              </button>
+
+            </div>
+          ))}
+
+        </div>
+
+      </section>
+
+      {/* ORDERS */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionTop}>
+          <h2>Заказы</h2>
+        </div>
+
+        <div className={styles.grid}>
+
+          {orders.map((item) => (
+
+            <div
+              key={item.id}
+              className={styles.card}
+            >
+
+              <strong>
+                Заказ #{item.id}
+              </strong>
+
+              <p>
+                {item.tracking ||
+                  "Без трека"}
+              </p>
+
+              <span>
+                {item.status}
+              </span>
+
+            </div>
+          ))}
+
+        </div>
+
+      </section>
+
+      {/* SETTINGS */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionTop}>
+          <h2>Настройки</h2>
+        </div>
+
+        <div className={styles.settings}>
+
+          <div className={styles.settingCard}>
+            <strong>
+              Имя
+            </strong>
+            <p>
+              {profile?.full_name}
+            </p>
+          </div>
+
+          <div className={styles.settingCard}>
+            <strong>
+              Телефон
+            </strong>
+            <p>
+              {profile?.phone}
+            </p>
+          </div>
 
         </div>
 
