@@ -26,45 +26,6 @@ export default function DashboardPage() {
 
     try {
 
-      /* 🔥 TEST LOGIN */
-
-      const fakeAuth =
-        localStorage.getItem(
-          "fakeAuth"
-        );
-
-      if (fakeAuth === "true") {
-
-        setUser({
-          phone:
-            "MASTER",
-        });
-
-        setProfile({
-          full_name:
-            "Владелец",
-          phone:
-            "MASTER ACCESS",
-        });
-
-        const {
-          data: r,
-        } =
-          await supabase
-            .from("requests")
-            .select("*")
-            .order("id", {
-              ascending:
-                false,
-            });
-
-        setOrders(r || []);
-
-        setLoading(false);
-
-        return;
-      }
-
       /* 🔥 MASTER ACCESS */
 
       const urlParams =
@@ -112,7 +73,7 @@ export default function DashboardPage() {
         return;
       }
 
-      /* 🔥 NORMAL LOGIN */
+      /* 🔥 SUPABASE SESSION */
 
       const {
         data: {
@@ -126,7 +87,63 @@ export default function DashboardPage() {
         session
       );
 
+      /* 🔥 TEST CLIENT */
+
       if (!session) {
+
+        const role =
+          document.cookie.includes(
+            "role=client"
+          );
+
+        if (role) {
+
+          setUser({
+            phone:
+              "+48519000000",
+          });
+
+          /* profile */
+
+          const {
+            data: p,
+          } =
+            await supabase
+              .from("profiles")
+              .select("*")
+              .eq(
+                "phone",
+                "+48519000000"
+              )
+              .maybeSingle();
+
+          setProfile(p);
+
+          /* requests */
+
+          const {
+            data: r,
+          } =
+            await supabase
+              .from("requests")
+              .select("*")
+              .eq(
+                "phone",
+                "+48519000000"
+              )
+              .order("id", {
+                ascending:
+                  false,
+              });
+
+          setOrders(r || []);
+
+          setLoading(false);
+
+          return;
+        }
+
+        /* 🔥 NO AUTH */
 
         window.location.href =
           "/login";
@@ -134,12 +151,14 @@ export default function DashboardPage() {
         return;
       }
 
+      /* 🔥 NORMAL USER */
+
       const currentUser =
         session.user;
 
       setUser(currentUser);
 
-      /* PROFILE */
+      /* profile */
 
       const {
         data: p,
@@ -155,7 +174,7 @@ export default function DashboardPage() {
 
       setProfile(p);
 
-      /* REQUESTS */
+      /* requests */
 
       const {
         data: r,
@@ -188,9 +207,8 @@ export default function DashboardPage() {
 
   async function logout() {
 
-    localStorage.removeItem(
-      "fakeAuth"
-    );
+    document.cookie =
+      "role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
 
     await supabase.auth.signOut();
 
