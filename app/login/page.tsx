@@ -21,7 +21,7 @@ export default function LoginPage() {
   const [surname, setSurname] =
     useState("");
 
-  /* 🔥 SMS */
+  /* SMS */
 
   const [code, setCode] =
     useState("");
@@ -35,13 +35,28 @@ export default function LoginPage() {
   const [smsError, setSmsError] =
     useState("");
 
-  /* SEND SMS */
+  /* SEND */
 
   async function submit() {
 
     setLoading(true);
 
     setSmsError("");
+
+    /* 🔥 TEST LOGIN */
+
+    if (phone === "1424") {
+
+      localStorage.setItem(
+        "fakeAuth",
+        "true"
+      );
+
+      window.location.href =
+        "/dashboard";
+
+      return;
+    }
 
     try {
 
@@ -58,6 +73,8 @@ export default function LoginPage() {
 
       setLoading(false);
 
+      /* ERROR */
+
       if (error) {
 
         setSmsError(
@@ -67,7 +84,7 @@ export default function LoginPage() {
         return;
       }
 
-      /* 🔥 показать поле кода */
+      /* SHOW CODE */
 
       setShowCode(true);
 
@@ -90,6 +107,7 @@ export default function LoginPage() {
     try {
 
       const {
+        data,
         error,
       } =
         await supabase.auth.verifyOtp({
@@ -103,6 +121,16 @@ export default function LoginPage() {
             "sms",
         });
 
+      console.log(
+        "VERIFY:",
+        data
+      );
+
+      console.log(
+        "VERIFY ERROR:",
+        error
+      );
+
       if (error) {
 
         alert(
@@ -112,7 +140,19 @@ export default function LoginPage() {
         return;
       }
 
-      /* 🔥 LOGIN SUCCESS */
+      /* 🔥 SESSION */
+
+      const {
+        data: sessionData,
+      } =
+        await supabase.auth.getSession();
+
+      console.log(
+        "SESSION:",
+        sessionData
+      );
+
+      /* LOGIN */
 
       window.location.href =
         "/dashboard";
@@ -255,6 +295,7 @@ export default function LoginPage() {
                   color: "#d10000",
                   marginTop: "12px",
                   fontSize: "14px",
+                  lineHeight: "1.4",
                 }}
               >
                 {smsError}
