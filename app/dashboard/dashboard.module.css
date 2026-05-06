@@ -1,106 +1,260 @@
 .page{
-  min-height:100svh;
-  background:#f5f5f5;
-  font-family:Arial, Helvetica, sans-serif;
-  color:#111111;
+  min-height:100vh;
+  background:#f5f7fb;
+  padding:24px;
+  font-family:Arial,sans-serif;
+  color:#111;
 }
 
-.wrap{
-  max-width:1180px;
-  margin:0 auto;
-  padding:40px 18px 70px;
+/* loading */
+
+.loading{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
 }
 
-.top{
-  display:grid;
-  gap:18px;
-  margin-bottom:28px;
+/* top */
+
+.hero{
+  max-width:1400px;
+  margin:0 auto 24px;
+}
+
+.topRow{
+  background:#ffffff;
+  border-radius:24px;
+  padding:28px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  box-shadow:
+    0 10px 40px rgba(0,0,0,.06);
 }
 
 .label{
-  color:#d10000;
   font-size:12px;
-  letter-spacing:.08em;
-  margin-bottom:8px;
+  letter-spacing:2px;
+  color:#d10000;
+  margin-bottom:10px;
 }
 
-.title{
+.name{
   margin:0;
   font-size:42px;
-  line-height:1.05;
-  font-weight:700;
+  font-weight:800;
+  line-height:1;
 }
 
 .phone{
   margin:10px 0 0;
-  color:#666666;
+  color:#666;
   font-size:16px;
 }
 
 .logout{
-  height:56px;
-  border:1px solid #111111;
-  background:#ffffff;
-  color:#111111;
-  font-size:16px;
-  font-weight:700;
+  height:48px;
   padding:0 22px;
+  border:none;
+  background:#111;
+  color:#fff;
+  border-radius:14px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.logout:hover{
+  transform:translateY(-2px);
+}
+
+/* sections */
+
+.section{
+  max-width:1400px;
+  margin:0 auto 24px;
+}
+
+.sectionTop{
+  margin-bottom:14px;
+}
+
+.sectionTop h2{
+  margin:0;
+  font-size:28px;
+  font-weight:800;
+}
+
+/* form */
+
+.form{
+  background:#ffffff;
+  border-radius:24px;
+  padding:24px;
+  box-shadow:
+    0 10px 40px rgba(0,0,0,.06);
+
+  display:grid;
+  grid-template-columns:
+    repeat(4,1fr);
+
+  gap:14px;
+}
+
+.input{
+  height:54px;
+  border:none;
+  background:#f3f5f8;
+  border-radius:14px;
+  padding:0 18px;
+  font-size:15px;
+  outline:none;
+}
+
+.input:focus{
+  background:#eceff4;
+}
+
+/* buttons */
+
+.createBtn{
+  height:54px;
+  border:none;
+  background:#d10000;
+  color:#fff;
+  border-radius:14px;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.createBtn:hover{
+  transform:translateY(-2px);
+}
+
+.payBtn{
+  margin-top:14px;
+  width:100%;
+  height:46px;
+  border:none;
+  background:#d10000;
+  color:#fff;
+  border-radius:12px;
+  font-size:14px;
+  font-weight:700;
   cursor:pointer;
 }
 
-.list{
+/* cards */
+
+.grid{
   display:grid;
-  gap:16px;
+  grid-template-columns:
+    repeat(auto-fill,minmax(280px,1fr));
+
+  gap:18px;
 }
 
 .card{
-  display:block;
   background:#ffffff;
-  border:1px solid #e7e7e7;
-  padding:20px;
-  text-decoration:none;
-  color:#111111;
+  border-radius:24px;
+  padding:22px;
+  box-shadow:
+    0 10px 40px rgba(0,0,0,.06);
+
+  transition:.18s;
+}
+
+.card:hover{
+  transform:translateY(-4px);
 }
 
 .card strong{
   display:block;
-  font-size:22px;
+  font-size:20px;
   margin-bottom:10px;
 }
 
 .card p{
   margin:0 0 12px;
-  font-size:15px;
-  color:#333333;
+  color:#666;
+  line-height:1.5;
 }
 
 .card span{
-  color:#d10000;
-  font-size:14px;
-  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  height:34px;
+  padding:0 14px;
+  border-radius:999px;
+  background:#f3f5f8;
+  font-size:13px;
+  font-weight:600;
 }
 
-.empty{
+/* settings */
+
+.settings{
+  display:grid;
+  grid-template-columns:
+    repeat(auto-fill,minmax(260px,1fr));
+
+  gap:18px;
+}
+
+.settingCard{
   background:#ffffff;
-  border:1px solid #e7e7e7;
-  padding:24px;
-  text-align:center;
-  color:#666666;
+  border-radius:24px;
+  padding:22px;
+  box-shadow:
+    0 10px 40px rgba(0,0,0,.06);
 }
 
-@media(min-width:901px){
-
-.top{
-  grid-template-columns:1fr auto;
-  align-items:end;
+.settingCard strong{
+  display:block;
+  margin-bottom:10px;
+  font-size:18px;
 }
 
-.title{
-  font-size:56px;
+.settingCard p{
+  margin:0;
+  color:#666;
 }
 
-.list{
-  grid-template-columns:repeat(2,1fr);
-}
+/* mobile */
+
+@media(max-width:900px){
+
+  .page{
+    padding:16px;
+  }
+
+  .topRow{
+    padding:22px;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:18px;
+  }
+
+  .name{
+    font-size:32px;
+  }
+
+  .form{
+    grid-template-columns:1fr;
+    padding:18px;
+  }
+
+  .sectionTop h2{
+    font-size:24px;
+  }
+
+  .card{
+    padding:18px;
+  }
 
 }
