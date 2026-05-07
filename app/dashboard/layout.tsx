@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import styles from "./dashboard.module.css";
 
 export default function DashboardLayout({
@@ -8,6 +9,25 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+
+  const pathname =
+    usePathname();
+
+  function active(path:string) {
+
+    if (
+      pathname.startsWith(path)
+    ) {
+
+      return `
+        ${styles.navItem}
+        ${styles.navItemActive}
+      `;
+    }
+
+    return styles.navItem;
+  }
+
   return (
     <main className={styles.page}>
 
@@ -43,15 +63,15 @@ export default function DashboardLayout({
 
       {children}
 
-      {/* BOTTOM NAV */}
+      {/* NAV */}
 
       <nav className={styles.bottomNav}>
 
         <Link
           href="/dashboard"
-          className={
-            `${styles.navItem} ${styles.navItemActive}`
-          }
+          className={active(
+            "/dashboard"
+          )}
         >
           <div className={styles.navIcon}>
             🏠
@@ -64,7 +84,9 @@ export default function DashboardLayout({
 
         <Link
           href="/dashboard/requests"
-          className={styles.navItem}
+          className={active(
+            "/dashboard/requests"
+          )}
         >
           <div className={styles.navIcon}>
             📄
@@ -77,7 +99,9 @@ export default function DashboardLayout({
 
         <Link
           href="/dashboard/offers"
-          className={styles.navItem}
+          className={active(
+            "/dashboard/offers"
+          )}
         >
           <div className={styles.navIcon}>
             💶
@@ -90,7 +114,9 @@ export default function DashboardLayout({
 
         <Link
           href="/dashboard/orders"
-          className={styles.navItem}
+          className={active(
+            "/dashboard/orders"
+          )}
         >
           <div className={styles.navIcon}>
             📦
@@ -102,8 +128,25 @@ export default function DashboardLayout({
         </Link>
 
         <Link
+          href="/dashboard/garage"
+          className={active(
+            "/dashboard/garage"
+          )}
+        >
+          <div className={styles.navIcon}>
+            🚘
+          </div>
+
+          <span>
+            Гараж
+          </span>
+        </Link>
+
+        <Link
           href="/dashboard/profile"
-          className={styles.navItem}
+          className={active(
+            "/dashboard/profile"
+          )}
         >
           <div className={styles.navIcon}>
             👤
