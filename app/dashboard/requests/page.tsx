@@ -36,7 +36,8 @@ export default function RequestsPage() {
         );
 
       if (role)
-        phone = "+48519000000";
+        phone =
+          "+48519000000";
     }
 
     const {
@@ -55,7 +56,9 @@ export default function RequestsPage() {
     setLoading(false);
   }
 
-  function getStatus(status:string) {
+  function getStatus(
+    status:string
+  ) {
 
     if (status === "new")
       return "🟡 Новая";
@@ -70,7 +73,11 @@ export default function RequestsPage() {
   }
 
   if (loading)
-    return <div className={styles.loading}>Загрузка...</div>;
+    return (
+      <div className={styles.loading}>
+        Загрузка...
+      </div>
+    );
 
   return (
     <main className={styles.page}>
@@ -78,33 +85,42 @@ export default function RequestsPage() {
       <section className={styles.section}>
 
         <div className={styles.sectionTop}>
-          <h2>Все заявки</h2>
+          <h2>
+            Все заявки
+          </h2>
         </div>
 
         {requests.map((item) => (
 
-          <div
+          <a
+            href={`/dashboard/requests/${item.id}`}
             key={item.id}
             className={styles.card}
           >
 
             <strong>
-              {item.part_name || "Запрос"}
+              {item.part_name ||
+                "Запрос"}
             </strong>
 
             <p>
-              VIN: {item.vin || "не указан"}
+              VIN:
+              {" "}
+              {item.vin ||
+                "не указан"}
             </p>
 
             <div className={styles.badge}>
-              {getStatus(item.status)}
+              {getStatus(
+                item.status
+              )}
             </div>
 
-          </div>
+          </a>
         ))}
 
       </section>
 
     </main>
   );
-          }
+}
