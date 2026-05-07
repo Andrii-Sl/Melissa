@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import styles from "./dashboard.module.css";
 
@@ -375,48 +374,159 @@ export default function DashboardPage() {
   return (
     <main className={styles.page}>
 
-      {/* TOP */}
+      {/* HERO */}
 
       <section className={styles.hero}>
 
-        <div className={styles.topRow}>
+        <h1 className={styles.title}>
+          Здравствуйте,
+          <br />
+          {profile?.full_name ||
+            "Клиент"}
+        </h1>
 
-          <div>
+        <p className={styles.phone}>
+          {profile?.phone ||
+            user?.phone}
+        </p>
 
-            <div className={styles.label}>
-              ЛИЧНЫЙ КАБИНЕТ
-            </div>
+      </section>
 
-            <h1 className={styles.name}>
-              {profile?.full_name ||
-                "Клиент"}
-            </h1>
+      {/* GARAGE */}
 
-            <p className={styles.phone}>
-              {profile?.phone ||
-                user?.phone}
-            </p>
+      <section className={styles.garage}>
 
+        <h2 className={styles.blockTitle}>
+          Мои автомобили
+        </h2>
+
+        <div className={styles.cars}>
+
+          <div className={styles.car}>
+            <strong>
+              Audi A6 C8
+            </strong>
+
+            <span>
+              WAUZZZF20...
+            </span>
           </div>
 
-          <button
-            className={styles.logout}
-            onClick={logout}
-          >
-            Выйти
-          </button>
+          <div className={styles.car}>
+            <strong>
+              BMW G30
+            </strong>
+
+            <span>
+              WBA5R510...
+            </span>
+          </div>
 
         </div>
 
       </section>
 
-      {/* CREATE REQUEST */}
+      {/* STATS */}
 
-      <section className={styles.section}>
+      <section className={styles.stats}>
 
-        <div className={styles.sectionTop}>
-          <h2>Новая заявка</h2>
+        <div className={styles.statCard}>
+
+          <div className={styles.statTop}>
+
+            <div
+              className={`${styles.statIcon} ${styles.red}`}
+            >
+              📄
+            </div>
+
+          </div>
+
+          <div className={styles.statValue}>
+            {requests.length}
+          </div>
+
+          <div className={styles.statLabel}>
+            Заявки
+          </div>
+
         </div>
+
+        <div className={styles.statCard}>
+
+          <div className={styles.statTop}>
+
+            <div
+              className={`${styles.statIcon} ${styles.blue}`}
+            >
+              💶
+            </div>
+
+          </div>
+
+          <div className={styles.statValue}>
+            {offers.length}
+          </div>
+
+          <div className={styles.statLabel}>
+            Предложения
+          </div>
+
+        </div>
+
+        <div className={styles.statCard}>
+
+          <div className={styles.statTop}>
+
+            <div
+              className={`${styles.statIcon} ${styles.purple}`}
+            >
+              📦
+            </div>
+
+          </div>
+
+          <div className={styles.statValue}>
+            {orders.length}
+          </div>
+
+          <div className={styles.statLabel}>
+            Заказы
+          </div>
+
+        </div>
+
+        <div className={styles.statCard}>
+
+          <div className={styles.statTop}>
+
+            <div
+              className={`${styles.statIcon} ${styles.green}`}
+            >
+              ✅
+            </div>
+
+          </div>
+
+          <div className={styles.statValue}>
+            12
+          </div>
+
+          <div className={styles.statLabel}>
+            Выполнено
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* NEW REQUEST */}
+
+      <section className={styles.requestBox}>
+
+        <h2 className={styles.blockTitle}>
+          Новая заявка
+        </h2>
 
         <div className={styles.form}>
 
@@ -472,35 +582,31 @@ export default function DashboardPage() {
           <h2>Заявки</h2>
         </div>
 
-        <div className={styles.grid}>
+        {requests.map((item) => (
 
-          {requests.map((item) => (
+          <div
+            key={item.id}
+            className={styles.card}
+          >
 
-            <div
-              key={item.id}
-              className={styles.card}
-            >
+            <strong>
+              {item.part_name ||
+                "Запрос"}
+            </strong>
 
-              <strong>
-                {item.part_name ||
-                  "Запрос"}
-              </strong>
+            <p>
+              {item.vin ||
+                "VIN не указан"}
+            </p>
 
-              <p>
-                {item.vin ||
-                  "VIN не указан"}
-              </p>
-
-              <span>
-                {requestStatus(
-                  item.status
-                )}
-              </span>
-
+            <div className={styles.badge}>
+              {requestStatus(
+                item.status
+              )}
             </div>
-          ))}
 
-        </div>
+          </div>
+        ))}
 
       </section>
 
@@ -512,37 +618,35 @@ export default function DashboardPage() {
           <h2>Предложения</h2>
         </div>
 
-        <div className={styles.grid}>
+        {offers.map((item) => (
 
-          {offers.map((item) => (
+          <div
+            key={item.id}
+            className={styles.card}
+          >
 
-            <div
-              key={item.id}
-              className={styles.card}
-            >
+            <strong>
+              {item.brand ||
+                "Предложение"}
+            </strong>
 
-              <strong>
-                {item.brand}
-              </strong>
-
-              <p>
-                €{item.price}
-              </p>
-
-              <span>
-                {item.availability}
-              </span>
-
-              <button
-                className={styles.payBtn}
-              >
-                Оплатить
-              </button>
-
+            <div className={styles.price}>
+              €{item.price || 0}
             </div>
-          ))}
 
-        </div>
+            <div className={styles.badge}>
+              {item.availability ||
+                "Под заказ"}
+            </div>
+
+            <button
+              className={styles.offerBtn}
+            >
+              Оплатить
+            </button>
+
+          </div>
+        ))}
 
       </section>
 
@@ -554,60 +658,94 @@ export default function DashboardPage() {
           <h2>Заказы</h2>
         </div>
 
-        <div className={styles.grid}>
+        {orders.map((item) => (
 
-          {orders.map((item) => (
+          <div
+            key={item.id}
+            className={styles.card}
+          >
 
-            <div
-              key={item.id}
-              className={styles.card}
-            >
+            <strong>
+              Заказ #{item.id}
+            </strong>
 
-              <strong>
-                Заказ #{item.id}
-              </strong>
+            <p>
+              {item.tracking ||
+                "Трек номер появится позже"}
+            </p>
 
-              <p>
-                {item.tracking ||
-                  "Без трека"}
-              </p>
+            <div className={styles.badge}>
+              {item.status ||
+                "В обработке"}
+            </div>
 
-              <span>
-                {item.status}
-              </span>
+            <div className={styles.steps}>
+
+              <div className={styles.step}>
+                <div className={styles.dot}></div>
+                <span>
+                  Оплата
+                </span>
+              </div>
+
+              <div className={styles.step}>
+                <div className={styles.dot}></div>
+                <span>
+                  Отправка
+                </span>
+              </div>
+
+              <div className={styles.step}>
+                <div className={styles.dot}></div>
+                <span>
+                  Доставка
+                </span>
+              </div>
 
             </div>
-          ))}
 
-        </div>
+          </div>
+        ))}
 
       </section>
 
-      {/* SETTINGS */}
+      {/* PROFILE */}
 
-      <section className={styles.section}>
+      <section className={styles.profile}>
 
-        <div className={styles.sectionTop}>
-          <h2>Настройки</h2>
-        </div>
+        <h2 className={styles.blockTitle}>
+          Профиль
+        </h2>
 
-        <div className={styles.settings}>
+        <div className={styles.profileCard}>
 
-          <div className={styles.settingCard}>
+          <div className={styles.profileItem}>
             <strong>
               Имя
             </strong>
+
             <p>
               {profile?.full_name}
             </p>
           </div>
 
-          <div className={styles.settingCard}>
+          <div className={styles.profileItem}>
             <strong>
               Телефон
             </strong>
+
             <p>
               {profile?.phone}
+            </p>
+          </div>
+
+          <div className={styles.profileItem}>
+            <strong>
+              Адрес доставки
+            </strong>
+
+            <p>
+              Slovenia, Ljubljana
             </p>
           </div>
 
