@@ -36,7 +36,8 @@ export default function OrdersPage() {
         );
 
       if (role)
-        phone = "+48519000000";
+        phone =
+          "+48519000000";
     }
 
     const {
@@ -56,7 +57,11 @@ export default function OrdersPage() {
   }
 
   if (loading)
-    return <div className={styles.loading}>Загрузка...</div>;
+    return (
+      <div className={styles.loading}>
+        Загрузка...
+      </div>
+    );
 
   return (
     <main className={styles.page}>
@@ -64,12 +69,15 @@ export default function OrdersPage() {
       <section className={styles.section}>
 
         <div className={styles.sectionTop}>
-          <h2>Заказы</h2>
+          <h2>
+            Заказы
+          </h2>
         </div>
 
         {orders.map((item) => (
 
-          <div
+          <a
+            href={`/dashboard/orders/${item.id}`}
             key={item.id}
             className={styles.card}
           >
@@ -79,33 +87,16 @@ export default function OrdersPage() {
             </strong>
 
             <p>
-              {item.tracking || "Трек номер появится позже"}
+              {item.tracking ||
+                "Трек номер появится позже"}
             </p>
 
             <div className={styles.badge}>
-              {item.status || "В пути"}
+              {item.status ||
+                "В пути"}
             </div>
 
-            <div className={styles.steps}>
-
-              <div className={styles.step}>
-                <div className={styles.dot}></div>
-                <span>Оплата</span>
-              </div>
-
-              <div className={styles.step}>
-                <div className={styles.dot}></div>
-                <span>Отправка</span>
-              </div>
-
-              <div className={styles.step}>
-                <div className={styles.dot}></div>
-                <span>Доставка</span>
-              </div>
-
-            </div>
-
-          </div>
+          </a>
         ))}
 
       </section>
