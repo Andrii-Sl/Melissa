@@ -36,7 +36,8 @@ export default function OffersPage() {
         );
 
       if (role)
-        phone = "+48519000000";
+        phone =
+          "+48519000000";
     }
 
     const {
@@ -56,7 +57,11 @@ export default function OffersPage() {
   }
 
   if (loading)
-    return <div className={styles.loading}>Загрузка...</div>;
+    return (
+      <div className={styles.loading}>
+        Загрузка...
+      </div>
+    );
 
   return (
     <main className={styles.page}>
@@ -64,18 +69,22 @@ export default function OffersPage() {
       <section className={styles.section}>
 
         <div className={styles.sectionTop}>
-          <h2>Предложения</h2>
+          <h2>
+            Предложения
+          </h2>
         </div>
 
         {offers.map((item) => (
 
-          <div
+          <a
+            href={`/dashboard/offers/${item.id}`}
             key={item.id}
             className={styles.card}
           >
 
             <strong>
-              {item.brand || "Предложение"}
+              {item.brand ||
+                "Предложение"}
             </strong>
 
             <div className={styles.price}>
@@ -83,14 +92,15 @@ export default function OffersPage() {
             </div>
 
             <div className={styles.badge}>
-              {item.availability || "Под заказ"}
+              {item.availability ||
+                "Под заказ"}
             </div>
 
             <button className={styles.offerBtn}>
-              Оплатить
+              Открыть
             </button>
 
-          </div>
+          </a>
         ))}
 
       </section>
