@@ -1,145 +1,90 @@
 "use client";
 
-import { useState } from "react";
-import "../panel.css";
-import LogoutButton from "@/components/LogoutButton";
-import { orders } from "@/data/orders";
-import {
-  leads,
-  updateLeadStatus
-} from "@/data/leads";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import styles from "./admin.module.css";
 
 export default function AdminPage() {
-  const [search, setSearch] = useState("");
 
-  function changeStatus(id: number, status: string) {
-    updateLeadStatus(id, status);
-    location.reload();
+  const [requests, setRequests] =
+    useState<any[]>([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  useEffect(() => {
+    loadRequests();
+  }, []);
+
+  async function loadRequests() {
+
+    const {
+      data,
+    } =
+      await supabase
+        .from("requests")
+        .select("*")
+        .order("id", {
+          ascending: false,
+        });
+
+    setRequests(data || []);
+
+    setLoading(false);
   }
 
-  const filteredLeads = leads.filter((lead) =>
-    `${lead.vin} ${lead.part} ${lead.phone}`
-      .toLowerCase()
-      .includes(search.toLowerCase())
-  );
-
-  const filteredOrders = orders.filter((order) =>
-    `${order.client} ${order.item} ${order.id}`
-      .toLowerCase()
-      .includes(search.toLowerCase())
-  );
+  if (loading)
+    return (
+      <main className={styles.loading}>
+        Загрузка...
+      </main>
+    );
 
   return (
-    <main className="panelLayout">
+    <main className={styles.page}>
 
-      <aside className="sidebar">
-        <div className="brand">AutoParts EU</div>
+      <section className={styles.top}>
 
-        <nav className="menu">
-          <a className="active">Все заказы</a>
-          <a>Новые заявки</a>
-          <a>Клиенты</a>
-          <a>Поставщики</a>
-          <a>Финансы</a>
-          <a>Сообщения</a>
-          <a>Настройки</a>
-        </nav>
-      </aside>
-
-      <section className="content">
-
-        <div className="topbar">
-          <h1>Админ кабинет</h1>
-
-          <div style={{display:"flex", gap:"10px"}}>
-            <input
-              placeholder="Поиск..."
-              value={search}
-              onChange={(e)=>setSearch(e.target.value)}
-              style={{
-                height:"42px",
-                padding:"0 12px",
-                border:"1px solid #ddd"
-              }}
-            />
-
-            <div className="userBox">Владелец</div>
-
-            <LogoutButton />
+        <div>
+          <div className={styles.label}>
+            ADMIN PANEL
           </div>
+
+          <h1 className={styles.title}>
+            Заявки клиентов
+          </h1>
         </div>
 
-        {/* Заявки */}
-        <div className="tableWrap" style={{marginBottom:"24px"}}>
-          <table>
-            <thead>
-              <tr>
-                <th>VIN</th>
-                <th>Деталь</th>
-                <th>Телефон</th>
-                <th>Статус</th>
-              </tr>
-            </thead>
+      </section>
 
-            <tbody>
-              {filteredLeads.map((lead) => (
-                <tr key={lead.id}>
-                  <td>{lead.vin}</td>
-                  <td>{lead.part}</td>
-                  <td>{lead.phone}</td>
+      <section className={styles.grid}>
 
-                  <td>
-                    <select
-                      value={lead.status}
-                      onChange={(e)=>
-                        changeStatus(
-                          lead.id,
-                          e.target.value
-                        )
-                      }
-                    >
-                      <option>Новая</option>
-                      <option>В работе</option>
-                      <option>Отправлено поставщику</option>
-                      <option>Закрыта</option>
-                    </select>
-                  </td>
+        {requests.map((item) => (
 
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+          <Link
+            href={`/admin/request/${item.id}`}
+            key={item.id}
+            className={styles.card}
+          >
 
-        {/* Заказы */}
-        <div className="tableWrap">
-          <table>
-            <thead>
-              <tr>
-                <th>№</th>
-                <th>Клиент</th>
-                <th>Товар</th>
-                <th>Статус</th>
-                <th>Сумма</th>
-              </tr>
-            </thead>
+            <strong>
+              {item.part_name || "Запрос"}
+            </strong>
 
-            <tbody>
-              {filteredOrders.map((order) => (
-                <tr key={order.id}>
-                  <td>{order.id}</td>
-                  <td>{order.client}</td>
-                  <td>{order.item}</td>
-                  <td>{order.status}</td>
-                  <td>{order.total}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            <p>
+              {item.phone}
+            </p>
+
+            <span>
+              {item.vin || "VIN отсутствует"}
+            </span>
+
+          </Link>
+        ))}
 
       </section>
 
     </main>
   );
-              }
+}
