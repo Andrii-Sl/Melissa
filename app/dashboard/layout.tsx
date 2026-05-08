@@ -21,6 +21,20 @@ export default function DashboardLayout({
   const [menuOpen, setMenuOpen] =
     useState(false);
 
+  const [notifyOpen, setNotifyOpen] =
+    useState(false);
+
+  function showNotify(
+    text:string
+  ) {
+
+    setNotify(text);
+
+    setTimeout(() => {
+      setNotify("");
+    }, 3000);
+  }
+
   useEffect(() => {
 
     const offers =
@@ -31,9 +45,9 @@ export default function DashboardLayout({
         .on(
           "postgres_changes",
           {
-            event: "INSERT",
-            schema: "public",
-            table: "offers",
+            event:"INSERT",
+            schema:"public",
+            table:"offers",
           },
           () => {
 
@@ -52,14 +66,14 @@ export default function DashboardLayout({
         .on(
           "postgres_changes",
           {
-            event: "UPDATE",
-            schema: "public",
-            table: "requests",
+            event:"UPDATE",
+            schema:"public",
+            table:"requests",
           },
           () => {
 
             showNotify(
-              "Статус обновлён"
+              "Статус заявки обновлён"
             );
           }
         )
@@ -78,17 +92,6 @@ export default function DashboardLayout({
 
   }, []);
 
-  function showNotify(
-    text:string
-  ) {
-
-    setNotify(text);
-
-    setTimeout(() => {
-      setNotify("");
-    }, 3000);
-  }
-
   function active(path:string) {
 
     if (
@@ -106,9 +109,10 @@ export default function DashboardLayout({
   }
 
   return (
+
     <main className={styles.page}>
 
-      {/* NOTIFY */}
+      {/* PUSH */}
 
       {notify && (
 
@@ -117,19 +121,63 @@ export default function DashboardLayout({
         </div>
       )}
 
-      {/* BURGER OVERLAY */}
+      {/* OVERLAY */}
 
-      {menuOpen && (
+      {(menuOpen || notifyOpen) && (
 
         <div
           className={styles.menuOverlay}
-          onClick={() =>
-            setMenuOpen(false)
-          }
+          onClick={() => {
+
+            setMenuOpen(false);
+            setNotifyOpen(false);
+          }}
         />
       )}
 
-      {/* SIDE MENU */}
+      {/* NOTIFICATIONS */}
+
+      {notifyOpen && (
+
+        <aside className={styles.sideMenu}>
+
+          <div className={styles.menuTop}>
+
+            <h2 className={styles.menuTitle}>
+              Уведомления
+            </h2>
+
+            <button
+              className={styles.closeBtn}
+              onClick={() =>
+                setNotifyOpen(false)
+              }
+            >
+              ✕
+            </button>
+
+          </div>
+
+          <div className={styles.menuLinks}>
+
+            <div className={styles.notifyCard}>
+              💶 Новое предложение
+            </div>
+
+            <div className={styles.notifyCard}>
+              📄 Заявка обработана
+            </div>
+
+            <div className={styles.notifyCard}>
+              📦 Заказ отправлен
+            </div>
+
+          </div>
+
+        </aside>
+      )}
+
+      {/* BURGER */}
 
       {menuOpen && (
 
@@ -214,6 +262,19 @@ export default function DashboardLayout({
               👤 Профиль
             </Link>
 
+            <button
+              className={styles.logoutBtn}
+              onClick={async () => {
+
+                await supabase.auth.signOut();
+
+                window.location.href =
+                  "/";
+              }}
+            >
+              🚪 Выйти
+            </button>
+
           </div>
 
         </aside>
@@ -240,9 +301,7 @@ export default function DashboardLayout({
             <button
               className={styles.iconBtn}
               onClick={() =>
-                showNotify(
-                  "Новых уведомлений нет"
-                )
+                setNotifyOpen(true)
               }
             >
               🔔
@@ -267,7 +326,7 @@ export default function DashboardLayout({
 
       {children}
 
-      {/* NAVIGATION */}
+      {/* BOTTOM NAV */}
 
       <nav className={styles.bottomNav}>
 
