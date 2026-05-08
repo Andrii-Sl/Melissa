@@ -125,6 +125,7 @@ export default function ProfilePage() {
     );
 
   return (
+
     <main className={styles.page}>
 
       <section className={styles.requestBox}>
@@ -179,19 +180,25 @@ export default function ProfilePage() {
             }
           />
 
-          <button
-            className={styles.createBtn}
-            onClick={saveProfile}
-          >
-            Сохранить
-          </button>
+          {/* BUTTONS */}
 
-          <button
-            className={styles.offerBtn}
-            onClick={logout}
-          >
-            Выйти
-          </button>
+          <div className={styles.profileButtons}>
+
+            <button
+              className={styles.createBtn}
+              onClick={saveProfile}
+            >
+              Сохранить
+            </button>
+
+            <button
+              className={styles.offerBtn}
+              onClick={logout}
+            >
+              Выйти
+            </button>
+
+          </div>
 
         </div>
 
