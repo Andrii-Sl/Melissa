@@ -1,420 +1,359 @@
 .page{
   min-height:100vh;
-  background:#f4f6fa;
-  font-family:Arial,sans-serif;
-  color:#111;
-  padding-bottom:110px;
+  background:#f5f5f5;
+  padding-bottom:120px;
 }
 
 /* HEADER */
 
 .header{
-  background:#ffffff;
-  padding:18px 18px 12px;
-  border-bottom:1px solid #ececec;
-
   position:sticky;
   top:0;
-  z-index:50;
+  z-index:40;
+
+  background:#fff;
+
+  border-bottom:
+    1px solid rgba(0,0,0,.06);
 }
 
 .headerTop{
   display:flex;
   align-items:center;
   justify-content:space-between;
+
+  padding:18px 20px;
 }
 
 .logo{
-  height:28px;
-  width:auto;
+  width:150px;
+  object-fit:contain;
 }
 
 .icons{
   display:flex;
-  align-items:center;
-  gap:14px;
+  gap:10px;
 }
 
 .iconBtn{
   width:42px;
   height:42px;
-  border:none;
-  background:#f3f5f9;
-  border-radius:14px;
-  font-size:18px;
-  cursor:pointer;
 
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  border:none;
+  border-radius:14px;
+
+  background:#f1f1f1;
+
+  font-size:18px;
 }
 
 /* HERO */
 
 .hero{
-  padding:22px 18px 8px;
+  padding:24px 20px 10px;
 }
 
-.title{
-  margin:0;
+.topRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+}
+
+.label{
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:2px;
+  color:#c40000;
+
+  margin-bottom:10px;
+}
+
+.name{
   font-size:34px;
-  line-height:1.05;
   font-weight:800;
+  margin:0;
+  color:#111;
 }
 
 .phone{
-  margin:10px 0 0;
-  color:#707887;
-  font-size:16px;
-}
-
-/* GARAGE */
-
-.garage{
-  padding:8px 18px 18px;
-}
-
-.blockTitle{
-  margin:0 0 14px;
-  font-size:20px;
-  font-weight:800;
-}
-
-.cars{
-  display:flex;
-  gap:12px;
-  overflow:auto;
-  padding-bottom:4px;
-}
-
-.car{
-  min-width:150px;
-  background:#ffffff;
-  border-radius:20px;
-  padding:16px;
-  box-shadow:
-    0 10px 30px rgba(0,0,0,.05);
-}
-
-.car strong{
-  display:block;
-  margin-bottom:6px;
-  font-size:16px;
-}
-
-.car span{
+  margin-top:10px;
   color:#666;
-  font-size:13px;
-}
-
-/* STATS */
-
-.stats{
-  padding:0 18px 18px;
-
-  display:grid;
-  grid-template-columns:
-    repeat(2,1fr);
-
-  gap:14px;
-}
-
-.statCard{
-  background:#ffffff;
-  border-radius:24px;
-  padding:22px 18px;
-  box-shadow:
-    0 10px 30px rgba(0,0,0,.05);
-}
-
-.statTop{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:16px;
-}
-
-.statIcon{
-  width:48px;
-  height:48px;
-  border-radius:16px;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  font-size:22px;
-}
-
-.red{
-  background:#fff0f0;
-}
-
-.blue{
-  background:#eef4ff;
-}
-
-.purple{
-  background:#f5efff;
-}
-
-.green{
-  background:#eefcf3;
-}
-
-.statValue{
-  font-size:34px;
-  font-weight:800;
-  line-height:1;
-  margin-bottom:8px;
-}
-
-.statLabel{
-  color:#666;
-  font-size:14px;
-}
-
-/* NEW REQUEST */
-
-.requestBox{
-  padding:0 18px 22px;
-}
-
-.form{
-  background:#ffffff;
-  border-radius:28px;
-  padding:20px;
-  box-shadow:
-    0 10px 30px rgba(0,0,0,.05);
-}
-
-.input{
-  width:100%;
-  height:54px;
-  border:none;
-  background:#f3f5f9;
-  border-radius:16px;
-  padding:0 16px;
   font-size:15px;
-  margin-bottom:12px;
-  outline:none;
 }
 
-.textarea{
-  width:100%;
-  height:110px;
-  border:none;
-  background:#f3f5f9;
-  border-radius:16px;
-  padding:16px;
-  font-size:15px;
-  margin-bottom:14px;
-  resize:none;
-  outline:none;
-}
+/* BUTTONS */
 
-.createBtn{
-  width:100%;
-  height:56px;
+.logout,
+.createBtn,
+.offerBtn{
   border:none;
-  background:#d10000;
-  color:#ffffff;
   border-radius:18px;
-  font-size:16px;
+
+  background:#c40000;
+  color:#fff;
+
+  padding:14px 18px;
+
+  font-size:14px;
   font-weight:700;
-  cursor:pointer;
 }
 
-/* LIST */
+.offerBtn{
+  margin-top:14px;
+}
+
+.logout{
+  background:#111;
+}
+
+/* SECTION */
 
 .section{
-  padding:0 18px 22px;
+  padding:10px 20px 24px;
 }
 
 .sectionTop{
   display:flex;
-  align-items:center;
   justify-content:space-between;
-  margin-bottom:14px;
+  align-items:center;
+
+  margin-bottom:16px;
 }
 
 .sectionTop h2{
   margin:0;
-  font-size:22px;
-  font-weight:800;
-}
-
-.more{
-  color:#d10000;
-  font-size:14px;
-  text-decoration:none;
+  font-size:24px;
+  color:#111;
 }
 
 /* CARD */
 
 .card{
-  background:#ffffff;
+  display:block;
+
+  text-decoration:none;
+  color:inherit;
+
+  background:#fff;
+
   border-radius:24px;
-  padding:18px;
-  margin-bottom:14px;
+
+  padding:20px;
+
+  margin-bottom:16px;
+
   box-shadow:
-    0 10px 30px rgba(0,0,0,.05);
+    0 10px 30px rgba(0,0,0,.06);
 }
 
 .card strong{
   display:block;
-  margin-bottom:8px;
+
   font-size:18px;
+  color:#111;
+
+  margin-bottom:8px;
 }
 
 .card p{
-  margin:0 0 10px;
+  margin:6px 0;
   color:#666;
-  line-height:1.5;
+  font-size:14px;
 }
+
+/* BADGE */
 
 .badge{
   display:inline-flex;
   align-items:center;
-  height:34px;
-  padding:0 14px;
+
+  margin-top:14px;
+
+  background:#f2f2f2;
+
+  padding:8px 12px;
+
   border-radius:999px;
-  background:#f3f5f9;
+
   font-size:13px;
   font-weight:700;
+
+  color:#111;
 }
 
-/* OFFER */
+/* PRICE */
 
 .price{
-  margin:12px 0;
+  margin-top:10px;
+
   font-size:28px;
   font-weight:800;
+
+  color:#111;
 }
 
-.offerBtn{
-  width:100%;
-  height:48px;
-  border:none;
-  background:#d10000;
-  color:#fff;
-  border-radius:14px;
-  font-size:15px;
-  font-weight:700;
-}
+/* FORM */
 
-/* DELIVERY */
-
-.steps{
-  margin-top:16px;
+.form{
   display:flex;
-  justify-content:space-between;
-  gap:8px;
+  flex-direction:column;
+  gap:14px;
 }
 
-.step{
-  flex:1;
-  text-align:center;
+.requestBox{
+  padding:10px 20px 24px;
 }
 
-.dot{
-  width:14px;
-  height:14px;
-  border-radius:50%;
-  margin:0 auto 8px;
-  background:#d10000;
+.blockTitle{
+  font-size:24px;
+  margin-bottom:16px;
+  color:#111;
 }
 
-.step span{
-  font-size:11px;
-  color:#666;
-}
+.input,
+.textarea{
+  width:100%;
 
-/* PROFILE */
+  border:none;
+  outline:none;
 
-.profile{
-  padding:0 18px 28px;
-}
+  background:#fff;
 
-.profileCard{
-  background:#ffffff;
-  border-radius:28px;
-  padding:22px;
+  border-radius:18px;
+
+  padding:16px;
+
+  font-size:15px;
+
+  box-sizing:border-box;
+
   box-shadow:
     0 10px 30px rgba(0,0,0,.05);
 }
 
-.profileItem{
-  margin-bottom:20px;
+.textarea{
+  min-height:120px;
+  resize:none;
 }
 
-.profileItem:last-child{
-  margin-bottom:0;
+/* GRID */
+
+.grid{
+  display:grid;
+  gap:16px;
 }
 
-.profileItem strong{
+/* SETTINGS */
+
+.settings{
+  display:grid;
+  gap:16px;
+}
+
+.settingCard{
+  background:#fff;
+
+  border-radius:24px;
+
+  padding:20px;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.05);
+}
+
+.settingCard strong{
   display:block;
   margin-bottom:8px;
-  font-size:16px;
 }
 
-.profileItem p{
-  margin:0;
+/* GARAGE */
+
+.cars{
+  display:grid;
+  gap:16px;
+}
+
+/* IMAGE */
+
+.requestImage{
+  width:100%;
+  max-width:240px;
+  height:180px;
+
+  object-fit:cover;
+
+  border-radius:20px;
+
+  background:#eee;
+}
+
+/* LOADING */
+
+.loading{
+  padding:60px 20px;
+  text-align:center;
+  font-size:18px;
   color:#666;
-  line-height:1.5;
 }
 
-/* BOTTOM NAV */
+/* NAVIGATION */
 
 .bottomNav{
   position:fixed;
   left:0;
-  right:0;
   bottom:0;
+
+  width:100%;
 
   height:82px;
 
-  background:#ffffff;
-  border-top:1px solid #ececec;
+  background:#fff;
+
+  border-top:
+    1px solid rgba(0,0,0,.08);
 
   display:flex;
-  align-items:center;
   justify-content:space-around;
+  align-items:center;
 
-  z-index:100;
+  z-index:50;
 }
 
 .navItem{
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:6px;
+  justify-content:center;
+
+  gap:4px;
 
   text-decoration:none;
-  color:#666;
-  font-size:12px;
+
+  color:#777;
+
+  font-size:11px;
+  font-weight:600;
+
+  width:100%;
+  height:100%;
 }
 
 .navItemActive{
-  color:#d10000;
+  color:#c40000;
 }
 
 .navIcon{
-  font-size:22px;
+  font-size:20px;
 }
 
-.requestImage{
-  width:220px;
-  height:160px;
-  object-fit:cover;
-  border-radius:20px;
-  background:#eee;
-}
+/* NOTIFY */
 
 .notify{
   position:fixed;
   top:90px;
   left:50%;
+
   transform:translateX(-50%);
 
   background:#111;
@@ -432,13 +371,15 @@
   box-shadow:
     0 10px 30px rgba(0,0,0,.25);
 
-  animation:notifyIn .25s ease;
+  animation:
+    notifyIn .25s ease;
 }
 
 @keyframes notifyIn{
 
   from{
     opacity:0;
+
     transform:
       translateX(-50%)
       translateY(-12px);
@@ -446,6 +387,7 @@
 
   to{
     opacity:1;
+
     transform:
       translateX(-50%)
       translateY(0);
