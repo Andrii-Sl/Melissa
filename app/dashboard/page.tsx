@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import styles from "../dashboard.module.css";
+import styles from "./dashboard.module.css";
 
 export default function ProfilePage() {
 
