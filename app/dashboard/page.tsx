@@ -2,213 +2,217 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import styles from "./dashboard.module.css";
+import styles from "../dashboard.module.css";
 
 export default function ProfilePage() {
 
-  const [profile, setProfile] =
-    useState<any>(null);
+const [profile, setProfile] =
+useState<any>(null);
 
-  const [loading, setLoading] =
-    useState(true);
+const [loading, setLoading] =
+useState(true);
 
-  const [name, setName] =
-    useState("");
+const [name, setName] =
+useState("");
 
-  const [country, setCountry] =
-    useState("");
+const [country, setCountry] =
+useState("");
 
-  const [city, setCity] =
-    useState("");
+const [city, setCity] =
+useState("");
 
-  const [address, setAddress] =
-    useState("");
+const [address, setAddress] =
+useState("");
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
+useEffect(() => {
+loadProfile();
+}, []);
 
-  async function loadProfile() {
+async function loadProfile() {
 
-    const {
-      data: {
-        session,
-      },
-    } =
-      await supabase.auth.getSession();
+const {  
+  data: {  
+    session,  
+  },  
+} =  
+  await supabase.auth.getSession();  
 
-    let phone =
-      session?.user?.phone;
+let phone =  
+  session?.user?.phone;  
 
-    /* TEST CLIENT */
+/* TEST CLIENT */  
 
-    if (!phone) {
+if (!phone) {  
 
-      const role =
-        document.cookie.includes(
-          "role=client"
-        );
+  const role =  
+    document.cookie.includes(  
+      "role=client"  
+    );  
 
-      if (role)
-        phone =
-          "+48519000000";
-    }
+  if (role)  
+    phone =  
+      "+48519000000";  
+}  
 
-    const {
-      data,
-    } =
-      await supabase
-        .from("profiles")
-        .select("*")
-        .eq("phone", phone)
-        .maybeSingle();
+const {  
+  data,  
+} =  
+  await supabase  
+    .from("profiles")  
+    .select("*")  
+    .eq("phone", phone)  
+    .maybeSingle();  
 
-    setProfile(data);
+setProfile(data);  
 
-    setName(
-      data?.full_name || ""
-    );
+setName(  
+  data?.full_name || ""  
+);  
 
-    setCountry(
-      data?.country || ""
-    );
+setCountry(  
+  data?.country || ""  
+);  
 
-    setCity(
-      data?.city || ""
-    );
+setCity(  
+  data?.city || ""  
+);  
 
-    setAddress(
-      data?.address || ""
-    );
+setAddress(  
+  data?.address || ""  
+);  
 
-    setLoading(false);
-  }
+setLoading(false);
 
-  /* SAVE */
+}
 
-  async function saveProfile() {
+/* SAVE */
 
-    if (!profile?.id)
-      return;
+async function saveProfile() {
 
-    await supabase
-      .from("profiles")
-      .update({
-        full_name: name,
-        country,
-        city,
-        address,
-      })
-      .eq(
-        "id",
-        profile.id
-      );
+if (!profile?.id)  
+  return;  
 
-    alert(
-      "Профиль сохранён"
-    );
-  }
+await supabase  
+  .from("profiles")  
+  .update({  
+    full_name: name,  
+    country,  
+    city,  
+    address,  
+  })  
+  .eq(  
+    "id",  
+    profile.id  
+  );  
 
-  /* LOGOUT */
+alert(  
+  "Профиль сохранён"  
+);
 
-  async function logout() {
+}
 
-    document.cookie =
-      "role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+/* LOGOUT */
 
-    await supabase.auth.signOut();
+async function logout() {
 
-    window.location.href =
-      "/";
-  }
+document.cookie =  
+  "role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";  
 
-  if (loading)
-    return (
-      <div className={styles.loading}>
-        Загрузка...
-      </div>
-    );
+await supabase.auth.signOut();  
 
-  return (
+window.location.href =  
+  "/";
 
-    <main className={styles.page}>
+}
 
-      <section className={styles.requestBox}>
+if (loading)
+return (
+<div className={styles.loading}>
+Загрузка...
+</div>
+);
 
-        <h2 className={styles.blockTitle}>
-          Профиль
-        </h2>
+return (
 
-        <div className={styles.form}>
+<main className={styles.page}>  
 
-          <input
-            className={styles.input}
-            placeholder="Имя"
-            value={name}
-            onChange={(e) =>
-              setName(
-                e.target.value
-              )
-            }
-          />
+  <section className={styles.requestBox}>  
 
-          <input
-            className={styles.input}
-            placeholder="Страна"
-            value={country}
-            onChange={(e) =>
-              setCountry(
-                e.target.value
-              )
-            }
-          />
+    <h2 className={styles.blockTitle}>  
+      Профиль  
+    </h2>  
 
-          <input
-            className={styles.input}
-            placeholder="Город"
-            value={city}
-            onChange={(e) =>
-              setCity(
-                e.target.value
-              )
-            }
-          />
+    <div className={styles.form}>  
 
-          <input
-            className={styles.input}
-            placeholder="Адрес"
-            value={address}
-            onChange={(e) =>
-              setAddress(
-                e.target.value
-              )
-            }
-          />
+      <input  
+        className={styles.input}  
+        placeholder="Имя"  
+        value={name}  
+        onChange={(e) =>  
+          setName(  
+            e.target.value  
+          )  
+        }  
+      />  
 
-          {/* BUTTONS */}
+      <input  
+        className={styles.input}  
+        placeholder="Страна"  
+        value={country}  
+        onChange={(e) =>  
+          setCountry(  
+            e.target.value  
+          )  
+        }  
+      />  
 
-          <div className={styles.profileButtons}>
+      <input  
+        className={styles.input}  
+        placeholder="Город"  
+        value={city}  
+        onChange={(e) =>  
+          setCity(  
+            e.target.value  
+          )  
+        }  
+      />  
 
-            <button
-              className={styles.createBtn}
-              onClick={saveProfile}
-            >
-              Сохранить
-            </button>
+      <input  
+        className={styles.input}  
+        placeholder="Адрес"  
+        value={address}  
+        onChange={(e) =>  
+          setAddress(  
+            e.target.value  
+          )  
+        }  
+      />  
 
-            <button
-              className={styles.logoutWhiteBtn}
-              onClick={logout}
-            >
-              Выйти
-            </button>
+      {/* BUTTONS */}  
 
-          </div>
+      <div className={styles.profileButtons}>  
 
-        </div>
+        <button  
+          className={styles.createBtn}  
+          onClick={saveProfile}  
+        >  
+          Сохранить  
+        </button>  
 
-      </section>
+        <button  
+          className={styles.logoutWhiteBtn}  
+          onClick={logout}  
+        >  
+          Выйти  
+        </button>  
 
-    </main>
-  );
+      </div>  
+
+    </div>  
+
+  </section>  
+
+</main>
+
+);
 }
