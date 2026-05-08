@@ -1,0 +1,206 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import styles from "../dashboard.module.css";
+
+export default function ProfilePage() {
+
+  const [profile, setProfile] =
+    useState<any>(null);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [name, setName] =
+    useState("");
+
+  const [country, setCountry] =
+    useState("");
+
+  const [city, setCity] =
+    useState("");
+
+  const [address, setAddress] =
+    useState("");
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
+  async function loadProfile() {
+
+    const {
+      data: {
+        session,
+      },
+    } =
+      await supabase.auth.getSession();
+
+    let phone =
+      session?.user?.phone;
+
+    if (!phone) {
+
+      const role =
+        document.cookie.includes(
+          "role=client"
+        );
+
+      if (role)
+        phone =
+          "+48519000000";
+    }
+
+    const {
+      data,
+    } =
+      await supabase
+        .from("profiles")
+        .select("*")
+        .eq("phone", phone)
+        .maybeSingle();
+
+    setProfile(data);
+
+    setName(
+      data?.full_name || ""
+    );
+
+    setCountry(
+      data?.country || ""
+    );
+
+    setCity(
+      data?.city || ""
+    );
+
+    setAddress(
+      data?.address || ""
+    );
+
+    setLoading(false);
+  }
+
+  async function saveProfile() {
+
+    if (!profile?.id)
+      return;
+
+    await supabase
+      .from("profiles")
+      .update({
+        full_name: name,
+        country,
+        city,
+        address,
+      })
+      .eq(
+        "id",
+        profile.id
+      );
+
+    alert(
+      "Профиль сохранён"
+    );
+  }
+
+  async function logout() {
+
+    document.cookie =
+      "role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+
+    await supabase.auth.signOut();
+
+    window.location.href =
+      "/";
+  }
+
+  if (loading)
+    return (
+      <div className={styles.loading}>
+        Загрузка...
+      </div>
+    );
+
+  return (
+
+    <main className={styles.page}>
+
+      <section className={styles.requestBox}>
+
+        <h2 className={styles.blockTitle}>
+          Профиль
+        </h2>
+
+        <div className={styles.form}>
+
+          <input
+            className={styles.input}
+            placeholder="Имя"
+            value={name}
+            onChange={(e) =>
+              setName(
+                e.target.value
+              )
+            }
+          />
+
+          <input
+            className={styles.input}
+            placeholder="Страна"
+            value={country}
+            onChange={(e) =>
+              setCountry(
+                e.target.value
+              )
+            }
+          />
+
+          <input
+            className={styles.input}
+            placeholder="Город"
+            value={city}
+            onChange={(e) =>
+              setCity(
+                e.target.value
+              )
+            }
+          />
+
+          <input
+            className={styles.input}
+            placeholder="Адрес"
+            value={address}
+            onChange={(e) =>
+              setAddress(
+                e.target.value
+              )
+            }
+          />
+
+          <div className={styles.profileButtons}>
+
+            <button
+              className={styles.createBtn}
+              onClick={saveProfile}
+            >
+              Сохранить
+            </button>
+
+            <button
+              className={styles.logoutWhiteBtn}
+              onClick={logout}
+            >
+              Выйти
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+  );
+}
