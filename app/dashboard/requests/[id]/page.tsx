@@ -18,6 +18,12 @@ export default function RequestDetailsPage() {
   const [images, setImages] =
     useState<any[]>([]);
 
+  const [comments, setComments] =
+    useState<any[]>([]);
+
+  const [message, setMessage] =
+    useState("");
+
   const [loading, setLoading] =
     useState(true);
 
@@ -26,6 +32,32 @@ export default function RequestDetailsPage() {
 
   useEffect(() => {
     loadRequest();
+
+    const channel =
+      supabase
+        .channel(
+          "request-comments"
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table:
+              "request_comments",
+          },
+          () => {
+            loadComments();
+          }
+        )
+        .subscribe();
+
+    return () => {
+      supabase.removeChannel(
+        channel
+      );
+    };
+
   }, []);
 
   async function loadRequest() {
@@ -71,7 +103,56 @@ export default function RequestDetailsPage() {
 
     setImages(imgs || []);
 
+    await loadComments();
+
     setLoading(false);
+  }
+
+  /* COMMENTS */
+
+  async function loadComments() {
+
+    const {
+      data,
+    } =
+      await supabase
+        .from(
+          "request_comments"
+        )
+        .select("*")
+        .eq(
+          "request_id",
+          params.id
+        )
+        .order("id", {
+          ascending: true,
+        });
+
+    setComments(data || []);
+  }
+
+  async function sendComment() {
+
+    if (!message)
+      return;
+
+    await supabase
+      .from(
+        "request_comments"
+      )
+      .insert([
+        {
+          request_id:
+            params.id,
+
+          sender:
+            "client",
+
+          message,
+        },
+      ]);
+
+    setMessage("");
   }
 
   /* UPLOAD */
@@ -217,7 +298,7 @@ export default function RequestDetailsPage() {
 
         <div className={styles.sectionTop}>
           <h2>
-            Загруженные фото
+            Фото
           </h2>
         </div>
 
@@ -232,6 +313,58 @@ export default function RequestDetailsPage() {
               alt="request"
             />
           ))}
+
+        </div>
+
+      </section>
+
+      {/* COMMENTS */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionTop}>
+          <h2>
+            Комментарии
+          </h2>
+        </div>
+
+        {comments.map((item) => (
+
+          <div
+            key={item.id}
+            className={styles.card}
+          >
+
+            <strong>
+              {item.sender}
+            </strong>
+
+            <p>
+              {item.message}
+            </p>
+
+          </div>
+        ))}
+
+        <div className={styles.form}>
+
+          <textarea
+            className={styles.textarea}
+            placeholder="Сообщение..."
+            value={message}
+            onChange={(e) =>
+              setMessage(
+                e.target.value
+              )
+            }
+          />
+
+          <button
+            className={styles.createBtn}
+            onClick={sendComment}
+          >
+            Отправить
+          </button>
 
         </div>
 
