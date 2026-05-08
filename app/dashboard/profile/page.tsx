@@ -12,6 +12,18 @@ export default function ProfilePage() {
   const [loading, setLoading] =
     useState(true);
 
+  const [name, setName] =
+    useState("");
+
+  const [country, setCountry] =
+    useState("");
+
+  const [city, setCity] =
+    useState("");
+
+  const [address, setAddress] =
+    useState("");
+
   useEffect(() => {
     loadProfile();
   }, []);
@@ -28,6 +40,8 @@ export default function ProfilePage() {
     let phone =
       session?.user?.phone;
 
+    /* TEST CLIENT */
+
     if (!phone) {
 
       const role =
@@ -36,7 +50,8 @@ export default function ProfilePage() {
         );
 
       if (role)
-        phone = "+48519000000";
+        phone =
+          "+48519000000";
     }
 
     const {
@@ -50,8 +65,46 @@ export default function ProfilePage() {
 
     setProfile(data);
 
+    setName(
+      data?.full_name || ""
+    );
+
+    setCountry(
+      data?.country || ""
+    );
+
+    setCity(
+      data?.city || ""
+    );
+
+    setAddress(
+      data?.address || ""
+    );
+
     setLoading(false);
   }
+
+  /* SAVE */
+
+  async function saveProfile() {
+
+    await supabase
+      .from("profiles")
+      .update({
+        full_name: name,
+        country,
+        city,
+        address,
+      })
+      .eq(
+        "id",
+        profile.id
+      );
+
+    alert("Профиль сохранён");
+  }
+
+  /* LOGOUT */
 
   async function logout() {
 
@@ -60,37 +113,78 @@ export default function ProfilePage() {
 
     await supabase.auth.signOut();
 
-    window.location.href = "/";
+    window.location.href =
+      "/";
   }
 
   if (loading)
-    return <div className={styles.loading}>Загрузка...</div>;
+    return (
+      <div className={styles.loading}>
+        Загрузка...
+      </div>
+    );
 
   return (
     <main className={styles.page}>
 
-      <section className={styles.profile}>
+      <section className={styles.requestBox}>
 
         <h2 className={styles.blockTitle}>
           Профиль
         </h2>
 
-        <div className={styles.profileCard}>
+        <div className={styles.form}>
 
-          <div className={styles.profileItem}>
-            <strong>Имя</strong>
-            <p>{profile?.full_name}</p>
-          </div>
+          <input
+            className={styles.input}
+            placeholder="Имя"
+            value={name}
+            onChange={(e) =>
+              setName(
+                e.target.value
+              )
+            }
+          />
 
-          <div className={styles.profileItem}>
-            <strong>Телефон</strong>
-            <p>{profile?.phone}</p>
-          </div>
+          <input
+            className={styles.input}
+            placeholder="Страна"
+            value={country}
+            onChange={(e) =>
+              setCountry(
+                e.target.value
+              )
+            }
+          />
 
-          <div className={styles.profileItem}>
-            <strong>Адрес доставки</strong>
-            <p>Slovenia, Ljubljana</p>
-          </div>
+          <input
+            className={styles.input}
+            placeholder="Город"
+            value={city}
+            onChange={(e) =>
+              setCity(
+                e.target.value
+              )
+            }
+          />
+
+          <input
+            className={styles.input}
+            placeholder="Адрес"
+            value={address}
+            onChange={(e) =>
+              setAddress(
+                e.target.value
+              )
+            }
+          />
+
+          <button
+            className={styles.createBtn}
+            onClick={saveProfile}
+          >
+            Сохранить
+          </button>
 
           <button
             className={styles.offerBtn}
