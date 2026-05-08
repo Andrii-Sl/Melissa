@@ -836,4 +836,12 @@
   font-weight:700;
 }
 
+/* PROFILE BUTTONS */
+
+.profileButtons{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
 }
