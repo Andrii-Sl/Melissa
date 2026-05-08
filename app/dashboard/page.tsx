@@ -29,6 +29,8 @@ export default function DashboardPage() {
     let phone =
       session?.user?.phone;
 
+    /* TEST CLIENT */
+
     if (!phone) {
 
       const role =
@@ -105,6 +107,7 @@ export default function DashboardPage() {
             href="/dashboard/garage"
             className={styles.car}
           >
+
             <strong>
               Audi A6 C8
             </strong>
@@ -112,12 +115,14 @@ export default function DashboardPage() {
             <span>
               WAUZZZF20...
             </span>
+
           </Link>
 
           <Link
             href="/dashboard/garage"
             className={styles.car}
           >
+
             <strong>
               BMW G30
             </strong>
@@ -125,6 +130,7 @@ export default function DashboardPage() {
             <span>
               WBA5R510...
             </span>
+
           </Link>
 
         </div>
@@ -234,6 +240,201 @@ export default function DashboardPage() {
           </div>
 
         </Link>
+
+      </section>
+
+      {/* NEW REQUEST */}
+
+      <section className={styles.requestBox}>
+
+        <h2 className={styles.blockTitle}>
+          Новая заявка
+        </h2>
+
+        <div className={styles.form}>
+
+          <input
+            className={styles.input}
+            placeholder="VIN"
+          />
+
+          <input
+            className={styles.input}
+            placeholder="Описание детали"
+          />
+
+          <input
+            className={styles.input}
+            placeholder="Каталожный номер"
+          />
+
+          <button
+            className={styles.createBtn}
+          >
+            + Создать заявку
+          </button>
+
+        </div>
+
+      </section>
+
+      {/* REQUESTS */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionTop}>
+
+          <h2>
+            Заявки
+          </h2>
+
+          <span className={styles.more}>
+            Все
+          </span>
+
+        </div>
+
+        <div className={styles.card}>
+
+          <strong>
+            Масляный фильтр
+          </strong>
+
+          <p>
+            WAUZZZF20...
+          </p>
+
+          <div className={styles.badge}>
+            🟡 Новая
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* OFFERS */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionTop}>
+
+          <h2>
+            Предложения
+          </h2>
+
+          <span className={styles.more}>
+            Все
+          </span>
+
+        </div>
+
+        <div className={styles.card}>
+
+          <strong>
+            BMW Original
+          </strong>
+
+          <div className={styles.price}>
+            €120
+          </div>
+
+          <div className={styles.badge}>
+            В наличии
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* ORDERS */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionTop}>
+
+          <h2>
+            Заказы
+          </h2>
+
+          <span className={styles.more}>
+            Все
+          </span>
+
+        </div>
+
+        <div className={styles.card}>
+
+          <strong>
+            Заказ #1024
+          </strong>
+
+          <p>
+            Track: EU4839201
+          </p>
+
+          <div className={styles.badge}>
+            Отправлен
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* PROFILE */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionTop}>
+
+          <h2>
+            Профиль
+          </h2>
+
+          <span className={styles.more}>
+            Открыть
+          </span>
+
+        </div>
+
+        <div className={styles.profileCard}>
+
+          <div className={styles.profileItem}>
+
+            <strong>
+              Имя
+            </strong>
+
+            <p>
+              {profile?.full_name || ""}
+            </p>
+
+          </div>
+
+          <div className={styles.profileItem}>
+
+            <strong>
+              Телефон
+            </strong>
+
+            <p>
+              {profile?.phone || ""}
+            </p>
+
+          </div>
+
+          <div className={styles.profileItem}>
+
+            <strong>
+              Адрес доставки
+            </strong>
+
+            <p>
+              Slovenia, Ljubljana
+            </p>
+
+          </div>
+
+        </div>
 
       </section>
 
