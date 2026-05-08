@@ -402,3 +402,11 @@
 .navIcon{
   font-size:22px;
 }
+
+.requestImage{
+  width:220px;
+  height:160px;
+  object-fit:cover;
+  border-radius:20px;
+  background:#eee;
+}
