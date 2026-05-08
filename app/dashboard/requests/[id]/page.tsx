@@ -31,7 +31,10 @@ export default function RequestDetailsPage() {
     useState(false);
 
   useEffect(() => {
+
     loadRequest();
+
+    /* REALTIME COMMENTS */
 
     const channel =
       supabase
@@ -59,6 +62,8 @@ export default function RequestDetailsPage() {
     };
 
   }, []);
+
+  /* LOAD */
 
   async function loadRequest() {
 
@@ -103,6 +108,8 @@ export default function RequestDetailsPage() {
 
     setImages(imgs || []);
 
+    /* COMMENTS */
+
     await loadComments();
 
     setLoading(false);
@@ -131,6 +138,8 @@ export default function RequestDetailsPage() {
     setComments(data || []);
   }
 
+  /* SEND COMMENT */
+
   async function sendComment() {
 
     if (!message)
@@ -155,7 +164,7 @@ export default function RequestDetailsPage() {
     setMessage("");
   }
 
-  /* UPLOAD */
+  /* UPLOAD IMAGE */
 
   async function uploadImage(
     e:any
@@ -233,6 +242,8 @@ export default function RequestDetailsPage() {
     setUploading(false);
   }
 
+  /* LOADING */
+
   if (loading)
     return (
       <div className={styles.loading}>
@@ -260,7 +271,8 @@ export default function RequestDetailsPage() {
           </p>
 
           <div className={styles.badge}>
-            {request.status}
+            {request.timeline ||
+              request.status}
           </div>
 
         </div>
