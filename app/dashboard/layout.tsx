@@ -146,7 +146,7 @@ export default function DashboardLayout({
 
       {children}
 
-      {/* NAV */}
+      {/* NAVIGATION */}
 
       <nav className={styles.bottomNav}>
 
