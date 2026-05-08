@@ -18,6 +18,9 @@ export default function DashboardLayout({
   const [notify, setNotify] =
     useState("");
 
+  const [menuOpen, setMenuOpen] =
+    useState(false);
+
   useEffect(() => {
 
     const offers =
@@ -114,25 +117,143 @@ export default function DashboardLayout({
         </div>
       )}
 
+      {/* BURGER OVERLAY */}
+
+      {menuOpen && (
+
+        <div
+          className={styles.menuOverlay}
+          onClick={() =>
+            setMenuOpen(false)
+          }
+        />
+      )}
+
+      {/* SIDE MENU */}
+
+      {menuOpen && (
+
+        <aside className={styles.sideMenu}>
+
+          <div className={styles.menuTop}>
+
+            <h2 className={styles.menuTitle}>
+              Меню
+            </h2>
+
+            <button
+              className={styles.closeBtn}
+              onClick={() =>
+                setMenuOpen(false)
+              }
+            >
+              ✕
+            </button>
+
+          </div>
+
+          <div className={styles.menuLinks}>
+
+            <Link
+              href="/dashboard"
+              className={styles.menuLink}
+              onClick={() =>
+                setMenuOpen(false)
+              }
+            >
+              🏠 Главная
+            </Link>
+
+            <Link
+              href="/dashboard/requests"
+              className={styles.menuLink}
+              onClick={() =>
+                setMenuOpen(false)
+              }
+            >
+              📄 Заявки
+            </Link>
+
+            <Link
+              href="/dashboard/offers"
+              className={styles.menuLink}
+              onClick={() =>
+                setMenuOpen(false)
+              }
+            >
+              💶 Предложения
+            </Link>
+
+            <Link
+              href="/dashboard/orders"
+              className={styles.menuLink}
+              onClick={() =>
+                setMenuOpen(false)
+              }
+            >
+              📦 Заказы
+            </Link>
+
+            <Link
+              href="/dashboard/garage"
+              className={styles.menuLink}
+              onClick={() =>
+                setMenuOpen(false)
+              }
+            >
+              🚘 Гараж
+            </Link>
+
+            <Link
+              href="/dashboard/profile"
+              className={styles.menuLink}
+              onClick={() =>
+                setMenuOpen(false)
+              }
+            >
+              👤 Профиль
+            </Link>
+
+          </div>
+
+        </aside>
+      )}
+
       {/* HEADER */}
 
       <header className={styles.header}>
 
         <div className={styles.headerTop}>
 
-          <img
-            src="/logo-final.png"
-            alt="logo"
-            className={styles.logo}
-          />
+          <div className={styles.headerLeft}>
+
+            <img
+              src="/logo-final.png"
+              alt="logo"
+              className={styles.logo}
+            />
+
+          </div>
 
           <div className={styles.icons}>
 
-            <button className={styles.iconBtn}>
+            <button
+              className={styles.iconBtn}
+              onClick={() =>
+                showNotify(
+                  "Новых уведомлений нет"
+                )
+              }
+            >
               🔔
             </button>
 
-            <button className={styles.iconBtn}>
+            <button
+              className={styles.iconBtn}
+              onClick={() =>
+                setMenuOpen(true)
+              }
+            >
               ☰
             </button>
 
