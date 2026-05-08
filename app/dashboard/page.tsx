@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "./dashboard.module.css";
@@ -329,19 +330,6 @@ export default function DashboardPage() {
     }
   }
 
-  /* LOGOUT */
-
-  async function logout() {
-
-    document.cookie =
-      "role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-
-    await supabase.auth.signOut();
-
-    window.location.href =
-      "/";
-  }
-
   /* STATUS */
 
   function requestStatus(
@@ -396,13 +384,28 @@ export default function DashboardPage() {
 
       <section className={styles.garage}>
 
-        <h2 className={styles.blockTitle}>
-          Мои автомобили
-        </h2>
+        <div className={styles.sectionTop}>
+
+          <h2 className={styles.blockTitle}>
+            Мои автомобили
+          </h2>
+
+          <Link
+            href="/dashboard/garage"
+            className={styles.more}
+          >
+            Все
+          </Link>
+
+        </div>
 
         <div className={styles.cars}>
 
-          <div className={styles.car}>
+          <Link
+            href="/dashboard/garage"
+            className={styles.car}
+          >
+
             <strong>
               Audi A6 C8
             </strong>
@@ -410,9 +413,14 @@ export default function DashboardPage() {
             <span>
               WAUZZZF20...
             </span>
-          </div>
 
-          <div className={styles.car}>
+          </Link>
+
+          <Link
+            href="/dashboard/garage"
+            className={styles.car}
+          >
+
             <strong>
               BMW G30
             </strong>
@@ -420,7 +428,8 @@ export default function DashboardPage() {
             <span>
               WBA5R510...
             </span>
-          </div>
+
+          </Link>
 
         </div>
 
@@ -430,7 +439,10 @@ export default function DashboardPage() {
 
       <section className={styles.stats}>
 
-        <div className={styles.statCard}>
+        <Link
+          href="/dashboard/requests"
+          className={styles.statCard}
+        >
 
           <div className={styles.statTop}>
 
@@ -450,9 +462,12 @@ export default function DashboardPage() {
             Заявки
           </div>
 
-        </div>
+        </Link>
 
-        <div className={styles.statCard}>
+        <Link
+          href="/dashboard/offers"
+          className={styles.statCard}
+        >
 
           <div className={styles.statTop}>
 
@@ -472,9 +487,12 @@ export default function DashboardPage() {
             Предложения
           </div>
 
-        </div>
+        </Link>
 
-        <div className={styles.statCard}>
+        <Link
+          href="/dashboard/orders"
+          className={styles.statCard}
+        >
 
           <div className={styles.statTop}>
 
@@ -494,9 +512,12 @@ export default function DashboardPage() {
             Заказы
           </div>
 
-        </div>
+        </Link>
 
-        <div className={styles.statCard}>
+        <Link
+          href="/dashboard/orders"
+          className={styles.statCard}
+        >
 
           <div className={styles.statTop}>
 
@@ -516,7 +537,7 @@ export default function DashboardPage() {
             Выполнено
           </div>
 
-        </div>
+        </Link>
 
       </section>
 
@@ -579,12 +600,24 @@ export default function DashboardPage() {
       <section className={styles.section}>
 
         <div className={styles.sectionTop}>
-          <h2>Заявки</h2>
+
+          <h2>
+            Заявки
+          </h2>
+
+          <Link
+            href="/dashboard/requests"
+            className={styles.more}
+          >
+            Все
+          </Link>
+
         </div>
 
         {requests.map((item) => (
 
-          <div
+          <Link
+            href={`/dashboard/requests/${item.id}`}
             key={item.id}
             className={styles.card}
           >
@@ -605,7 +638,7 @@ export default function DashboardPage() {
               )}
             </div>
 
-          </div>
+          </Link>
         ))}
 
       </section>
@@ -615,12 +648,24 @@ export default function DashboardPage() {
       <section className={styles.section}>
 
         <div className={styles.sectionTop}>
-          <h2>Предложения</h2>
+
+          <h2>
+            Предложения
+          </h2>
+
+          <Link
+            href="/dashboard/offers"
+            className={styles.more}
+          >
+            Все
+          </Link>
+
         </div>
 
         {offers.map((item) => (
 
-          <div
+          <Link
+            href={`/dashboard/offers/${item.id}`}
             key={item.id}
             className={styles.card}
           >
@@ -645,7 +690,7 @@ export default function DashboardPage() {
               Оплатить
             </button>
 
-          </div>
+          </Link>
         ))}
 
       </section>
@@ -655,12 +700,24 @@ export default function DashboardPage() {
       <section className={styles.section}>
 
         <div className={styles.sectionTop}>
-          <h2>Заказы</h2>
+
+          <h2>
+            Заказы
+          </h2>
+
+          <Link
+            href="/dashboard/orders"
+            className={styles.more}
+          >
+            Все
+          </Link>
+
         </div>
 
         {orders.map((item) => (
 
-          <div
+          <Link
+            href={`/dashboard/orders/${item.id}`}
             key={item.id}
             className={styles.card}
           >
@@ -683,6 +740,7 @@ export default function DashboardPage() {
 
               <div className={styles.step}>
                 <div className={styles.dot}></div>
+
                 <span>
                   Оплата
                 </span>
@@ -690,6 +748,7 @@ export default function DashboardPage() {
 
               <div className={styles.step}>
                 <div className={styles.dot}></div>
+
                 <span>
                   Отправка
                 </span>
@@ -697,6 +756,7 @@ export default function DashboardPage() {
 
               <div className={styles.step}>
                 <div className={styles.dot}></div>
+
                 <span>
                   Доставка
                 </span>
@@ -704,7 +764,7 @@ export default function DashboardPage() {
 
             </div>
 
-          </div>
+          </Link>
         ))}
 
       </section>
@@ -713,13 +773,25 @@ export default function DashboardPage() {
 
       <section className={styles.profile}>
 
-        <h2 className={styles.blockTitle}>
-          Профиль
-        </h2>
+        <div className={styles.sectionTop}>
+
+          <h2 className={styles.blockTitle}>
+            Профиль
+          </h2>
+
+          <Link
+            href="/dashboard/profile"
+            className={styles.more}
+          >
+            Открыть
+          </Link>
+
+        </div>
 
         <div className={styles.profileCard}>
 
           <div className={styles.profileItem}>
+
             <strong>
               Имя
             </strong>
@@ -727,9 +799,11 @@ export default function DashboardPage() {
             <p>
               {profile?.full_name}
             </p>
+
           </div>
 
           <div className={styles.profileItem}>
+
             <strong>
               Телефон
             </strong>
@@ -737,9 +811,11 @@ export default function DashboardPage() {
             <p>
               {profile?.phone}
             </p>
+
           </div>
 
           <div className={styles.profileItem}>
+
             <strong>
               Адрес доставки
             </strong>
@@ -747,6 +823,7 @@ export default function DashboardPage() {
             <p>
               Slovenia, Ljubljana
             </p>
+
           </div>
 
         </div>
