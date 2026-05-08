@@ -803,4 +803,37 @@
   to{
     transform:translateX(0);
   }
+
+/* NOTIFY CARD */
+
+.notifyCard{
+  padding:18px;
+
+  border-radius:18px;
+
+  background:#f4f6fa;
+
+  font-size:15px;
+  font-weight:600;
+}
+
+/* LOGOUT */
+
+.logoutBtn{
+  margin-top:12px;
+
+  height:54px;
+
+  border:none;
+
+  border-radius:18px;
+
+  background:#d10000;
+
+  color:#fff;
+
+  font-size:15px;
+  font-weight:700;
+}
+
 }
