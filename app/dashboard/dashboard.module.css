@@ -375,9 +375,16 @@
 }
 
 .more{
-  color:#d10000;
-  font-size:14px;
+  color:#111;
+
+  font-size:20px;
+  font-weight:800;
+
   text-decoration:none;
+
+  line-height:1;
+
+  opacity:.9;
 }
 
 /* CARD */
