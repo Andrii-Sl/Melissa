@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 import styles from "./dashboard.module.css";
 
 export default function DashboardLayout({
@@ -13,10 +15,82 @@ export default function DashboardLayout({
   const pathname =
     usePathname();
 
+  const [notify, setNotify] =
+    useState("");
+
+  useEffect(() => {
+
+    const offers =
+      supabase
+        .channel(
+          "offers-live"
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "offers",
+          },
+          () => {
+
+            showNotify(
+              "Новое предложение"
+            );
+          }
+        )
+        .subscribe();
+
+    const requests =
+      supabase
+        .channel(
+          "requests-live"
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "requests",
+          },
+          () => {
+
+            showNotify(
+              "Статус обновлён"
+            );
+          }
+        )
+        .subscribe();
+
+    return () => {
+
+      supabase.removeChannel(
+        offers
+      );
+
+      supabase.removeChannel(
+        requests
+      );
+    };
+
+  }, []);
+
+  function showNotify(
+    text:string
+  ) {
+
+    setNotify(text);
+
+    setTimeout(() => {
+      setNotify("");
+    }, 3000);
+  }
+
   function active(path:string) {
 
     if (
-      pathname.startsWith(path)
+      pathname === path ||
+      pathname.startsWith(path + "/")
     ) {
 
       return `
@@ -30,6 +104,15 @@ export default function DashboardLayout({
 
   return (
     <main className={styles.page}>
+
+      {/* NOTIFY */}
+
+      {notify && (
+
+        <div className={styles.notify}>
+          {notify}
+        </div>
+      )}
 
       {/* HEADER */}
 
