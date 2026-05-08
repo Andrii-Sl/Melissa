@@ -634,4 +634,10 @@
   to{
     transform:translateX(0);
   }
+
+.statCard{
+  text-decoration:none;
+  color:inherit;
+}
+
 }
