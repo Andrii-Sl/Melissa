@@ -10,8 +10,10 @@
 
 .header{
   background:#ffffff;
-  padding:18px 18px 12px;
-  border-bottom:1px solid #ececec;
+  padding:16px 18px 14px;
+
+  border-bottom:
+    1px solid rgba(0,0,0,.04);
 
   position:sticky;
   top:0;
@@ -22,11 +24,24 @@
   display:flex;
   align-items:center;
   justify-content:space-between;
+
+  gap:20px;
+}
+
+.headerLeft{
+  display:flex;
+  align-items:center;
+
+  flex:1;
 }
 
 .logo{
-  height:28px;
+  height:42px;
   width:auto;
+
+  object-fit:contain;
+
+  display:block;
 }
 
 .icons{
@@ -105,8 +120,19 @@
 .cars{
   display:flex;
   gap:14px;
-  overflow:auto;
-  padding-bottom:6px;
+
+  overflow-x:auto;
+  overflow-y:hidden;
+
+  padding-bottom:2px;
+
+  scrollbar-width:none;
+
+  -ms-overflow-style:none;
+}
+
+.cars::-webkit-scrollbar{
+  display:none;
 }
 
 .car{
@@ -200,7 +226,6 @@
 }
 
 .statCard::before{
-
   content:"";
 
   position:absolute;
