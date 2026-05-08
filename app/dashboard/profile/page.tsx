@@ -88,6 +88,9 @@ export default function ProfilePage() {
 
   async function saveProfile() {
 
+    if (!profile?.id)
+      return;
+
     await supabase
       .from("profiles")
       .update({
@@ -101,7 +104,9 @@ export default function ProfilePage() {
         profile.id
       );
 
-    alert("Профиль сохранён");
+    alert(
+      "Профиль сохранён"
+    );
   }
 
   /* LOGOUT */
@@ -192,7 +197,7 @@ export default function ProfilePage() {
             </button>
 
             <button
-              className={styles.offerBtn}
+              className={styles.logoutWhiteBtn}
               onClick={logout}
             >
               Выйти
