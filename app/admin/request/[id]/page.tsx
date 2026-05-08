@@ -24,6 +24,9 @@ export default function AdminRequestPage() {
   const [delivery, setDelivery] =
     useState("7 дней");
 
+  const [comment, setComment] =
+    useState("");
+
   useEffect(() => {
     loadRequest();
   }, []);
@@ -41,6 +44,8 @@ export default function AdminRequestPage() {
 
     setRequest(data);
   }
+
+  /* CREATE OFFER */
 
   async function createOffer() {
 
@@ -71,10 +76,59 @@ export default function AdminRequestPage() {
       .from("requests")
       .update({
         status: "found",
+        timeline:
+          "Предложение готово",
       })
       .eq("id", request.id);
 
-    alert("Предложение создано");
+    alert(
+      "Предложение создано"
+    );
+  }
+
+  /* STATUS */
+
+  async function setStatus(
+    status:string,
+    timeline:string
+  ) {
+
+    await supabase
+      .from("requests")
+      .update({
+        status,
+        timeline,
+      })
+      .eq("id", request.id);
+
+    loadRequest();
+  }
+
+  /* COMMENT */
+
+  async function sendComment() {
+
+    if (!comment)
+      return;
+
+    await supabase
+      .from(
+        "request_comments"
+      )
+      .insert([
+        {
+          request_id:
+            request.id,
+
+          sender:
+            "admin",
+
+          message:
+            comment,
+        },
+      ]);
+
+    setComment("");
   }
 
   if (!request)
@@ -88,6 +142,8 @@ export default function AdminRequestPage() {
     <main className={styles.page}>
 
       <section className={styles.single}>
+
+        {/* REQUEST */}
 
         <div className={styles.card}>
 
@@ -103,7 +159,59 @@ export default function AdminRequestPage() {
             {request.vin}
           </span>
 
+          <div style={{
+            marginTop:"16px",
+            fontWeight:700,
+          }}>
+            {request.timeline ||
+              "Новая заявка"}
+          </div>
+
         </div>
+
+        {/* STATUS */}
+
+        <div className={styles.form}>
+
+          <button
+            className={styles.button}
+            onClick={() =>
+              setStatus(
+                "search",
+                "Поиск поставщика"
+              )
+            }
+          >
+            Поиск
+          </button>
+
+          <button
+            className={styles.button}
+            onClick={() =>
+              setStatus(
+                "delivery",
+                "Товар отправлен"
+              )
+            }
+          >
+            Отправлено
+          </button>
+
+          <button
+            className={styles.button}
+            onClick={() =>
+              setStatus(
+                "done",
+                "Доставлено"
+              )
+            }
+          >
+            Доставлено
+          </button>
+
+        </div>
+
+        {/* OFFER */}
 
         <div className={styles.form}>
 
@@ -156,6 +264,30 @@ export default function AdminRequestPage() {
             onClick={createOffer}
           >
             Создать предложение
+          </button>
+
+        </div>
+
+        {/* COMMENT */}
+
+        <div className={styles.form}>
+
+          <textarea
+            className={styles.input}
+            placeholder="Комментарий клиенту"
+            value={comment}
+            onChange={(e) =>
+              setComment(
+                e.target.value
+              )
+            }
+          />
+
+          <button
+            className={styles.button}
+            onClick={sendComment}
+          >
+            Отправить комментарий
           </button>
 
         </div>
