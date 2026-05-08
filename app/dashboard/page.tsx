@@ -7,131 +7,52 @@ import styles from "./dashboard.module.css";
 
 export default function DashboardPage() {
 
-  const [user, setUser] =
-    useState<any>(null);
-
   const [profile, setProfile] =
     useState<any>(null);
-
-  const [requests, setRequests] =
-    useState<any[]>([]);
-
-  const [offers, setOffers] =
-    useState<any[]>([]);
-
-  const [orders, setOrders] =
-    useState<any[]>([]);
 
   const [loading, setLoading] =
     useState(true);
 
   useEffect(() => {
-    loadData();
+    loadProfile();
   }, []);
 
-  async function loadData() {
+  async function loadProfile() {
 
-    try {
+    const {
+      data: {
+        session,
+      },
+    } =
+      await supabase.auth.getSession();
 
-      const {
-        data: {
-          session,
-        },
-      } =
-        await supabase.auth.getSession();
+    let phone =
+      session?.user?.phone;
 
-      let phone =
-        session?.user?.phone;
+    if (!phone) {
 
-      /* TEST CLIENT */
+      const role =
+        document.cookie.includes(
+          "role=client"
+        );
 
-      if (!phone) {
-
-        const role =
-          document.cookie.includes(
-            "role=client"
-          );
-
-        if (role)
-          phone =
-            "+48519000000";
-      }
-
-      if (!phone) {
-
-        window.location.href =
-          "/login";
-
-        return;
-      }
-
-      setUser({
-        phone,
-      });
-
-      const [
-        profileRes,
-        requestsRes,
-        offersRes,
-        ordersRes,
-      ] = await Promise.all([
-
-        supabase
-          .from("profiles")
-          .select("*")
-          .eq("phone", phone)
-          .maybeSingle(),
-
-        supabase
-          .from("requests")
-          .select("*")
-          .eq("phone", phone)
-          .order("id", {
-            ascending:false,
-          }),
-
-        supabase
-          .from("offers")
-          .select("*")
-          .eq("phone", phone)
-          .order("id", {
-            ascending:false,
-          }),
-
-        supabase
-          .from("orders")
-          .select("*")
-          .eq("phone", phone)
-          .order("id", {
-            ascending:false,
-          }),
-
-      ]);
-
-      setProfile(
-        profileRes.data
-      );
-
-      setRequests(
-        requestsRes.data || []
-      );
-
-      setOffers(
-        offersRes.data || []
-      );
-
-      setOrders(
-        ordersRes.data || []
-      );
-
-      setLoading(false);
-
-    } catch (e) {
-
-      console.error(e);
-
-      setLoading(false);
+      if (role)
+        phone =
+          "+48519000000";
     }
+
+    const {
+      data,
+    } =
+      await supabase
+        .from("profiles")
+        .select("*")
+        .eq("phone", phone)
+        .maybeSingle();
+
+    setProfile(data);
+
+    setLoading(false);
   }
 
   if (loading)
@@ -152,13 +73,12 @@ export default function DashboardPage() {
         <h1 className={styles.title}>
           Здравствуйте,
           <br />
-          {profile?.full_name ||
-            "Клиент"}
+          Клиент
         </h1>
 
         <p className={styles.phone}>
           {profile?.phone ||
-            user?.phone}
+            "+48519000000"}
         </p>
 
       </section>
@@ -231,7 +151,7 @@ export default function DashboardPage() {
           </div>
 
           <div className={styles.statValue}>
-            {requests.length}
+            0
           </div>
 
           <div className={styles.statLabel}>
@@ -256,7 +176,7 @@ export default function DashboardPage() {
           </div>
 
           <div className={styles.statValue}>
-            {offers.length}
+            0
           </div>
 
           <div className={styles.statLabel}>
@@ -281,7 +201,7 @@ export default function DashboardPage() {
           </div>
 
           <div className={styles.statValue}>
-            {orders.length}
+            0
           </div>
 
           <div className={styles.statLabel}>
@@ -317,119 +237,7 @@ export default function DashboardPage() {
 
       </section>
 
-      {/* REQUESTS */}
-
-      <section className={styles.section}>
-
-        <div className={styles.sectionTop}>
-
-          <h2>
-            Заявки
-          </h2>
-
-          <span className={styles.more}>
-            Все
-          </span>
-
-        </div>
-
-      </section>
-
-      {/* OFFERS */}
-
-      <section className={styles.section}>
-
-        <div className={styles.sectionTop}>
-
-          <h2>
-            Предложения
-          </h2>
-
-          <span className={styles.more}>
-            Все
-          </span>
-
-        </div>
-
-      </section>
-
-      {/* ORDERS */}
-
-      <section className={styles.section}>
-
-        <div className={styles.sectionTop}>
-
-          <h2>
-            Заказы
-          </h2>
-
-          <span className={styles.more}>
-            Все
-          </span>
-
-        </div>
-
-      </section>
-
-      {/* PROFILE */}
-
-      <section className={styles.profile}>
-
-        <div className={styles.sectionTop}>
-
-          <h2 className={styles.blockTitle}>
-            Профиль
-          </h2>
-
-          <span className={styles.more}>
-            Открыть
-          </span>
-
-        </div>
-
-        <div className={styles.profileCard}>
-
-          <div className={styles.profileItem}>
-
-            <strong>
-              Имя
-            </strong>
-
-            <p>
-              {profile?.full_name}
-            </p>
-
-          </div>
-
-          <div className={styles.profileItem}>
-
-            <strong>
-              Телефон
-            </strong>
-
-            <p>
-              {profile?.phone}
-            </p>
-
-          </div>
-
-          <div className={styles.profileItem}>
-
-            <strong>
-              Адрес доставки
-            </strong>
-
-            <p>
-              Slovenia, Ljubljana
-            </p>
-
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* PAYMENTS */}
+      {/* PAYMENT BANNER */}
 
       <section className={styles.paymentBannerSection}>
 
