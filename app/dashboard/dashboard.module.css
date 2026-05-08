@@ -1,206 +1,641 @@
-"use client";
+.page{
+  min-height:100vh;
+  background:#f4f6fa;
+  font-family:Arial,sans-serif;
+  color:#111;
+  padding-bottom:110px;
+}
 
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
-import styles from "../dashboard.module.css";
+/* HEADER */
 
-export default function ProfilePage() {
+.header{
+  background:#ffffff;
+  padding:16px 18px 14px;
 
-  const [profile, setProfile] =
-    useState<any>(null);
+  border-bottom:
+    1px solid rgba(0,0,0,.04);
 
-  const [loading, setLoading] =
-    useState(true);
+  position:sticky;
+  top:0;
+  z-index:50;
+}
 
-  const [name, setName] =
-    useState("");
+.headerTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 
-  const [country, setCountry] =
-    useState("");
+  gap:20px;
+}
 
-  const [city, setCity] =
-    useState("");
+.headerLeft{
+  display:flex;
+  align-items:center;
 
-  const [address, setAddress] =
-    useState("");
+  flex:1;
+}
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
+.logo{
+  height:42px;
+  width:auto;
 
-  async function loadProfile() {
+  object-fit:contain;
 
-    const {
-      data: {
-        session,
-      },
-    } =
-      await supabase.auth.getSession();
+  display:block;
+}
 
-    let phone =
-      session?.user?.phone;
+.icons{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
 
-    if (!phone) {
+.iconBtn{
+  width:52px;
+  height:52px;
 
-      const role =
-        document.cookie.includes(
-          "role=client"
-        );
+  border:none;
 
-      if (role)
-        phone =
-          "+48519000000";
-    }
-
-    const {
-      data,
-    } =
-      await supabase
-        .from("profiles")
-        .select("*")
-        .eq("phone", phone)
-        .maybeSingle();
-
-    setProfile(data);
-
-    setName(
-      data?.full_name || ""
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #f5f7fc 100%
     );
 
-    setCountry(
-      data?.country || ""
+  border-radius:18px;
+
+  font-size:20px;
+
+  cursor:pointer;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  box-shadow:
+    0 10px 25px rgba(15,23,42,.08),
+    0 2px 8px rgba(15,23,42,.04);
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+.iconBtn:active{
+  transform:scale(.96);
+}
+
+/* HERO */
+
+.hero{
+  padding:22px 18px 8px;
+}
+
+.title{
+  margin:0;
+  font-size:34px;
+  line-height:1.05;
+  font-weight:800;
+}
+
+.phone{
+  margin:10px 0 0;
+  color:#707887;
+  font-size:16px;
+}
+
+/* GARAGE */
+
+.garage{
+  padding:8px 18px 18px;
+}
+
+.blockTitle{
+  margin:0;
+  font-size:20px;
+  font-weight:800;
+}
+
+.cars{
+  display:flex;
+  gap:14px;
+
+  overflow-x:auto;
+  overflow-y:hidden;
+
+  padding-bottom:2px;
+
+  scrollbar-width:none;
+
+  -ms-overflow-style:none;
+}
+
+.cars::-webkit-scrollbar{
+  display:none;
+}
+
+.car{
+  min-width:160px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #fafbff 100%
     );
 
-    setCity(
-      data?.city || ""
+  border-radius:24px;
+
+  padding:18px;
+
+  text-decoration:none;
+  color:#111;
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+
+  box-shadow:
+    0 12px 30px rgba(15,23,42,.08),
+    0 2px 10px rgba(15,23,42,.04);
+}
+
+.car:active{
+  transform:scale(.98);
+}
+
+.car strong{
+  display:block;
+  margin-bottom:6px;
+  font-size:16px;
+}
+
+.car span{
+  color:#666;
+  font-size:13px;
+}
+
+/* STATS */
+
+.stats{
+  padding:0 18px 18px;
+
+  display:grid;
+  grid-template-columns:
+    repeat(2,1fr);
+
+  gap:14px;
+}
+
+.statCard{
+  position:relative;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #fafbff 100%
     );
 
-    setAddress(
-      data?.address || ""
+  border-radius:30px;
+
+  padding:24px 20px;
+
+  text-decoration:none;
+  color:#111;
+
+  overflow:hidden;
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+
+  box-shadow:
+    0 10px 30px rgba(15,23,42,.08),
+    0 2px 10px rgba(15,23,42,.04);
+}
+
+.statCard:active{
+  transform:scale(.98);
+
+  box-shadow:
+    0 6px 18px rgba(15,23,42,.08);
+}
+
+.statCard::before{
+  content:"";
+
+  position:absolute;
+
+  inset:0;
+
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(255,255,255,.9),
+      transparent 40%
     );
 
-    setLoading(false);
-  }
+  pointer-events:none;
+}
 
-  async function saveProfile() {
+.statTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:16px;
+}
 
-    if (!profile?.id)
-      return;
+.statIcon{
+  width:56px;
+  height:56px;
+  border-radius:18px;
 
-    await supabase
-      .from("profiles")
-      .update({
-        full_name: name,
-        country,
-        city,
-        address,
-      })
-      .eq(
-        "id",
-        profile.id
-      );
+  display:flex;
+  align-items:center;
+  justify-content:center;
 
-    alert(
-      "Профиль сохранён"
+  font-size:24px;
+}
+
+.red{
+  background:#fff0f0;
+}
+
+.blue{
+  background:#eef4ff;
+}
+
+.purple{
+  background:#f5efff;
+}
+
+.green{
+  background:#eefcf3;
+}
+
+.statValue{
+  font-size:42px;
+  font-weight:800;
+  line-height:1;
+  margin-bottom:8px;
+}
+
+.statLabel{
+  color:#666;
+  font-size:15px;
+}
+
+/* NEW REQUEST */
+
+.requestBox{
+  padding:0 18px 22px;
+}
+
+.form{
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #fafbff 100%
     );
-  }
 
-  async function logout() {
+  border-radius:28px;
+  padding:20px;
 
-    document.cookie =
-      "role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+  box-shadow:
+    0 12px 35px rgba(15,23,42,.08),
+    0 2px 10px rgba(15,23,42,.04);
+}
 
-    await supabase.auth.signOut();
+.input{
+  width:100%;
+  height:54px;
+  border:none;
+  background:#f3f5f9;
+  border-radius:16px;
+  padding:0 16px;
+  font-size:15px;
+  margin-bottom:12px;
+  outline:none;
+}
 
-    window.location.href =
-      "/";
-  }
+.textarea{
+  width:100%;
+  height:110px;
+  border:none;
+  background:#f3f5f9;
+  border-radius:16px;
+  padding:16px;
+  font-size:15px;
+  margin-bottom:14px;
+  resize:none;
+  outline:none;
+}
 
-  if (loading)
-    return (
-      <div className={styles.loading}>
-        Загрузка...
-      </div>
+.createBtn{
+  width:100%;
+  height:56px;
+  border:none;
+  background:#d10000;
+  color:#ffffff;
+  border-radius:18px;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+
+  box-shadow:
+    0 10px 20px rgba(209,0,0,.22);
+}
+
+.logoutWhiteBtn{
+  width:100%;
+  height:56px;
+
+  border:none;
+
+  background:#ffffff;
+
+  color:#d10000;
+
+  border-radius:18px;
+
+  font-size:16px;
+  font-weight:700;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 10px 25px rgba(15,23,42,.06),
+    inset 0 0 0 1px rgba(209,0,0,.12);
+}
+
+.profileButtons{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+/* LIST */
+
+.section{
+  padding:0 18px 22px;
+}
+
+.sectionTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:14px;
+}
+
+.sectionTop h2{
+  margin:0;
+  font-size:22px;
+  font-weight:800;
+}
+
+.more{
+  color:#111;
+
+  font-size:20px;
+  font-weight:800;
+
+  text-decoration:none;
+
+  line-height:1;
+
+  opacity:.9;
+}
+
+/* CARD */
+
+.card{
+  display:block;
+
+  text-decoration:none;
+  color:#111;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #fafbff 100%
     );
 
-  return (
+  border-radius:28px;
 
-    <main className={styles.page}>
+  padding:20px;
 
-      <section className={styles.requestBox}>
+  margin-bottom:16px;
 
-        <h2 className={styles.blockTitle}>
-          Профиль
-        </h2>
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
 
-        <div className={styles.form}>
+  box-shadow:
+    0 12px 35px rgba(15,23,42,.08),
+    0 2px 10px rgba(15,23,42,.04);
+}
 
-          <input
-            className={styles.input}
-            placeholder="Имя"
-            value={name}
-            onChange={(e) =>
-              setName(
-                e.target.value
-              )
-            }
-          />
+.card:active{
+  transform:scale(.985);
 
-          <input
-            className={styles.input}
-            placeholder="Страна"
-            value={country}
-            onChange={(e) =>
-              setCountry(
-                e.target.value
-              )
-            }
-          />
+  box-shadow:
+    0 8px 20px rgba(15,23,42,.08);
+}
 
-          <input
-            className={styles.input}
-            placeholder="Город"
-            value={city}
-            onChange={(e) =>
-              setCity(
-                e.target.value
-              )
-            }
-          />
+.card strong{
+  display:block;
+  margin-bottom:8px;
+  font-size:18px;
+}
 
-          <input
-            className={styles.input}
-            placeholder="Адрес"
-            value={address}
-            onChange={(e) =>
-              setAddress(
-                e.target.value
-              )
-            }
-          />
+.card p{
+  margin:0 0 10px;
+  color:#666;
+  line-height:1.5;
+}
 
-          <div className={styles.profileButtons}>
+.badge{
+  display:inline-flex;
+  align-items:center;
+  height:34px;
+  padding:0 14px;
+  border-radius:999px;
+  background:#f3f5f9;
+  font-size:13px;
+  font-weight:700;
+}
 
-            <button
-              className={styles.createBtn}
-              onClick={saveProfile}
-            >
-              Сохранить
-            </button>
+/* OFFER */
 
-            <button
-              className={styles.logoutWhiteBtn}
-              onClick={logout}
-            >
-              Выйти
-            </button>
+.price{
+  margin:12px 0;
+  font-size:28px;
+  font-weight:800;
+}
 
-          </div>
+.offerBtn{
+  width:100%;
+  height:48px;
+  border:none;
+  background:#d10000;
+  color:#fff;
+  border-radius:14px;
+  font-size:15px;
+  font-weight:700;
 
-        </div>
+  box-shadow:
+    0 8px 20px rgba(209,0,0,.2);
+}
 
-      </section>
+/* DELIVERY */
 
-    </main>
-  );
+.steps{
+  margin-top:16px;
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+}
+
+.step{
+  flex:1;
+  text-align:center;
+}
+
+.dot{
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  margin:0 auto 8px;
+  background:#d10000;
+}
+
+.step span{
+  font-size:11px;
+  color:#666;
+}
+
+/* PROFILE */
+
+.profile{
+  padding:0 18px 28px;
+}
+
+.profileCard{
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #fafbff 100%
+    );
+
+  border-radius:28px;
+
+  padding:22px;
+
+  box-shadow:
+    0 12px 35px rgba(15,23,42,.08),
+    0 2px 10px rgba(15,23,42,.04);
+}
+
+.profileItem{
+  margin-bottom:20px;
+}
+
+.profileItem:last-child{
+  margin-bottom:0;
+}
+
+.profileItem strong{
+  display:block;
+  margin-bottom:8px;
+  font-size:16px;
+}
+
+.profileItem p{
+  margin:0;
+  color:#666;
+  line-height:1.5;
+}
+
+/* BOTTOM NAV */
+
+.bottomNav{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+
+  height:82px;
+
+  background:#ffffff;
+
+  border-top:
+    1px solid rgba(0,0,0,.06);
+
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+
+  z-index:100;
+
+  box-shadow:
+    0 -5px 20px rgba(0,0,0,.04);
+}
+
+.navItem{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+
+  text-decoration:none;
+  color:#666;
+  font-size:12px;
+}
+
+.navItemActive{
+  color:#d10000;
+}
+
+.navItemActive .navIcon{
+  transform:translateY(-2px);
+}
+
+.navIcon{
+  font-size:22px;
+}
+
+/* LOADING */
+
+.loading{
+  min-height:40vh;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  color:#666;
+  font-size:16px;
+}
+
+/* PAYMENT BANNER */
+
+.paymentBannerSection{
+  padding:
+    10px 18px 120px;
+}
+
+.paymentBanner{
+  width:100%;
+
+  border-radius:24px;
+
+  display:block;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.08);
 }
