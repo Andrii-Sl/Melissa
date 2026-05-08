@@ -1,125 +1,137 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "./dashboard.module.css";
 
-export default function ProfilePage() {
+export default function DashboardPage() {
+
+  const [user, setUser] =
+    useState<any>(null);
 
   const [profile, setProfile] =
     useState<any>(null);
 
+  const [requests, setRequests] =
+    useState<any[]>([]);
+
+  const [offers, setOffers] =
+    useState<any[]>([]);
+
+  const [orders, setOrders] =
+    useState<any[]>([]);
+
   const [loading, setLoading] =
     useState(true);
 
-  const [name, setName] =
-    useState("");
-
-  const [country, setCountry] =
-    useState("");
-
-  const [city, setCity] =
-    useState("");
-
-  const [address, setAddress] =
-    useState("");
-
   useEffect(() => {
-    loadProfile();
+    loadData();
   }, []);
 
-  async function loadProfile() {
+  async function loadData() {
 
-    const {
-      data: {
-        session,
-      },
-    } =
-      await supabase.auth.getSession();
+    try {
 
-    let phone =
-      session?.user?.phone;
+      const {
+        data: {
+          session,
+        },
+      } =
+        await supabase.auth.getSession();
 
-    /* TEST CLIENT */
+      let phone =
+        session?.user?.phone;
 
-    if (!phone) {
+      /* TEST CLIENT */
 
-      const role =
-        document.cookie.includes(
-          "role=client"
-        );
+      if (!phone) {
 
-      if (role)
-        phone =
-          "+48519000000";
-    }
+        const role =
+          document.cookie.includes(
+            "role=client"
+          );
 
-    const {
-      data,
-    } =
-      await supabase
-        .from("profiles")
-        .select("*")
-        .eq("phone", phone)
-        .maybeSingle();
+        if (role)
+          phone =
+            "+48519000000";
+      }
 
-    setProfile(data);
+      if (!phone) {
 
-    setName(
-      data?.full_name || ""
-    );
+        window.location.href =
+          "/login";
 
-    setCountry(
-      data?.country || ""
-    );
+        return;
+      }
 
-    setCity(
-      data?.city || ""
-    );
+      setUser({
+        phone,
+      });
 
-    setAddress(
-      data?.address || ""
-    );
+      const [
+        profileRes,
+        requestsRes,
+        offersRes,
+        ordersRes,
+      ] = await Promise.all([
 
-    setLoading(false);
-  }
+        supabase
+          .from("profiles")
+          .select("*")
+          .eq("phone", phone)
+          .maybeSingle(),
 
-  /* SAVE */
+        supabase
+          .from("requests")
+          .select("*")
+          .eq("phone", phone)
+          .order("id", {
+            ascending:false,
+          }),
 
-  async function saveProfile() {
+        supabase
+          .from("offers")
+          .select("*")
+          .eq("phone", phone)
+          .order("id", {
+            ascending:false,
+          }),
 
-    if (!profile?.id)
-      return;
+        supabase
+          .from("orders")
+          .select("*")
+          .eq("phone", phone)
+          .order("id", {
+            ascending:false,
+          }),
 
-    await supabase
-      .from("profiles")
-      .update({
-        full_name: name,
-        country,
-        city,
-        address,
-      })
-      .eq(
-        "id",
-        profile.id
+      ]);
+
+      setProfile(
+        profileRes.data
       );
 
-    alert(
-      "Профиль сохранён"
-    );
-  }
+      setRequests(
+        requestsRes.data || []
+      );
 
-  /* LOGOUT */
+      setOffers(
+        offersRes.data || []
+      );
 
-  async function logout() {
+      setOrders(
+        ordersRes.data || []
+      );
 
-    document.cookie =
-      "role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+      setLoading(false);
 
-    await supabase.auth.signOut();
+    } catch (e) {
 
-    window.location.href =
-      "/";
+      console.error(e);
+
+      setLoading(false);
+    }
   }
 
   if (loading)
@@ -133,79 +145,299 @@ export default function ProfilePage() {
 
     <main className={styles.page}>
 
-      <section className={styles.requestBox}>
+      {/* HERO */}
 
-        <h2 className={styles.blockTitle}>
-          Профиль
-        </h2>
+      <section className={styles.hero}>
 
-        <div className={styles.form}>
+        <h1 className={styles.title}>
+          Здравствуйте,
+          <br />
+          {profile?.full_name ||
+            "Клиент"}
+        </h1>
 
-          <input
-            className={styles.input}
-            placeholder="Имя"
-            value={name}
-            onChange={(e) =>
-              setName(
-                e.target.value
-              )
-            }
-          />
+        <p className={styles.phone}>
+          {profile?.phone ||
+            user?.phone}
+        </p>
 
-          <input
-            className={styles.input}
-            placeholder="Страна"
-            value={country}
-            onChange={(e) =>
-              setCountry(
-                e.target.value
-              )
-            }
-          />
+      </section>
 
-          <input
-            className={styles.input}
-            placeholder="Город"
-            value={city}
-            onChange={(e) =>
-              setCity(
-                e.target.value
-              )
-            }
-          />
+      {/* GARAGE */}
 
-          <input
-            className={styles.input}
-            placeholder="Адрес"
-            value={address}
-            onChange={(e) =>
-              setAddress(
-                e.target.value
-              )
-            }
-          />
+      <section className={styles.garage}>
 
-          {/* BUTTONS */}
+        <div className={styles.sectionTop}>
 
-          <div className={styles.profileButtons}>
+          <h2 className={styles.blockTitle}>
+            Мои автомобили
+          </h2>
 
-            <button
-              className={styles.createBtn}
-              onClick={saveProfile}
+          <span className={styles.more}>
+            Все
+          </span>
+
+        </div>
+
+        <div className={styles.cars}>
+
+          <Link
+            href="/dashboard/garage"
+            className={styles.car}
+          >
+            <strong>
+              Audi A6 C8
+            </strong>
+
+            <span>
+              WAUZZZF20...
+            </span>
+          </Link>
+
+          <Link
+            href="/dashboard/garage"
+            className={styles.car}
+          >
+            <strong>
+              BMW G30
+            </strong>
+
+            <span>
+              WBA5R510...
+            </span>
+          </Link>
+
+        </div>
+
+      </section>
+
+      {/* STATS */}
+
+      <section className={styles.stats}>
+
+        <Link
+          href="/dashboard/requests"
+          className={styles.statCard}
+        >
+
+          <div className={styles.statTop}>
+
+            <div
+              className={`${styles.statIcon} ${styles.red}`}
             >
-              Сохранить
-            </button>
+              📄
+            </div>
 
-            <button
-              className={styles.logoutWhiteBtn}
-              onClick={logout}
+          </div>
+
+          <div className={styles.statValue}>
+            {requests.length}
+          </div>
+
+          <div className={styles.statLabel}>
+            Заявки
+          </div>
+
+        </Link>
+
+        <Link
+          href="/dashboard/offers"
+          className={styles.statCard}
+        >
+
+          <div className={styles.statTop}>
+
+            <div
+              className={`${styles.statIcon} ${styles.blue}`}
             >
-              Выйти
-            </button>
+              💶
+            </div>
+
+          </div>
+
+          <div className={styles.statValue}>
+            {offers.length}
+          </div>
+
+          <div className={styles.statLabel}>
+            Предложения
+          </div>
+
+        </Link>
+
+        <Link
+          href="/dashboard/orders"
+          className={styles.statCard}
+        >
+
+          <div className={styles.statTop}>
+
+            <div
+              className={`${styles.statIcon} ${styles.purple}`}
+            >
+              📦
+            </div>
+
+          </div>
+
+          <div className={styles.statValue}>
+            {orders.length}
+          </div>
+
+          <div className={styles.statLabel}>
+            Заказы
+          </div>
+
+        </Link>
+
+        <Link
+          href="/dashboard/profile"
+          className={styles.statCard}
+        >
+
+          <div className={styles.statTop}>
+
+            <div
+              className={`${styles.statIcon} ${styles.green}`}
+            >
+              ✅
+            </div>
+
+          </div>
+
+          <div className={styles.statValue}>
+            12
+          </div>
+
+          <div className={styles.statLabel}>
+            Выполнено
+          </div>
+
+        </Link>
+
+      </section>
+
+      {/* REQUESTS */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionTop}>
+
+          <h2>
+            Заявки
+          </h2>
+
+          <span className={styles.more}>
+            Все
+          </span>
+
+        </div>
+
+      </section>
+
+      {/* OFFERS */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionTop}>
+
+          <h2>
+            Предложения
+          </h2>
+
+          <span className={styles.more}>
+            Все
+          </span>
+
+        </div>
+
+      </section>
+
+      {/* ORDERS */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionTop}>
+
+          <h2>
+            Заказы
+          </h2>
+
+          <span className={styles.more}>
+            Все
+          </span>
+
+        </div>
+
+      </section>
+
+      {/* PROFILE */}
+
+      <section className={styles.profile}>
+
+        <div className={styles.sectionTop}>
+
+          <h2 className={styles.blockTitle}>
+            Профиль
+          </h2>
+
+          <span className={styles.more}>
+            Открыть
+          </span>
+
+        </div>
+
+        <div className={styles.profileCard}>
+
+          <div className={styles.profileItem}>
+
+            <strong>
+              Имя
+            </strong>
+
+            <p>
+              {profile?.full_name}
+            </p>
+
+          </div>
+
+          <div className={styles.profileItem}>
+
+            <strong>
+              Телефон
+            </strong>
+
+            <p>
+              {profile?.phone}
+            </p>
+
+          </div>
+
+          <div className={styles.profileItem}>
+
+            <strong>
+              Адрес доставки
+            </strong>
+
+            <p>
+              Slovenia, Ljubljana
+            </p>
 
           </div>
 
         </div>
+
+      </section>
+
+      {/* PAYMENTS */}
+
+      <section className={styles.paymentBannerSection}>
+
+        <img
+          src="/payments-banner.png"
+          alt="payments"
+          className={styles.paymentBanner}
+        />
 
       </section>
 
