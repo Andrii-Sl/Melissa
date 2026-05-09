@@ -3,7 +3,7 @@
 import Link from "next/link";
 import styles from "../admin.module.css";
 
-export default function AdminOffersPage() {
+export default function AdminOrdersPage() {
 
   return (
 
@@ -16,11 +16,11 @@ export default function AdminOffersPage() {
         <div>
 
           <h1 className={styles.title}>
-            Предложения
+            Заказы
           </h1>
 
           <p className={styles.subtitle}>
-            Все предложения поставщиков
+            Активные заказы клиентов
           </p>
 
         </div>
@@ -34,7 +34,7 @@ export default function AdminOffersPage() {
 
       </header>
 
-      {/* OFFERS */}
+      {/* ORDERS */}
 
       <section className={styles.section}>
 
@@ -43,21 +43,21 @@ export default function AdminOffersPage() {
           <div className={styles.requestTop}>
 
             <strong>
-              BMW Original
+              Order #1024
             </strong>
 
-            <span className={styles.badgeBlue}>
-              €120
+            <span className={styles.badge}>
+              NEW
             </span>
 
           </div>
 
           <p>
-            Масляный фильтр
+            BMW Original Filter
           </p>
 
           <small>
-            Доставка: 2-4 дня
+            Tracking: EU4839201
           </small>
 
         </div>
@@ -67,21 +67,21 @@ export default function AdminOffersPage() {
           <div className={styles.requestTop}>
 
             <strong>
-              Bosch
+              Order #1025
             </strong>
 
             <span className={styles.badgeBlue}>
-              €85
+              SENT
             </span>
 
           </div>
 
           <p>
-            Тормозные колодки
+            Bosch Brake Pads
           </p>
 
           <small>
-            В наличии
+            Tracking: EU4839202
           </small>
 
         </div>
@@ -124,7 +124,7 @@ export default function AdminOffersPage() {
 
         <Link
           href="/admin/offers"
-          className={`${styles.navItem} ${styles.active}`}
+          className={styles.navItem}
         >
 
           <span>
@@ -139,7 +139,7 @@ export default function AdminOffersPage() {
 
         <Link
           href="/admin/orders"
-          className={styles.navItem}
+          className={`${styles.navItem} ${styles.active}`}
         >
 
           <span>
