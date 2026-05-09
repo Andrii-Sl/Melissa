@@ -46,9 +46,27 @@ export default function LoginPage() {
     const cleanPhone =
       phone.trim();
 
+    /* 🔥 ADMIN LOGIN */
+
+    if (
+      cleanPhone ===
+      "14051978"
+    ) {
+
+      document.cookie =
+        "role=admin; path=/; max-age=86400; SameSite=Lax";
+
+      window.location.href =
+        "/admin";
+
+      return;
+    }
+
     /* 🔥 MASTER LOGIN */
 
-    if (cleanPhone === "1424") {
+    if (
+      cleanPhone === "1424"
+    ) {
 
       window.location.href =
         "/dashboard?master=1424";
@@ -119,6 +137,8 @@ export default function LoginPage() {
         setSmsError(
           "Ошибка регистрации"
         );
+
+        setLoading(false);
 
         return;
       }
