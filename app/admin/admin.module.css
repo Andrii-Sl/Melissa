@@ -197,4 +197,55 @@
     0 10px 30px rgba(220,38,38,.4);
 
   cursor:pointer;
+
+/* BOTTOM NAV */
+
+.bottomNav{
+  position:fixed;
+
+  left:0;
+  right:0;
+  bottom:0;
+
+  height:84px;
+
+  background:#111827;
+
+  border-top:
+    1px solid rgba(255,255,255,.06);
+
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+
+  z-index:999;
+}
+
+.navItem{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+
+  text-decoration:none;
+
+  color:#94a3b8;
+
+  font-size:12px;
+
+  gap:6px;
+}
+
+.navItem span{
+  font-size:22px;
+}
+
+.navItem p{
+  margin:0;
+}
+
+.active{
+  color:#ffffff;
+
+}
 }
