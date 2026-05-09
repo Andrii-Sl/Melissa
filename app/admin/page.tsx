@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import styles from "./admin.module.css";
 
 export default function AdminPage() {
@@ -34,7 +35,11 @@ export default function AdminPage() {
 
       <section className={styles.stats}>
 
-        <div className={styles.card}>
+        <Link
+          href="/admin/requests"
+          className={styles.card}
+        >
+
           <span className={styles.cardIcon}>
             📄
           </span>
@@ -46,9 +51,14 @@ export default function AdminPage() {
           <p>
             Новые заявки
           </p>
-        </div>
 
-        <div className={styles.card}>
+        </Link>
+
+        <Link
+          href="/admin/offers"
+          className={styles.card}
+        >
+
           <span className={styles.cardIcon}>
             💶
           </span>
@@ -60,9 +70,14 @@ export default function AdminPage() {
           <p>
             Предложения
           </p>
-        </div>
 
-        <div className={styles.card}>
+        </Link>
+
+        <Link
+          href="/admin/orders"
+          className={styles.card}
+        >
+
           <span className={styles.cardIcon}>
             📦
           </span>
@@ -74,11 +89,16 @@ export default function AdminPage() {
           <p>
             Заказы
           </p>
-        </div>
 
-        <div className={styles.card}>
+        </Link>
+
+        <Link
+          href="/admin/clients"
+          className={styles.card}
+        >
+
           <span className={styles.cardIcon}>
-            ✅
+            👥
           </span>
 
           <strong>
@@ -86,9 +106,10 @@ export default function AdminPage() {
           </strong>
 
           <p>
-            Выполнено
+            Клиенты
           </p>
-        </div>
+
+        </Link>
 
       </section>
 
@@ -102,9 +123,12 @@ export default function AdminPage() {
             Последние заявки
           </h2>
 
-          <button className={styles.viewAll}>
+          <Link
+            href="/admin/requests"
+            className={styles.viewAll}
+          >
             Все
-          </button>
+          </Link>
 
         </div>
 
@@ -163,6 +187,64 @@ export default function AdminPage() {
       <button className={styles.fab}>
         +
       </button>
+
+      {/* BOTTOM NAV */}
+
+      <nav className={styles.bottomNav}>
+
+        <Link
+          href="/admin"
+          className={`${styles.navItem} ${styles.active}`}
+        >
+          <span>
+            🏠
+          </span>
+
+          <p>
+            Главная
+          </p>
+        </Link>
+
+        <Link
+          href="/admin/requests"
+          className={styles.navItem}
+        >
+          <span>
+            📄
+          </span>
+
+          <p>
+            Заявки
+          </p>
+        </Link>
+
+        <Link
+          href="/admin/offers"
+          className={styles.navItem}
+        >
+          <span>
+            💶
+          </span>
+
+          <p>
+            Предложения
+          </p>
+        </Link>
+
+        <Link
+          href="/admin/orders"
+          className={styles.navItem}
+        >
+          <span>
+            📦
+          </span>
+
+          <p>
+            Заказы
+          </p>
+        </Link>
+
+      </nav>
 
     </main>
   );
