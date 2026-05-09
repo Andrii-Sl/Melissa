@@ -437,19 +437,3 @@ export default function DashboardPage() {
         </div>
 
       </section>
-
-      {/* PAYMENT BANNER */}
-
-      <section className={styles.paymentBannerSection}>
-
-        <img
-          src="/payments-banner.png"
-          alt="payments"
-          className={styles.paymentBanner}
-        />
-
-      </section>
-
-    </main>
-  );
-}
