@@ -14,34 +14,47 @@ export function middleware(
   /* ADMIN */
 
   if (
-    path.startsWith("/admin") &&
-    role !== "admin"
+    path.startsWith("/admin")
   ) {
 
-    return NextResponse.redirect(
-      new URL(
-        "/login",
-        request.url
-      )
-    );
+    if (role !== "admin") {
+
+      return NextResponse.redirect(
+        new URL(
+          "/login",
+          request.url
+        )
+      );
+    }
   }
 
   /* SUPPLIER */
 
   if (
-    path.startsWith("/supplier") &&
-    role !== "supplier"
+    path.startsWith("/supplier")
   ) {
 
-    return NextResponse.redirect(
-      new URL(
-        "/login",
-        request.url
-      )
-    );
+    if (role !== "supplier") {
+
+      return NextResponse.redirect(
+        new URL(
+          "/login",
+          request.url
+        )
+      );
+    }
   }
 
-  /* 🔥 dashboard НЕ БЛОКИРУЕМ */
+  /* CLIENT DASHBOARD */
+
+  if (
+    path.startsWith("/dashboard")
+  ) {
+
+    return NextResponse.next();
+  }
+
+  /* PUBLIC */
 
   return NextResponse.next();
 }
@@ -50,5 +63,6 @@ export const config = {
   matcher: [
     "/admin/:path*",
     "/supplier/:path*",
+    "/dashboard/:path*",
   ],
 };
