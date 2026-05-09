@@ -95,9 +95,12 @@ export default function DashboardPage() {
             Мои автомобили
           </h2>
 
-          <span className={styles.more}>
+          <Link
+            href="/dashboard/garage"
+            className={styles.more}
+          >
             Все
-          </span>
+          </Link>
 
         </div>
 
@@ -288,13 +291,19 @@ export default function DashboardPage() {
             Заявки
           </h2>
 
-          <span className={styles.more}>
+          <Link
+            href="/dashboard/requests"
+            className={styles.more}
+          >
             Все
-          </span>
+          </Link>
 
         </div>
 
-        <div className={styles.card}>
+        <Link
+          href="/dashboard/requests"
+          className={styles.card}
+        >
 
           <strong>
             Масляный фильтр
@@ -308,7 +317,7 @@ export default function DashboardPage() {
             🟡 Новая
           </div>
 
-        </div>
+        </Link>
 
       </section>
 
@@ -322,13 +331,19 @@ export default function DashboardPage() {
             Предложения
           </h2>
 
-          <span className={styles.more}>
+          <Link
+            href="/dashboard/offers"
+            className={styles.more}
+          >
             Все
-          </span>
+          </Link>
 
         </div>
 
-        <div className={styles.card}>
+        <Link
+          href="/dashboard/offers"
+          className={styles.card}
+        >
 
           <strong>
             BMW Original
@@ -342,7 +357,7 @@ export default function DashboardPage() {
             В наличии
           </div>
 
-        </div>
+        </Link>
 
       </section>
 
@@ -356,13 +371,19 @@ export default function DashboardPage() {
             Заказы
           </h2>
 
-          <span className={styles.more}>
+          <Link
+            href="/dashboard/orders"
+            className={styles.more}
+          >
             Все
-          </span>
+          </Link>
 
         </div>
 
-        <div className={styles.card}>
+        <Link
+          href="/dashboard/orders"
+          className={styles.card}
+        >
 
           <strong>
             Заказ #1024
@@ -376,7 +397,7 @@ export default function DashboardPage() {
             Отправлен
           </div>
 
-        </div>
+        </Link>
 
       </section>
 
@@ -390,13 +411,19 @@ export default function DashboardPage() {
             Профиль
           </h2>
 
-          <span className={styles.more}>
+          <Link
+            href="/dashboard/profile"
+            className={styles.more}
+          >
             Открыть
-          </span>
+          </Link>
 
         </div>
 
-        <div className={styles.profileCard}>
+        <Link
+          href="/dashboard/profile"
+          className={styles.profileCard}
+        >
 
           <div className={styles.profileItem}>
 
@@ -434,7 +461,19 @@ export default function DashboardPage() {
 
           </div>
 
-        </div>
+        </Link>
+
+      </section>
+
+      {/* PAYMENT BANNER */}
+
+      <section className={styles.paymentSection}>
+
+        <img
+          src="/payments-banner.png"
+          alt="Payments"
+          className={styles.paymentBanner}
+        />
 
       </section>
 
