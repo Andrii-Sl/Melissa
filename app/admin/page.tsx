@@ -196,6 +196,7 @@ export default function AdminPage() {
           href="/admin"
           className={`${styles.navItem} ${styles.active}`}
         >
+
           <span>
             🏠
           </span>
@@ -203,12 +204,14 @@ export default function AdminPage() {
           <p>
             Главная
           </p>
+
         </Link>
 
         <Link
           href="/admin/requests"
           className={styles.navItem}
         >
+
           <span>
             📄
           </span>
@@ -216,12 +219,14 @@ export default function AdminPage() {
           <p>
             Заявки
           </p>
+
         </Link>
 
         <Link
           href="/admin/offers"
           className={styles.navItem}
         >
+
           <span>
             💶
           </span>
@@ -229,12 +234,14 @@ export default function AdminPage() {
           <p>
             Предложения
           </p>
+
         </Link>
 
         <Link
           href="/admin/orders"
           className={styles.navItem}
         >
+
           <span>
             📦
           </span>
@@ -242,6 +249,7 @@ export default function AdminPage() {
           <p>
             Заказы
           </p>
+
         </Link>
 
       </nav>
