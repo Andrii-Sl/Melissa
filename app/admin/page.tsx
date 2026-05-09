@@ -1,89 +1,168 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
 import styles from "./admin.module.css";
 
 export default function AdminPage() {
 
-  const [requests, setRequests] =
-    useState<any[]>([]);
-
-  const [loading, setLoading] =
-    useState(true);
-
-  useEffect(() => {
-    loadRequests();
-  }, []);
-
-  async function loadRequests() {
-
-    const {
-      data,
-    } =
-      await supabase
-        .from("requests")
-        .select("*")
-        .order("id", {
-          ascending: false,
-        });
-
-    setRequests(data || []);
-
-    setLoading(false);
-  }
-
-  if (loading)
-    return (
-      <main className={styles.loading}>
-        Загрузка...
-      </main>
-    );
-
   return (
+
     <main className={styles.page}>
 
-      <section className={styles.top}>
+      {/* HEADER */}
+
+      <header className={styles.header}>
 
         <div>
-          <div className={styles.label}>
-            ADMIN PANEL
-          </div>
 
           <h1 className={styles.title}>
-            Заявки клиентов
+            Admin Dashboard
           </h1>
+
+          <p className={styles.subtitle}>
+            AutoParts EU
+          </p>
+
+        </div>
+
+        <button className={styles.profileBtn}>
+          👤
+        </button>
+
+      </header>
+
+      {/* STATS */}
+
+      <section className={styles.stats}>
+
+        <div className={styles.card}>
+          <span className={styles.cardIcon}>
+            📄
+          </span>
+
+          <strong>
+            24
+          </strong>
+
+          <p>
+            Новые заявки
+          </p>
+        </div>
+
+        <div className={styles.card}>
+          <span className={styles.cardIcon}>
+            💶
+          </span>
+
+          <strong>
+            18
+          </strong>
+
+          <p>
+            Предложения
+          </p>
+        </div>
+
+        <div className={styles.card}>
+          <span className={styles.cardIcon}>
+            📦
+          </span>
+
+          <strong>
+            12
+          </strong>
+
+          <p>
+            Заказы
+          </p>
+        </div>
+
+        <div className={styles.card}>
+          <span className={styles.cardIcon}>
+            ✅
+          </span>
+
+          <strong>
+            143
+          </strong>
+
+          <p>
+            Выполнено
+          </p>
         </div>
 
       </section>
 
-      <section className={styles.grid}>
+      {/* REQUESTS */}
 
-        {requests.map((item) => (
+      <section className={styles.section}>
 
-          <Link
-            href={`/admin/request/${item.id}`}
-            key={item.id}
-            className={styles.card}
-          >
+        <div className={styles.sectionTop}>
+
+          <h2>
+            Последние заявки
+          </h2>
+
+          <button className={styles.viewAll}>
+            Все
+          </button>
+
+        </div>
+
+        <div className={styles.requestCard}>
+
+          <div className={styles.requestTop}>
 
             <strong>
-              {item.part_name || "Запрос"}
+              BMW G30
             </strong>
 
-            <p>
-              {item.phone}
-            </p>
-
-            <span>
-              {item.vin || "VIN отсутствует"}
+            <span className={styles.badge}>
+              NEW
             </span>
 
-          </Link>
-        ))}
+          </div>
+
+          <p>
+            Масляный фильтр
+          </p>
+
+          <small>
+            VIN: WBA5R510...
+          </small>
+
+        </div>
+
+        <div className={styles.requestCard}>
+
+          <div className={styles.requestTop}>
+
+            <strong>
+              Audi A6 C8
+            </strong>
+
+            <span className={styles.badgeBlue}>
+              OFFER
+            </span>
+
+          </div>
+
+          <p>
+            Тормозные колодки
+          </p>
+
+          <small>
+            VIN: WAUZZZF20...
+          </small>
+
+        </div>
 
       </section>
+
+      {/* FLOAT BUTTON */}
+
+      <button className={styles.fab}>
+        +
+      </button>
 
     </main>
   );
