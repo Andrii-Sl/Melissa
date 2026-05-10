@@ -62,6 +62,25 @@ export default function OffersPage() {
     setLoading(false);
   }
 
+  async function acceptOffer(
+    item:any
+  ) {
+
+    await supabase
+      .from("orders")
+      .insert([
+        {
+          offer_id:item.id,
+          part_name:item.brand,
+          status:"NEW",
+        },
+      ]);
+
+    alert(
+      "Заказ создан"
+    );
+  }
+
   if (loading)
     return (
       <div className={styles.loading}>
@@ -130,6 +149,15 @@ export default function OffersPage() {
             <div className={styles.badge}>
               В наличии
             </div>
+
+            <button
+              className={styles.createBtn}
+              onClick={() =>
+                acceptOffer(item)
+              }
+            >
+              Принять предложение
+            </button>
 
           </div>
         ))}
