@@ -38,9 +38,9 @@ export default function AdminOffersPage() {
         .on(
           "postgres_changes",
           {
-            event:"*",
-            schema:"public",
-            table:"offers",
+            event: "*",
+            schema: "public",
+            table: "offers",
           },
           () => {
             loadData();
@@ -62,8 +62,8 @@ export default function AdminOffersPage() {
     try {
 
       const {
-        data:offersData,
-        error:offersError,
+        data: offersData,
+        error: offersError,
       } =
         await supabase
           .from("offers")
@@ -71,13 +71,13 @@ export default function AdminOffersPage() {
           .order(
             "created_at",
             {
-              ascending:false,
+              ascending: false,
             }
           );
 
       const {
-        data:requestsData,
-        error:requestsError,
+        data: requestsData,
+        error: requestsError,
       } =
         await supabase
           .from("requests")
@@ -85,16 +85,22 @@ export default function AdminOffersPage() {
           .order(
             "created_at",
             {
-              ascending:false,
+              ascending: false,
             }
           );
 
       if (offersError) {
-        console.error(offersError);
+        console.error(
+          "OFFERS ERROR:",
+          offersError
+        );
       }
 
       if (requestsError) {
-        console.error(requestsError);
+        console.error(
+          "REQUESTS ERROR:",
+          requestsError
+        );
       }
 
       setOffers(
@@ -117,20 +123,22 @@ export default function AdminOffersPage() {
 
   async function createOffer() {
 
-    if (
-      !requestId ||
-      !brand ||
-      !price
-    ) {
-
-      alert(
-        "Заполните обязательные поля"
-      );
-
-      return;
-    }
-
     try {
+
+      if (
+        !requestId ||
+        !brand ||
+        !price
+      ) {
+
+        alert(
+          "Заполните поля"
+        );
+
+        return;
+      }
+
+      /* FIND REQUEST */
 
       const selectedRequest =
         requests.find(
@@ -139,8 +147,25 @@ export default function AdminOffersPage() {
             requestId
         );
 
+      if (!selectedRequest) {
+
+        alert(
+          "Заявка не найдена"
+        );
+
+        return;
+      }
+
+      console.log(
+        "REQUEST:",
+        selectedRequest
+      );
+
+      /* INSERT OFFER */
+
       const {
         error,
+        data,
       } =
         await supabase
           .from("offers")
@@ -149,7 +174,8 @@ export default function AdminOffersPage() {
               request_id:
                 Number(requestId),
 
-              brand,
+              brand:
+                brand.trim(),
 
               price:
                 Number(price),
@@ -158,30 +184,47 @@ export default function AdminOffersPage() {
                 Number(delivery || 0),
 
               client_phone:
-                selectedRequest?.client_phone || "",
+                selectedRequest.client_phone,
 
               request_part_name:
-                selectedRequest?.part_name || "",
+                selectedRequest.part_name || "",
 
-              status:"NEW",
+              status: "NEW",
+
+              created_at:
+                new Date()
+                  .toISOString(),
             },
-          ]);
+          ])
+          .select();
+
+      console.log(
+        "INSERT:",
+        data
+      );
+
+      console.log(
+        "ERROR:",
+        error
+      );
 
       if (error) {
 
-        console.error(error);
-
         alert(
-          "Ошибка создания предложения"
+          error.message
         );
 
         return;
       }
 
+      /* CLEAR */
+
       setBrand("");
       setPrice("");
       setDelivery("");
       setRequestId("");
+
+      /* RELOAD */
 
       await loadData();
 
@@ -194,13 +237,13 @@ export default function AdminOffersPage() {
       console.error(error);
 
       alert(
-        "Ошибка соединения"
+        "Ошибка создания предложения"
       );
     }
   }
 
   async function deleteOffer(
-    id:number
+    id: number
   ) {
 
     const confirmDelete =
@@ -322,6 +365,7 @@ export default function AdminOffersPage() {
                 {" — "}
                 {item.client_phone}
               </option>
+
             ))}
 
           </select>
@@ -393,6 +437,7 @@ export default function AdminOffersPage() {
             </p>
 
           </div>
+
         )}
 
         {offers.map((item) => (
@@ -444,7 +489,7 @@ export default function AdminOffersPage() {
 
             <div
               style={{
-                marginTop:"14px",
+                marginTop: "14px",
               }}
             >
 
@@ -460,6 +505,7 @@ export default function AdminOffersPage() {
             </div>
 
           </div>
+
         ))}
 
       </section>
