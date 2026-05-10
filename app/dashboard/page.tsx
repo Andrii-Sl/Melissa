@@ -35,6 +35,11 @@ export default function DashboardPage() {
   const [ordersCount, setOrdersCount] =
     useState(0);
 
+  /* LAST REQUESTS */
+
+  const [latestRequests, setLatestRequests] =
+    useState<any[]>([]);
+
   useEffect(() => {
 
     loadProfile();
@@ -192,6 +197,26 @@ export default function DashboardPage() {
 
     setOrdersCount(
       ordersTotal || 0
+    );
+
+    /* LAST REQUESTS */
+
+    const {
+      data:latest,
+    } =
+      await supabase
+        .from("requests")
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending:false,
+          }
+        )
+        .limit(3);
+
+    setLatestRequests(
+      latest || []
     );
 
     setLoading(false);
@@ -490,24 +515,39 @@ export default function DashboardPage() {
 
         </div>
 
-        <Link
-          href="/dashboard/requests"
-          className={styles.card}
-        >
+        {latestRequests.length === 0 && (
 
-          <strong>
-            Масляный фильтр
-          </strong>
+          <div className={styles.card}>
 
-          <p>
-            WAUZZZF20...
-          </p>
+            <strong>
+              Пока нет заявок
+            </strong>
 
-          <div className={styles.badge}>
-            🟡 Новая
           </div>
+        )}
 
-        </Link>
+        {latestRequests.map((item) => (
+
+          <Link
+            key={item.id}
+            href="/dashboard/requests"
+            className={styles.card}
+          >
+
+            <strong>
+              {item.part_name || "Деталь"}
+            </strong>
+
+            <p>
+              VIN: {item.vin || "—"}
+            </p>
+
+            <div className={styles.badge}>
+              {item.status || "NEW"}
+            </div>
+
+          </Link>
+        ))}
 
       </section>
 
