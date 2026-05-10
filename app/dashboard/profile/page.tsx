@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "../dashboard.module.css";
@@ -39,8 +40,6 @@ export default function ProfilePage() {
 
     let phone =
       session?.user?.phone;
-
-    /* TEST CLIENT */
 
     if (!phone) {
 
@@ -94,7 +93,7 @@ export default function ProfilePage() {
     await supabase
       .from("profiles")
       .update({
-        full_name: name,
+        full_name:name,
         country,
         city,
         address,
@@ -133,11 +132,19 @@ export default function ProfilePage() {
 
     <main className={styles.page}>
 
-      <section className={styles.requestBox}>
+      {/* HEADER */}
 
-        <h2 className={styles.blockTitle}>
+      <section className={styles.hero}>
+
+        <h1 className={styles.title}>
           Профиль
-        </h2>
+        </h1>
+
+      </section>
+
+      {/* PROFILE */}
+
+      <section className={styles.requestBox}>
 
         <div className={styles.form}>
 
@@ -185,29 +192,89 @@ export default function ProfilePage() {
             }
           />
 
-          {/* BUTTONS */}
+          <button
+            className={styles.createBtn}
+            onClick={saveProfile}
+          >
+            Сохранить
+          </button>
 
-          <div className={styles.profileButtons}>
-
-            <button
-              className={styles.createBtn}
-              onClick={saveProfile}
-            >
-              Сохранить
-            </button>
-
-            <button
-              className={styles.logoutWhiteBtn}
-              onClick={logout}
-            >
-              Выйти
-            </button>
-
-          </div>
+          <button
+            className={styles.logoutWhiteBtn}
+            onClick={logout}
+          >
+            Выйти
+          </button>
 
         </div>
 
       </section>
+
+      {/* BOTTOM NAV */}
+
+      <nav className={styles.bottomNav}>
+
+        <Link
+          href="/dashboard"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            🏠
+          </div>
+
+          <span>
+            Главная
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/requests"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            📄
+          </div>
+
+          <span>
+            Заявки
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/offers"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            💶
+          </div>
+
+          <span>
+            Предложения
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/profile"
+          className={`${styles.navItem} ${styles.navItemActive}`}
+        >
+
+          <div className={styles.navIcon}>
+            👤
+          </div>
+
+          <span>
+            Профиль
+          </span>
+
+        </Link>
+
+      </nav>
 
     </main>
   );
