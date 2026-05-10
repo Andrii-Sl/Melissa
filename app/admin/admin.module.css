@@ -325,3 +325,11 @@
 .navItemActive .navIcon{
   transform:translateY(-2px);
 }
+
+/* PROFILE MENU */
+
+.profileMenu{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
