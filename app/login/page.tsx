@@ -48,118 +48,154 @@ export default function LoginPage() {
       "role=client; path=/; max-age=31536000; SameSite=Lax";
   }
 
+  /* CREATE OR UPDATE PROFILE */
+
+  async function createProfileIfNeeded(
+    cleanPhone:string
+  ) {
+
+    try {
+
+      const {
+        data:existing,
+      } =
+        await supabase
+          .from("profiles")
+          .select("*")
+          .eq(
+            "phone",
+            cleanPhone
+          )
+          .maybeSingle();
+
+      const fullName =
+        (
+          name +
+          " " +
+          surname
+        ).trim();
+
+      /* CREATE */
+
+      if (!existing) {
+
+        await supabase
+          .from("profiles")
+          .insert([
+            {
+              full_name:
+                fullName ||
+                "Клиент",
+
+              phone:
+                cleanPhone,
+            },
+          ]);
+
+        return;
+      }
+
+      /* UPDATE EMPTY NAME */
+
+      if (
+        fullName &&
+        !existing.full_name
+      ) {
+
+        await supabase
+          .from("profiles")
+          .update({
+            full_name:
+              fullName,
+          })
+          .eq(
+            "phone",
+            cleanPhone
+          );
+      }
+
+    } catch (error) {
+
+      console.error(error);
+    }
+  }
+
   /* SUBMIT */
 
   async function submit() {
 
-    setLoading(true);
+    try {
 
-    setSmsError("");
+      setLoading(true);
 
-    const cleanPhone =
-      phone.trim();
+      setSmsError("");
 
-    /* ADMIN LOGIN */
+      const cleanPhone =
+        phone.trim();
 
-    if (
-      cleanPhone ===
-      "14051978"
-    ) {
-
-      document.cookie =
-        "role=admin; path=/; max-age=31536000; SameSite=Lax";
-
-      window.location.href =
-        "/admin";
-
-      return;
-    }
-
-    /* MASTER LOGIN */
-
-    if (
-      cleanPhone === "1424"
-    ) {
-
-      window.location.href =
-        "/dashboard?master=1424";
-
-      return;
-    }
-
-    /* TEST CLIENT LOGIN */
-
-    if (
-      cleanPhone.startsWith("+")
-    ) {
-
-      try {
-
-        /* PROFILE */
-
-        const {
-          data:existing,
-        } =
-          await supabase
-            .from("profiles")
-            .select("*")
-            .eq(
-              "phone",
-              cleanPhone
-            )
-            .maybeSingle();
-
-        /* CREATE PROFILE */
-
-        if (!existing) {
-
-          await supabase
-            .from("profiles")
-            .insert([
-              {
-                full_name:
-                  (
-                    name +
-                    " " +
-                    surname
-                  ).trim(),
-
-                phone:
-                  cleanPhone,
-              },
-            ]);
-        }
-
-        /* SAVE PHONE */
-
-        saveClientPhone(
-          cleanPhone
-        );
-
-        /* DASHBOARD */
-
-        window.location.href =
-          "/dashboard";
-
-        return;
-
-      } catch (e) {
-
-        console.error(e);
+      if (!cleanPhone) {
 
         setSmsError(
-          "Ошибка входа"
+          "Введите телефон"
         );
 
         setLoading(false);
 
         return;
       }
-    }
 
-    /* REAL SMS LOGIN */
+      /* ADMIN LOGIN */
 
-    try {
+      if (
+        cleanPhone ===
+        "14051978"
+      ) {
+
+        document.cookie =
+          "role=admin; path=/; max-age=31536000; SameSite=Lax";
+
+        window.location.href =
+          "/admin";
+
+        return;
+      }
+
+      /* MASTER LOGIN */
+
+      if (
+        cleanPhone === "1424"
+      ) {
+
+        window.location.href =
+          "/dashboard?master=1424";
+
+        return;
+      }
+
+      /*
+        TEST LOGIN
+        Any +phone works
+      */
+
+      if (
+        cleanPhone.startsWith("+")
+      ) {
+
+        await createProfileIfNeeded(
+          cleanPhone
+        );
+
+        saveClientPhone(
+          cleanPhone
+        );
+
+        window.location.href =
+          "/dashboard";
+
+        return;
+      }
+
+      /* REAL SMS LOGIN */
 
       const {
         error,
@@ -169,28 +205,30 @@ export default function LoginPage() {
             cleanPhone,
         });
 
-      setLoading(false);
-
       if (error) {
 
         setSmsError(
           error.message
         );
 
+        setLoading(false);
+
         return;
       }
 
       setShowCode(true);
 
-    } catch (e) {
+    } catch (error) {
 
-      console.error(e);
-
-      setLoading(false);
+      console.error(error);
 
       setSmsError(
-        "Ошибка отправки SMS"
+        "Ошибка входа"
       );
+
+    } finally {
+
+      setLoading(false);
     }
   }
 
@@ -200,12 +238,17 @@ export default function LoginPage() {
 
     try {
 
+      setLoading(true);
+
+      const cleanPhone =
+        phone.trim();
+
       const {
         error,
       } =
         await supabase.auth.verifyOtp({
           phone:
-            phone.trim(),
+            cleanPhone,
 
           token:
             code,
@@ -220,13 +263,21 @@ export default function LoginPage() {
           error.message
         );
 
+        setLoading(false);
+
         return;
       }
+
+      /* CREATE PROFILE */
+
+      await createProfileIfNeeded(
+        cleanPhone
+      );
 
       /* SAVE PHONE */
 
       saveClientPhone(
-        phone.trim()
+        cleanPhone
       );
 
       /* LOGIN */
@@ -234,13 +285,15 @@ export default function LoginPage() {
       window.location.href =
         "/dashboard";
 
-    } catch (e) {
+    } catch (error) {
 
-      console.error(e);
+      console.error(error);
 
       alert(
         "Ошибка проверки кода"
       );
+
+      setLoading(false);
     }
   }
 
@@ -282,65 +335,70 @@ export default function LoginPage() {
             {/* LABEL */}
 
             <div className={styles.label}>
-              {mode === "login"
-                ? "ВХОД"
-                : "РЕГИСТРАЦИЯ"}
+              {
+                mode === "login"
+                  ? "ВХОД"
+                  : "РЕГИСТРАЦИЯ"
+              }
             </div>
 
             {/* TITLE */}
 
             <h1 className={styles.title}>
-              {mode === "login"
-                ? "Личный кабинет"
-                : "Регистрация"}
+              {
+                mode === "login"
+                  ? "Личный кабинет"
+                  : "Регистрация"
+              }
             </h1>
 
             {/* REGISTER */}
 
-            {mode ===
-              "register" && (
-              <>
+            {
+              mode === "register" && (
+                <>
 
-                <div className={styles.inputWrap}>
+                  <div className={styles.inputWrap}>
 
-                  <input
-                    className={styles.input}
-                    placeholder=" "
-                    value={name}
-                    onChange={(e) =>
-                      setName(
-                        e.target.value
-                      )
-                    }
-                  />
+                    <input
+                      className={styles.input}
+                      placeholder=" "
+                      value={name}
+                      onChange={(e) =>
+                        setName(
+                          e.target.value
+                        )
+                      }
+                    />
 
-                  <label>
-                    Имя
-                  </label>
+                    <label>
+                      Имя
+                    </label>
 
-                </div>
+                  </div>
 
-                <div className={styles.inputWrap}>
+                  <div className={styles.inputWrap}>
 
-                  <input
-                    className={styles.input}
-                    placeholder=" "
-                    value={surname}
-                    onChange={(e) =>
-                      setSurname(
-                        e.target.value
-                      )
-                    }
-                  />
+                    <input
+                      className={styles.input}
+                      placeholder=" "
+                      value={surname}
+                      onChange={(e) =>
+                        setSurname(
+                          e.target.value
+                        )
+                      }
+                    />
 
-                  <label>
-                    Фамилия
-                  </label>
+                    <label>
+                      Фамилия
+                    </label>
 
-                </div>
+                  </div>
 
-              </>
-            )}
+                </>
+              )
+            }
 
             {/* PHONE */}
 
@@ -370,63 +428,69 @@ export default function LoginPage() {
               onClick={submit}
             >
 
-              {loading
-                ? "ОТПРАВКА..."
-                : mode === "login"
-                ? "ВОЙТИ"
-                : "ЗАРЕГИСТРИРОВАТЬСЯ"}
+              {
+                loading
+                  ? "ОТПРАВКА..."
+                  : mode === "login"
+                  ? "ВОЙТИ"
+                  : "ЗАРЕГИСТРИРОВАТЬСЯ"
+              }
 
             </button>
 
             {/* ERROR */}
 
-            {smsError && (
+            {
+              smsError && (
 
-              <div
-                style={{
-                  color:"#d10000",
-                  marginTop:"12px",
-                  fontSize:"14px",
-                  lineHeight:"1.4",
-                }}
-              >
-                {smsError}
-              </div>
-            )}
+                <div
+                  style={{
+                    color:"#d10000",
+                    marginTop:"12px",
+                    fontSize:"14px",
+                    lineHeight:"1.4",
+                  }}
+                >
+                  {smsError}
+                </div>
+              )
+            }
 
             {/* SMS CODE */}
 
-            {showCode && (
-              <>
+            {
+              showCode && (
+                <>
 
-                <div className={styles.inputWrap}>
+                  <div className={styles.inputWrap}>
 
-                  <input
-                    className={styles.input}
-                    placeholder=" "
-                    value={code}
-                    onChange={(e) =>
-                      setCode(
-                        e.target.value
-                      )
-                    }
-                  />
+                    <input
+                      className={styles.input}
+                      placeholder=" "
+                      value={code}
+                      onChange={(e) =>
+                        setCode(
+                          e.target.value
+                        )
+                      }
+                    />
 
-                  <label>
-                    Код из SMS
-                  </label>
+                    <label>
+                      Код из SMS
+                    </label>
 
-                </div>
+                  </div>
 
-                <button
-                  className={styles.button}
-                  onClick={verifyCode}
-                >
-                  ПОДТВЕРДИТЬ КОД
-                </button>
+                  <button
+                    className={styles.button}
+                    onClick={verifyCode}
+                  >
+                    ПОДТВЕРДИТЬ КОД
+                  </button>
 
-              </>
-            )}
+                </>
+              )
+            }
 
             {/* SWITCH */}
 
@@ -441,9 +505,11 @@ export default function LoginPage() {
               }
             >
 
-              {mode === "login"
-                ? "Регистрация"
-                : "Назад ко входу"}
+              {
+                mode === "login"
+                  ? "Регистрация"
+                  : "Назад ко входу"
+              }
 
             </button>
 
