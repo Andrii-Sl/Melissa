@@ -125,6 +125,10 @@ export default function OffersPage() {
             "client_phone",
             phone
           )
+          .eq(
+            "payment_status",
+            "PENDING"
+          )
           .order(
             "created_at",
             {
@@ -173,8 +177,10 @@ export default function OffersPage() {
         return;
       }
 
+      /* CREATE ORDER */
+
       const {
-        error,
+        error:orderError,
       } =
         await supabase
           .from("orders")
@@ -183,6 +189,7 @@ export default function OffersPage() {
               offer_id:item.id,
 
               part_name:
+                item.request_part_name ||
                 item.brand,
 
               status:"NEW",
@@ -200,9 +207,9 @@ export default function OffersPage() {
             },
           ]);
 
-      if (error) {
+      if (orderError) {
 
-        console.error(error);
+        console.error(orderError);
 
         alert(
           "Ошибка создания заказа"
@@ -211,9 +218,76 @@ export default function OffersPage() {
         return;
       }
 
+      /* UPDATE OFFER STATUS */
+
+      const {
+        error:updateError,
+      } =
+        await supabase
+          .from("offers")
+          .update({
+            payment_status:"PAID",
+          })
+          .eq("id", item.id);
+
+      if (updateError) {
+
+        console.error(updateError);
+      }
+
+      await loadOffers();
+
       alert(
-        "Заказ создан"
+        "Оплата прошла успешно"
       );
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Ошибка соединения"
+      );
+    }
+  }
+
+  async function cancelOffer(
+    id:number
+  ) {
+
+    const confirmCancel =
+      confirm(
+        "Отменить предложение?"
+      );
+
+    if (!confirmCancel)
+      return;
+
+    try {
+
+      const {
+        error,
+      } =
+        await supabase
+          .from("offers")
+          .update({
+            payment_status:
+              "CANCELLED",
+          })
+          .eq("id", id);
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "Ошибка отмены"
+        );
+
+        return;
+      }
+
+      await loadOffers();
 
     } catch (error) {
 
@@ -290,8 +364,14 @@ export default function OffersPage() {
               дн.
             </p>
 
+            <p>
+              Деталь:
+              {" "}
+              {item.request_part_name || "—"}
+            </p>
+
             <div className={styles.badge}>
-              В наличии
+              Ожидает оплаты
             </div>
 
             <button
@@ -300,7 +380,19 @@ export default function OffersPage() {
                 acceptOffer(item)
               }
             >
-              Принять предложение
+              Оплатить
+            </button>
+
+            <button
+              onClick={() =>
+                cancelOffer(item.id)
+              }
+              className={styles.logoutBtn}
+              style={{
+                marginTop:"10px",
+              }}
+            >
+              Отменить
             </button>
 
           </div>
