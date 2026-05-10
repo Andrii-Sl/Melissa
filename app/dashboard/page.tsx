@@ -499,13 +499,11 @@ export default function DashboardPage() {
         >
 
           <div className={styles.statTop}>
-
             <div
               className={`${styles.statIcon} ${styles.red}`}
             >
               📄
             </div>
-
           </div>
 
           <div className={styles.statValue}>
@@ -524,13 +522,11 @@ export default function DashboardPage() {
         >
 
           <div className={styles.statTop}>
-
             <div
               className={`${styles.statIcon} ${styles.blue}`}
             >
               💶
             </div>
-
           </div>
 
           <div className={styles.statValue}>
@@ -549,13 +545,11 @@ export default function DashboardPage() {
         >
 
           <div className={styles.statTop}>
-
             <div
               className={`${styles.statIcon} ${styles.purple}`}
             >
               📦
             </div>
-
           </div>
 
           <div className={styles.statValue}>
@@ -574,19 +568,15 @@ export default function DashboardPage() {
         >
 
           <div className={styles.statTop}>
-
             <div
               className={`${styles.statIcon} ${styles.green}`}
             >
               👤
             </div>
-
           </div>
 
           <div className={styles.statValue}>
-            {profile?.full_name
-              ? "✓"
-              : "—"}
+            {profile?.full_name ? "✓" : "—"}
           </div>
 
           <div className={styles.statLabel}>
@@ -612,9 +602,7 @@ export default function DashboardPage() {
             placeholder="VIN"
             value={vin}
             onChange={(e) =>
-              setVin(
-                e.target.value
-              )
+              setVin(e.target.value)
             }
           />
 
@@ -623,9 +611,7 @@ export default function DashboardPage() {
             placeholder="Автомобиль"
             value={car}
             onChange={(e) =>
-              setCar(
-                e.target.value
-              )
+              setCar(e.target.value)
             }
           />
 
@@ -634,9 +620,7 @@ export default function DashboardPage() {
             placeholder="Название детали"
             value={partName}
             onChange={(e) =>
-              setPartName(
-                e.target.value
-              )
+              setPartName(e.target.value)
             }
           />
 
@@ -648,6 +632,61 @@ export default function DashboardPage() {
           </button>
 
         </div>
+
+      </section>
+
+      {/* REQUESTS */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionTop}>
+
+          <h2>
+            Заявки
+          </h2>
+
+          <Link
+            href="/dashboard/requests"
+            className={styles.more}
+          >
+            Все
+          </Link>
+
+        </div>
+
+        {latestRequests.length === 0 && (
+
+          <div className={styles.card}>
+            <strong>
+              Пока нет заявок
+            </strong>
+          </div>
+
+        )}
+
+        {latestRequests.map((item) => (
+
+          <Link
+            key={item.id}
+            href="/dashboard/requests"
+            className={styles.card}
+          >
+
+            <strong>
+              {item.part_name || "Деталь"}
+            </strong>
+
+            <p>
+              VIN: {item.vin || "—"}
+            </p>
+
+            <div className={styles.badge}>
+              {item.status || "NEW"}
+            </div>
+
+          </Link>
+
+        ))}
 
       </section>
 
