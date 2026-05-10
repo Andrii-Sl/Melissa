@@ -156,4 +156,11 @@ body{
   background:#f4f6fa;
 }
 
+/* IOS / ANDROID FIX */
+
+main{
+  display:block;
+  width:100%;
+}
+
 }
