@@ -45,11 +45,39 @@ export default function OffersPage() {
   async function loadOffers() {
 
     const {
+      data: {
+        session,
+      },
+    } =
+      await supabase.auth.getSession();
+
+    let phone =
+      session?.user?.phone;
+
+    /* TEST CLIENT */
+
+    if (!phone) {
+
+      const role =
+        document.cookie.includes(
+          "role=client"
+        );
+
+      if (role)
+        phone =
+          "+48519000000";
+    }
+
+    const {
       data,
     } =
       await supabase
         .from("offers")
         .select("*")
+        .eq(
+          "client_phone",
+          phone
+        )
         .order(
           "created_at",
           {
@@ -66,6 +94,28 @@ export default function OffersPage() {
     item:any
   ) {
 
+    const {
+      data: {
+        session,
+      },
+    } =
+      await supabase.auth.getSession();
+
+    let phone =
+      session?.user?.phone;
+
+    if (!phone) {
+
+      const role =
+        document.cookie.includes(
+          "role=client"
+        );
+
+      if (role)
+        phone =
+          "+48519000000";
+    }
+
     await supabase
       .from("orders")
       .insert([
@@ -73,6 +123,10 @@ export default function OffersPage() {
           offer_id:item.id,
           part_name:item.brand,
           status:"NEW",
+
+          client_phone:phone,
+
+          track_number:"",
         },
       ]);
 
