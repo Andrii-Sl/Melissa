@@ -75,6 +75,22 @@ export default function OrdersPage() {
     return styles.badge;
   }
 
+  function getStatusText(
+    status:string
+  ) {
+
+    if (status === "DELIVERED")
+      return "Доставлен";
+
+    if (status === "SHIPPED")
+      return "Отправлен";
+
+    if (status === "PROCESS")
+      return "В обработке";
+
+    return "Новый";
+  }
+
   if (loading)
     return (
       <div className={styles.loading}>
@@ -145,7 +161,11 @@ export default function OrdersPage() {
                 )
               }
             >
-              {item.status || "NEW"}
+              {
+                getStatusText(
+                  item.status
+                )
+              }
             </div>
 
           </div>
