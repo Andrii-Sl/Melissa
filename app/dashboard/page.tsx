@@ -24,6 +24,17 @@ export default function DashboardPage() {
   const [partName, setPartName] =
     useState("");
 
+  /* COUNTS */
+
+  const [requestsCount, setRequestsCount] =
+    useState(0);
+
+  const [offersCount, setOffersCount] =
+    useState(0);
+
+  const [ordersCount, setOrdersCount] =
+    useState(0);
+
   useEffect(() => {
     loadProfile();
   }, []);
@@ -65,6 +76,59 @@ export default function DashboardPage() {
 
     setProfile(data);
 
+    /* COUNTS */
+
+    const {
+      count:requestsTotal,
+    } =
+      await supabase
+        .from("requests")
+        .select(
+          "*",
+          {
+            count:"exact",
+            head:true,
+          }
+        );
+
+    const {
+      count:offersTotal,
+    } =
+      await supabase
+        .from("offers")
+        .select(
+          "*",
+          {
+            count:"exact",
+            head:true,
+          }
+        );
+
+    const {
+      count:ordersTotal,
+    } =
+      await supabase
+        .from("orders")
+        .select(
+          "*",
+          {
+            count:"exact",
+            head:true,
+          }
+        );
+
+    setRequestsCount(
+      requestsTotal || 0
+    );
+
+    setOffersCount(
+      offersTotal || 0
+    );
+
+    setOrdersCount(
+      ordersTotal || 0
+    );
+
     setLoading(false);
   }
 
@@ -89,6 +153,10 @@ export default function DashboardPage() {
     setVin("");
     setCar("");
     setPartName("");
+
+    setRequestsCount(
+      (prev) => prev + 1
+    );
 
     alert(
       "Заявка создана"
@@ -198,7 +266,7 @@ export default function DashboardPage() {
           </div>
 
           <div className={styles.statValue}>
-            0
+            {requestsCount}
           </div>
 
           <div className={styles.statLabel}>
@@ -223,7 +291,7 @@ export default function DashboardPage() {
           </div>
 
           <div className={styles.statValue}>
-            0
+            {offersCount}
           </div>
 
           <div className={styles.statLabel}>
@@ -248,7 +316,7 @@ export default function DashboardPage() {
           </div>
 
           <div className={styles.statValue}>
-            0
+            {ordersCount}
           </div>
 
           <div className={styles.statLabel}>
