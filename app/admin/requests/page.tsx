@@ -14,7 +14,29 @@ export default function AdminRequestsPage() {
     useState(true);
 
   useEffect(() => {
+
     loadRequests();
+
+    const channel =
+      supabase
+        .channel("live-admin-requests")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"requests",
+          },
+          () => {
+            loadRequests();
+          }
+        )
+        .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+
   }, []);
 
   async function loadRequests() {
@@ -25,9 +47,12 @@ export default function AdminRequestsPage() {
       await supabase
         .from("requests")
         .select("*")
-        .order("id", {
-          ascending:false,
-        });
+        .order(
+          "created_at",
+          {
+            ascending:false,
+          }
+        );
 
     setRequests(data || []);
 
@@ -74,6 +99,17 @@ export default function AdminRequestsPage() {
 
       <section className={styles.section}>
 
+        {requests.length === 0 && (
+
+          <div className={styles.requestCard}>
+
+            <p>
+              Заявок пока нет
+            </p>
+
+          </div>
+        )}
+
         {requests.map((item) => (
 
           <div
@@ -114,32 +150,60 @@ export default function AdminRequestsPage() {
           href="/admin"
           className={styles.navItem}
         >
-          <span>🏠</span>
-          <p>Главная</p>
+
+          <div className={styles.navIcon}>
+            🏠
+          </div>
+
+          <span>
+            Главная
+          </span>
+
         </Link>
 
         <Link
           href="/admin/requests"
-          className={`${styles.navItem} ${styles.active}`}
+          className={`${styles.navItem} ${styles.navItemActive}`}
         >
-          <span>📄</span>
-          <p>Заявки</p>
+
+          <div className={styles.navIcon}>
+            📄
+          </div>
+
+          <span>
+            Заявки
+          </span>
+
         </Link>
 
         <Link
           href="/admin/offers"
           className={styles.navItem}
         >
-          <span>💶</span>
-          <p>Предложения</p>
+
+          <div className={styles.navIcon}>
+            💶
+          </div>
+
+          <span>
+            Предложения
+          </span>
+
         </Link>
 
         <Link
           href="/admin/orders"
           className={styles.navItem}
         >
-          <span>📦</span>
-          <p>Заказы</p>
+
+          <div className={styles.navIcon}>
+            📦
+          </div>
+
+          <span>
+            Заказы
+          </span>
+
         </Link>
 
       </nav>
