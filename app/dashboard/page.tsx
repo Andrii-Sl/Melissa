@@ -169,6 +169,10 @@ export default function DashboardPage() {
             count:"exact",
             head:true,
           }
+        )
+        .eq(
+          "client_phone",
+          phone
         );
 
     const {
@@ -182,6 +186,10 @@ export default function DashboardPage() {
             count:"exact",
             head:true,
           }
+        )
+        .eq(
+          "client_phone",
+          phone
         );
 
     const {
@@ -195,6 +203,10 @@ export default function DashboardPage() {
             count:"exact",
             head:true,
           }
+        )
+        .eq(
+          "client_phone",
+          phone
         );
 
     setRequestsCount(
@@ -217,6 +229,10 @@ export default function DashboardPage() {
       await supabase
         .from("requests")
         .select("*")
+        .eq(
+          "client_phone",
+          phone
+        )
         .order(
           "created_at",
           {
@@ -237,6 +253,10 @@ export default function DashboardPage() {
       await supabase
         .from("offers")
         .select("*")
+        .eq(
+          "client_phone",
+          phone
+        )
         .order(
           "created_at",
           {
@@ -257,6 +277,10 @@ export default function DashboardPage() {
       await supabase
         .from("orders")
         .select("*")
+        .eq(
+          "client_phone",
+          phone
+        )
         .order(
           "created_at",
           {
@@ -287,6 +311,10 @@ export default function DashboardPage() {
           car,
           part_name:partName,
           status:"NEW",
+
+          client_phone:
+            profile?.phone ||
+            "+48519000000",
         },
       ]);
 
@@ -486,289 +514,6 @@ export default function DashboardPage() {
 
           <div className={styles.statLabel}>
             Выполнено
-          </div>
-
-        </Link>
-
-      </section>
-
-      {/* NEW REQUEST */}
-
-      <section className={styles.requestBox}>
-
-        <h2 className={styles.blockTitle}>
-          Новая заявка
-        </h2>
-
-        <div className={styles.form}>
-
-          <input
-            className={styles.input}
-            placeholder="VIN"
-            value={vin}
-            onChange={(e) =>
-              setVin(
-                e.target.value
-              )
-            }
-          />
-
-          <input
-            className={styles.input}
-            placeholder="Автомобиль"
-            value={car}
-            onChange={(e) =>
-              setCar(
-                e.target.value
-              )
-            }
-          />
-
-          <input
-            className={styles.input}
-            placeholder="Название детали"
-            value={partName}
-            onChange={(e) =>
-              setPartName(
-                e.target.value
-              )
-            }
-          />
-
-          <button
-            className={styles.createBtn}
-            onClick={createRequest}
-          >
-            + Создать заявку
-          </button>
-
-        </div>
-
-      </section>
-
-      {/* REQUESTS */}
-
-      <section className={styles.section}>
-
-        <div className={styles.sectionTop}>
-
-          <h2>
-            Заявки
-          </h2>
-
-          <Link
-            href="/dashboard/requests"
-            className={styles.more}
-          >
-            Все
-          </Link>
-
-        </div>
-
-        {latestRequests.length === 0 && (
-
-          <div className={styles.card}>
-
-            <strong>
-              Пока нет заявок
-            </strong>
-
-          </div>
-        )}
-
-        {latestRequests.map((item) => (
-
-          <Link
-            key={item.id}
-            href="/dashboard/requests"
-            className={styles.card}
-          >
-
-            <strong>
-              {item.part_name || "Деталь"}
-            </strong>
-
-            <p>
-              VIN: {item.vin || "—"}
-            </p>
-
-            <div className={styles.badge}>
-              {item.status || "NEW"}
-            </div>
-
-          </Link>
-        ))}
-
-      </section>
-
-      {/* OFFERS */}
-
-      <section className={styles.section}>
-
-        <div className={styles.sectionTop}>
-
-          <h2>
-            Предложения
-          </h2>
-
-          <Link
-            href="/dashboard/offers"
-            className={styles.more}
-          >
-            Все
-          </Link>
-
-        </div>
-
-        {latestOffers.length === 0 && (
-
-          <div className={styles.card}>
-
-            <strong>
-              Пока нет предложений
-            </strong>
-
-          </div>
-        )}
-
-        {latestOffers.map((item) => (
-
-          <Link
-            key={item.id}
-            href="/dashboard/offers"
-            className={styles.card}
-          >
-
-            <strong>
-              {item.brand || "Предложение"}
-            </strong>
-
-            <div className={styles.price}>
-              € {item.price || 0}
-            </div>
-
-            <div className={styles.badge}>
-              {item.delivery_days || 0} дн.
-            </div>
-
-          </Link>
-        ))}
-
-      </section>
-
-      {/* ORDERS */}
-
-      <section className={styles.section}>
-
-        <div className={styles.sectionTop}>
-
-          <h2>
-            Заказы
-          </h2>
-
-          <Link
-            href="/dashboard/orders"
-            className={styles.more}
-          >
-            Все
-          </Link>
-
-        </div>
-
-        {latestOrders.length === 0 && (
-
-          <div className={styles.card}>
-
-            <strong>
-              Пока нет заказов
-            </strong>
-
-          </div>
-        )}
-
-        {latestOrders.map((item) => (
-
-          <Link
-            key={item.id}
-            href="/dashboard/orders"
-            className={styles.card}
-          >
-
-            <strong>
-              Заказ #{item.id}
-            </strong>
-
-            <p>
-              {item.part_name || "Деталь"}
-            </p>
-
-            <div className={styles.badge}>
-              {item.status || "NEW"}
-            </div>
-
-          </Link>
-        ))}
-
-      </section>
-
-      {/* PROFILE */}
-
-      <section className={styles.section}>
-
-        <div className={styles.sectionTop}>
-
-          <h2>
-            Профиль
-          </h2>
-
-          <Link
-            href="/dashboard/profile"
-            className={styles.more}
-          >
-            Открыть
-          </Link>
-
-        </div>
-
-        <Link
-          href="/dashboard/profile"
-          className={styles.profileCard}
-        >
-
-          <div className={styles.profileItem}>
-
-            <strong>
-              Имя
-            </strong>
-
-            <p>
-              {profile?.full_name || ""}
-            </p>
-
-          </div>
-
-          <div className={styles.profileItem}>
-
-            <strong>
-              Телефон
-            </strong>
-
-            <p>
-              {profile?.phone || ""}
-            </p>
-
-          </div>
-
-          <div className={styles.profileItem}>
-
-            <strong>
-              Адрес доставки
-            </strong>
-
-            <p>
-              Slovenia, Ljubljana
-            </p>
-
           </div>
 
         </Link>
