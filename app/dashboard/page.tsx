@@ -690,6 +690,268 @@ export default function DashboardPage() {
 
       </section>
 
+      {/* OFFERS */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionTop}>
+
+          <h2>
+            Предложения
+          </h2>
+
+          <Link
+            href="/dashboard/offers"
+            className={styles.more}
+          >
+            Все
+          </Link>
+
+        </div>
+
+        {latestOffers.length === 0 && (
+
+          <div className={styles.card}>
+
+            <strong>
+              Пока нет предложений
+            </strong>
+
+          </div>
+
+        )}
+
+        {latestOffers.map((item) => (
+
+          <Link
+            key={item.id}
+            href="/dashboard/offers"
+            className={styles.card}
+          >
+
+            <strong>
+              {item.brand || "Предложение"}
+            </strong>
+
+            <div className={styles.price}>
+              € {item.price || 0}
+            </div>
+
+            <div className={styles.badge}>
+              {item.delivery_days || 0} дн.
+            </div>
+
+          </Link>
+
+        ))}
+
+      </section>
+
+      {/* ORDERS */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionTop}>
+
+          <h2>
+            Заказы
+          </h2>
+
+          <Link
+            href="/dashboard/orders"
+            className={styles.more}
+          >
+            Все
+          </Link>
+
+        </div>
+
+        {latestOrders.length === 0 && (
+
+          <div className={styles.card}>
+
+            <strong>
+              Пока нет заказов
+            </strong>
+
+          </div>
+
+        )}
+
+        {latestOrders.map((item) => (
+
+          <Link
+            key={item.id}
+            href="/dashboard/orders"
+            className={styles.card}
+          >
+
+            <strong>
+              Заказ #{item.id}
+            </strong>
+
+            <p>
+              {item.part_name || "Деталь"}
+            </p>
+
+            <div className={styles.badge}>
+              {item.status || "NEW"}
+            </div>
+
+          </Link>
+
+        ))}
+
+      </section>
+
+      {/* PROFILE */}
+
+      <section className={styles.profile}>
+
+        <div className={styles.sectionTop}>
+
+          <h2>
+            Профиль
+          </h2>
+
+          <Link
+            href="/dashboard/profile"
+            className={styles.more}
+          >
+            Открыть
+          </Link>
+
+        </div>
+
+        <Link
+          href="/dashboard/profile"
+          className={styles.profileCard}
+        >
+
+          <div className={styles.profileItem}>
+
+            <strong>
+              Имя
+            </strong>
+
+            <p>
+              {profile?.full_name || "Клиент"}
+            </p>
+
+          </div>
+
+          <div className={styles.profileItem}>
+
+            <strong>
+              Телефон
+            </strong>
+
+            <p>
+              {profile?.phone || ""}
+            </p>
+
+          </div>
+
+        </Link>
+
+      </section>
+
+      {/* BOTTOM NAV */}
+
+      <nav className={styles.bottomNav}>
+
+        <Link
+          href="/dashboard"
+          className={`${styles.navItem} ${styles.navItemActive}`}
+        >
+
+          <div className={styles.navIcon}>
+            🏠
+          </div>
+
+          <span>
+            Главная
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/requests"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            📄
+          </div>
+
+          <span>
+            Заявки
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/offers"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            💶
+          </div>
+
+          <span>
+            Предложения
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/orders"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            📦
+          </div>
+
+          <span>
+            Заказы
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/garage"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            🚗
+          </div>
+
+          <span>
+            Гараж
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/profile"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            👤
+          </div>
+
+          <span>
+            Профиль
+          </span>
+
+        </Link>
+
+      </nav>
+
     </main>
   );
 }
