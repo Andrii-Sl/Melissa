@@ -42,52 +42,117 @@ export default function OrdersPage() {
 
   }, []);
 
+  async function getClientPhone() {
+
+    try {
+
+      const {
+        data: {
+          session,
+        },
+      } =
+        await supabase.auth.getSession();
+
+      let phone =
+        session?.user?.phone;
+
+      /* COOKIE AUTOLOGIN */
+
+      if (!phone) {
+
+        const phoneCookie =
+          document.cookie
+            .split("; ")
+            .find((row) =>
+              row.startsWith(
+                "client_phone="
+              )
+            )
+            ?.split("=")[1];
+
+        if (phoneCookie)
+          phone = phoneCookie;
+      }
+
+      /* TEST CLIENT */
+
+      if (!phone) {
+
+        const role =
+          document.cookie.includes(
+            "role=client"
+          );
+
+        if (role)
+          phone =
+            "+48519000000";
+      }
+
+      return phone;
+
+    } catch (error) {
+
+      console.error(error);
+
+      return null;
+    }
+  }
+
   async function loadOrders() {
 
-    const {
-      data: {
-        session,
-      },
-    } =
-      await supabase.auth.getSession();
+    try {
 
-    let phone =
-      session?.user?.phone;
+      const phone =
+        await getClientPhone();
 
-    /* TEST CLIENT */
+      if (!phone) {
 
-    if (!phone) {
+        setOrders([]);
 
-      const role =
-        document.cookie.includes(
-          "role=client"
-        );
+        setLoading(false);
 
-      if (role)
-        phone =
-          "+48519000000";
+        return;
+      }
+
+      const {
+        data,
+        error,
+      } =
+        await supabase
+          .from("orders")
+          .select("*")
+          .eq(
+            "client_phone",
+            phone
+          )
+          .order(
+            "created_at",
+            {
+              ascending:false,
+            }
+          );
+
+      if (error) {
+
+        console.error(error);
+
+        setOrders([]);
+
+      } else {
+
+        setOrders(data || []);
+      }
+
+    } catch (error) {
+
+      console.error(error);
+
+      setOrders([]);
+
+    } finally {
+
+      setLoading(false);
     }
-
-    const {
-      data,
-    } =
-      await supabase
-        .from("orders")
-        .select("*")
-        .eq(
-          "client_phone",
-          phone
-        )
-        .order(
-          "created_at",
-          {
-            ascending:false,
-          }
-        );
-
-    setOrders(data || []);
-
-    setLoading(false);
   }
 
   function getStatusClass(
