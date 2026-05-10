@@ -103,14 +103,27 @@ export default function AdminOffersPage() {
     )
       return;
 
+    const selectedRequest =
+      requests.find(
+        (item) =>
+          item.id.toString() ===
+          requestId
+      );
+
     await supabase
       .from("offers")
       .insert([
         {
           request_id:requestId,
+
           brand,
+
           price,
+
           delivery_days:delivery,
+
+          client_phone:
+            selectedRequest?.client_phone || "",
         },
       ]);
 
