@@ -8,6 +8,11 @@ export function middleware(
   const role =
     request.cookies.get("role")?.value;
 
+  const clientPhone =
+    request.cookies.get(
+      "client_phone"
+    )?.value;
+
   const path =
     request.nextUrl.pathname;
 
@@ -56,13 +61,18 @@ export function middleware(
   ) {
 
     /*
-      Dashboard intentionally
-      stays open for current
-      auth flow.
-
-      Supabase session is checked
-      inside client pages.
+      Client autologin
     */
+
+    if (!clientPhone) {
+
+      return NextResponse.redirect(
+        new URL(
+          "/login",
+          request.url
+        )
+      );
+    }
 
     return NextResponse.next();
   }
