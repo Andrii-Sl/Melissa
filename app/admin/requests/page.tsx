@@ -34,29 +34,79 @@ export default function AdminRequestsPage() {
         .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+
+      supabase.removeChannel(
+        channel
+      );
     };
 
   }, []);
 
   async function loadRequests() {
 
-    const {
-      data,
-    } =
-      await supabase
-        .from("requests")
-        .select("*")
-        .order(
-          "created_at",
-          {
-            ascending:false,
-          }
-        );
+    try {
 
-    setRequests(data || []);
+      const {
+        data,
+        error,
+      } =
+        await supabase
+          .from("requests")
+          .select("*")
+          .order(
+            "created_at",
+            {
+              ascending:false,
+            }
+          );
 
-    setLoading(false);
+      if (error) {
+
+        console.error(error);
+
+        setRequests([]);
+
+      } else {
+
+        setRequests(data || []);
+      }
+
+    } catch (error) {
+
+      console.error(error);
+
+      setRequests([]);
+
+    } finally {
+
+      setLoading(false);
+    }
+  }
+
+  function getStatusClass(
+    status:string
+  ) {
+
+    if (status === "DONE")
+      return styles.badgeGreen;
+
+    if (status === "PROCESS")
+      return styles.badgeBlue;
+
+    return styles.badge;
+  }
+
+  function getStatusText(
+    status:string
+  ) {
+
+    if (status === "DONE")
+      return "Готово";
+
+    if (status === "PROCESS")
+      return "В работе";
+
+    return "Новая";
   }
 
   if (loading)
@@ -123,8 +173,18 @@ export default function AdminRequestsPage() {
                 {item.car || "Автомобиль"}
               </strong>
 
-              <span className={styles.badge}>
-                {item.status || "NEW"}
+              <span
+                className={
+                  getStatusClass(
+                    item.status
+                  )
+                }
+              >
+                {
+                  getStatusText(
+                    item.status
+                  )
+                }
               </span>
 
             </div>
@@ -134,7 +194,17 @@ export default function AdminRequestsPage() {
             </p>
 
             <small>
-              VIN: {item.vin || "—"}
+              VIN:
+              {" "}
+              {item.vin || "—"}
+            </small>
+
+            <br />
+
+            <small>
+              Клиент:
+              {" "}
+              {item.client_phone || "—"}
             </small>
 
           </div>
