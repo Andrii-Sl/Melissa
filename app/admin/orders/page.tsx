@@ -1,9 +1,70 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import styles from "../admin.module.css";
 
 export default function AdminOrdersPage() {
+
+  const [orders, setOrders] =
+    useState<any[]>([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  useEffect(() => {
+
+    loadOrders();
+
+    const channel =
+      supabase
+        .channel("live-admin-orders")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"orders",
+          },
+          () => {
+            loadOrders();
+          }
+        )
+        .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+
+  }, []);
+
+  async function loadOrders() {
+
+    const {
+      data,
+    } =
+      await supabase
+        .from("orders")
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending:false,
+          }
+        );
+
+    setOrders(data || []);
+
+    setLoading(false);
+  }
+
+  if (loading)
+    return (
+      <div className={styles.loading}>
+        Загрузка...
+      </div>
+    );
 
   return (
 
@@ -20,7 +81,7 @@ export default function AdminOrdersPage() {
           </h1>
 
           <p className={styles.subtitle}>
-            Активные заказы клиентов
+            Все заказы клиентов
           </p>
 
         </div>
@@ -38,53 +99,46 @@ export default function AdminOrdersPage() {
 
       <section className={styles.section}>
 
-        <div className={styles.requestCard}>
+        {orders.length === 0 && (
 
-          <div className={styles.requestTop}>
+          <div className={styles.requestCard}>
 
-            <strong>
-              Order #1024
-            </strong>
-
-            <span className={styles.badge}>
-              NEW
-            </span>
+            <p>
+              Заказов пока нет
+            </p>
 
           </div>
+        )}
 
-          <p>
-            BMW Original Filter
-          </p>
+        {orders.map((item) => (
 
-          <small>
-            Tracking: EU4839201
-          </small>
+          <div
+            key={item.id}
+            className={styles.requestCard}
+          >
 
-        </div>
+            <div className={styles.requestTop}>
 
-        <div className={styles.requestCard}>
+              <strong>
+                Заказ #{item.id}
+              </strong>
 
-          <div className={styles.requestTop}>
+              <span className={styles.badge}>
+                {item.status || "NEW"}
+              </span>
 
-            <strong>
-              Order #1025
-            </strong>
+            </div>
 
-            <span className={styles.badgeBlue}>
-              SENT
-            </span>
+            <p>
+              {item.part_name || "Деталь"}
+            </p>
+
+            <small>
+              Track: {item.track_number || "—"}
+            </small>
 
           </div>
-
-          <p>
-            Bosch Brake Pads
-          </p>
-
-          <small>
-            Tracking: EU4839202
-          </small>
-
-        </div>
+        ))}
 
       </section>
 
@@ -97,13 +151,13 @@ export default function AdminOrdersPage() {
           className={styles.navItem}
         >
 
-          <span>
+          <div className={styles.navIcon}>
             🏠
-          </span>
+          </div>
 
-          <p>
+          <span>
             Главная
-          </p>
+          </span>
 
         </Link>
 
@@ -112,13 +166,13 @@ export default function AdminOrdersPage() {
           className={styles.navItem}
         >
 
-          <span>
+          <div className={styles.navIcon}>
             📄
-          </span>
+          </div>
 
-          <p>
+          <span>
             Заявки
-          </p>
+          </span>
 
         </Link>
 
@@ -127,28 +181,28 @@ export default function AdminOrdersPage() {
           className={styles.navItem}
         >
 
-          <span>
+          <div className={styles.navIcon}>
             💶
-          </span>
+          </div>
 
-          <p>
+          <span>
             Предложения
-          </p>
+          </span>
 
         </Link>
 
         <Link
           href="/admin/orders"
-          className={`${styles.navItem} ${styles.active}`}
+          className={`${styles.navItem} ${styles.navItemActive}`}
         >
 
-          <span>
+          <div className={styles.navIcon}>
             📦
-          </span>
+          </div>
 
-          <p>
+          <span>
             Заказы
-          </p>
+          </span>
 
         </Link>
 
