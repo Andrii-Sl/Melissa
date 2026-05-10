@@ -13,6 +13,17 @@ export default function DashboardPage() {
   const [loading, setLoading] =
     useState(true);
 
+  /* NEW REQUEST */
+
+  const [vin, setVin] =
+    useState("");
+
+  const [car, setCar] =
+    useState("");
+
+  const [partName, setPartName] =
+    useState("");
+
   useEffect(() => {
     loadProfile();
   }, []);
@@ -55,6 +66,33 @@ export default function DashboardPage() {
     setProfile(data);
 
     setLoading(false);
+  }
+
+  /* CREATE REQUEST */
+
+  async function createRequest() {
+
+    if (!vin || !partName)
+      return;
+
+    await supabase
+      .from("requests")
+      .insert([
+        {
+          vin,
+          car,
+          part_name:partName,
+          status:"NEW",
+        },
+      ]);
+
+    setVin("");
+    setCar("");
+    setPartName("");
+
+    alert(
+      "Заявка создана"
+    );
   }
 
   if (loading)
@@ -259,20 +297,39 @@ export default function DashboardPage() {
           <input
             className={styles.input}
             placeholder="VIN"
+            value={vin}
+            onChange={(e) =>
+              setVin(
+                e.target.value
+              )
+            }
           />
 
           <input
             className={styles.input}
-            placeholder="Описание детали"
+            placeholder="Автомобиль"
+            value={car}
+            onChange={(e) =>
+              setCar(
+                e.target.value
+              )
+            }
           />
 
           <input
             className={styles.input}
-            placeholder="Каталожный номер"
+            placeholder="Название детали"
+            value={partName}
+            onChange={(e) =>
+              setPartName(
+                e.target.value
+              )
+            }
           />
 
           <button
             className={styles.createBtn}
+            onClick={createRequest}
           >
             + Создать заявку
           </button>
