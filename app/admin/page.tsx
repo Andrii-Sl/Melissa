@@ -166,7 +166,7 @@ async function logout() {
         <div>
 
           <h1 className={styles.title}>
-            Панель Управления
+            Admin
           </h1>
 
           <p className={styles.subtitle}>
