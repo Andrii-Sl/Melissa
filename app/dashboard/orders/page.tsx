@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "../dashboard.module.css";
@@ -13,32 +14,32 @@ export default function OrdersPage() {
     useState(true);
 
   useEffect(() => {
+
     loadOrders();
+
+    const channel =
+      supabase
+        .channel("client-orders")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"orders",
+          },
+          () => {
+            loadOrders();
+          }
+        )
+        .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+
   }, []);
 
   async function loadOrders() {
-
-    const {
-      data: {
-        session,
-      },
-    } =
-      await supabase.auth.getSession();
-
-    let phone =
-      session?.user?.phone;
-
-    if (!phone) {
-
-      const role =
-        document.cookie.includes(
-          "role=client"
-        );
-
-      if (role)
-        phone =
-          "+48519000000";
-    }
 
     const {
       data,
@@ -46,10 +47,12 @@ export default function OrdersPage() {
       await supabase
         .from("orders")
         .select("*")
-        .eq("phone", phone)
-        .order("id", {
-          ascending: false,
-        });
+        .order(
+          "created_at",
+          {
+            ascending:false,
+          }
+        );
 
     setOrders(data || []);
 
@@ -64,20 +67,37 @@ export default function OrdersPage() {
     );
 
   return (
+
     <main className={styles.page}>
+
+      {/* HEADER */}
+
+      <section className={styles.hero}>
+
+        <h1 className={styles.title}>
+          Заказы
+        </h1>
+
+      </section>
+
+      {/* ORDERS */}
 
       <section className={styles.section}>
 
-        <div className={styles.sectionTop}>
-          <h2>
-            Заказы
-          </h2>
-        </div>
+        {orders.length === 0 && (
+
+          <div className={styles.card}>
+
+            <strong>
+              Пока нет заказов
+            </strong>
+
+          </div>
+        )}
 
         {orders.map((item) => (
 
-          <a
-            href={`/dashboard/orders/${item.id}`}
+          <div
             key={item.id}
             className={styles.card}
           >
@@ -87,19 +107,91 @@ export default function OrdersPage() {
             </strong>
 
             <p>
-              {item.tracking ||
-                "Трек номер появится позже"}
+              {item.part_name || "Деталь"}
             </p>
 
             <div className={styles.badge}>
-              {item.status ||
-                "В пути"}
+              {item.status || "NEW"}
             </div>
 
-          </a>
+            <p
+              style={{
+                marginTop:"12px",
+              }}
+            >
+              Track: {item.track_number || "—"}
+            </p>
+
+          </div>
         ))}
 
       </section>
+
+      {/* BOTTOM NAV */}
+
+      <nav className={styles.bottomNav}>
+
+        <Link
+          href="/dashboard"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            🏠
+          </div>
+
+          <span>
+            Главная
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/requests"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            📄
+          </div>
+
+          <span>
+            Заявки
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/offers"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            💶
+          </div>
+
+          <span>
+            Предложения
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/orders"
+          className={`${styles.navItem} ${styles.navItemActive}`}
+        >
+
+          <div className={styles.navIcon}>
+            📦
+          </div>
+
+          <span>
+            Заказы
+          </span>
+
+        </Link>
+
+      </nav>
 
     </main>
   );
