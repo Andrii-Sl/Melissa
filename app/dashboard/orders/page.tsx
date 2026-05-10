@@ -177,6 +177,20 @@ export default function OrdersPage() {
             </p>
 
             <p>
+              Цена:
+              {" "}
+              € {item.offer_price || 0}
+            </p>
+
+            <p>
+              Доставка:
+              {" "}
+              {item.delivery_days || 0}
+              {" "}
+              дн.
+            </p>
+
+            <p>
               Track:
               {" "}
               {item.track_number || "—"}
