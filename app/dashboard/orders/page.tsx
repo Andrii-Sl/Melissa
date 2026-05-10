@@ -114,13 +114,15 @@ export default function OrdersPage() {
               {item.status || "NEW"}
             </div>
 
-            <p
+            <div
               style={{
                 marginTop:"12px",
+                color:"#666",
+                fontSize:"14px",
               }}
             >
               Track: {item.track_number || "—"}
-            </p>
+            </div>
 
           </div>
         ))}
