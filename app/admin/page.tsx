@@ -135,6 +135,19 @@ export default function AdminPage() {
     setLoading(false);
   }
 
+/* LOGOUT */
+
+async function logout() {
+
+  document.cookie =
+    "role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+
+  await supabase.auth.signOut();
+
+  window.location.href =
+    "/";
+}
+
   if (loading)
     return (
       <div className={styles.loading}>
