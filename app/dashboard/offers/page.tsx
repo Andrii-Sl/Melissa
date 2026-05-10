@@ -34,7 +34,10 @@ export default function OffersPage() {
         .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+
+      supabase.removeChannel(
+        channel
+      );
     };
 
   }, []);
@@ -70,13 +73,19 @@ export default function OffersPage() {
 
     <main className={styles.page}>
 
-      {/* HEADER */}
+      {/* HERO */}
 
       <section className={styles.hero}>
 
         <h1 className={styles.title}>
           Предложения
         </h1>
+
+        <p className={styles.phone}>
+          Всего:
+          {" "}
+          {offers.length}
+        </p>
 
       </section>
 
@@ -111,11 +120,15 @@ export default function OffersPage() {
             </div>
 
             <p>
-              {item.part_name || "Деталь"}
+              Срок доставки:
+              {" "}
+              {item.delivery_days || 0}
+              {" "}
+              дн.
             </p>
 
             <div className={styles.badge}>
-              {item.delivery_days || 0} дн.
+              В наличии
             </div>
 
           </div>
