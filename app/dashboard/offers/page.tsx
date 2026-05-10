@@ -42,104 +42,187 @@ export default function OffersPage() {
 
   }, []);
 
+  async function getClientPhone() {
+
+    try {
+
+      const {
+        data: {
+          session,
+        },
+      } =
+        await supabase.auth.getSession();
+
+      let phone =
+        session?.user?.phone;
+
+      /* COOKIE AUTOLOGIN */
+
+      if (!phone) {
+
+        const phoneCookie =
+          document.cookie
+            .split("; ")
+            .find((row) =>
+              row.startsWith(
+                "client_phone="
+              )
+            )
+            ?.split("=")[1];
+
+        if (phoneCookie)
+          phone = phoneCookie;
+      }
+
+      /* TEST CLIENT */
+
+      if (!phone) {
+
+        const role =
+          document.cookie.includes(
+            "role=client"
+          );
+
+        if (role)
+          phone =
+            "+48519000000";
+      }
+
+      return phone;
+
+    } catch (error) {
+
+      console.error(error);
+
+      return null;
+    }
+  }
+
   async function loadOffers() {
 
-    const {
-      data: {
-        session,
-      },
-    } =
-      await supabase.auth.getSession();
+    try {
 
-    let phone =
-      session?.user?.phone;
+      const phone =
+        await getClientPhone();
 
-    /* TEST CLIENT */
+      if (!phone) {
 
-    if (!phone) {
+        setOffers([]);
 
-      const role =
-        document.cookie.includes(
-          "role=client"
-        );
+        setLoading(false);
 
-      if (role)
-        phone =
-          "+48519000000";
+        return;
+      }
+
+      const {
+        data,
+        error,
+      } =
+        await supabase
+          .from("offers")
+          .select("*")
+          .eq(
+            "client_phone",
+            phone
+          )
+          .order(
+            "created_at",
+            {
+              ascending:false,
+            }
+          );
+
+      if (error) {
+
+        console.error(error);
+
+        setOffers([]);
+
+      } else {
+
+        setOffers(data || []);
+      }
+
+    } catch (error) {
+
+      console.error(error);
+
+      setOffers([]);
+
+    } finally {
+
+      setLoading(false);
     }
-
-    const {
-      data,
-    } =
-      await supabase
-        .from("offers")
-        .select("*")
-        .eq(
-          "client_phone",
-          phone
-        )
-        .order(
-          "created_at",
-          {
-            ascending:false,
-          }
-        );
-
-    setOffers(data || []);
-
-    setLoading(false);
   }
 
   async function acceptOffer(
     item:any
   ) {
 
-    const {
-      data: {
-        session,
-      },
-    } =
-      await supabase.auth.getSession();
+    try {
 
-    let phone =
-      session?.user?.phone;
+      const phone =
+        await getClientPhone();
 
-    if (!phone) {
+      if (!phone) {
 
-      const role =
-        document.cookie.includes(
-          "role=client"
+        alert(
+          "Ошибка авторизации"
         );
 
-      if (role)
-        phone =
-          "+48519000000";
+        return;
+      }
+
+      const {
+        error,
+      } =
+        await supabase
+          .from("orders")
+          .insert([
+            {
+              offer_id:item.id,
+
+              part_name:
+                item.brand,
+
+              status:"NEW",
+
+              client_phone:
+                phone,
+
+              track_number:"",
+
+              offer_price:
+                item.price,
+
+              delivery_days:
+                item.delivery_days,
+            },
+          ]);
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "Ошибка создания заказа"
+        );
+
+        return;
+      }
+
+      alert(
+        "Заказ создан"
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Ошибка соединения"
+      );
     }
-
-    await supabase
-      .from("orders")
-      .insert([
-        {
-          offer_id:item.id,
-
-          part_name:item.brand,
-
-          status:"NEW",
-
-          client_phone:phone,
-
-          track_number:"",
-
-          offer_price:item.price,
-
-          delivery_days:
-            item.delivery_days,
-        },
-      ]);
-
-    alert(
-      "Заказ создан"
-    );
   }
 
   if (loading)
