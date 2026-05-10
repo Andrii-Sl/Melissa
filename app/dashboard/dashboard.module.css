@@ -859,13 +859,6 @@
   padding-bottom:160px;
 }
 
-/* IOS / ANDROID FIX */
-
-main{
-  display:block;
-  width:100%;
-}
-
 /* SECTION SPACING FIX */
 
 .section:last-child{
