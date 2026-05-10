@@ -50,6 +50,11 @@ export default function DashboardPage() {
   const [latestOrders, setLatestOrders] =
     useState<any[]>([]);
 
+  /* GARAGE */
+
+  const [garage, setGarage] =
+    useState<any[]>([]);
+
   /* GET CLIENT PHONE */
 
   function getClientPhone() {
@@ -217,6 +222,10 @@ export default function DashboardPage() {
           .eq(
             "client_phone",
             phone
+          )
+          .eq(
+            "payment_status",
+            "PENDING"
           );
 
       const {
@@ -248,7 +257,7 @@ export default function DashboardPage() {
         ordersTotal || 0
       );
 
-      /* LAST REQUESTS */
+      /* LAST REQUEST */
 
       const {
         data:latestRequestsData,
@@ -266,13 +275,13 @@ export default function DashboardPage() {
               ascending:false,
             }
           )
-          .limit(3);
+          .limit(1);
 
       setLatestRequests(
         latestRequestsData || []
       );
 
-      /* LAST OFFERS */
+      /* LAST OFFER */
 
       const {
         data:latestOffersData,
@@ -284,19 +293,23 @@ export default function DashboardPage() {
             "client_phone",
             phone
           )
+          .eq(
+            "payment_status",
+            "PENDING"
+          )
           .order(
             "created_at",
             {
               ascending:false,
             }
           )
-          .limit(3);
+          .limit(1);
 
       setLatestOffers(
         latestOffersData || []
       );
 
-      /* LAST ORDERS */
+      /* LAST ORDER */
 
       const {
         data:latestOrdersData,
@@ -314,10 +327,34 @@ export default function DashboardPage() {
               ascending:false,
             }
           )
-          .limit(3);
+          .limit(1);
 
       setLatestOrders(
         latestOrdersData || []
+      );
+
+      /* GARAGE */
+
+      const {
+        data:garageData,
+      } =
+        await supabase
+          .from("garage")
+          .select("*")
+          .eq(
+            "client_phone",
+            phone
+          )
+          .order(
+            "created_at",
+            {
+              ascending:false,
+            }
+          )
+          .limit(2);
+
+      setGarage(
+        garageData || []
       );
 
     } catch (error) {
@@ -455,35 +492,37 @@ export default function DashboardPage() {
 
         <div className={styles.cars}>
 
-          <Link
-            href="/dashboard/garage"
-            className={styles.car}
-          >
+          {garage.length === 0 && (
 
-            <strong>
-              Audi A6 C8
-            </strong>
+            <div className={styles.card}>
 
-            <span>
-              WAUZZZF20...
-            </span>
+              <strong>
+                Нет автомобилей
+              </strong>
 
-          </Link>
+            </div>
 
-          <Link
-            href="/dashboard/garage"
-            className={styles.car}
-          >
+          )}
 
-            <strong>
-              BMW G30
-            </strong>
+          {garage.map((item) => (
 
-            <span>
-              WBA5R510...
-            </span>
+            <Link
+              key={item.id}
+              href="/dashboard/garage"
+              className={styles.car}
+            >
 
-          </Link>
+              <strong>
+                {item.car_name || "Автомобиль"}
+              </strong>
+
+              <span>
+                {item.vin || "—"}
+              </span>
+
+            </Link>
+
+          ))}
 
         </div>
 
@@ -642,7 +681,7 @@ export default function DashboardPage() {
         <div className={styles.sectionTop}>
 
           <h2>
-            Заявки
+            Последняя заявка
           </h2>
 
           <Link
@@ -697,7 +736,7 @@ export default function DashboardPage() {
         <div className={styles.sectionTop}>
 
           <h2>
-            Предложения
+            Последнее предложение
           </h2>
 
           <Link
@@ -754,7 +793,7 @@ export default function DashboardPage() {
         <div className={styles.sectionTop}>
 
           <h2>
-            Заказы
+            Последний заказ
           </h2>
 
           <Link
