@@ -36,7 +36,72 @@ export default function DashboardPage() {
     useState(0);
 
   useEffect(() => {
+
     loadProfile();
+
+    const requestsChannel =
+      supabase
+        .channel("dashboard-requests")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"requests",
+          },
+          () => {
+            loadProfile();
+          }
+        )
+        .subscribe();
+
+    const offersChannel =
+      supabase
+        .channel("dashboard-offers")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"offers",
+          },
+          () => {
+            loadProfile();
+          }
+        )
+        .subscribe();
+
+    const ordersChannel =
+      supabase
+        .channel("dashboard-orders")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"orders",
+          },
+          () => {
+            loadProfile();
+          }
+        )
+        .subscribe();
+
+    return () => {
+
+      supabase.removeChannel(
+        requestsChannel
+      );
+
+      supabase.removeChannel(
+        offersChannel
+      );
+
+      supabase.removeChannel(
+        ordersChannel
+      );
+    };
+
   }, []);
 
   async function loadProfile() {
