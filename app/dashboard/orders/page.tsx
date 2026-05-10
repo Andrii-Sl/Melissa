@@ -34,7 +34,10 @@ export default function OrdersPage() {
         .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+
+      supabase.removeChannel(
+        channel
+      );
     };
 
   }, []);
@@ -70,13 +73,19 @@ export default function OrdersPage() {
 
     <main className={styles.page}>
 
-      {/* HEADER */}
+      {/* HERO */}
 
       <section className={styles.hero}>
 
         <h1 className={styles.title}>
           Заказы
         </h1>
+
+        <p className={styles.phone}>
+          Всего:
+          {" "}
+          {orders.length}
+        </p>
 
       </section>
 
@@ -110,18 +119,14 @@ export default function OrdersPage() {
               {item.part_name || "Деталь"}
             </p>
 
+            <p>
+              Track:
+              {" "}
+              {item.track_number || "—"}
+            </p>
+
             <div className={styles.badge}>
               {item.status || "NEW"}
-            </div>
-
-            <div
-              style={{
-                marginTop:"12px",
-                color:"#666",
-                fontSize:"14px",
-              }}
-            >
-              Track: {item.track_number || "—"}
             </div>
 
           </div>
