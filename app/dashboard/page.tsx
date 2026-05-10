@@ -45,6 +45,11 @@ export default function DashboardPage() {
   const [latestOffers, setLatestOffers] =
     useState<any[]>([]);
 
+  /* LAST ORDERS */
+
+  const [latestOrders, setLatestOrders] =
+    useState<any[]>([]);
+
   useEffect(() => {
 
     loadProfile();
@@ -242,6 +247,26 @@ export default function DashboardPage() {
 
     setLatestOffers(
       latestOffersData || []
+    );
+
+    /* LAST ORDERS */
+
+    const {
+      data:latestOrdersData,
+    } =
+      await supabase
+        .from("orders")
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending:false,
+          }
+        )
+        .limit(3);
+
+    setLatestOrders(
+      latestOrdersData || []
     );
 
     setLoading(false);
@@ -650,24 +675,39 @@ export default function DashboardPage() {
 
         </div>
 
-        <Link
-          href="/dashboard/orders"
-          className={styles.card}
-        >
+        {latestOrders.length === 0 && (
 
-          <strong>
-            Заказ #1024
-          </strong>
+          <div className={styles.card}>
 
-          <p>
-            Track: EU4839201
-          </p>
+            <strong>
+              Пока нет заказов
+            </strong>
 
-          <div className={styles.badge}>
-            Отправлен
           </div>
+        )}
 
-        </Link>
+        {latestOrders.map((item) => (
+
+          <Link
+            key={item.id}
+            href="/dashboard/orders"
+            className={styles.card}
+          >
+
+            <strong>
+              Заказ #{item.id}
+            </strong>
+
+            <p>
+              {item.part_name || "Деталь"}
+            </p>
+
+            <div className={styles.badge}>
+              {item.status || "NEW"}
+            </div>
+
+          </Link>
+        ))}
 
       </section>
 
