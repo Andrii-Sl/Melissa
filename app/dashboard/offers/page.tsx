@@ -121,12 +121,19 @@ export default function OffersPage() {
       .insert([
         {
           offer_id:item.id,
+
           part_name:item.brand,
+
           status:"NEW",
 
           client_phone:phone,
 
           track_number:"",
+
+          offer_price:item.price,
+
+          delivery_days:
+            item.delivery_days,
         },
       ]);
 
