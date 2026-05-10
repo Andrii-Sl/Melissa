@@ -45,11 +45,39 @@ export default function OrdersPage() {
   async function loadOrders() {
 
     const {
+      data: {
+        session,
+      },
+    } =
+      await supabase.auth.getSession();
+
+    let phone =
+      session?.user?.phone;
+
+    /* TEST CLIENT */
+
+    if (!phone) {
+
+      const role =
+        document.cookie.includes(
+          "role=client"
+        );
+
+      if (role)
+        phone =
+          "+48519000000";
+    }
+
+    const {
       data,
     } =
       await supabase
         .from("orders")
         .select("*")
+        .eq(
+          "client_phone",
+          phone
+        )
         .order(
           "created_at",
           {
