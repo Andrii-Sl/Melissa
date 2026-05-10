@@ -40,6 +40,11 @@ export default function DashboardPage() {
   const [latestRequests, setLatestRequests] =
     useState<any[]>([]);
 
+  /* LAST OFFERS */
+
+  const [latestOffers, setLatestOffers] =
+    useState<any[]>([]);
+
   useEffect(() => {
 
     loadProfile();
@@ -217,6 +222,26 @@ export default function DashboardPage() {
 
     setLatestRequests(
       latest || []
+    );
+
+    /* LAST OFFERS */
+
+    const {
+      data:latestOffersData,
+    } =
+      await supabase
+        .from("offers")
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending:false,
+          }
+        )
+        .limit(3);
+
+    setLatestOffers(
+      latestOffersData || []
     );
 
     setLoading(false);
@@ -570,24 +595,39 @@ export default function DashboardPage() {
 
         </div>
 
-        <Link
-          href="/dashboard/offers"
-          className={styles.card}
-        >
+        {latestOffers.length === 0 && (
 
-          <strong>
-            BMW Original
-          </strong>
+          <div className={styles.card}>
 
-          <div className={styles.price}>
-            €120
+            <strong>
+              Пока нет предложений
+            </strong>
+
           </div>
+        )}
 
-          <div className={styles.badge}>
-            В наличии
-          </div>
+        {latestOffers.map((item) => (
 
-        </Link>
+          <Link
+            key={item.id}
+            href="/dashboard/offers"
+            className={styles.card}
+          >
+
+            <strong>
+              {item.brand || "Предложение"}
+            </strong>
+
+            <div className={styles.price}>
+              € {item.price || 0}
+            </div>
+
+            <div className={styles.badge}>
+              {item.delivery_days || 0} дн.
+            </div>
+
+          </Link>
+        ))}
 
       </section>
 
