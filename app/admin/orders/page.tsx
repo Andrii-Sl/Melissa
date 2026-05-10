@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "../admin.module.css";
@@ -19,7 +18,7 @@ export default function AdminOrdersPage() {
 
     const channel =
       supabase
-        .channel("live-admin-orders")
+        .channel("admin-orders")
         .on(
           "postgres_changes",
           {
@@ -34,7 +33,10 @@ export default function AdminOrdersPage() {
         .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+
+      supabase.removeChannel(
+        channel
+      );
     };
 
   }, []);
@@ -59,6 +61,21 @@ export default function AdminOrdersPage() {
     setLoading(false);
   }
 
+  async function updateStatus(
+    id:number,
+    status:string
+  ) {
+
+    await supabase
+      .from("orders")
+      .update({
+        status,
+      })
+      .eq("id", id);
+
+    loadOrders();
+  }
+
   if (loading)
     return (
       <div className={styles.loading}>
@@ -81,17 +98,10 @@ export default function AdminOrdersPage() {
           </h1>
 
           <p className={styles.subtitle}>
-            Все заказы клиентов
+            Панель администратора
           </p>
 
         </div>
-
-        <Link
-          href="/admin"
-          className={styles.profileBtn}
-        >
-          ←
-        </Link>
 
       </header>
 
@@ -103,9 +113,9 @@ export default function AdminOrdersPage() {
 
           <div className={styles.requestCard}>
 
-            <p>
-              Заказов пока нет
-            </p>
+            <strong>
+              Пока нет заказов
+            </strong>
 
           </div>
         )}
@@ -123,7 +133,7 @@ export default function AdminOrdersPage() {
                 Заказ #{item.id}
               </strong>
 
-              <span className={styles.badge}>
+              <span className={styles.badgeBlue}>
                 {item.status || "NEW"}
               </span>
 
@@ -134,79 +144,62 @@ export default function AdminOrdersPage() {
             </p>
 
             <small>
-              Track: {item.track_number || "—"}
+              Offer ID:
+              {" "}
+              {item.offer_id || "—"}
             </small>
+
+            <div
+              style={{
+                display:"flex",
+                gap:"10px",
+                marginTop:"16px",
+                flexWrap:"wrap",
+              }}
+            >
+
+              <button
+                className={styles.createBtn}
+                onClick={() =>
+                  updateStatus(
+                    item.id,
+                    "PROCESS"
+                  )
+                }
+              >
+                PROCESS
+              </button>
+
+              <button
+                className={styles.createBtn}
+                onClick={() =>
+                  updateStatus(
+                    item.id,
+                    "SHIPPED"
+                  )
+                }
+              >
+                SHIPPED
+              </button>
+
+              <button
+                className={styles.createBtn}
+                onClick={() =>
+                  updateStatus(
+                    item.id,
+                    "DELIVERED"
+                  )
+                }
+              >
+                DELIVERED
+              </button>
+
+            </div>
 
           </div>
         ))}
 
       </section>
-
-      {/* BOTTOM NAV */}
-
-      <nav className={styles.bottomNav}>
-
-        <Link
-          href="/admin"
-          className={styles.navItem}
-        >
-
-          <div className={styles.navIcon}>
-            🏠
-          </div>
-
-          <span>
-            Главная
-          </span>
-
-        </Link>
-
-        <Link
-          href="/admin/requests"
-          className={styles.navItem}
-        >
-
-          <div className={styles.navIcon}>
-            📄
-          </div>
-
-          <span>
-            Заявки
-          </span>
-
-        </Link>
-
-        <Link
-          href="/admin/offers"
-          className={styles.navItem}
-        >
-
-          <div className={styles.navIcon}>
-            💶
-          </div>
-
-          <span>
-            Предложения
-          </span>
-
-        </Link>
-
-        <Link
-          href="/admin/orders"
-          className={`${styles.navItem} ${styles.navItemActive}`}
-        >
-
-          <div className={styles.navIcon}>
-            📦
-          </div>
-
-          <span>
-            Заказы
-          </span>
-
-        </Link>
-
-      </nav>
 
     </main>
   );
