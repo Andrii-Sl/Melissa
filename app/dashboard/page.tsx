@@ -121,212 +121,260 @@ export default function DashboardPage() {
 
   async function loadProfile() {
 
-    const {
-      data: {
-        session,
-      },
-    } =
-      await supabase.auth.getSession();
+    try {
 
-    let phone =
-      session?.user?.phone;
+      const {
+        data: {
+          session,
+        },
+      } =
+        await supabase.auth.getSession();
 
-    /* TEST CLIENT */
+      let phone =
+        session?.user?.phone;
 
-    if (!phone) {
+      /* TEST CLIENT */
 
-      const role =
-        document.cookie.includes(
-          "role=client"
-        );
+      if (!phone) {
 
-      if (role)
-        phone =
-          "+48519000000";
+        const role =
+          document.cookie.includes(
+            "role=client"
+          );
+
+        if (role)
+          phone =
+            "+48519000000";
+      }
+
+      if (!phone) {
+        setLoading(false);
+        return;
+      }
+
+      /* PROFILE */
+
+      const {
+        data:profileData,
+      } =
+        await supabase
+          .from("profiles")
+          .select("*")
+          .eq("phone", phone)
+          .maybeSingle();
+
+      setProfile(profileData);
+
+      /* COUNTS */
+
+      const {
+        count:requestsTotal,
+      } =
+        await supabase
+          .from("requests")
+          .select(
+            "*",
+            {
+              count:"exact",
+              head:true,
+            }
+          )
+          .eq(
+            "client_phone",
+            phone
+          );
+
+      const {
+        count:offersTotal,
+      } =
+        await supabase
+          .from("offers")
+          .select(
+            "*",
+            {
+              count:"exact",
+              head:true,
+            }
+          )
+          .eq(
+            "client_phone",
+            phone
+          );
+
+      const {
+        count:ordersTotal,
+      } =
+        await supabase
+          .from("orders")
+          .select(
+            "*",
+            {
+              count:"exact",
+              head:true,
+            }
+          )
+          .eq(
+            "client_phone",
+            phone
+          );
+
+      setRequestsCount(
+        requestsTotal || 0
+      );
+
+      setOffersCount(
+        offersTotal || 0
+      );
+
+      setOrdersCount(
+        ordersTotal || 0
+      );
+
+      /* LAST REQUESTS */
+
+      const {
+        data:latestRequestsData,
+      } =
+        await supabase
+          .from("requests")
+          .select("*")
+          .eq(
+            "client_phone",
+            phone
+          )
+          .order(
+            "created_at",
+            {
+              ascending:false,
+            }
+          )
+          .limit(3);
+
+      setLatestRequests(
+        latestRequestsData || []
+      );
+
+      /* LAST OFFERS */
+
+      const {
+        data:latestOffersData,
+      } =
+        await supabase
+          .from("offers")
+          .select("*")
+          .eq(
+            "client_phone",
+            phone
+          )
+          .order(
+            "created_at",
+            {
+              ascending:false,
+            }
+          )
+          .limit(3);
+
+      setLatestOffers(
+        latestOffersData || []
+      );
+
+      /* LAST ORDERS */
+
+      const {
+        data:latestOrdersData,
+      } =
+        await supabase
+          .from("orders")
+          .select("*")
+          .eq(
+            "client_phone",
+            phone
+          )
+          .order(
+            "created_at",
+            {
+              ascending:false,
+            }
+          )
+          .limit(3);
+
+      setLatestOrders(
+        latestOrdersData || []
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+    } finally {
+
+      setLoading(false);
     }
-
-    const {
-      data,
-    } =
-      await supabase
-        .from("profiles")
-        .select("*")
-        .eq("phone", phone)
-        .maybeSingle();
-
-    setProfile(data);
-
-    /* COUNTS */
-
-    const {
-      count:requestsTotal,
-    } =
-      await supabase
-        .from("requests")
-        .select(
-          "*",
-          {
-            count:"exact",
-            head:true,
-          }
-        )
-        .eq(
-          "client_phone",
-          phone
-        );
-
-    const {
-      count:offersTotal,
-    } =
-      await supabase
-        .from("offers")
-        .select(
-          "*",
-          {
-            count:"exact",
-            head:true,
-          }
-        )
-        .eq(
-          "client_phone",
-          phone
-        );
-
-    const {
-      count:ordersTotal,
-    } =
-      await supabase
-        .from("orders")
-        .select(
-          "*",
-          {
-            count:"exact",
-            head:true,
-          }
-        )
-        .eq(
-          "client_phone",
-          phone
-        );
-
-    setRequestsCount(
-      requestsTotal || 0
-    );
-
-    setOffersCount(
-      offersTotal || 0
-    );
-
-    setOrdersCount(
-      ordersTotal || 0
-    );
-
-    /* LAST REQUESTS */
-
-    const {
-      data:latest,
-    } =
-      await supabase
-        .from("requests")
-        .select("*")
-        .eq(
-          "client_phone",
-          phone
-        )
-        .order(
-          "created_at",
-          {
-            ascending:false,
-          }
-        )
-        .limit(3);
-
-    setLatestRequests(
-      latest || []
-    );
-
-    /* LAST OFFERS */
-
-    const {
-      data:latestOffersData,
-    } =
-      await supabase
-        .from("offers")
-        .select("*")
-        .eq(
-          "client_phone",
-          phone
-        )
-        .order(
-          "created_at",
-          {
-            ascending:false,
-          }
-        )
-        .limit(3);
-
-    setLatestOffers(
-      latestOffersData || []
-    );
-
-    /* LAST ORDERS */
-
-    const {
-      data:latestOrdersData,
-    } =
-      await supabase
-        .from("orders")
-        .select("*")
-        .eq(
-          "client_phone",
-          phone
-        )
-        .order(
-          "created_at",
-          {
-            ascending:false,
-          }
-        )
-        .limit(3);
-
-    setLatestOrders(
-      latestOrdersData || []
-    );
-
-    setLoading(false);
   }
 
   /* CREATE REQUEST */
 
   async function createRequest() {
 
-    if (!vin || !partName)
+    if (!vin || !partName) {
+
+      alert(
+        "Заполните обязательные поля"
+      );
+
       return;
+    }
 
-    await supabase
-      .from("requests")
-      .insert([
-        {
-          vin,
-          car,
-          part_name:partName,
-          status:"NEW",
+    try {
 
-          client_phone:
-            profile?.phone ||
-            "+48519000000",
-        },
-      ]);
+      const phone =
+        profile?.phone ||
+        "+48519000000";
 
-    setVin("");
-    setCar("");
-    setPartName("");
+      const {
+        error,
+      } =
+        await supabase
+          .from("requests")
+          .insert([
+            {
+              vin,
+              car,
+              part_name:partName,
+              status:"NEW",
+              client_phone:phone,
+            },
+          ]);
 
-    loadProfile();
+      if (error) {
 
-    alert(
-      "Заявка создана"
-    );
+        console.error(error);
+
+        alert(
+          "Ошибка создания заявки"
+        );
+
+        return;
+      }
+
+      setVin("");
+      setCar("");
+      setPartName("");
+
+      await loadProfile();
+
+      alert(
+        "Заявка создана"
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Ошибка соединения"
+      );
+    }
   }
 
   if (loading)
@@ -351,8 +399,10 @@ export default function DashboardPage() {
         </h1>
 
         <p className={styles.phone}>
-          {profile?.phone ||
-            "+48519000000"}
+          {
+            profile?.phone ||
+            "+48519000000"
+          }
         </p>
 
       </section>
@@ -533,7 +583,9 @@ export default function DashboardPage() {
             placeholder="VIN"
             value={vin}
             onChange={(e) =>
-              setVin(e.target.value)
+              setVin(
+                e.target.value
+              )
             }
           />
 
@@ -542,7 +594,9 @@ export default function DashboardPage() {
             placeholder="Автомобиль"
             value={car}
             onChange={(e) =>
-              setCar(e.target.value)
+              setCar(
+                e.target.value
+              )
             }
           />
 
@@ -551,7 +605,9 @@ export default function DashboardPage() {
             placeholder="Название детали"
             value={partName}
             onChange={(e) =>
-              setPartName(e.target.value)
+              setPartName(
+                e.target.value
+              )
             }
           />
 
@@ -609,7 +665,9 @@ export default function DashboardPage() {
             </strong>
 
             <p>
-              VIN: {item.vin || "—"}
+              VIN:
+              {" "}
+              {item.vin || "—"}
             </p>
 
             <div className={styles.badge}>
@@ -668,7 +726,9 @@ export default function DashboardPage() {
             </div>
 
             <div className={styles.badge}>
-              {item.delivery_days || 0} дн.
+              {item.delivery_days || 0}
+              {" "}
+              дн.
             </div>
 
           </Link>
@@ -733,7 +793,7 @@ export default function DashboardPage() {
 
       {/* PROFILE */}
 
-      <section className={styles.section}>
+      <section className={styles.profile}>
 
         <div className={styles.sectionTop}>
 
@@ -794,6 +854,102 @@ export default function DashboardPage() {
         </Link>
 
       </section>
+
+      {/* BOTTOM NAV */}
+
+      <nav className={styles.bottomNav}>
+
+        <Link
+          href="/dashboard"
+          className={`${styles.navItem} ${styles.navItemActive}`}
+        >
+
+          <div className={styles.navIcon}>
+            🏠
+          </div>
+
+          <span>
+            Главная
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/requests"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            📄
+          </div>
+
+          <span>
+            Заявки
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/offers"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            💶
+          </div>
+
+          <span>
+            Предложения
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/orders"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            📦
+          </div>
+
+          <span>
+            Заказы
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/garage"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            🚗
+          </div>
+
+          <span>
+            Гараж
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/profile"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            👤
+          </div>
+
+          <span>
+            Профиль
+          </span>
+
+        </Link>
+
+      </nav>
 
     </main>
   );
