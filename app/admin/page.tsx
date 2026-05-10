@@ -16,7 +16,7 @@ export default function AdminPage() {
         <div>
 
           <h1 className={styles.title}>
-            Admin Dashboard
+            КАБИНЕТ АДМИНА
           </h1>
 
           <p className={styles.subtitle}>
