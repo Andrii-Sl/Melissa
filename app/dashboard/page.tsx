@@ -50,6 +50,23 @@ export default function DashboardPage() {
   const [latestOrders, setLatestOrders] =
     useState<any[]>([]);
 
+  /* GET CLIENT PHONE */
+
+  function getClientPhone() {
+
+    const cookiePhone =
+      document.cookie
+        .split("; ")
+        .find((row) =>
+          row.startsWith(
+            "client_phone="
+          )
+        )
+        ?.split("=")[1];
+
+    return cookiePhone || "";
+  }
+
   useEffect(() => {
 
     loadProfile();
@@ -123,32 +140,28 @@ export default function DashboardPage() {
 
     try {
 
-      const {
-        data: {
-          session,
-        },
-      } =
-        await supabase.auth.getSession();
-
       let phone =
-        session?.user?.phone;
+        getClientPhone();
 
-      /* TEST CLIENT */
+      /* REAL SUPABASE SESSION */
 
       if (!phone) {
 
-        const role =
-          document.cookie.includes(
-            "role=client"
-          );
+        const {
+          data:{
+            session,
+          },
+        } =
+          await supabase.auth.getSession();
 
-        if (role)
-          phone =
-            "+48519000000";
+        phone =
+          session?.user?.phone || "";
       }
 
       if (!phone) {
+
         setLoading(false);
+
         return;
       }
 
@@ -328,8 +341,16 @@ export default function DashboardPage() {
     try {
 
       const phone =
-        profile?.phone ||
-        "+48519000000";
+        getClientPhone();
+
+      if (!phone) {
+
+        alert(
+          "Требуется авторизация"
+        );
+
+        return;
+      }
 
       const {
         error,
@@ -399,10 +420,7 @@ export default function DashboardPage() {
         </h1>
 
         <p className={styles.phone}>
-          {
-            profile?.phone ||
-            "+48519000000"
-          }
+          {profile?.phone || ""}
         </p>
 
       </section>
@@ -621,335 +639,6 @@ export default function DashboardPage() {
         </div>
 
       </section>
-
-      {/* REQUESTS */}
-
-      <section className={styles.section}>
-
-        <div className={styles.sectionTop}>
-
-          <h2>
-            Заявки
-          </h2>
-
-          <Link
-            href="/dashboard/requests"
-            className={styles.more}
-          >
-            Все
-          </Link>
-
-        </div>
-
-        {latestRequests.length === 0 && (
-
-          <div className={styles.card}>
-
-            <strong>
-              Пока нет заявок
-            </strong>
-
-          </div>
-        )}
-
-        {latestRequests.map((item) => (
-
-          <Link
-            key={item.id}
-            href="/dashboard/requests"
-            className={styles.card}
-          >
-
-            <strong>
-              {item.part_name || "Деталь"}
-            </strong>
-
-            <p>
-              VIN:
-              {" "}
-              {item.vin || "—"}
-            </p>
-
-            <div className={styles.badge}>
-              {item.status || "NEW"}
-            </div>
-
-          </Link>
-        ))}
-
-      </section>
-
-      {/* OFFERS */}
-
-      <section className={styles.section}>
-
-        <div className={styles.sectionTop}>
-
-          <h2>
-            Предложения
-          </h2>
-
-          <Link
-            href="/dashboard/offers"
-            className={styles.more}
-          >
-            Все
-          </Link>
-
-        </div>
-
-        {latestOffers.length === 0 && (
-
-          <div className={styles.card}>
-
-            <strong>
-              Пока нет предложений
-            </strong>
-
-          </div>
-        )}
-
-        {latestOffers.map((item) => (
-
-          <Link
-            key={item.id}
-            href="/dashboard/offers"
-            className={styles.card}
-          >
-
-            <strong>
-              {item.brand || "Предложение"}
-            </strong>
-
-            <div className={styles.price}>
-              € {item.price || 0}
-            </div>
-
-            <div className={styles.badge}>
-              {item.delivery_days || 0}
-              {" "}
-              дн.
-            </div>
-
-          </Link>
-        ))}
-
-      </section>
-
-      {/* ORDERS */}
-
-      <section className={styles.section}>
-
-        <div className={styles.sectionTop}>
-
-          <h2>
-            Заказы
-          </h2>
-
-          <Link
-            href="/dashboard/orders"
-            className={styles.more}
-          >
-            Все
-          </Link>
-
-        </div>
-
-        {latestOrders.length === 0 && (
-
-          <div className={styles.card}>
-
-            <strong>
-              Пока нет заказов
-            </strong>
-
-          </div>
-        )}
-
-        {latestOrders.map((item) => (
-
-          <Link
-            key={item.id}
-            href="/dashboard/orders"
-            className={styles.card}
-          >
-
-            <strong>
-              Заказ #{item.id}
-            </strong>
-
-            <p>
-              {item.part_name || "Деталь"}
-            </p>
-
-            <div className={styles.badge}>
-              {item.status || "NEW"}
-            </div>
-
-          </Link>
-        ))}
-
-      </section>
-
-      {/* PROFILE */}
-
-      <section className={styles.profile}>
-
-        <div className={styles.sectionTop}>
-
-          <h2>
-            Профиль
-          </h2>
-
-          <Link
-            href="/dashboard/profile"
-            className={styles.more}
-          >
-            Открыть
-          </Link>
-
-        </div>
-
-        <Link
-          href="/dashboard/profile"
-          className={styles.profileCard}
-        >
-
-          <div className={styles.profileItem}>
-
-            <strong>
-              Имя
-            </strong>
-
-            <p>
-              {profile?.full_name || ""}
-            </p>
-
-          </div>
-
-          <div className={styles.profileItem}>
-
-            <strong>
-              Телефон
-            </strong>
-
-            <p>
-              {profile?.phone || ""}
-            </p>
-
-          </div>
-
-          <div className={styles.profileItem}>
-
-            <strong>
-              Адрес доставки
-            </strong>
-
-            <p>
-              Slovenia, Ljubljana
-            </p>
-
-          </div>
-
-        </Link>
-
-      </section>
-
-      {/* BOTTOM NAV */}
-
-      <nav className={styles.bottomNav}>
-
-        <Link
-          href="/dashboard"
-          className={`${styles.navItem} ${styles.navItemActive}`}
-        >
-
-          <div className={styles.navIcon}>
-            🏠
-          </div>
-
-          <span>
-            Главная
-          </span>
-
-        </Link>
-
-        <Link
-          href="/dashboard/requests"
-          className={styles.navItem}
-        >
-
-          <div className={styles.navIcon}>
-            📄
-          </div>
-
-          <span>
-            Заявки
-          </span>
-
-        </Link>
-
-        <Link
-          href="/dashboard/offers"
-          className={styles.navItem}
-        >
-
-          <div className={styles.navIcon}>
-            💶
-          </div>
-
-          <span>
-            Предложения
-          </span>
-
-        </Link>
-
-        <Link
-          href="/dashboard/orders"
-          className={styles.navItem}
-        >
-
-          <div className={styles.navIcon}>
-            📦
-          </div>
-
-          <span>
-            Заказы
-          </span>
-
-        </Link>
-
-        <Link
-          href="/dashboard/garage"
-          className={styles.navItem}
-        >
-
-          <div className={styles.navIcon}>
-            🚗
-          </div>
-
-          <span>
-            Гараж
-          </span>
-
-        </Link>
-
-        <Link
-          href="/dashboard/profile"
-          className={styles.navItem}
-        >
-
-          <div className={styles.navIcon}>
-            👤
-          </div>
-
-          <span>
-            Профиль
-          </span>
-
-        </Link>
-
-      </nav>
 
     </main>
   );
