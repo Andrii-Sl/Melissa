@@ -23,7 +23,78 @@ export default function AdminPage() {
     useState(true);
 
   useEffect(() => {
+
     loadData();
+
+    /* LIVE REQUESTS */
+
+    const requestsChannel =
+      supabase
+        .channel("admin-requests")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"requests",
+          },
+          () => {
+            loadData();
+          }
+        )
+        .subscribe();
+
+    /* LIVE OFFERS */
+
+    const offersChannel =
+      supabase
+        .channel("admin-offers")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"offers",
+          },
+          () => {
+            loadData();
+          }
+        )
+        .subscribe();
+
+    /* LIVE ORDERS */
+
+    const ordersChannel =
+      supabase
+        .channel("admin-orders")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"orders",
+          },
+          () => {
+            loadData();
+          }
+        )
+        .subscribe();
+
+    return () => {
+
+      supabase.removeChannel(
+        requestsChannel
+      );
+
+      supabase.removeChannel(
+        offersChannel
+      );
+
+      supabase.removeChannel(
+        ordersChannel
+      );
+    };
+
   }, []);
 
   async function loadData() {
