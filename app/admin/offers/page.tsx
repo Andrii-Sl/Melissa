@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "../admin.module.css";
@@ -10,16 +9,31 @@ export default function AdminOffersPage() {
   const [offers, setOffers] =
     useState<any[]>([]);
 
+  const [requests, setRequests] =
+    useState<any[]>([]);
+
   const [loading, setLoading] =
     useState(true);
 
+  const [requestId, setRequestId] =
+    useState("");
+
+  const [brand, setBrand] =
+    useState("");
+
+  const [price, setPrice] =
+    useState("");
+
+  const [delivery, setDelivery] =
+    useState("");
+
   useEffect(() => {
 
-    loadOffers();
+    loadData();
 
     const channel =
       supabase
-        .channel("live-admin-offers")
+        .channel("admin-offers")
         .on(
           "postgres_changes",
           {
@@ -28,21 +42,23 @@ export default function AdminOffersPage() {
             table:"offers",
           },
           () => {
-            loadOffers();
+            loadData();
           }
         )
         .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(
+        channel
+      );
     };
 
   }, []);
 
-  async function loadOffers() {
+  async function loadData() {
 
     const {
-      data,
+      data:offersData,
     } =
       await supabase
         .from("offers")
@@ -54,9 +70,58 @@ export default function AdminOffersPage() {
           }
         );
 
-    setOffers(data || []);
+    const {
+      data:requestsData,
+    } =
+      await supabase
+        .from("requests")
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending:false,
+          }
+        );
+
+    setOffers(
+      offersData || []
+    );
+
+    setRequests(
+      requestsData || []
+    );
 
     setLoading(false);
+  }
+
+  async function createOffer() {
+
+    if (
+      !requestId ||
+      !brand ||
+      !price
+    )
+      return;
+
+    await supabase
+      .from("offers")
+      .insert([
+        {
+          request_id:requestId,
+          brand,
+          price,
+          delivery_days:delivery,
+        },
+      ]);
+
+    setBrand("");
+    setPrice("");
+    setDelivery("");
+    setRequestId("");
+
+    alert(
+      "Предложение создано"
+    );
   }
 
   if (loading)
@@ -81,34 +146,106 @@ export default function AdminOffersPage() {
           </h1>
 
           <p className={styles.subtitle}>
-            Все предложения поставщиков
+            Панель администратора
           </p>
 
         </div>
 
-        <Link
-          href="/admin"
-          className={styles.profileBtn}
-        >
-          ←
-        </Link>
-
       </header>
+
+      {/* CREATE OFFER */}
+
+      <section className={styles.section}>
+
+        <div className={styles.requestCard}>
+
+          <h2>
+            Создать предложение
+          </h2>
+
+          <select
+            value={requestId}
+            onChange={(e) =>
+              setRequestId(
+                e.target.value
+              )
+            }
+            className={styles.input}
+          >
+
+            <option value="">
+              Выберите заявку
+            </option>
+
+            {requests.map((item) => (
+
+              <option
+                key={item.id}
+                value={item.id}
+              >
+                #{item.id}
+                {" — "}
+                {item.part_name}
+              </option>
+            ))}
+
+          </select>
+
+          <input
+            className={styles.input}
+            placeholder="Бренд"
+            value={brand}
+            onChange={(e) =>
+              setBrand(
+                e.target.value
+              )
+            }
+          />
+
+          <input
+            className={styles.input}
+            placeholder="Цена"
+            value={price}
+            onChange={(e) =>
+              setPrice(
+                e.target.value
+              )
+            }
+          />
+
+          <input
+            className={styles.input}
+            placeholder="Доставка (дни)"
+            value={delivery}
+            onChange={(e) =>
+              setDelivery(
+                e.target.value
+              )
+            }
+          />
+
+          <button
+            className={styles.createBtn}
+            onClick={createOffer}
+          >
+            + Создать предложение
+          </button>
+
+        </div>
+
+      </section>
 
       {/* OFFERS */}
 
       <section className={styles.section}>
 
-        {offers.length === 0 && (
+        <div className={styles.sectionTop}>
 
-          <div className={styles.requestCard}>
+          <h2>
+            Все предложения
+          </h2>
 
-            <p>
-              Предложений пока нет
-            </p>
-
-          </div>
-        )}
+        </div>
 
         {offers.map((item) => (
 
@@ -120,93 +257,33 @@ export default function AdminOffersPage() {
             <div className={styles.requestTop}>
 
               <strong>
-                {item.brand || "Предложение"}
+                {item.brand}
               </strong>
 
               <span className={styles.badgeBlue}>
-                € {item.price || 0}
+                € {item.price}
               </span>
 
             </div>
 
             <p>
-              {item.part_name || "Деталь"}
+              Доставка:
+              {" "}
+              {item.delivery_days}
+              {" "}
+              дн.
             </p>
 
             <small>
-              Срок: {item.delivery_days || 0} дн.
+              Request ID:
+              {" "}
+              {item.request_id}
             </small>
 
           </div>
         ))}
 
       </section>
-
-      {/* BOTTOM NAV */}
-
-      <nav className={styles.bottomNav}>
-
-        <Link
-          href="/admin"
-          className={styles.navItem}
-        >
-
-          <div className={styles.navIcon}>
-            🏠
-          </div>
-
-          <span>
-            Главная
-          </span>
-
-        </Link>
-
-        <Link
-          href="/admin/requests"
-          className={styles.navItem}
-        >
-
-          <div className={styles.navIcon}>
-            📄
-          </div>
-
-          <span>
-            Заявки
-          </span>
-
-        </Link>
-
-        <Link
-          href="/admin/offers"
-          className={`${styles.navItem} ${styles.navItemActive}`}
-        >
-
-          <div className={styles.navIcon}>
-            💶
-          </div>
-
-          <span>
-            Предложения
-          </span>
-
-        </Link>
-
-        <Link
-          href="/admin/orders"
-          className={styles.navItem}
-        >
-
-          <div className={styles.navIcon}>
-            📦
-          </div>
-
-          <span>
-            Заказы
-          </span>
-
-        </Link>
-
-      </nav>
 
     </main>
   );
