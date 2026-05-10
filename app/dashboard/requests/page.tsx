@@ -44,50 +44,98 @@ export default function RequestsPage() {
 
   async function loadRequests() {
 
-    const {
-      data: {
-        session,
-      },
-    } =
-      await supabase.auth.getSession();
+    try {
 
-    let phone =
-      session?.user?.phone;
+      const {
+        data: {
+          session,
+        },
+      } =
+        await supabase.auth.getSession();
 
-    /* TEST CLIENT */
+      let phone =
+        session?.user?.phone;
 
-    if (!phone) {
+      /* COOKIE AUTOLOGIN */
 
-      const role =
-        document.cookie.includes(
-          "role=client"
-        );
+      if (!phone) {
 
-      if (role)
-        phone =
-          "+48519000000";
+        const phoneCookie =
+          document.cookie
+            .split("; ")
+            .find((row) =>
+              row.startsWith(
+                "client_phone="
+              )
+            )
+            ?.split("=")[1];
+
+        if (phoneCookie)
+          phone = phoneCookie;
+      }
+
+      /* TEST CLIENT */
+
+      if (!phone) {
+
+        const role =
+          document.cookie.includes(
+            "role=client"
+          );
+
+        if (role)
+          phone =
+            "+48519000000";
+      }
+
+      if (!phone) {
+
+        setRequests([]);
+
+        setLoading(false);
+
+        return;
+      }
+
+      const {
+        data,
+        error,
+      } =
+        await supabase
+          .from("requests")
+          .select("*")
+          .eq(
+            "client_phone",
+            phone
+          )
+          .order(
+            "created_at",
+            {
+              ascending:false,
+            }
+          );
+
+      if (error) {
+
+        console.error(error);
+
+        setRequests([]);
+
+      } else {
+
+        setRequests(data || []);
+      }
+
+    } catch (error) {
+
+      console.error(error);
+
+      setRequests([]);
+
+    } finally {
+
+      setLoading(false);
     }
-
-    const {
-      data,
-    } =
-      await supabase
-        .from("requests")
-        .select("*")
-        .eq(
-          "client_phone",
-          phone
-        )
-        .order(
-          "created_at",
-          {
-            ascending:false,
-          }
-        );
-
-    setRequests(data || []);
-
-    setLoading(false);
   }
 
   async function deleteRequest(
@@ -102,18 +150,43 @@ export default function RequestsPage() {
     if (!confirmDelete)
       return;
 
-    await supabase
-      .from("requests")
-      .delete()
-      .eq("id", id);
+    try {
 
-    setRequests(
-      (prev) =>
-        prev.filter(
-          (item) =>
-            item.id !== id
-        )
-    );
+      const {
+        error,
+      } =
+        await supabase
+          .from("requests")
+          .delete()
+          .eq("id", id);
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "Ошибка удаления"
+        );
+
+        return;
+      }
+
+      setRequests(
+        (prev) =>
+          prev.filter(
+            (item) =>
+              item.id !== id
+          )
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Ошибка соединения"
+      );
+    }
   }
 
   if (loading)
