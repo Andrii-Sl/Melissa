@@ -311,3 +311,17 @@
   color:#666;
   font-size:16px;
 }
+
+/* NAV ICON */
+
+.navIcon{
+  font-size:22px;
+}
+
+.navItemActive{
+  color:#d10000;
+}
+
+.navItemActive .navIcon{
+  transform:translateY(-2px);
+}
