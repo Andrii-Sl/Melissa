@@ -35,17 +35,13 @@ export default function DashboardPage() {
   const [ordersCount, setOrdersCount] =
     useState(0);
 
-  /* LAST REQUESTS */
+  /* LAST DATA */
 
   const [latestRequests, setLatestRequests] =
     useState<any[]>([]);
 
-  /* LAST OFFERS */
-
   const [latestOffers, setLatestOffers] =
     useState<any[]>([]);
-
-  /* LAST ORDERS */
 
   const [latestOrders, setLatestOrders] =
     useState<any[]>([]);
@@ -124,6 +120,22 @@ export default function DashboardPage() {
         )
         .subscribe();
 
+    const garageChannel =
+      supabase
+        .channel("dashboard-garage")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"garage",
+          },
+          () => {
+            loadProfile();
+          }
+        )
+        .subscribe();
+
     return () => {
 
       supabase.removeChannel(
@@ -137,6 +149,10 @@ export default function DashboardPage() {
       supabase.removeChannel(
         ordersChannel
       );
+
+      supabase.removeChannel(
+        garageChannel
+      );
     };
 
   }, []);
@@ -147,8 +163,6 @@ export default function DashboardPage() {
 
       let phone =
         getClientPhone();
-
-      /* REAL SUPABASE SESSION */
 
       if (!phone) {
 
@@ -174,17 +188,12 @@ export default function DashboardPage() {
 
       const {
         data:profileData,
-        error:profileError,
       } =
         await supabase
           .from("profiles")
           .select("*")
           .eq("phone", phone)
           .maybeSingle();
-
-      if (profileError) {
-        console.error(profileError);
-      }
 
       setProfile(profileData);
 
@@ -205,6 +214,10 @@ export default function DashboardPage() {
           .eq(
             "client_phone",
             phone
+          )
+          .eq(
+            "status",
+            "NEW"
           );
 
       const {
@@ -224,8 +237,8 @@ export default function DashboardPage() {
             phone
           )
           .eq(
-            "payment_status",
-            "PENDING"
+            "status",
+            "ACTIVE"
           );
 
       const {
@@ -269,6 +282,10 @@ export default function DashboardPage() {
             "client_phone",
             phone
           )
+          .eq(
+            "status",
+            "NEW"
+          )
           .order(
             "created_at",
             {
@@ -294,8 +311,8 @@ export default function DashboardPage() {
             phone
           )
           .eq(
-            "payment_status",
-            "PENDING"
+            "status",
+            "ACTIVE"
           )
           .order(
             "created_at",
@@ -365,6 +382,21 @@ export default function DashboardPage() {
 
       setLoading(false);
     }
+  }
+
+  /* SELECT GARAGE CAR */
+
+  function selectGarageCar(
+    item:any
+  ) {
+
+    setCar(
+      item.car_name || ""
+    );
+
+    setVin(
+      item.vin || ""
+    );
   }
 
   /* CREATE REQUEST */
@@ -538,11 +570,13 @@ export default function DashboardPage() {
         >
 
           <div className={styles.statTop}>
+
             <div
               className={`${styles.statIcon} ${styles.red}`}
             >
               📄
             </div>
+
           </div>
 
           <div className={styles.statValue}>
@@ -561,11 +595,13 @@ export default function DashboardPage() {
         >
 
           <div className={styles.statTop}>
+
             <div
               className={`${styles.statIcon} ${styles.blue}`}
             >
               💶
             </div>
+
           </div>
 
           <div className={styles.statValue}>
@@ -584,11 +620,13 @@ export default function DashboardPage() {
         >
 
           <div className={styles.statTop}>
+
             <div
               className={`${styles.statIcon} ${styles.purple}`}
             >
               📦
             </div>
+
           </div>
 
           <div className={styles.statValue}>
@@ -607,11 +645,13 @@ export default function DashboardPage() {
         >
 
           <div className={styles.statTop}>
+
             <div
               className={`${styles.statIcon} ${styles.green}`}
             >
               👤
             </div>
+
           </div>
 
           <div className={styles.statValue}>
@@ -636,22 +676,51 @@ export default function DashboardPage() {
 
         <div className={styles.form}>
 
+          {/* SELECT CAR */}
+
+          <select
+            className={styles.input}
+            value={car}
+            onChange={(e) => {
+
+              const selected =
+                garage.find(
+                  (item) =>
+                    item.car_name ===
+                    e.target.value
+                );
+
+              if (selected) {
+
+                selectGarageCar(
+                  selected
+                );
+              }
+            }}
+          >
+
+            <option value="">
+              Выберите автомобиль
+            </option>
+
+            {garage.map((item) => (
+
+              <option
+                key={item.id}
+                value={item.car_name}
+              >
+                {item.car_name}
+              </option>
+
+            ))}
+
+          </select>
+
           <input
             className={styles.input}
             placeholder="VIN"
             value={vin}
-            onChange={(e) =>
-              setVin(e.target.value)
-            }
-          />
-
-          <input
-            className={styles.input}
-            placeholder="Автомобиль"
-            value={car}
-            onChange={(e) =>
-              setCar(e.target.value)
-            }
+            readOnly
           />
 
           <input
@@ -659,7 +728,9 @@ export default function DashboardPage() {
             placeholder="Название детали"
             value={partName}
             onChange={(e) =>
-              setPartName(e.target.value)
+              setPartName(
+                e.target.value
+              )
             }
           />
 
@@ -696,9 +767,11 @@ export default function DashboardPage() {
         {latestRequests.length === 0 && (
 
           <div className={styles.card}>
+
             <strong>
               Пока нет заявок
             </strong>
+
           </div>
 
         )}
