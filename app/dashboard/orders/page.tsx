@@ -62,6 +62,19 @@ export default function OrdersPage() {
     setLoading(false);
   }
 
+  function getStatusClass(
+    status:string
+  ) {
+
+    if (status === "DELIVERED")
+      return styles.badgeGreen;
+
+    if (status === "SHIPPED")
+      return styles.badgeBlue;
+
+    return styles.badge;
+  }
+
   if (loading)
     return (
       <div className={styles.loading}>
@@ -125,7 +138,13 @@ export default function OrdersPage() {
               {item.track_number || "—"}
             </p>
 
-            <div className={styles.badge}>
+            <div
+              className={
+                getStatusClass(
+                  item.status
+                )
+              }
+            >
               {item.status || "NEW"}
             </div>
 
