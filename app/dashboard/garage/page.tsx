@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "../dashboard.module.css";
@@ -21,89 +22,255 @@ export default function GaragePage() {
   const [vin, setVin] =
     useState("");
 
-  const [phone, setPhone] =
-    useState("");
-
   useEffect(() => {
-    loadGarage();
+
+    loadCars();
+
+    const channel =
+      supabase
+        .channel("garage-realtime")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"garage",
+          },
+          () => {
+            loadCars();
+          }
+        )
+        .subscribe();
+
+    return () => {
+
+      supabase.removeChannel(
+        channel
+      );
+    };
+
   }, []);
 
-  async function loadGarage() {
+  function getClientPhone() {
 
-    const {
-      data: {
-        session,
-      },
-    } =
-      await supabase.auth.getSession();
-
-    let currentPhone =
-      session?.user?.phone;
-
-    if (!currentPhone) {
-
-      const role =
-        document.cookie.includes(
-          "role=client"
-        );
-
-      if (role)
-        currentPhone =
-          "+48519000000";
-    }
-
-    setPhone(currentPhone || "");
-
-    const {
-      data,
-    } =
-      await supabase
-        .from("garage")
-        .select("*")
-        .eq(
-          "phone",
-          currentPhone
+    const cookiePhone =
+      document.cookie
+        .split("; ")
+        .find((row) =>
+          row.startsWith(
+            "client_phone="
+          )
         )
-        .order("id", {
-          ascending: false,
-        });
+        ?.split("=")[1];
 
-    setCars(data || []);
+    return cookiePhone || "";
+  }
 
-    setLoading(false);
+  async function loadCars() {
+
+    try {
+
+      let phone =
+        getClientPhone();
+
+      if (!phone) {
+
+        const {
+          data:{
+            session,
+          },
+        } =
+          await supabase.auth.getSession();
+
+        phone =
+          session?.user?.phone || "";
+      }
+
+      if (!phone) {
+
+        setCars([]);
+
+        setLoading(false);
+
+        return;
+      }
+
+      const {
+        data,
+        error,
+      } =
+        await supabase
+          .from("garage")
+          .select("*")
+          .eq(
+            "client_phone",
+            phone
+          )
+          .order(
+            "created_at",
+            {
+              ascending:false,
+            }
+          );
+
+      if (error) {
+
+        console.error(error);
+
+        setCars([]);
+
+        return;
+      }
+
+      setCars(data || []);
+
+    } catch (error) {
+
+      console.error(error);
+
+    } finally {
+
+      setLoading(false);
+    }
   }
 
   async function addCar() {
 
-    if (!brand || !model)
+    if (
+      !brand ||
+      !model ||
+      !vin
+    ) {
+
+      alert(
+        "Заполните все поля"
+      );
+
       return;
+    }
 
-    const {
-      data,
-    } =
-      await supabase
-        .from("garage")
-        .insert([
-          {
-            phone,
-            brand,
-            model,
-            vin,
+    try {
+
+      let phone =
+        getClientPhone();
+
+      if (!phone) {
+
+        const {
+          data:{
+            session,
           },
-        ])
-        .select()
-        .single();
+        } =
+          await supabase.auth.getSession();
 
-    if (data) {
+        phone =
+          session?.user?.phone || "";
+      }
 
-      setCars([
-        data,
-        ...cars,
-      ]);
+      if (!phone) {
+
+        alert(
+          "Требуется авторизация"
+        );
+
+        return;
+      }
+
+      const {
+        error,
+      } =
+        await supabase
+          .from("garage")
+          .insert([
+            {
+              brand,
+              model,
+              vin,
+              client_phone:phone,
+              car_name:
+                `${brand} ${model}`,
+            },
+          ]);
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "Ошибка добавления"
+        );
+
+        return;
+      }
 
       setBrand("");
       setModel("");
       setVin("");
+
+      await loadCars();
+
+      alert(
+        "Автомобиль добавлен"
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Ошибка соединения"
+      );
+    }
+  }
+
+  async function deleteCar(
+    id:number
+  ) {
+
+    const confirmDelete =
+      confirm(
+        "Удалить автомобиль?"
+      );
+
+    if (!confirmDelete)
+      return;
+
+    try {
+
+      const {
+        error,
+      } =
+        await supabase
+          .from("garage")
+          .delete()
+          .eq("id", id);
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "Ошибка удаления"
+        );
+
+        return;
+      }
+
+      setCars(
+        (prev) =>
+          prev.filter(
+            (item) =>
+              item.id !== id
+          )
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Ошибка соединения"
+      );
     }
   }
 
@@ -115,7 +282,24 @@ export default function GaragePage() {
     );
 
   return (
+
     <main className={styles.page}>
+
+      {/* HEADER */}
+
+      <section className={styles.hero}>
+
+        <h1 className={styles.title}>
+          Гараж
+        </h1>
+
+        <p className={styles.phone}>
+          Мои автомобили
+        </p>
+
+      </section>
+
+      {/* ADD CAR */}
 
       <section className={styles.requestBox}>
 
@@ -169,13 +353,29 @@ export default function GaragePage() {
 
       </section>
 
+      {/* CARS */}
+
       <section className={styles.section}>
 
         <div className={styles.sectionTop}>
+
           <h2>
             Мои автомобили
           </h2>
+
         </div>
+
+        {cars.length === 0 && (
+
+          <div className={styles.card}>
+
+            <strong>
+              Автомобилей пока нет
+            </strong>
+
+          </div>
+
+        )}
 
         {cars.map((item) => (
 
@@ -193,14 +393,119 @@ export default function GaragePage() {
             <p>
               VIN:
               {" "}
-              {item.vin ||
-                "не указан"}
+              {item.vin}
             </p>
 
+            <button
+              className={styles.logoutBtn}
+              onClick={() =>
+                deleteCar(item.id)
+              }
+            >
+              Удалить
+            </button>
+
           </div>
+
         ))}
 
       </section>
+
+      {/* BOTTOM NAV */}
+
+      <nav className={styles.bottomNav}>
+
+        <Link
+          href="/dashboard"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            🏠
+          </div>
+
+          <span>
+            Главная
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/requests"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            📄
+          </div>
+
+          <span>
+            Заявки
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/offers"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            💶
+          </div>
+
+          <span>
+            Предложения
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/orders"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            📦
+          </div>
+
+          <span>
+            Заказы
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/garage"
+          className={`${styles.navItem} ${styles.navItemActive}`}
+        >
+
+          <div className={styles.navIcon}>
+            🚗
+          </div>
+
+          <span>
+            Гараж
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/profile"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            👤
+          </div>
+
+          <span>
+            Профиль
+          </span>
+
+        </Link>
+
+      </nav>
 
     </main>
   );
