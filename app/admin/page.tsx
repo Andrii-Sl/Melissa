@@ -162,9 +162,16 @@ export default function AdminPage() {
 
         </div>
 
-        <button className={styles.profileBtn}>
-          👤
-        </button>
+        <div className={styles.profileMenu}>
+
+  <button
+    className={styles.profileBtn}
+    onClick={logout}
+  >
+    🚪
+  </button>
+
+</div>
 
       </header>
 
