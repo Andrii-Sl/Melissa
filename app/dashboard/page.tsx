@@ -169,12 +169,17 @@ export default function DashboardPage() {
 
       const {
         data:profileData,
+        error:profileError,
       } =
         await supabase
           .from("profiles")
           .select("*")
           .eq("phone", phone)
           .maybeSingle();
+
+      if (profileError) {
+        console.error(profileError);
+      }
 
       setProfile(profileData);
 
@@ -416,7 +421,11 @@ export default function DashboardPage() {
         <h1 className={styles.title}>
           Здравствуйте,
           <br />
-          Клиент
+          {
+            profile?.full_name
+              ? profile.full_name
+              : "Клиент"
+          }
         </h1>
 
         <p className={styles.phone}>
@@ -569,17 +578,19 @@ export default function DashboardPage() {
             <div
               className={`${styles.statIcon} ${styles.green}`}
             >
-              ✅
+              👤
             </div>
 
           </div>
 
           <div className={styles.statValue}>
-            12
+            {profile?.full_name
+              ? "✓"
+              : "—"}
           </div>
 
           <div className={styles.statLabel}>
-            Выполнено
+            Профиль
           </div>
 
         </Link>
