@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "../dashboard.module.css";
@@ -13,32 +14,32 @@ export default function RequestsPage() {
     useState(true);
 
   useEffect(() => {
+
     loadRequests();
+
+    const channel =
+      supabase
+        .channel("client-requests")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"requests",
+          },
+          () => {
+            loadRequests();
+          }
+        )
+        .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+
   }, []);
 
   async function loadRequests() {
-
-    const {
-      data: {
-        session,
-      },
-    } =
-      await supabase.auth.getSession();
-
-    let phone =
-      session?.user?.phone;
-
-    if (!phone) {
-
-      const role =
-        document.cookie.includes(
-          "role=client"
-        );
-
-      if (role)
-        phone =
-          "+48519000000";
-    }
 
     const {
       data,
@@ -46,30 +47,16 @@ export default function RequestsPage() {
       await supabase
         .from("requests")
         .select("*")
-        .eq("phone", phone)
-        .order("id", {
-          ascending: false,
-        });
+        .order(
+          "created_at",
+          {
+            ascending:false,
+          }
+        );
 
     setRequests(data || []);
 
     setLoading(false);
-  }
-
-  function getStatus(
-    status:string
-  ) {
-
-    if (status === "new")
-      return "🟡 Новая";
-
-    if (status === "search")
-      return "🔵 В подборе";
-
-    if (status === "found")
-      return "🟢 Предложение готово";
-
-    return status;
   }
 
   if (loading)
@@ -80,46 +67,123 @@ export default function RequestsPage() {
     );
 
   return (
+
     <main className={styles.page}>
+
+      {/* HEADER */}
+
+      <section className={styles.hero}>
+
+        <h1 className={styles.title}>
+          Заявки
+        </h1>
+
+      </section>
+
+      {/* REQUESTS */}
 
       <section className={styles.section}>
 
-        <div className={styles.sectionTop}>
-          <h2>
-            Все заявки
-          </h2>
-        </div>
+        {requests.length === 0 && (
+
+          <div className={styles.card}>
+
+            <strong>
+              Пока нет заявок
+            </strong>
+
+          </div>
+        )}
 
         {requests.map((item) => (
 
-          <a
-            href={`/dashboard/requests/${item.id}`}
+          <div
             key={item.id}
             className={styles.card}
           >
 
             <strong>
-              {item.part_name ||
-                "Запрос"}
+              {item.part_name || "Деталь"}
             </strong>
 
             <p>
-              VIN:
-              {" "}
-              {item.vin ||
-                "не указан"}
+              VIN: {item.vin || "—"}
             </p>
 
             <div className={styles.badge}>
-              {getStatus(
-                item.status
-              )}
+              {item.status || "NEW"}
             </div>
 
-          </a>
+          </div>
         ))}
 
       </section>
+
+      {/* BOTTOM NAV */}
+
+      <nav className={styles.bottomNav}>
+
+        <Link
+          href="/dashboard"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            🏠
+          </div>
+
+          <span>
+            Главная
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/requests"
+          className={`${styles.navItem} ${styles.navItemActive}`}
+        >
+
+          <div className={styles.navIcon}>
+            📄
+          </div>
+
+          <span>
+            Заявки
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/offers"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            💶
+          </div>
+
+          <span>
+            Предложения
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/orders"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            📦
+          </div>
+
+          <span>
+            Заказы
+          </span>
+
+        </Link>
+
+      </nav>
 
     </main>
   );
