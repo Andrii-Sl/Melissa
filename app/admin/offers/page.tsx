@@ -32,7 +32,7 @@ export default function AdminOffersPage() {
 
     loadData();
 
-    const channel =
+    const offersChannel =
       supabase
         .channel("admin-offers")
         .on(
@@ -48,10 +48,30 @@ export default function AdminOffersPage() {
         )
         .subscribe();
 
+    const requestsChannel =
+      supabase
+        .channel("admin-requests")
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "requests",
+          },
+          () => {
+            loadData();
+          }
+        )
+        .subscribe();
+
     return () => {
 
       supabase.removeChannel(
-        channel
+        offersChannel
+      );
+
+      supabase.removeChannel(
+        requestsChannel
       );
     };
 
@@ -82,6 +102,10 @@ export default function AdminOffersPage() {
         await supabase
           .from("requests")
           .select("*")
+          .eq(
+            "status",
+            "NEW"
+          )
           .order(
             "created_at",
             {
@@ -90,6 +114,7 @@ export default function AdminOffersPage() {
           );
 
       if (offersError) {
+
         console.error(
           "OFFERS ERROR:",
           offersError
@@ -97,6 +122,7 @@ export default function AdminOffersPage() {
       }
 
       if (requestsError) {
+
         console.error(
           "REQUESTS ERROR:",
           requestsError
@@ -156,16 +182,10 @@ export default function AdminOffersPage() {
         return;
       }
 
-      console.log(
-        "REQUEST:",
-        selectedRequest
-      );
-
-      /* INSERT OFFER */
+      /* CREATE OFFER */
 
       const {
         error,
-        data,
       } =
         await supabase
           .from("offers")
@@ -186,35 +206,43 @@ export default function AdminOffersPage() {
               client_phone:
                 selectedRequest.client_phone,
 
-              request_part_name:
-                selectedRequest.part_name || "",
-
-              status: "NEW",
+              status:"ACTIVE",
 
               created_at:
                 new Date()
                   .toISOString(),
             },
-          ])
-          .select();
-
-      console.log(
-        "INSERT:",
-        data
-      );
-
-      console.log(
-        "ERROR:",
-        error
-      );
+          ]);
 
       if (error) {
+
+        console.error(error);
 
         alert(
           error.message
         );
 
         return;
+      }
+
+      /* UPDATE REQUEST STATUS */
+
+      const {
+        error:updateError,
+      } =
+        await supabase
+          .from("requests")
+          .update({
+            status:"IN_OFFER",
+          })
+          .eq(
+            "id",
+            Number(requestId)
+          );
+
+      if (updateError) {
+
+        console.error(updateError);
       }
 
       /* CLEAR */
@@ -243,7 +271,7 @@ export default function AdminOffersPage() {
   }
 
   async function deleteOffer(
-    id: number
+    id:number
   ) {
 
     const confirmDelete =
@@ -255,6 +283,12 @@ export default function AdminOffersPage() {
       return;
 
     try {
+
+      const currentOffer =
+        offers.find(
+          (item) =>
+            item.id === id
+        );
 
       const {
         error,
@@ -273,6 +307,23 @@ export default function AdminOffersPage() {
         );
 
         return;
+      }
+
+      /* RETURN REQUEST */
+
+      if (
+        currentOffer?.request_id
+      ) {
+
+        await supabase
+          .from("requests")
+          .update({
+            status:"NEW",
+          })
+          .eq(
+            "id",
+            currentOffer.request_id
+          );
       }
 
       setOffers(
@@ -468,9 +519,9 @@ export default function AdminOffersPage() {
             </p>
 
             <p>
-              Деталь:
+              Статус:
               {" "}
-              {item.request_part_name || "—"}
+              {item.status || "ACTIVE"}
             </p>
 
             <small>
@@ -489,7 +540,7 @@ export default function AdminOffersPage() {
 
             <div
               style={{
-                marginTop: "14px",
+                marginTop:"14px",
               }}
             >
 
