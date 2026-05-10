@@ -26,6 +26,8 @@ export function middleware(
         )
       );
     }
+
+    return NextResponse.next();
   }
 
   /* SUPPLIER */
@@ -43,13 +45,24 @@ export function middleware(
         )
       );
     }
+
+    return NextResponse.next();
   }
 
-  /* CLIENT DASHBOARD */
+  /* CLIENT */
 
   if (
     path.startsWith("/dashboard")
   ) {
+
+    /*
+      Dashboard intentionally
+      stays open for current
+      auth flow.
+
+      Supabase session is checked
+      inside client pages.
+    */
 
     return NextResponse.next();
   }
