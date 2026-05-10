@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "../admin.module.css";
@@ -48,6 +49,7 @@ export default function AdminOffersPage() {
         .subscribe();
 
     return () => {
+
       supabase.removeChannel(
         channel
       );
@@ -57,41 +59,60 @@ export default function AdminOffersPage() {
 
   async function loadData() {
 
-    const {
-      data:offersData,
-    } =
-      await supabase
-        .from("offers")
-        .select("*")
-        .order(
-          "created_at",
-          {
-            ascending:false,
-          }
-        );
+    try {
 
-    const {
-      data:requestsData,
-    } =
-      await supabase
-        .from("requests")
-        .select("*")
-        .order(
-          "created_at",
-          {
-            ascending:false,
-          }
-        );
+      const {
+        data:offersData,
+        error:offersError,
+      } =
+        await supabase
+          .from("offers")
+          .select("*")
+          .order(
+            "created_at",
+            {
+              ascending:false,
+            }
+          );
 
-    setOffers(
-      offersData || []
-    );
+      const {
+        data:requestsData,
+        error:requestsError,
+      } =
+        await supabase
+          .from("requests")
+          .select("*")
+          .order(
+            "created_at",
+            {
+              ascending:false,
+            }
+          );
 
-    setRequests(
-      requestsData || []
-    );
+      if (offersError) {
+        console.error(offersError);
+      }
 
-    setLoading(false);
+      if (requestsError) {
+        console.error(requestsError);
+      }
+
+      setOffers(
+        offersData || []
+      );
+
+      setRequests(
+        requestsData || []
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+    } finally {
+
+      setLoading(false);
+    }
   }
 
   async function createOffer() {
@@ -100,41 +121,133 @@ export default function AdminOffersPage() {
       !requestId ||
       !brand ||
       !price
-    )
-      return;
+    ) {
 
-    const selectedRequest =
-      requests.find(
-        (item) =>
-          item.id.toString() ===
-          requestId
+      alert(
+        "Заполните обязательные поля"
       );
 
-    await supabase
-      .from("offers")
-      .insert([
-        {
-          request_id:requestId,
+      return;
+    }
 
-          brand,
+    try {
 
-          price,
+      const selectedRequest =
+        requests.find(
+          (item) =>
+            item.id.toString() ===
+            requestId
+        );
 
-          delivery_days:delivery,
+      const {
+        error,
+      } =
+        await supabase
+          .from("offers")
+          .insert([
+            {
+              request_id:
+                Number(requestId),
 
-          client_phone:
-            selectedRequest?.client_phone || "",
-        },
-      ]);
+              brand,
 
-    setBrand("");
-    setPrice("");
-    setDelivery("");
-    setRequestId("");
+              price:
+                Number(price),
 
-    alert(
-      "Предложение создано"
-    );
+              delivery_days:
+                Number(delivery || 0),
+
+              client_phone:
+                selectedRequest?.client_phone || "",
+
+              request_part_name:
+                selectedRequest?.part_name || "",
+
+              status:"NEW",
+            },
+          ]);
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "Ошибка создания предложения"
+        );
+
+        return;
+      }
+
+      setBrand("");
+      setPrice("");
+      setDelivery("");
+      setRequestId("");
+
+      await loadData();
+
+      alert(
+        "Предложение создано"
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Ошибка соединения"
+      );
+    }
+  }
+
+  async function deleteOffer(
+    id:number
+  ) {
+
+    const confirmDelete =
+      confirm(
+        "Удалить предложение?"
+      );
+
+    if (!confirmDelete)
+      return;
+
+    try {
+
+      const {
+        error,
+      } =
+        await supabase
+          .from("offers")
+          .delete()
+          .eq("id", id);
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "Ошибка удаления"
+        );
+
+        return;
+      }
+
+      setOffers(
+        (prev) =>
+          prev.filter(
+            (item) =>
+              item.id !== id
+          )
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Ошибка соединения"
+      );
+    }
   }
 
   if (loading)
@@ -163,6 +276,13 @@ export default function AdminOffersPage() {
           </p>
 
         </div>
+
+        <Link
+          href="/admin"
+          className={styles.profileBtn}
+        >
+          ←
+        </Link>
 
       </header>
 
@@ -199,6 +319,8 @@ export default function AdminOffersPage() {
                 #{item.id}
                 {" — "}
                 {item.part_name}
+                {" — "}
+                {item.client_phone}
               </option>
             ))}
 
@@ -216,6 +338,7 @@ export default function AdminOffersPage() {
           />
 
           <input
+            type="number"
             className={styles.input}
             placeholder="Цена"
             value={price}
@@ -227,6 +350,7 @@ export default function AdminOffersPage() {
           />
 
           <input
+            type="number"
             className={styles.input}
             placeholder="Доставка (дни)"
             value={delivery}
@@ -260,6 +384,17 @@ export default function AdminOffersPage() {
 
         </div>
 
+        {offers.length === 0 && (
+
+          <div className={styles.requestCard}>
+
+            <p>
+              Предложений пока нет
+            </p>
+
+          </div>
+        )}
+
         {offers.map((item) => (
 
           <div
@@ -270,11 +405,11 @@ export default function AdminOffersPage() {
             <div className={styles.requestTop}>
 
               <strong>
-                {item.brand}
+                {item.brand || "Предложение"}
               </strong>
 
               <span className={styles.badgeBlue}>
-                € {item.price}
+                € {item.price || 0}
               </span>
 
             </div>
@@ -282,9 +417,15 @@ export default function AdminOffersPage() {
             <p>
               Доставка:
               {" "}
-              {item.delivery_days}
+              {item.delivery_days || 0}
               {" "}
               дн.
+            </p>
+
+            <p>
+              Деталь:
+              {" "}
+              {item.request_part_name || "—"}
             </p>
 
             <small>
@@ -293,10 +434,101 @@ export default function AdminOffersPage() {
               {item.request_id}
             </small>
 
+            <br />
+
+            <small>
+              Клиент:
+              {" "}
+              {item.client_phone || "—"}
+            </small>
+
+            <div
+              style={{
+                marginTop:"14px",
+              }}
+            >
+
+              <button
+                onClick={() =>
+                  deleteOffer(item.id)
+                }
+                className={styles.logoutBtn}
+              >
+                Удалить
+              </button>
+
+            </div>
+
           </div>
         ))}
 
       </section>
+
+      {/* BOTTOM NAV */}
+
+      <nav className={styles.bottomNav}>
+
+        <Link
+          href="/admin"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            🏠
+          </div>
+
+          <span>
+            Главная
+          </span>
+
+        </Link>
+
+        <Link
+          href="/admin/requests"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            📄
+          </div>
+
+          <span>
+            Заявки
+          </span>
+
+        </Link>
+
+        <Link
+          href="/admin/offers"
+          className={`${styles.navItem} ${styles.navItemActive}`}
+        >
+
+          <div className={styles.navIcon}>
+            💶
+          </div>
+
+          <span>
+            Предложения
+          </span>
+
+        </Link>
+
+        <Link
+          href="/admin/orders"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            📦
+          </div>
+
+          <span>
+            Заказы
+          </span>
+
+        </Link>
+
+      </nav>
 
     </main>
   );
