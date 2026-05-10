@@ -1,9 +1,45 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import styles from "../admin.module.css";
 
 export default function AdminRequestsPage() {
+
+  const [requests, setRequests] =
+    useState<any[]>([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  useEffect(() => {
+    loadRequests();
+  }, []);
+
+  async function loadRequests() {
+
+    const {
+      data,
+    } =
+      await supabase
+        .from("requests")
+        .select("*")
+        .order("id", {
+          ascending:false,
+        });
+
+    setRequests(data || []);
+
+    setLoading(false);
+  }
+
+  if (loading)
+    return (
+      <div className={styles.loading}>
+        Загрузка...
+      </div>
+    );
 
   return (
 
@@ -38,53 +74,35 @@ export default function AdminRequestsPage() {
 
       <section className={styles.section}>
 
-        <div className={styles.requestCard}>
+        {requests.map((item) => (
 
-          <div className={styles.requestTop}>
+          <div
+            key={item.id}
+            className={styles.requestCard}
+          >
 
-            <strong>
-              BMW G30
-            </strong>
+            <div className={styles.requestTop}>
 
-            <span className={styles.badge}>
-              NEW
-            </span>
+              <strong>
+                {item.car || "Автомобиль"}
+              </strong>
 
-          </div>
+              <span className={styles.badge}>
+                {item.status || "NEW"}
+              </span>
 
-          <p>
-            Масляный фильтр
-          </p>
+            </div>
 
-          <small>
-            VIN: WBA5R510...
-          </small>
+            <p>
+              {item.part_name || "Деталь"}
+            </p>
 
-        </div>
-
-        <div className={styles.requestCard}>
-
-          <div className={styles.requestTop}>
-
-            <strong>
-              Audi A6 C8
-            </strong>
-
-            <span className={styles.badgeBlue}>
-              OFFER
-            </span>
+            <small>
+              VIN: {item.vin || "—"}
+            </small>
 
           </div>
-
-          <p>
-            Тормозные колодки
-          </p>
-
-          <small>
-            VIN: WAUZZZF20...
-          </small>
-
-        </div>
+        ))}
 
       </section>
 
@@ -96,60 +114,32 @@ export default function AdminRequestsPage() {
           href="/admin"
           className={styles.navItem}
         >
-
-          <span>
-            🏠
-          </span>
-
-          <p>
-            Главная
-          </p>
-
+          <span>🏠</span>
+          <p>Главная</p>
         </Link>
 
         <Link
           href="/admin/requests"
           className={`${styles.navItem} ${styles.active}`}
         >
-
-          <span>
-            📄
-          </span>
-
-          <p>
-            Заявки
-          </p>
-
+          <span>📄</span>
+          <p>Заявки</p>
         </Link>
 
         <Link
           href="/admin/offers"
           className={styles.navItem}
         >
-
-          <span>
-            💶
-          </span>
-
-          <p>
-            Предложения
-          </p>
-
+          <span>💶</span>
+          <p>Предложения</p>
         </Link>
 
         <Link
           href="/admin/orders"
           className={styles.navItem}
         >
-
-          <span>
-            📦
-          </span>
-
-          <p>
-            Заказы
-          </p>
-
+          <span>📦</span>
+          <p>Заказы</p>
         </Link>
 
       </nav>
