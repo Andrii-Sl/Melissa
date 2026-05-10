@@ -1,9 +1,70 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import styles from "../admin.module.css";
 
 export default function AdminOffersPage() {
+
+  const [offers, setOffers] =
+    useState<any[]>([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  useEffect(() => {
+
+    loadOffers();
+
+    const channel =
+      supabase
+        .channel("live-admin-offers")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"offers",
+          },
+          () => {
+            loadOffers();
+          }
+        )
+        .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+
+  }, []);
+
+  async function loadOffers() {
+
+    const {
+      data,
+    } =
+      await supabase
+        .from("offers")
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending:false,
+          }
+        );
+
+    setOffers(data || []);
+
+    setLoading(false);
+  }
+
+  if (loading)
+    return (
+      <div className={styles.loading}>
+        Загрузка...
+      </div>
+    );
 
   return (
 
@@ -38,53 +99,46 @@ export default function AdminOffersPage() {
 
       <section className={styles.section}>
 
-        <div className={styles.requestCard}>
+        {offers.length === 0 && (
 
-          <div className={styles.requestTop}>
+          <div className={styles.requestCard}>
 
-            <strong>
-              BMW Original
-            </strong>
-
-            <span className={styles.badgeBlue}>
-              €120
-            </span>
+            <p>
+              Предложений пока нет
+            </p>
 
           </div>
+        )}
 
-          <p>
-            Масляный фильтр
-          </p>
+        {offers.map((item) => (
 
-          <small>
-            Доставка: 2-4 дня
-          </small>
+          <div
+            key={item.id}
+            className={styles.requestCard}
+          >
 
-        </div>
+            <div className={styles.requestTop}>
 
-        <div className={styles.requestCard}>
+              <strong>
+                {item.brand || "Предложение"}
+              </strong>
 
-          <div className={styles.requestTop}>
+              <span className={styles.badgeBlue}>
+                € {item.price || 0}
+              </span>
 
-            <strong>
-              Bosch
-            </strong>
+            </div>
 
-            <span className={styles.badgeBlue}>
-              €85
-            </span>
+            <p>
+              {item.part_name || "Деталь"}
+            </p>
+
+            <small>
+              Срок: {item.delivery_days || 0} дн.
+            </small>
 
           </div>
-
-          <p>
-            Тормозные колодки
-          </p>
-
-          <small>
-            В наличии
-          </small>
-
-        </div>
+        ))}
 
       </section>
 
@@ -97,13 +151,13 @@ export default function AdminOffersPage() {
           className={styles.navItem}
         >
 
-          <span>
+          <div className={styles.navIcon}>
             🏠
-          </span>
+          </div>
 
-          <p>
+          <span>
             Главная
-          </p>
+          </span>
 
         </Link>
 
@@ -112,28 +166,28 @@ export default function AdminOffersPage() {
           className={styles.navItem}
         >
 
-          <span>
+          <div className={styles.navIcon}>
             📄
-          </span>
+          </div>
 
-          <p>
+          <span>
             Заявки
-          </p>
+          </span>
 
         </Link>
 
         <Link
           href="/admin/offers"
-          className={`${styles.navItem} ${styles.active}`}
+          className={`${styles.navItem} ${styles.navItemActive}`}
         >
 
-          <span>
+          <div className={styles.navIcon}>
             💶
-          </span>
+          </div>
 
-          <p>
+          <span>
             Предложения
-          </p>
+          </span>
 
         </Link>
 
@@ -142,13 +196,13 @@ export default function AdminOffersPage() {
           className={styles.navItem}
         >
 
-          <span>
+          <div className={styles.navIcon}>
             📦
-          </span>
+          </div>
 
-          <p>
+          <span>
             Заказы
-          </p>
+          </span>
 
         </Link>
 
