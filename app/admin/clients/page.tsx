@@ -1,9 +1,70 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import styles from "../admin.module.css";
 
 export default function AdminClientsPage() {
+
+  const [clients, setClients] =
+    useState<any[]>([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  useEffect(() => {
+
+    loadClients();
+
+    const channel =
+      supabase
+        .channel("live-admin-clients")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"profiles",
+          },
+          () => {
+            loadClients();
+          }
+        )
+        .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+
+  }, []);
+
+  async function loadClients() {
+
+    const {
+      data,
+    } =
+      await supabase
+        .from("profiles")
+        .select("*")
+        .order(
+          "id",
+          {
+            ascending:false,
+          }
+        );
+
+    setClients(data || []);
+
+    setLoading(false);
+  }
+
+  if (loading)
+    return (
+      <div className={styles.loading}>
+        Загрузка...
+      </div>
+    );
 
   return (
 
@@ -38,121 +99,48 @@ export default function AdminClientsPage() {
 
       <section className={styles.section}>
 
-        <div className={styles.requestCard}>
+        {clients.length === 0 && (
 
-          <div className={styles.requestTop}>
+          <div className={styles.requestCard}>
 
-            <strong>
-              Andrii Slynko
-            </strong>
-
-            <span className={styles.badgeBlue}>
-              VIP
-            </span>
+            <p>
+              Клиентов пока нет
+            </p>
 
           </div>
+        )}
 
-          <p>
-            +48 519 000 000
-          </p>
+        {clients.map((item) => (
 
-          <small>
-            Slovenia, Ljubljana
-          </small>
+          <div
+            key={item.id}
+            className={styles.requestCard}
+          >
 
-        </div>
+            <div className={styles.requestTop}>
 
-        <div className={styles.requestCard}>
+              <strong>
+                {item.full_name || "Клиент"}
+              </strong>
 
-          <div className={styles.requestTop}>
+              <span className={styles.badgeBlue}>
+                CLIENT
+              </span>
 
-            <strong>
-              John Smith
-            </strong>
+            </div>
 
-            <span className={styles.badge}>
-              NEW
-            </span>
+            <p>
+              {item.phone || "Нет телефона"}
+            </p>
+
+            <small>
+              {item.country || ""} {item.city || ""}
+            </small>
 
           </div>
-
-          <p>
-            +49 152 123 45 67
-          </p>
-
-          <small>
-            Germany, Berlin
-          </small>
-
-        </div>
+        ))}
 
       </section>
-
-      {/* BOTTOM NAV */}
-
-      <nav className={styles.bottomNav}>
-
-        <Link
-          href="/admin"
-          className={styles.navItem}
-        >
-
-          <span>
-            🏠
-          </span>
-
-          <p>
-            Главная
-          </p>
-
-        </Link>
-
-        <Link
-          href="/admin/requests"
-          className={styles.navItem}
-        >
-
-          <span>
-            📄
-          </span>
-
-          <p>
-            Заявки
-          </p>
-
-        </Link>
-
-        <Link
-          href="/admin/offers"
-          className={styles.navItem}
-        >
-
-          <span>
-            💶
-          </span>
-
-          <p>
-            Предложения
-          </p>
-
-        </Link>
-
-        <Link
-          href="/admin/orders"
-          className={styles.navItem}
-        >
-
-          <span>
-            📦
-          </span>
-
-          <p>
-            Заказы
-          </p>
-
-        </Link>
-
-      </nav>
 
     </main>
   );
