@@ -34,7 +34,10 @@ export default function RequestsPage() {
         .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+
+      supabase.removeChannel(
+        channel
+      );
     };
 
   }, []);
@@ -59,6 +62,32 @@ export default function RequestsPage() {
     setLoading(false);
   }
 
+  async function deleteRequest(
+    id:number
+  ) {
+
+    const confirmDelete =
+      confirm(
+        "Удалить заявку?"
+      );
+
+    if (!confirmDelete)
+      return;
+
+    await supabase
+      .from("requests")
+      .delete()
+      .eq("id", id);
+
+    setRequests(
+      (prev) =>
+        prev.filter(
+          (item) =>
+            item.id !== id
+        )
+    );
+  }
+
   if (loading)
     return (
       <div className={styles.loading}>
@@ -70,13 +99,19 @@ export default function RequestsPage() {
 
     <main className={styles.page}>
 
-      {/* HEADER */}
+      {/* HERO */}
 
       <section className={styles.hero}>
 
         <h1 className={styles.title}>
           Заявки
         </h1>
+
+        <p className={styles.phone}>
+          Всего:
+          {" "}
+          {requests.length}
+        </p>
 
       </section>
 
@@ -102,12 +137,40 @@ export default function RequestsPage() {
             className={styles.card}
           >
 
-            <strong>
-              {item.part_name || "Деталь"}
-            </strong>
+            <div className={styles.sectionTop}>
+
+              <strong>
+                {item.part_name || "Деталь"}
+              </strong>
+
+              <button
+                onClick={() =>
+                  deleteRequest(
+                    item.id
+                  )
+                }
+                style={{
+                  border:"none",
+                  background:"none",
+                  fontSize:"18px",
+                  cursor:"pointer",
+                }}
+              >
+                🗑️
+              </button>
+
+            </div>
 
             <p>
-              VIN: {item.vin || "—"}
+              VIN:
+              {" "}
+              {item.vin || "—"}
+            </p>
+
+            <p>
+              Автомобиль:
+              {" "}
+              {item.car || "—"}
             </p>
 
             <div className={styles.badge}>
