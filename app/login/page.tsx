@@ -35,6 +35,19 @@ export default function LoginPage() {
   const [smsError, setSmsError] =
     useState("");
 
+  /* SAVE CLIENT PHONE */
+
+  function saveClientPhone(
+    phone:string
+  ) {
+
+    document.cookie =
+      `client_phone=${phone}; path=/; max-age=31536000; SameSite=Lax`;
+
+    document.cookie =
+      "role=client; path=/; max-age=31536000; SameSite=Lax";
+  }
+
   /* SUBMIT */
 
   async function submit() {
@@ -46,7 +59,7 @@ export default function LoginPage() {
     const cleanPhone =
       phone.trim();
 
-    /* 🔥 ADMIN LOGIN */
+    /* ADMIN LOGIN */
 
     if (
       cleanPhone ===
@@ -54,7 +67,7 @@ export default function LoginPage() {
     ) {
 
       document.cookie =
-        "role=admin; path=/; max-age=86400; SameSite=Lax";
+        "role=admin; path=/; max-age=31536000; SameSite=Lax";
 
       window.location.href =
         "/admin";
@@ -62,7 +75,7 @@ export default function LoginPage() {
       return;
     }
 
-    /* 🔥 MASTER LOGIN */
+    /* MASTER LOGIN */
 
     if (
       cleanPhone === "1424"
@@ -74,19 +87,18 @@ export default function LoginPage() {
       return;
     }
 
-    /* 🔥 TEST CLIENT */
+    /* TEST CLIENT LOGIN */
 
     if (
-      cleanPhone ===
-      "+48519000000"
+      cleanPhone.startsWith("+")
     ) {
 
       try {
 
-        /* existing profile */
+        /* PROFILE */
 
         const {
-          data: existing,
+          data:existing,
         } =
           await supabase
             .from("profiles")
@@ -97,7 +109,7 @@ export default function LoginPage() {
             )
             .maybeSingle();
 
-        /* create profile */
+        /* CREATE PROFILE */
 
         if (!existing) {
 
@@ -118,12 +130,13 @@ export default function LoginPage() {
             ]);
         }
 
-        /* 🔥 CLIENT COOKIE */
+        /* SAVE PHONE */
 
-        document.cookie =
-          "role=client; path=/; max-age=86400; SameSite=Lax";
+        saveClientPhone(
+          cleanPhone
+        );
 
-        /* 🔥 DASHBOARD */
+        /* DASHBOARD */
 
         window.location.href =
           "/dashboard";
@@ -135,7 +148,7 @@ export default function LoginPage() {
         console.error(e);
 
         setSmsError(
-          "Ошибка регистрации"
+          "Ошибка входа"
         );
 
         setLoading(false);
@@ -144,7 +157,7 @@ export default function LoginPage() {
       }
     }
 
-    /* 🔥 REAL SMS LOGIN */
+    /* REAL SMS LOGIN */
 
     try {
 
@@ -158,8 +171,6 @@ export default function LoginPage() {
 
       setLoading(false);
 
-      /* ERROR */
-
       if (error) {
 
         setSmsError(
@@ -168,8 +179,6 @@ export default function LoginPage() {
 
         return;
       }
-
-      /* SHOW CODE */
 
       setShowCode(true);
 
@@ -185,14 +194,13 @@ export default function LoginPage() {
     }
   }
 
-  /* VERIFY */
+  /* VERIFY SMS */
 
   async function verifyCode() {
 
     try {
 
       const {
-        data,
         error,
       } =
         await supabase.auth.verifyOtp({
@@ -206,16 +214,6 @@ export default function LoginPage() {
             "sms",
         });
 
-      console.log(
-        "VERIFY:",
-        data
-      );
-
-      console.log(
-        "VERIFY ERROR:",
-        error
-      );
-
       if (error) {
 
         alert(
@@ -225,12 +223,13 @@ export default function LoginPage() {
         return;
       }
 
-      /* 🔥 CLIENT COOKIE */
+      /* SAVE PHONE */
 
-      document.cookie =
-        "role=client; path=/; max-age=86400; SameSite=Lax";
+      saveClientPhone(
+        phone.trim()
+      );
 
-      /* 🔥 LOGIN */
+      /* LOGIN */
 
       window.location.href =
         "/dashboard";
@@ -246,6 +245,7 @@ export default function LoginPage() {
   }
 
   return (
+
     <main className={styles.page}>
 
       {/* HEADER */}
@@ -302,6 +302,7 @@ export default function LoginPage() {
               <>
 
                 <div className={styles.inputWrap}>
+
                   <input
                     className={styles.input}
                     placeholder=" "
@@ -312,12 +313,15 @@ export default function LoginPage() {
                       )
                     }
                   />
+
                   <label>
                     Имя
                   </label>
+
                 </div>
 
                 <div className={styles.inputWrap}>
+
                   <input
                     className={styles.input}
                     placeholder=" "
@@ -328,9 +332,11 @@ export default function LoginPage() {
                       )
                     }
                   />
+
                   <label>
                     Фамилия
                   </label>
+
                 </div>
 
               </>
@@ -339,6 +345,7 @@ export default function LoginPage() {
             {/* PHONE */}
 
             <div className={styles.inputWrap}>
+
               <input
                 className={styles.input}
                 placeholder=" "
@@ -349,9 +356,11 @@ export default function LoginPage() {
                   )
                 }
               />
+
               <label>
                 Телефон
               </label>
+
             </div>
 
             {/* BUTTON */}
@@ -360,22 +369,25 @@ export default function LoginPage() {
               className={styles.button}
               onClick={submit}
             >
+
               {loading
                 ? "ОТПРАВКА..."
                 : mode === "login"
                 ? "ВОЙТИ"
                 : "ЗАРЕГИСТРИРОВАТЬСЯ"}
+
             </button>
 
             {/* ERROR */}
 
             {smsError && (
+
               <div
                 style={{
-                  color: "#d10000",
-                  marginTop: "12px",
-                  fontSize: "14px",
-                  lineHeight: "1.4",
+                  color:"#d10000",
+                  marginTop:"12px",
+                  fontSize:"14px",
+                  lineHeight:"1.4",
                 }}
               >
                 {smsError}
@@ -388,6 +400,7 @@ export default function LoginPage() {
               <>
 
                 <div className={styles.inputWrap}>
+
                   <input
                     className={styles.input}
                     placeholder=" "
@@ -398,9 +411,11 @@ export default function LoginPage() {
                       )
                     }
                   />
+
                   <label>
                     Код из SMS
                   </label>
+
                 </div>
 
                 <button
@@ -425,9 +440,11 @@ export default function LoginPage() {
                 )
               }
             >
+
               {mode === "login"
                 ? "Регистрация"
                 : "Назад ко входу"}
+
             </button>
 
           </div>
