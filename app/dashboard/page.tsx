@@ -68,93 +68,10 @@ export default function DashboardPage() {
     return cookiePhone || "";
   }
 
+  /* LOAD */
+
   useEffect(() => {
-
     loadProfile();
-
-    const requestsChannel =
-      supabase
-        .channel("dashboard-requests")
-        .on(
-          "postgres_changes",
-          {
-            event:"*",
-            schema:"public",
-            table:"requests",
-          },
-          () => {
-            loadProfile();
-          }
-        )
-        .subscribe();
-
-    const offersChannel =
-      supabase
-        .channel("dashboard-offers")
-        .on(
-          "postgres_changes",
-          {
-            event:"*",
-            schema:"public",
-            table:"offers",
-          },
-          () => {
-            loadProfile();
-          }
-        )
-        .subscribe();
-
-    const ordersChannel =
-      supabase
-        .channel("dashboard-orders")
-        .on(
-          "postgres_changes",
-          {
-            event:"*",
-            schema:"public",
-            table:"orders",
-          },
-          () => {
-            loadProfile();
-          }
-        )
-        .subscribe();
-
-    const garageChannel =
-      supabase
-        .channel("dashboard-garage")
-        .on(
-          "postgres_changes",
-          {
-            event:"*",
-            schema:"public",
-            table:"garage",
-          },
-          () => {
-            loadProfile();
-          }
-        )
-        .subscribe();
-
-    return () => {
-
-      supabase.removeChannel(
-        requestsChannel
-      );
-
-      supabase.removeChannel(
-        offersChannel
-      );
-
-      supabase.removeChannel(
-        ordersChannel
-      );
-
-      supabase.removeChannel(
-        garageChannel
-      );
-    };
-
   }, []);
 
   async function loadProfile() {
@@ -191,13 +108,15 @@ export default function DashboardPage() {
       } =
         await supabase
           .from("profiles")
-          .select("*")
+          .select(
+            "id, full_name, phone"
+          )
           .eq("phone", phone)
           .maybeSingle();
 
       setProfile(profileData);
 
-      /* COUNTS */
+      /* REQUESTS COUNT */
 
       const {
         count:requestsTotal,
@@ -205,7 +124,7 @@ export default function DashboardPage() {
         await supabase
           .from("requests")
           .select(
-            "*",
+            "id",
             {
               count:"exact",
               head:true,
@@ -220,13 +139,15 @@ export default function DashboardPage() {
             "NEW"
           );
 
+      /* OFFERS COUNT */
+
       const {
         count:offersTotal,
       } =
         await supabase
           .from("offers")
           .select(
-            "*",
+            "id",
             {
               count:"exact",
               head:true,
@@ -236,10 +157,12 @@ export default function DashboardPage() {
             "client_phone",
             phone
           )
-          .in(
+          .eq(
             "status",
-            ["ACTIVE", "NEW"]
+            "ACTIVE"
           );
+
+      /* ORDERS COUNT */
 
       const {
         count:ordersTotal,
@@ -247,7 +170,7 @@ export default function DashboardPage() {
         await supabase
           .from("orders")
           .select(
-            "*",
+            "id",
             {
               count:"exact",
               head:true,
@@ -256,6 +179,10 @@ export default function DashboardPage() {
           .eq(
             "client_phone",
             phone
+          )
+          .neq(
+            "status",
+            "DELIVERED"
           );
 
       setRequestsCount(
@@ -277,7 +204,9 @@ export default function DashboardPage() {
       } =
         await supabase
           .from("requests")
-          .select("*")
+          .select(
+            "id, vin, part_name, status"
+          )
           .eq(
             "client_phone",
             phone
@@ -305,14 +234,16 @@ export default function DashboardPage() {
       } =
         await supabase
           .from("offers")
-          .select("*")
+          .select(
+            "id, brand, price, delivery_days"
+          )
           .eq(
             "client_phone",
             phone
           )
-          .in(
+          .eq(
             "status",
-            ["ACTIVE", "NEW"]
+            "ACTIVE"
           )
           .order(
             "created_at",
@@ -333,10 +264,16 @@ export default function DashboardPage() {
       } =
         await supabase
           .from("orders")
-          .select("*")
+          .select(
+            "id, part_name, status"
+          )
           .eq(
             "client_phone",
             phone
+          )
+          .neq(
+            "status",
+            "DELIVERED"
           )
           .order(
             "created_at",
@@ -357,7 +294,9 @@ export default function DashboardPage() {
       } =
         await supabase
           .from("garage")
-          .select("*")
+          .select(
+            "id, car_name, vin"
+          )
           .eq(
             "client_phone",
             phone
@@ -375,7 +314,10 @@ export default function DashboardPage() {
 
     } catch (error) {
 
-      console.error(error);
+      console.error(
+        "DASHBOARD ERROR:",
+        error
+      );
 
     } finally {
 
@@ -383,7 +325,7 @@ export default function DashboardPage() {
     }
   }
 
-  /* SELECT GARAGE CAR */
+  /* SELECT CAR */
 
   function selectGarageCar(
     item:any
@@ -455,7 +397,9 @@ export default function DashboardPage() {
       setCar("");
       setPartName("");
 
-      await loadProfile();
+      setRequestsCount(
+        (prev) => prev + 1
+      );
 
       alert(
         "Заявка создана"
@@ -490,9 +434,8 @@ export default function DashboardPage() {
           Здравствуйте,
           <br />
           {
-            profile?.full_name
-              ? profile.full_name
-              : "Клиент"
+            profile?.full_name ||
+            "Клиент"
           }
         </h1>
 
@@ -742,7 +685,7 @@ export default function DashboardPage() {
 
       </section>
 
-      {/* REQUESTS */}
+      {/* LAST REQUEST */}
 
       <section className={styles.section}>
 
@@ -799,7 +742,7 @@ export default function DashboardPage() {
 
       </section>
 
-      {/* OFFERS */}
+      {/* LAST OFFER */}
 
       <section className={styles.section}>
 
@@ -856,7 +799,7 @@ export default function DashboardPage() {
 
       </section>
 
-      {/* ORDERS */}
+      {/* LAST ORDER */}
 
       <section className={styles.section}>
 
