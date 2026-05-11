@@ -184,6 +184,24 @@ export default function OrdersPage() {
     return "Новый";
   }
 
+  /* ACTIVE */
+
+  const activeOrders =
+    orders.filter(
+      (item) =>
+        item.status !==
+        "DELIVERED"
+    );
+
+  /* DELIVERED */
+
+  const deliveredOrders =
+    orders.filter(
+      (item) =>
+        item.status ===
+        "DELIVERED"
+    );
+
   if (loading)
     return (
       <div className={styles.loading}>
@@ -211,22 +229,31 @@ export default function OrdersPage() {
 
       </section>
 
-      {/* ORDERS */}
+      {/* ACTIVE ORDERS */}
 
       <section className={styles.section}>
 
-        {orders.length === 0 && (
+        <div className={styles.sectionTop}>
+
+          <h2>
+            Активные заказы
+          </h2>
+
+        </div>
+
+        {activeOrders.length === 0 && (
 
           <div className={styles.card}>
 
             <strong>
-              Пока нет заказов
+              Нет активных заказов
             </strong>
 
           </div>
+
         )}
 
-        {orders.map((item) => (
+        {activeOrders.map((item) => (
 
           <div
             key={item.id}
@@ -276,6 +303,74 @@ export default function OrdersPage() {
             </div>
 
           </div>
+        ))}
+
+      </section>
+
+      {/* DELIVERED */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionTop}>
+
+          <h2>
+            Доставленные
+          </h2>
+
+        </div>
+
+        {deliveredOrders.length === 0 && (
+
+          <div className={styles.card}>
+
+            <strong>
+              Нет доставленных заказов
+            </strong>
+
+          </div>
+
+        )}
+
+        {deliveredOrders.map((item) => (
+
+          <div
+            key={item.id}
+            className={styles.card}
+            style={{
+              padding:"14px 16px",
+            }}
+          >
+
+            <div
+              style={{
+                display:"flex",
+                justifyContent:"space-between",
+                alignItems:"center",
+                gap:"10px",
+                flexWrap:"wrap",
+              }}
+            >
+
+              <strong>
+                #{item.id}
+              </strong>
+
+              <span>
+                {item.part_name || "Деталь"}
+              </span>
+
+              <span
+                className={
+                  styles.badgeGreen
+                }
+              >
+                ✓ Доставлен
+              </span>
+
+            </div>
+
+          </div>
+
         ))}
 
       </section>
