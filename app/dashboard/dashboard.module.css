@@ -864,3 +864,20 @@
 .section:last-child{
   margin-bottom:120px;
 }
+
+.addressBox{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.disabledBtn{
+  width:100%;
+  height:54px;
+  border:none;
+  border-radius:18px;
+  background:#cfcfcf;
+  color:#666;
+  font-size:16px;
+  font-weight:700;
+}
