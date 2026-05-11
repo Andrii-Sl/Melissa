@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "../dashboard.module.css";
 
@@ -42,51 +42,48 @@ export default function RequestsPage() {
 
   }, []);
 
-  async function loadRequests() {
+  async function getClientPhone() {
 
     try {
 
+      const cookiePhone =
+        document.cookie
+          .split("; ")
+          .find((row) =>
+            row.startsWith(
+              "client_phone="
+            )
+          )
+          ?.split("=")[1];
+
+      if (cookiePhone)
+        return cookiePhone;
+
       const {
-        data: {
+        data:{
           session,
         },
       } =
         await supabase.auth.getSession();
 
-      let phone =
-        session?.user?.phone;
+      return (
+        session?.user?.phone || ""
+      );
 
-      /* COOKIE AUTOLOGIN */
+    } catch (error) {
 
-      if (!phone) {
+      console.error(error);
 
-        const phoneCookie =
-          document.cookie
-            .split("; ")
-            .find((row) =>
-              row.startsWith(
-                "client_phone="
-              )
-            )
-            ?.split("=")[1];
+      return "";
+    }
+  }
 
-        if (phoneCookie)
-          phone = phoneCookie;
-      }
+  async function loadRequests() {
 
-      /* TEST CLIENT */
+    try {
 
-      if (!phone) {
-
-        const role =
-          document.cookie.includes(
-            "role=client"
-          );
-
-        if (role)
-          phone =
-            "+48519000000";
-      }
+      const phone =
+        await getClientPhone();
 
       if (!phone) {
 
@@ -103,7 +100,16 @@ export default function RequestsPage() {
       } =
         await supabase
           .from("requests")
-          .select("*")
+          .select(
+            `
+              id,
+              vin,
+              car,
+              part_name,
+              status,
+              created_at
+            `
+          )
           .eq(
             "client_phone",
             phone
@@ -117,14 +123,17 @@ export default function RequestsPage() {
 
       if (error) {
 
-        console.error(error);
+        console.error(
+          "REQUESTS ERROR:",
+          error
+        );
 
         setRequests([]);
 
-      } else {
-
-        setRequests(data || []);
+        return;
       }
+
+      setRequests(data || []);
 
     } catch (error) {
 
@@ -189,6 +198,76 @@ export default function RequestsPage() {
     }
   }
 
+  function getStatusText(
+    status:string
+  ) {
+
+    if (status === "NEW")
+      return "Новая";
+
+    if (status === "IN_OFFER")
+      return "Есть предложение";
+
+    if (status === "DONE")
+      return "Завершена";
+
+    if (status === "CANCELLED")
+      return "Отменена";
+
+    return status || "NEW";
+  }
+
+  function getStatusClass(
+    status:string
+  ) {
+
+    if (status === "DONE")
+      return styles.badgeGreen;
+
+    if (status === "IN_OFFER")
+      return styles.badgeBlue;
+
+    return styles.badge;
+  }
+
+  function formatDate(
+    value:string
+  ) {
+
+    if (!value)
+      return "—";
+
+    return new Date(value)
+      .toLocaleDateString(
+        "ru-RU",
+        {
+          day:"2-digit",
+          month:"2-digit",
+          year:"numeric",
+        }
+      );
+  }
+
+  const activeRequests =
+    useMemo(
+      () =>
+        requests.filter(
+          (item) =>
+            item.status !== "DONE"
+        ),
+      [requests]
+    );
+
+  const completedRequests =
+    useMemo(
+      () =>
+        requests.filter(
+          (item) =>
+            item.status === "DONE"
+        ),
+      [requests]
+    );
+
   if (loading)
     return (
       <div className={styles.loading}>
@@ -209,29 +288,38 @@ export default function RequestsPage() {
         </h1>
 
         <p className={styles.phone}>
-          Всего:
+          Активных:
           {" "}
-          {requests.length}
+          {activeRequests.length}
         </p>
 
       </section>
 
-      {/* REQUESTS */}
+      {/* ACTIVE REQUESTS */}
 
       <section className={styles.section}>
 
-        {requests.length === 0 && (
+        <div className={styles.sectionTop}>
+
+          <h2>
+            Активные заявки
+          </h2>
+
+        </div>
+
+        {activeRequests.length === 0 && (
 
           <div className={styles.card}>
 
             <strong>
-              Пока нет заявок
+              Нет активных заявок
             </strong>
 
           </div>
+
         )}
 
-        {requests.map((item) => (
+        {activeRequests.map((item) => (
 
           <div
             key={item.id}
@@ -263,10 +351,81 @@ export default function RequestsPage() {
             </div>
 
             <p>
+              Автомобиль:
+              {" "}
+              {item.car || "—"}
+            </p>
+
+            <p>
               VIN:
               {" "}
               {item.vin || "—"}
             </p>
+
+            <p>
+              Дата:
+              {" "}
+              {
+                formatDate(
+                  item.created_at
+                )
+              }
+            </p>
+
+            <div
+              className={
+                getStatusClass(
+                  item.status
+                )
+              }
+            >
+              {
+                getStatusText(
+                  item.status
+                )
+              }
+            </div>
+
+          </div>
+
+        ))}
+
+      </section>
+
+      {/* COMPLETED */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionTop}>
+
+          <h2>
+            Завершённые
+          </h2>
+
+        </div>
+
+        {completedRequests.length === 0 && (
+
+          <div className={styles.card}>
+
+            <strong>
+              Нет завершённых заявок
+            </strong>
+
+          </div>
+
+        )}
+
+        {completedRequests.map((item) => (
+
+          <div
+            key={item.id}
+            className={styles.card}
+          >
+
+            <strong>
+              {item.part_name || "Деталь"}
+            </strong>
 
             <p>
               Автомобиль:
@@ -274,11 +433,30 @@ export default function RequestsPage() {
               {item.car || "—"}
             </p>
 
-            <div className={styles.badge}>
-              {item.status || "NEW"}
+            <p>
+              VIN:
+              {" "}
+              {item.vin || "—"}
+            </p>
+
+            <p>
+              Дата:
+              {" "}
+              {
+                formatDate(
+                  item.created_at
+                )
+              }
+            </p>
+
+            <div
+              className={styles.badgeGreen}
+            >
+              Завершена
             </div>
 
           </div>
+
         ))}
 
       </section>
