@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -13,19 +14,25 @@ export default function OffersPage() {
   const [loading, setLoading] =
     useState(true);
 
-  /* DELIVERY ADDRESS */
+  const [selectedOffer, setSelectedOffer] =
+    useState<any>(null);
+
+  /* DELIVERY */
 
   const [country, setCountry] =
-    useState<any>({});
+    useState("");
 
   const [city, setCity] =
-    useState<any>({});
+    useState("");
 
   const [street, setStreet] =
-    useState<any>({});
+    useState("");
 
   const [zip, setZip] =
-    useState<any>({});
+    useState("");
+
+  const [paymentMethod, setPaymentMethod] =
+    useState("CARD");
 
   useEffect(() => {
 
@@ -70,8 +77,6 @@ export default function OffersPage() {
       let phone =
         session?.user?.phone;
 
-      /* COOKIE AUTOLOGIN */
-
       if (!phone) {
 
         const phoneCookie =
@@ -87,8 +92,6 @@ export default function OffersPage() {
         if (phoneCookie)
           phone = phoneCookie;
       }
-
-      /* TEST CLIENT */
 
       if (!phone) {
 
@@ -173,80 +176,22 @@ export default function OffersPage() {
     }
   }
 
-  async function saveDeliveryAddress(
-    item:any
-  ) {
+  async function createOrder() {
 
     if (
-      !country[item.id] ||
-      !city[item.id] ||
-      !street[item.id] ||
-      !zip[item.id]
+      !selectedOffer
+    )
+      return;
+
+    if (
+      !country ||
+      !city ||
+      !street ||
+      !zip
     ) {
 
       alert(
         "Заполните адрес доставки"
-      );
-
-      return;
-    }
-
-    try {
-
-      const fullAddress =
-        `${country[item.id]}, ${city[item.id]}, ${street[item.id]}, ${zip[item.id]}`;
-
-      const {
-        error,
-      } =
-        await supabase
-          .from("offers")
-          .update({
-            delivery_address:
-              fullAddress,
-          })
-          .eq(
-            "id",
-            item.id
-          );
-
-      if (error) {
-
-        console.error(error);
-
-        alert(
-          "Ошибка сохранения адреса"
-        );
-
-        return;
-      }
-
-      await loadOffers();
-
-      alert(
-        "Адрес доставки сохранен"
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
-      alert(
-        "Ошибка соединения"
-      );
-    }
-  }
-
-  async function acceptOffer(
-    item:any
-  ) {
-
-    if (
-      !item.delivery_address
-    ) {
-
-      alert(
-        "Сначала заполните адрес доставки"
       );
 
       return;
@@ -266,6 +211,9 @@ export default function OffersPage() {
         return;
       }
 
+      const fullAddress =
+        `${country}, ${city}, ${street}, ${zip}`;
+
       /* CREATE ORDER */
 
       const {
@@ -275,11 +223,11 @@ export default function OffersPage() {
           .from("orders")
           .insert([
             {
-              offer_id:item.id,
+              offer_id:
+                selectedOffer.id,
 
               part_name:
-                item.request_part_name ||
-                item.brand,
+                selectedOffer.brand,
 
               status:"NEW",
 
@@ -289,13 +237,16 @@ export default function OffersPage() {
               track_number:"",
 
               offer_price:
-                item.price,
+                selectedOffer.price,
 
               delivery_days:
-                item.delivery_days,
+                selectedOffer.delivery_days,
 
               delivery_address:
-                item.delivery_address,
+                fullAddress,
+
+              payment_method:
+                paymentMethod,
             },
           ]);
 
@@ -310,7 +261,7 @@ export default function OffersPage() {
         return;
       }
 
-      /* UPDATE OFFER STATUS */
+      /* UPDATE OFFER */
 
       const {
         error:updateError,
@@ -320,18 +271,30 @@ export default function OffersPage() {
           .update({
             payment_status:"PAID",
             status:"PAID",
+            delivery_address:
+              fullAddress,
           })
-          .eq("id", item.id);
+          .eq(
+            "id",
+            selectedOffer.id
+          );
 
       if (updateError) {
 
         console.error(updateError);
       }
 
+      setSelectedOffer(null);
+
+      setCountry("");
+      setCity("");
+      setStreet("");
+      setZip("");
+
       await loadOffers();
 
       alert(
-        "Оплата прошла успешно"
+        "Заказ оформлен"
       );
 
     } catch (error) {
@@ -422,207 +385,286 @@ export default function OffersPage() {
 
       </section>
 
-      {/* OFFERS */}
+      {/* ORDER FORM */}
 
-      <section className={styles.section}>
+      {selectedOffer && (
 
-        {offers.length === 0 && (
+        <section
+          className={styles.section}
+        >
 
           <div className={styles.card}>
 
+            <h2
+              style={{
+                marginBottom:"20px",
+              }}
+            >
+              Оформление заказа
+            </h2>
+
+            {selectedOffer.product_image && (
+
+              <img
+                src={
+                  selectedOffer.product_image
+                }
+                alt=""
+                style={{
+                  width:"100%",
+                  borderRadius:"20px",
+                  marginBottom:"16px",
+                }}
+              />
+
+            )}
+
             <strong>
-              Пока нет предложений
+              {
+                selectedOffer.brand
+              }
             </strong>
-
-          </div>
-        )}
-
-        {offers.map((item) => (
-
-          <div
-            key={item.id}
-            className={styles.card}
-          >
-
-            <strong>
-              {item.brand || "Предложение"}
-            </strong>
-
-            <div className={styles.price}>
-              € {item.price || 0}
-            </div>
 
             <p>
-              Срок доставки:
+              Артикул:
               {" "}
-              {item.delivery_days || 0}
+              {
+                selectedOffer.article ||
+                "—"
+              }
+            </p>
+
+            <p>
+              {
+                selectedOffer.description ||
+                "Описание отсутствует"
+              }
+            </p>
+
+            <p>
+              Доставка:
+              {" "}
+              {
+                selectedOffer.delivery_days
+              }
               {" "}
               дн.
             </p>
 
-            <p>
-              Деталь:
+            <div className={styles.price}>
+              €
               {" "}
-              {item.request_part_name || "—"}
-            </p>
-
-            <div className={styles.badge}>
-              Ожидает оплаты
+              {
+                selectedOffer.price
+              }
             </div>
 
-            {/* ADDRESS */}
+            <input
+              className={styles.input}
+              placeholder="Страна"
+              value={country}
+              onChange={(e) =>
+                setCountry(
+                  e.target.value
+                )
+              }
+            />
 
-            {!item.delivery_address && (
+            <input
+              className={styles.input}
+              placeholder="Город"
+              value={city}
+              onChange={(e) =>
+                setCity(
+                  e.target.value
+                )
+              }
+            />
 
-              <div
-                style={{
-                  marginTop:"14px",
-                  display:"flex",
-                  flexDirection:"column",
-                  gap:"10px",
-                }}
-              >
+            <input
+              className={styles.input}
+              placeholder="Улица и дом"
+              value={street}
+              onChange={(e) =>
+                setStreet(
+                  e.target.value
+                )
+              }
+            />
 
-                <input
-                  className={styles.input}
-                  placeholder="Страна"
-                  value={
-                    country[item.id] || ""
-                  }
-                  onChange={(e) =>
-                    setCountry({
-                      ...country,
-                      [item.id]:
-                        e.target.value,
-                    })
-                  }
-                />
+            <input
+              className={styles.input}
+              placeholder="Почтовый индекс"
+              value={zip}
+              onChange={(e) =>
+                setZip(
+                  e.target.value
+                )
+              }
+            />
 
-                <input
-                  className={styles.input}
-                  placeholder="Город"
-                  value={
-                    city[item.id] || ""
-                  }
-                  onChange={(e) =>
-                    setCity({
-                      ...city,
-                      [item.id]:
-                        e.target.value,
-                    })
-                  }
-                />
+            <select
+              className={styles.input}
+              value={paymentMethod}
+              onChange={(e) =>
+                setPaymentMethod(
+                  e.target.value
+                )
+              }
+            >
 
-                <input
-                  className={styles.input}
-                  placeholder="Улица и дом"
-                  value={
-                    street[item.id] || ""
-                  }
-                  onChange={(e) =>
-                    setStreet({
-                      ...street,
-                      [item.id]:
-                        e.target.value,
-                    })
-                  }
-                />
+              <option value="CARD">
+                Банковская карта
+              </option>
 
-                <input
-                  className={styles.input}
-                  placeholder="Почтовый индекс"
-                  value={
-                    zip[item.id] || ""
-                  }
-                  onChange={(e) =>
-                    setZip({
-                      ...zip,
-                      [item.id]:
-                        e.target.value,
-                    })
-                  }
-                />
+              <option value="CASH">
+                Наличные
+              </option>
 
-                <button
-                  className={styles.createBtn}
-                  onClick={() =>
-                    saveDeliveryAddress(
-                      item
-                    )
-                  }
-                >
-                  Сохранить адрес
-                </button>
+              <option value="TRANSFER">
+                Банковский перевод
+              </option>
 
-              </div>
-
-            )}
-
-            {item.delivery_address && (
-
-              <div
-                style={{
-                  marginTop:"12px",
-                }}
-              >
-
-                <strong>
-                  Адрес доставки:
-                </strong>
-
-                <p>
-                  {
-                    item.delivery_address
-                  }
-                </p>
-
-              </div>
-
-            )}
+            </select>
 
             <button
-              className={
-                item.delivery_address
-                  ? styles.createBtn
-                  : styles.logoutBtn
-              }
-              disabled={
-                !item.delivery_address
-              }
-              onClick={() =>
-                acceptOffer(item)
-              }
-              style={{
-                marginTop:"14px",
-                opacity:
-                  item.delivery_address
-                    ? 1
-                    : 0.5,
-              }}
+              className={styles.createBtn}
+              onClick={createOrder}
             >
-              {
-                item.delivery_address
-                  ? "Оплатить"
-                  : "Сначала заполните адрес"
-              }
+              Оплатить
             </button>
 
             <button
-              onClick={() =>
-                cancelOffer(item.id)
-              }
               className={styles.logoutBtn}
               style={{
                 marginTop:"10px",
               }}
+              onClick={() =>
+                setSelectedOffer(null)
+              }
             >
-              Отменить
+              Отмена
             </button>
 
           </div>
-        ))}
 
-      </section>
+        </section>
+
+      )}
+
+      {/* OFFERS */}
+
+      {!selectedOffer && (
+
+        <section className={styles.section}>
+
+          {offers.length === 0 && (
+
+            <div className={styles.card}>
+
+              <strong>
+                Пока нет предложений
+              </strong>
+
+            </div>
+          )}
+
+          {offers.map((item) => (
+
+            <div
+              key={item.id}
+              className={styles.card}
+            >
+
+              {item.product_image && (
+
+                <img
+                  src={item.product_image}
+                  alt=""
+                  style={{
+                    width:"100%",
+                    borderRadius:"20px",
+                    marginBottom:"16px",
+                    objectFit:"cover",
+                  }}
+                />
+
+              )}
+
+              <strong
+                style={{
+                  fontSize:"24px",
+                }}
+              >
+                {
+                  item.brand ||
+                  "Товар"
+                }
+              </strong>
+
+              <p
+                style={{
+                  marginTop:"10px",
+                }}
+              >
+                Артикул:
+                {" "}
+                {
+                  item.article ||
+                  "—"
+                }
+              </p>
+
+              <p>
+                {
+                  item.description ||
+                  "Описание отсутствует"
+                }
+              </p>
+
+              <p>
+                Срок доставки:
+                {" "}
+                {
+                  item.delivery_days || 0
+                }
+                {" "}
+                дн.
+              </p>
+
+              <div className={styles.price}>
+                €
+                {" "}
+                {item.price || 0}
+              </div>
+
+              <button
+                className={styles.createBtn}
+                onClick={() =>
+                  setSelectedOffer(item)
+                }
+              >
+                Оформить заказ
+              </button>
+
+              <button
+                onClick={() =>
+                  cancelOffer(item.id)
+                }
+                className={styles.logoutBtn}
+                style={{
+                  marginTop:"10px",
+                }}
+              >
+                Отменить
+              </button>
+
+            </div>
+          ))}
+
+        </section>
+
+      )}
 
       {/* BOTTOM NAV */}
 
