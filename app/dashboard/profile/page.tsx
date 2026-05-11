@@ -13,8 +13,12 @@ export default function ProfilePage() {
   const [loading, setLoading] =
     useState(true);
 
+  /* READONLY NAME */
+
   const [name, setName] =
     useState("");
+
+  /* ADDRESS */
 
   const [country, setCountry] =
     useState("");
@@ -31,81 +35,161 @@ export default function ProfilePage() {
 
   async function loadProfile() {
 
-    const {
-      data: {
-        session,
-      },
-    } =
-      await supabase.auth.getSession();
+    try {
 
-    let phone =
-      session?.user?.phone;
+      const {
+        data: {
+          session,
+        },
+      } =
+        await supabase.auth.getSession();
 
-    if (!phone) {
+      let phone =
+        session?.user?.phone;
 
-      const role =
-        document.cookie.includes(
-          "role=client"
-        );
+      /* COOKIE AUTOLOGIN */
 
-      if (role)
-        phone =
-          "+48519000000";
+      if (!phone) {
+
+        const phoneCookie =
+          document.cookie
+            .split("; ")
+            .find((row) =>
+              row.startsWith(
+                "client_phone="
+              )
+            )
+            ?.split("=")[1];
+
+        if (phoneCookie)
+          phone = phoneCookie;
+      }
+
+      /* TEST CLIENT */
+
+      if (!phone) {
+
+        const role =
+          document.cookie.includes(
+            "role=client"
+          );
+
+        if (role)
+          phone =
+            "+48519000000";
+      }
+
+      if (!phone) {
+
+        setLoading(false);
+
+        return;
+      }
+
+      const {
+        data,
+        error,
+      } =
+        await supabase
+          .from("profiles")
+          .select("*")
+          .eq("phone", phone)
+          .maybeSingle();
+
+      if (error) {
+
+        console.error(error);
+
+        setLoading(false);
+
+        return;
+      }
+
+      setProfile(data);
+
+      /* NAME FROM REGISTRATION */
+
+      setName(
+        data?.full_name || ""
+      );
+
+      /* ADDRESS */
+
+      setCountry(
+        data?.country || ""
+      );
+
+      setCity(
+        data?.city || ""
+      );
+
+      setAddress(
+        data?.address || ""
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+    } finally {
+
+      setLoading(false);
     }
-
-    const {
-      data,
-    } =
-      await supabase
-        .from("profiles")
-        .select("*")
-        .eq("phone", phone)
-        .maybeSingle();
-
-    setProfile(data);
-
-    setName(
-      data?.full_name || ""
-    );
-
-    setCountry(
-      data?.country || ""
-    );
-
-    setCity(
-      data?.city || ""
-    );
-
-    setAddress(
-      data?.address || ""
-    );
-
-    setLoading(false);
   }
 
-  /* SAVE */
+  /* SAVE PROFILE */
 
   async function saveProfile() {
 
-    if (!profile?.id)
-      return;
+    try {
 
-    await supabase
-      .from("profiles")
-      .update({
-        full_name:name,
-        country,
-        city,
-        address,
-      })
-      .eq(
-        "id",
-        profile.id
+      if (!profile?.id) {
+
+        alert(
+          "Профиль не найден"
+        );
+
+        return;
+      }
+
+      const {
+        error,
+      } =
+        await supabase
+          .from("profiles")
+          .update({
+            country,
+            city,
+            address,
+          })
+          .eq(
+            "id",
+            profile.id
+          );
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "Ошибка сохранения"
+        );
+
+        return;
+      }
+
+      alert(
+        "Профиль сохранён"
       );
 
-    alert(
-      "Профиль сохранён"
-    );
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Ошибка соединения"
+      );
+    }
   }
 
   /* LOGOUT */
@@ -114,6 +198,9 @@ export default function ProfilePage() {
 
     document.cookie =
       "role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+
+    document.cookie =
+      "client_phone=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
 
     await supabase.auth.signOut();
 
@@ -132,7 +219,7 @@ export default function ProfilePage() {
 
     <main className={styles.page}>
 
-      {/* HEADER */}
+      {/* HERO */}
 
       <section className={styles.hero}>
 
@@ -142,22 +229,39 @@ export default function ProfilePage() {
 
       </section>
 
-      {/* PROFILE */}
+      {/* PROFILE FORM */}
 
       <section className={styles.requestBox}>
 
         <div className={styles.form}>
 
+          {/* NAME */}
+
           <input
             className={styles.input}
-            placeholder="Имя"
             value={name}
-            onChange={(e) =>
-              setName(
-                e.target.value
-              )
-            }
+            readOnly
+            style={{
+              opacity:0.7,
+              cursor:"not-allowed",
+            }}
           />
+
+          {/* PHONE */}
+
+          <input
+            className={styles.input}
+            value={
+              profile?.phone || ""
+            }
+            readOnly
+            style={{
+              opacity:0.7,
+              cursor:"not-allowed",
+            }}
+          />
+
+          {/* COUNTRY */}
 
           <input
             className={styles.input}
@@ -170,6 +274,8 @@ export default function ProfilePage() {
             }
           />
 
+          {/* CITY */}
+
           <input
             className={styles.input}
             placeholder="Город"
@@ -181,9 +287,11 @@ export default function ProfilePage() {
             }
           />
 
+          {/* ADDRESS */}
+
           <input
             className={styles.input}
-            placeholder="Адрес"
+            placeholder="Адрес доставки"
             value={address}
             onChange={(e) =>
               setAddress(
@@ -192,12 +300,16 @@ export default function ProfilePage() {
             }
           />
 
+          {/* SAVE */}
+
           <button
             className={styles.createBtn}
             onClick={saveProfile}
           >
             Сохранить
           </button>
+
+          {/* LOGOUT */}
 
           <button
             className={styles.logoutWhiteBtn}
@@ -255,6 +367,36 @@ export default function ProfilePage() {
 
           <span>
             Предложения
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/orders"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            📦
+          </div>
+
+          <span>
+            Заказы
+          </span>
+
+        </Link>
+
+        <Link
+          href="/dashboard/garage"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            🚗
+          </div>
+
+          <span>
+            Гараж
           </span>
 
         </Link>
