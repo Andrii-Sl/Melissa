@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "../dashboard.module.css";
 
@@ -12,6 +12,9 @@ export default function OrdersPage() {
 
   const [loading, setLoading] =
     useState(true);
+
+  const [activeTab, setActiveTab] =
+    useState("ACTIVE");
 
   useEffect(() => {
 
@@ -34,7 +37,6 @@ export default function OrdersPage() {
         .subscribe();
 
     return () => {
-
       supabase.removeChannel(
         channel
       );
@@ -92,7 +94,6 @@ export default function OrdersPage() {
       if (!phone) {
 
         setOrders([]);
-
         setLoading(false);
 
         return;
@@ -105,7 +106,14 @@ export default function OrdersPage() {
         await supabase
           .from("orders")
           .select(`
-            *,
+            id,
+            status,
+            offer_price,
+            delivery_days,
+            delivery_address,
+            payment_method,
+            track_number,
+            created_at,
             offers (
               brand,
               article,
@@ -163,18 +171,42 @@ export default function OrdersPage() {
     return "Новый";
   }
 
+  function getPaymentText(
+    method:string
+  ) {
+
+    if (method === "CARD")
+      return "Банковская карта";
+
+    if (method === "CASH")
+      return "Наличные";
+
+    if (method === "TRANSFER")
+      return "Банковский перевод";
+
+    return "—";
+  }
+
   const activeOrders =
-    orders.filter(
-      (item) =>
-        item.status !==
-        "DELIVERED"
+    useMemo(
+      () =>
+        orders.filter(
+          (item) =>
+            item.status !==
+            "DELIVERED"
+        ),
+      [orders]
     );
 
   const deliveredOrders =
-    orders.filter(
-      (item) =>
-        item.status ===
-        "DELIVERED"
+    useMemo(
+      () =>
+        orders.filter(
+          (item) =>
+            item.status ===
+            "DELIVERED"
+        ),
+      [orders]
     );
 
   if (loading)
@@ -204,192 +236,301 @@ export default function OrdersPage() {
 
       </section>
 
-      {/* ACTIVE */}
+      {/* TABS */}
 
-      <section className={styles.section}>
+      <section
+        className={styles.section}
+        style={{
+          paddingTop:"0",
+        }}
+      >
 
-        <div className={styles.sectionTop}>
+        <div
+          style={{
+            display:"flex",
+            gap:"10px",
+          }}
+        >
 
-          <h2>
-            Активные заказы
-          </h2>
+          <button
+            className={
+              activeTab === "ACTIVE"
+                ? styles.createBtn
+                : styles.logoutWhiteBtn
+            }
+            onClick={() =>
+              setActiveTab(
+                "ACTIVE"
+              )
+            }
+          >
+            Активные
+          </button>
+
+          <button
+            className={
+              activeTab === "DELIVERED"
+                ? styles.createBtn
+                : styles.logoutWhiteBtn
+            }
+            onClick={() =>
+              setActiveTab(
+                "DELIVERED"
+              )
+            }
+          >
+            Доставленные
+          </button>
 
         </div>
 
-        {activeOrders.length === 0 && (
+      </section>
 
-          <div className={styles.card}>
+      {/* ACTIVE ORDERS */}
 
-            <strong>
-              Нет активных заказов
-            </strong>
+      {activeTab === "ACTIVE" && (
 
-          </div>
+        <section className={styles.section}>
 
-        )}
+          {activeOrders.length === 0 && (
 
-        {activeOrders.map((item) => (
+            <div className={styles.card}>
 
-          <div
-            key={item.id}
-            className={styles.card}
-          >
-
-            {item.offers?.product_image && (
-
-              <img
-                src={
-                  item.offers.product_image
-                }
-                alt=""
-                style={{
-                  width:"100%",
-                  borderRadius:"20px",
-                  marginBottom:"16px",
-                }}
-              />
-
-            )}
-
-            <strong
-              style={{
-                fontSize:"22px",
-              }}
-            >
-              {
-                item.offers?.brand ||
-                "Товар"
-              }
-            </strong>
-
-            <p>
-              Артикул:
-              {" "}
-              {
-                item.offers?.article ||
-                "—"
-              }
-            </p>
-
-            <p>
-              {
-                item.offers?.description ||
-                "Описание отсутствует"
-              }
-            </p>
-
-            <p>
-              Цена:
-              {" "}
-              €
-              {" "}
-              {
-                item.offer_price || 0
-              }
-            </p>
-
-            <p>
-              Доставка:
-              {" "}
-              {
-                item.delivery_days || 0
-              }
-              {" "}
-              дн.
-            </p>
-
-            <p>
-              Адрес:
-              {" "}
-              {
-                item.delivery_address ||
-                "—"
-              }
-            </p>
-
-            <p>
-              Track:
-              {" "}
-              {
-                item.track_number ||
-                "—"
-              }
-            </p>
-
-            <div className={styles.badge}>
-
-              {
-                getStatusText(
-                  item.status
-                )
-              }
+              <strong>
+                Нет активных заказов
+              </strong>
 
             </div>
 
-          </div>
+          )}
 
-        ))}
+          {activeOrders.map((item) => (
 
-      </section>
+            <div
+              key={item.id}
+              className={styles.card}
+            >
+
+              {item.offers?.product_image && (
+
+                <img
+                  src={
+                    item.offers
+                      .product_image
+                  }
+                  alt=""
+                  style={{
+                    width:"100%",
+                    borderRadius:"20px",
+                    marginBottom:"16px",
+                    objectFit:"cover",
+                  }}
+                />
+
+              )}
+
+              <strong
+                style={{
+                  fontSize:"24px",
+                  display:"block",
+                  marginBottom:"10px",
+                }}
+              >
+                {
+                  item.offers?.brand ||
+                  "Товар"
+                }
+              </strong>
+
+              <p>
+                Артикул:
+                {" "}
+                {
+                  item.offers?.article ||
+                  "—"
+                }
+              </p>
+
+              <p>
+                {
+                  item.offers
+                    ?.description ||
+                  "Описание отсутствует"
+                }
+              </p>
+
+              <p>
+                Срок доставки:
+                {" "}
+                {
+                  item.delivery_days || 0
+                }
+                {" "}
+                дн.
+              </p>
+
+              <div className={styles.price}>
+                €
+                {" "}
+                {
+                  item.offer_price || 0
+                }
+              </div>
+
+              <p>
+                Адрес доставки:
+                {" "}
+                {
+                  item.delivery_address ||
+                  "—"
+                }
+              </p>
+
+              <p>
+                Способ оплаты:
+                {" "}
+                {
+                  getPaymentText(
+                    item.payment_method
+                  )
+                }
+              </p>
+
+              <p>
+                Track:
+                {" "}
+                {
+                  item.track_number ||
+                  "—"
+                }
+              </p>
+
+              <div
+                className={
+                  item.status ===
+                  "SHIPPED"
+                    ? styles.badgeBlue
+                    : styles.badge
+                }
+                style={{
+                  marginTop:"14px",
+                }}
+              >
+
+                {
+                  getStatusText(
+                    item.status
+                  )
+                }
+
+              </div>
+
+            </div>
+
+          ))}
+
+        </section>
+
+      )}
 
       {/* DELIVERED */}
 
-      <section className={styles.section}>
+      {activeTab === "DELIVERED" && (
 
-        <div className={styles.sectionTop}>
+        <section className={styles.section}>
 
-          <h2>
-            Доставленные
-          </h2>
+          {deliveredOrders.length === 0 && (
 
-        </div>
+            <div className={styles.card}>
 
-        {deliveredOrders.length === 0 && (
+              <strong>
+                Нет доставленных заказов
+              </strong>
 
-          <div className={styles.card}>
-
-            <strong>
-              Нет доставленных заказов
-            </strong>
-
-          </div>
-
-        )}
-
-        {deliveredOrders.map((item) => (
-
-          <div
-            key={item.id}
-            className={styles.card}
-            style={{
-              padding:"16px",
-            }}
-          >
-
-            <strong>
-              {
-                item.offers?.brand ||
-                "Товар"
-              }
-            </strong>
-
-            <p>
-              €
-              {" "}
-              {
-                item.offer_price || 0
-              }
-            </p>
-
-            <div className={styles.badgeGreen}>
-              Доставлен
             </div>
 
-          </div>
+          )}
 
-        ))}
+          {deliveredOrders.map((item) => (
 
-      </section>
+            <div
+              key={item.id}
+              className={styles.card}
+              style={{
+                display:"flex",
+                alignItems:"center",
+                justifyContent:"space-between",
+                gap:"14px",
+                padding:"14px 18px",
+              }}
+            >
+
+              <div
+                style={{
+                  display:"flex",
+                  alignItems:"center",
+                  gap:"14px",
+                }}
+              >
+
+                {item.offers?.product_image && (
+
+                  <img
+                    src={
+                      item.offers
+                        .product_image
+                    }
+                    alt=""
+                    style={{
+                      width:"70px",
+                      height:"70px",
+                      borderRadius:"14px",
+                      objectFit:"cover",
+                    }}
+                  />
+
+                )}
+
+                <div>
+
+                  <strong>
+                    {
+                      item.offers?.brand ||
+                      "Товар"
+                    }
+                  </strong>
+
+                  <p
+                    style={{
+                      marginTop:"4px",
+                    }}
+                  >
+                    €
+                    {" "}
+                    {
+                      item.offer_price || 0
+                    }
+                  </p>
+
+                </div>
+
+              </div>
+
+              <div
+                className={
+                  styles.badgeGreen
+                }
+              >
+                Доставлен
+              </div>
+
+            </div>
+
+          ))}
+
+        </section>
+
+      )}
 
       {/* NAV */}
 
