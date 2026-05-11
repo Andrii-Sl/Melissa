@@ -13,6 +13,20 @@ export default function OffersPage() {
   const [loading, setLoading] =
     useState(true);
 
+  /* DELIVERY ADDRESS */
+
+  const [country, setCountry] =
+    useState<any>({});
+
+  const [city, setCity] =
+    useState<any>({});
+
+  const [street, setStreet] =
+    useState<any>({});
+
+  const [zip, setZip] =
+    useState<any>({});
+
   useEffect(() => {
 
     loadOffers();
@@ -159,9 +173,84 @@ export default function OffersPage() {
     }
   }
 
+  async function saveDeliveryAddress(
+    item:any
+  ) {
+
+    if (
+      !country[item.id] ||
+      !city[item.id] ||
+      !street[item.id] ||
+      !zip[item.id]
+    ) {
+
+      alert(
+        "Заполните адрес доставки"
+      );
+
+      return;
+    }
+
+    try {
+
+      const fullAddress =
+        `${country[item.id]}, ${city[item.id]}, ${street[item.id]}, ${zip[item.id]}`;
+
+      const {
+        error,
+      } =
+        await supabase
+          .from("offers")
+          .update({
+            delivery_address:
+              fullAddress,
+          })
+          .eq(
+            "id",
+            item.id
+          );
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "Ошибка сохранения адреса"
+        );
+
+        return;
+      }
+
+      await loadOffers();
+
+      alert(
+        "Адрес доставки сохранен"
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Ошибка соединения"
+      );
+    }
+  }
+
   async function acceptOffer(
     item:any
   ) {
+
+    if (
+      !item.delivery_address
+    ) {
+
+      alert(
+        "Сначала заполните адрес доставки"
+      );
+
+      return;
+    }
 
     try {
 
@@ -204,6 +293,9 @@ export default function OffersPage() {
 
               delivery_days:
                 item.delivery_days,
+
+              delivery_address:
+                item.delivery_address,
             },
           ]);
 
@@ -227,6 +319,7 @@ export default function OffersPage() {
           .from("offers")
           .update({
             payment_status:"PAID",
+            status:"PAID",
           })
           .eq("id", item.id);
 
@@ -272,6 +365,9 @@ export default function OffersPage() {
           .from("offers")
           .update({
             payment_status:
+              "CANCELLED",
+
+            status:
               "CANCELLED",
           })
           .eq("id", id);
@@ -374,13 +470,141 @@ export default function OffersPage() {
               Ожидает оплаты
             </div>
 
+            {/* ADDRESS */}
+
+            {!item.delivery_address && (
+
+              <div
+                style={{
+                  marginTop:"14px",
+                  display:"flex",
+                  flexDirection:"column",
+                  gap:"10px",
+                }}
+              >
+
+                <input
+                  className={styles.input}
+                  placeholder="Страна"
+                  value={
+                    country[item.id] || ""
+                  }
+                  onChange={(e) =>
+                    setCountry({
+                      ...country,
+                      [item.id]:
+                        e.target.value,
+                    })
+                  }
+                />
+
+                <input
+                  className={styles.input}
+                  placeholder="Город"
+                  value={
+                    city[item.id] || ""
+                  }
+                  onChange={(e) =>
+                    setCity({
+                      ...city,
+                      [item.id]:
+                        e.target.value,
+                    })
+                  }
+                />
+
+                <input
+                  className={styles.input}
+                  placeholder="Улица и дом"
+                  value={
+                    street[item.id] || ""
+                  }
+                  onChange={(e) =>
+                    setStreet({
+                      ...street,
+                      [item.id]:
+                        e.target.value,
+                    })
+                  }
+                />
+
+                <input
+                  className={styles.input}
+                  placeholder="Почтовый индекс"
+                  value={
+                    zip[item.id] || ""
+                  }
+                  onChange={(e) =>
+                    setZip({
+                      ...zip,
+                      [item.id]:
+                        e.target.value,
+                    })
+                  }
+                />
+
+                <button
+                  className={styles.createBtn}
+                  onClick={() =>
+                    saveDeliveryAddress(
+                      item
+                    )
+                  }
+                >
+                  Сохранить адрес
+                </button>
+
+              </div>
+
+            )}
+
+            {item.delivery_address && (
+
+              <div
+                style={{
+                  marginTop:"12px",
+                }}
+              >
+
+                <strong>
+                  Адрес доставки:
+                </strong>
+
+                <p>
+                  {
+                    item.delivery_address
+                  }
+                </p>
+
+              </div>
+
+            )}
+
             <button
-              className={styles.createBtn}
+              className={
+                item.delivery_address
+                  ? styles.createBtn
+                  : styles.logoutBtn
+              }
+              disabled={
+                !item.delivery_address
+              }
               onClick={() =>
                 acceptOffer(item)
               }
+              style={{
+                marginTop:"14px",
+                opacity:
+                  item.delivery_address
+                    ? 1
+                    : 0.5,
+              }}
             >
-              Оплатить
+              {
+                item.delivery_address
+                  ? "Оплатить"
+                  : "Сначала заполните адрес"
+              }
             </button>
 
             <button
