@@ -140,9 +140,9 @@ export default function GaragePage() {
   async function addCar() {
 
     if (
-      !brand ||
-      !model ||
-      !vin
+      !brand.trim() ||
+      !model.trim() ||
+      !vin.trim()
     ) {
 
       alert(
@@ -179,24 +179,36 @@ export default function GaragePage() {
         return;
       }
 
+      const insertData = {
+
+        client_phone:
+          phone,
+
+        brand:
+          brand.trim(),
+
+        model:
+          model.trim(),
+
+        vin:
+          vin.trim(),
+
+        car_name:
+          `${brand.trim()} ${model.trim()}`,
+      };
+
+      console.log(
+        "INSERT DATA:",
+        insertData
+      );
+
       const {
         error,
         data,
       } =
         await supabase
           .from("garage")
-          .insert([
-            {
-              client_phone:
-                phone,
-
-              car_name:
-                `${brand} ${model}`,
-
-              vin:
-                vin.trim(),
-            },
-          ])
+          .insert([insertData])
           .select();
 
       console.log(
