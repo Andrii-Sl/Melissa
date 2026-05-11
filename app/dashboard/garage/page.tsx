@@ -115,7 +115,10 @@ export default function GaragePage() {
 
       if (error) {
 
-        console.error(error);
+        console.error(
+          "LOAD GARAGE ERROR:",
+          error
+        );
 
         setCars([]);
 
@@ -178,25 +181,40 @@ export default function GaragePage() {
 
       const {
         error,
+        data,
       } =
         await supabase
           .from("garage")
           .insert([
             {
-              brand,
-              model,
-              vin,
-              client_phone:phone,
+              client_phone:
+                phone,
+
               car_name:
                 `${brand} ${model}`,
+
+              vin:
+                vin.trim(),
             },
-          ]);
+          ])
+          .select();
+
+      console.log(
+        "GARAGE INSERT:",
+        data
+      );
+
+      console.log(
+        "GARAGE ERROR:",
+        error
+      );
 
       if (error) {
 
         console.error(error);
 
         alert(
+          error.message ||
           "Ошибка добавления"
         );
 
@@ -385,15 +403,13 @@ export default function GaragePage() {
           >
 
             <strong>
-              {item.brand}
-              {" "}
-              {item.model}
+              {item.car_name || "Автомобиль"}
             </strong>
 
             <p>
               VIN:
               {" "}
-              {item.vin}
+              {item.vin || "—"}
             </p>
 
             <button
