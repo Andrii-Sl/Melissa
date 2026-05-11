@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "../admin.module.css";
@@ -182,7 +183,11 @@ export default function AdminOffersPage() {
           .from("products")
           .upload(
             fileName,
-            file
+            file,
+            {
+              cacheControl:"3600",
+              upsert:false,
+            }
           );
 
       if (error) {
@@ -549,9 +554,8 @@ export default function AdminOffersPage() {
           />
 
           <input
-            type="number"
+            type="date"
             className={styles.input}
-            placeholder="Доставка (дни)"
             value={delivery}
             onChange={(e) =>
               setDelivery(
@@ -585,15 +589,28 @@ export default function AdminOffersPage() {
 
           {productImage && (
 
-            <img
-              src={productImage}
-              alt=""
+            <div
               style={{
+                position:"relative",
                 width:"100%",
+                height:"240px",
+                marginTop:"14px",
                 borderRadius:"20px",
-                marginTop:"10px",
+                overflow:"hidden",
               }}
-            />
+            >
+
+              <Image
+                src={productImage}
+                alt=""
+                fill
+                style={{
+                  objectFit:"cover",
+                }}
+                unoptimized
+              />
+
+            </div>
 
           )}
 
@@ -652,16 +669,28 @@ export default function AdminOffersPage() {
 
             {item.product_image && (
 
-              <img
-                src={item.product_image}
-                alt=""
+              <div
                 style={{
+                  position:"relative",
                   width:"100%",
+                  height:"240px",
                   borderRadius:"20px",
+                  overflow:"hidden",
                   marginBottom:"14px",
-                  objectFit:"cover",
                 }}
-              />
+              >
+
+                <Image
+                  src={item.product_image}
+                  alt=""
+                  fill
+                  style={{
+                    objectFit:"cover",
+                  }}
+                  unoptimized
+                />
+
+              </div>
 
             )}
 
@@ -692,9 +721,7 @@ export default function AdminOffersPage() {
             <p>
               Доставка:
               {" "}
-              {item.delivery_days || 0}
-              {" "}
-              дн.
+              {item.delivery_days || "—"}
             </p>
 
             <p>
