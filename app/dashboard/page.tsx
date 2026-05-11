@@ -53,19 +53,50 @@ export default function DashboardPage() {
 
   /* GET CLIENT PHONE */
 
-  function getClientPhone() {
+  async function getClientPhone() {
 
-    const cookiePhone =
-      document.cookie
-        .split("; ")
-        .find((row) =>
-          row.startsWith(
-            "client_phone="
+    try {
+
+      /* SESSION */
+
+      const {
+        data:{
+          session,
+        },
+      } =
+        await supabase.auth.getSession();
+
+      if (
+        session?.user?.phone
+      ) {
+
+        return session.user.phone;
+      }
+
+      /* COOKIE */
+
+      const cookiePhone =
+        document.cookie
+          .split("; ")
+          .find((row) =>
+            row.startsWith(
+              "client_phone="
+            )
           )
-        )
-        ?.split("=")[1];
+          ?.split("=")[1];
 
-    return cookiePhone || "";
+      if (cookiePhone) {
+        return cookiePhone;
+      }
+
+      return "";
+
+    } catch (error) {
+
+      console.error(error);
+
+      return "";
+    }
   }
 
   /* LOAD */
@@ -78,21 +109,8 @@ export default function DashboardPage() {
 
     try {
 
-      let phone =
-        getClientPhone();
-
-      if (!phone) {
-
-        const {
-          data:{
-            session,
-          },
-        } =
-          await supabase.auth.getSession();
-
-        phone =
-          session?.user?.phone || "";
-      }
+      const phone =
+        await getClientPhone();
 
       if (!phone) {
 
@@ -111,7 +129,10 @@ export default function DashboardPage() {
           .select(
             "id, full_name, phone"
           )
-          .eq("phone", phone)
+          .eq(
+            "phone",
+            phone
+          )
           .maybeSingle();
 
       setProfile(profileData);
@@ -356,7 +377,7 @@ export default function DashboardPage() {
     try {
 
       const phone =
-        getClientPhone();
+        await getClientPhone();
 
       if (!phone) {
 
