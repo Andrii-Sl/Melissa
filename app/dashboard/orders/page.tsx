@@ -47,7 +47,7 @@ export default function OrdersPage() {
     try {
 
       const {
-        data: {
+        data:{
           session,
         },
       } =
@@ -55,8 +55,6 @@ export default function OrdersPage() {
 
       let phone =
         session?.user?.phone;
-
-      /* COOKIE AUTOLOGIN */
 
       if (!phone) {
 
@@ -72,20 +70,6 @@ export default function OrdersPage() {
 
         if (phoneCookie)
           phone = phoneCookie;
-      }
-
-      /* TEST CLIENT */
-
-      if (!phone) {
-
-        const role =
-          document.cookie.includes(
-            "role=client"
-          );
-
-        if (role)
-          phone =
-            "+48519000000";
       }
 
       return phone;
@@ -120,7 +104,15 @@ export default function OrdersPage() {
       } =
         await supabase
           .from("orders")
-          .select("*")
+          .select(`
+            *,
+            offers (
+              brand,
+              article,
+              description,
+              product_image
+            )
+          `)
           .eq(
             "client_phone",
             phone
@@ -155,19 +147,6 @@ export default function OrdersPage() {
     }
   }
 
-  function getStatusClass(
-    status:string
-  ) {
-
-    if (status === "DELIVERED")
-      return styles.badgeGreen;
-
-    if (status === "SHIPPED")
-      return styles.badgeBlue;
-
-    return styles.badge;
-  }
-
   function getStatusText(
     status:string
   ) {
@@ -184,16 +163,12 @@ export default function OrdersPage() {
     return "Новый";
   }
 
-  /* ACTIVE */
-
   const activeOrders =
     orders.filter(
       (item) =>
         item.status !==
         "DELIVERED"
     );
-
-  /* DELIVERED */
 
   const deliveredOrders =
     orders.filter(
@@ -222,14 +197,14 @@ export default function OrdersPage() {
         </h1>
 
         <p className={styles.phone}>
-          Всего:
+          Активных:
           {" "}
-          {orders.length}
+          {activeOrders.length}
         </p>
 
       </section>
 
-      {/* ACTIVE ORDERS */}
+      {/* ACTIVE */}
 
       <section className={styles.section}>
 
@@ -260,49 +235,99 @@ export default function OrdersPage() {
             className={styles.card}
           >
 
-            <strong>
-              Заказ #{item.id}
+            {item.offers?.product_image && (
+
+              <img
+                src={
+                  item.offers.product_image
+                }
+                alt=""
+                style={{
+                  width:"100%",
+                  borderRadius:"20px",
+                  marginBottom:"16px",
+                }}
+              />
+
+            )}
+
+            <strong
+              style={{
+                fontSize:"22px",
+              }}
+            >
+              {
+                item.offers?.brand ||
+                "Товар"
+              }
             </strong>
 
             <p>
-              {item.part_name || "Деталь"}
+              Артикул:
+              {" "}
+              {
+                item.offers?.article ||
+                "—"
+              }
+            </p>
+
+            <p>
+              {
+                item.offers?.description ||
+                "Описание отсутствует"
+              }
             </p>
 
             <p>
               Цена:
               {" "}
-              € {item.offer_price || 0}
+              €
+              {" "}
+              {
+                item.offer_price || 0
+              }
             </p>
 
             <p>
               Доставка:
               {" "}
-              {item.delivery_days || 0}
+              {
+                item.delivery_days || 0
+              }
               {" "}
               дн.
             </p>
 
             <p>
-              Track:
+              Адрес:
               {" "}
-              {item.track_number || "—"}
+              {
+                item.delivery_address ||
+                "—"
+              }
             </p>
 
-            <div
-              className={
-                getStatusClass(
-                  item.status
-                )
+            <p>
+              Track:
+              {" "}
+              {
+                item.track_number ||
+                "—"
               }
-            >
+            </p>
+
+            <div className={styles.badge}>
+
               {
                 getStatusText(
                   item.status
                 )
               }
+
             </div>
 
           </div>
+
         ))}
 
       </section>
@@ -337,36 +362,27 @@ export default function OrdersPage() {
             key={item.id}
             className={styles.card}
             style={{
-              padding:"14px 16px",
+              padding:"16px",
             }}
           >
 
-            <div
-              style={{
-                display:"flex",
-                justifyContent:"space-between",
-                alignItems:"center",
-                gap:"10px",
-                flexWrap:"wrap",
-              }}
-            >
+            <strong>
+              {
+                item.offers?.brand ||
+                "Товар"
+              }
+            </strong>
 
-              <strong>
-                #{item.id}
-              </strong>
+            <p>
+              €
+              {" "}
+              {
+                item.offer_price || 0
+              }
+            </p>
 
-              <span>
-                {item.part_name || "Деталь"}
-              </span>
-
-              <span
-                className={
-                  styles.badgeGreen
-                }
-              >
-                ✓ Доставлен
-              </span>
-
+            <div className={styles.badgeGreen}>
+              Доставлен
             </div>
 
           </div>
@@ -375,7 +391,7 @@ export default function OrdersPage() {
 
       </section>
 
-      {/* BOTTOM NAV */}
+      {/* NAV */}
 
       <nav className={styles.bottomNav}>
 
