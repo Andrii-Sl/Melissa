@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "../admin.module.css";
@@ -11,6 +12,9 @@ export default function AdminOrdersPage() {
 
   const [loading, setLoading] =
     useState(true);
+
+  const [trackNumbers, setTrackNumbers] =
+    useState<any>({});
 
   useEffect(() => {
 
@@ -43,22 +47,51 @@ export default function AdminOrdersPage() {
 
   async function loadOrders() {
 
-    const {
-      data,
-    } =
-      await supabase
-        .from("orders")
-        .select("*")
-        .order(
-          "created_at",
-          {
-            ascending:false,
-          }
-        );
+    try {
 
-    setOrders(data || []);
+      const {
+        data,
+        error,
+      } =
+        await supabase
+          .from("orders")
+          .select(`
+            *,
+            offers (
+              brand,
+              article,
+              description,
+              product_image
+            )
+          `)
+          .order(
+            "created_at",
+            {
+              ascending:false,
+            }
+          );
 
-    setLoading(false);
+      if (error) {
+
+        console.error(error);
+
+        setOrders([]);
+
+      } else {
+
+        setOrders(data || []);
+      }
+
+    } catch (error) {
+
+      console.error(error);
+
+      setOrders([]);
+
+    } finally {
+
+      setLoading(false);
+    }
   }
 
   async function updateStatus(
@@ -66,14 +99,65 @@ export default function AdminOrdersPage() {
     status:string
   ) {
 
-    await supabase
-      .from("orders")
-      .update({
-        status,
-      })
-      .eq("id", id);
+    try {
 
-    loadOrders();
+      const updateData:any = {
+        status,
+      };
+
+      if (
+        trackNumbers[id]
+      ) {
+
+        updateData.track_number =
+          trackNumbers[id];
+      }
+
+      const {
+        error,
+      } =
+        await supabase
+          .from("orders")
+          .update(updateData)
+          .eq("id", id);
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "Ошибка обновления"
+        );
+
+        return;
+      }
+
+      await loadOrders();
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Ошибка соединения"
+      );
+    }
+  }
+
+  function getStatusText(
+    status:string
+  ) {
+
+    if (status === "DELIVERED")
+      return "Доставлен";
+
+    if (status === "SHIPPED")
+      return "Отправлен";
+
+    if (status === "PROCESS")
+      return "В обработке";
+
+    return "Новый";
   }
 
   if (loading)
@@ -98,10 +182,17 @@ export default function AdminOrdersPage() {
           </h1>
 
           <p className={styles.subtitle}>
-            Панель администратора
+            Управление заказами
           </p>
 
         </div>
+
+        <Link
+          href="/admin"
+          className={styles.profileBtn}
+        >
+          ←
+        </Link>
 
       </header>
 
@@ -114,10 +205,11 @@ export default function AdminOrdersPage() {
           <div className={styles.requestCard}>
 
             <strong>
-              Пока нет заказов
+              Заказов пока нет
             </strong>
 
           </div>
+
         )}
 
         {orders.map((item) => (
@@ -127,34 +219,120 @@ export default function AdminOrdersPage() {
             className={styles.requestCard}
           >
 
-            <div className={styles.requestTop}>
+            {item.offers?.product_image && (
 
-              <strong>
-                Заказ #{item.id}
-              </strong>
+              <img
+                src={
+                  item.offers.product_image
+                }
+                alt=""
+                style={{
+                  width:"100%",
+                  borderRadius:"20px",
+                  marginBottom:"16px",
+                }}
+              />
 
-              <span className={styles.badgeBlue}>
-                {item.status || "NEW"}
-              </span>
+            )}
 
-            </div>
+            <strong
+              style={{
+                fontSize:"22px",
+              }}
+            >
+              {
+                item.offers?.brand ||
+                "Товар"
+              }
+            </strong>
 
             <p>
-              {item.part_name || "Деталь"}
+              Артикул:
+              {" "}
+              {
+                item.offers?.article ||
+                "—"
+              }
             </p>
 
-            <small>
-              Offer ID:
+            <p>
+              {
+                item.offers?.description ||
+                "Описание отсутствует"
+              }
+            </p>
+
+            <p>
+              Цена:
               {" "}
-              {item.offer_id || "—"}
-            </small>
+              €
+              {" "}
+              {
+                item.offer_price || 0
+              }
+            </p>
+
+            <p>
+              Доставка:
+              {" "}
+              {
+                item.delivery_days || 0
+              }
+              {" "}
+              дн.
+            </p>
+
+            <p>
+              Адрес:
+              {" "}
+              {
+                item.delivery_address ||
+                "—"
+              }
+            </p>
+
+            <p>
+              Клиент:
+              {" "}
+              {
+                item.client_phone ||
+                "—"
+              }
+            </p>
+
+            <p>
+              Статус:
+              {" "}
+              {
+                getStatusText(
+                  item.status
+                )
+              }
+            </p>
+
+            <input
+              className={styles.input}
+              placeholder="Track number"
+              value={
+                trackNumbers[item.id] ||
+                item.track_number ||
+                ""
+              }
+              onChange={(e) =>
+                setTrackNumbers({
+                  ...trackNumbers,
+                  [item.id]:
+                    e.target.value,
+                })
+              }
+            />
 
             <div
               style={{
                 display:"flex",
+                flexDirection:"column",
                 gap:"10px",
-                marginTop:"16px",
-                flexWrap:"wrap",
+                marginTop:"14px",
               }}
             >
 
@@ -167,7 +345,7 @@ export default function AdminOrdersPage() {
                   )
                 }
               >
-                PROCESS
+                В обработке
               </button>
 
               <button
@@ -179,7 +357,7 @@ export default function AdminOrdersPage() {
                   )
                 }
               >
-                SHIPPED
+                Отправлен
               </button>
 
               <button
@@ -191,15 +369,82 @@ export default function AdminOrdersPage() {
                   )
                 }
               >
-                DELIVERED
+                Доставлен
               </button>
 
             </div>
 
           </div>
+
         ))}
 
       </section>
+
+      {/* NAV */}
+
+      <nav className={styles.bottomNav}>
+
+        <Link
+          href="/admin"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            🏠
+          </div>
+
+          <span>
+            Главная
+          </span>
+
+        </Link>
+
+        <Link
+          href="/admin/requests"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            📄
+          </div>
+
+          <span>
+            Заявки
+          </span>
+
+        </Link>
+
+        <Link
+          href="/admin/offers"
+          className={styles.navItem}
+        >
+
+          <div className={styles.navIcon}>
+            💶
+          </div>
+
+          <span>
+            Предложения
+          </span>
+
+        </Link>
+
+        <Link
+          href="/admin/orders"
+          className={`${styles.navItem} ${styles.navItemActive}`}
+        >
+
+          <div className={styles.navIcon}>
+            📦
+          </div>
+
+          <span>
+            Заказы
+          </span>
+
+        </Link>
+
+      </nav>
 
     </main>
   );
