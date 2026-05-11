@@ -28,6 +28,15 @@ export default function AdminOffersPage() {
   const [delivery, setDelivery] =
     useState("");
 
+  const [article, setArticle] =
+    useState("");
+
+  const [description, setDescription] =
+    useState("");
+
+  const [productImage, setProductImage] =
+    useState("");
+
   useEffect(() => {
 
     loadData();
@@ -147,6 +156,55 @@ export default function AdminOffersPage() {
     }
   }
 
+  async function uploadImage(
+    file:any
+  ) {
+
+    try {
+
+      const fileName =
+        `${Date.now()}-${file.name}`;
+
+      const {
+        error,
+      } =
+        await supabase.storage
+          .from("products")
+          .upload(
+            fileName,
+            file
+          );
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "Ошибка загрузки фото"
+        );
+
+        return "";
+      }
+
+      const {
+        data,
+      } =
+        supabase.storage
+          .from("products")
+          .getPublicUrl(
+            fileName
+          );
+
+      return data.publicUrl;
+
+    } catch (error) {
+
+      console.error(error);
+
+      return "";
+    }
+  }
+
   async function createOffer() {
 
     try {
@@ -203,6 +261,15 @@ export default function AdminOffersPage() {
               delivery_days:
                 Number(delivery || 0),
 
+              article:
+                article.trim(),
+
+              description:
+                description.trim(),
+
+              product_image:
+                productImage,
+
               client_phone:
                 selectedRequest.client_phone,
 
@@ -251,6 +318,9 @@ export default function AdminOffersPage() {
       setPrice("");
       setDelivery("");
       setRequestId("");
+      setArticle("");
+      setDescription("");
+      setProductImage("");
 
       /* RELOAD */
 
@@ -308,8 +378,6 @@ export default function AdminOffersPage() {
 
         return;
       }
-
-      /* RETURN REQUEST */
 
       if (
         currentOffer?.request_id
@@ -423,10 +491,32 @@ export default function AdminOffersPage() {
 
           <input
             className={styles.input}
-            placeholder="Бренд"
+            placeholder="Название товара"
             value={brand}
             onChange={(e) =>
               setBrand(
+                e.target.value
+              )
+            }
+          />
+
+          <input
+            className={styles.input}
+            placeholder="Артикул"
+            value={article}
+            onChange={(e) =>
+              setArticle(
+                e.target.value
+              )
+            }
+          />
+
+          <textarea
+            className={styles.textarea}
+            placeholder="Описание товара"
+            value={description}
+            onChange={(e) =>
+              setDescription(
                 e.target.value
               )
             }
@@ -455,6 +545,41 @@ export default function AdminOffersPage() {
               )
             }
           />
+
+          <input
+            type="file"
+            accept="image/*"
+            className={styles.input}
+            onChange={async (e) => {
+
+              const file =
+                e.target.files?.[0];
+
+              if (!file)
+                return;
+
+              const imageUrl =
+                await uploadImage(file);
+
+              setProductImage(
+                imageUrl
+              );
+            }}
+          />
+
+          {productImage && (
+
+            <img
+              src={productImage}
+              alt=""
+              style={{
+                width:"100%",
+                borderRadius:"20px",
+                marginTop:"10px",
+              }}
+            />
+
+          )}
 
           <button
             className={styles.createBtn}
@@ -498,10 +623,24 @@ export default function AdminOffersPage() {
             className={styles.requestCard}
           >
 
+            {item.product_image && (
+
+              <img
+                src={item.product_image}
+                alt=""
+                style={{
+                  width:"100%",
+                  borderRadius:"20px",
+                  marginBottom:"14px",
+                }}
+              />
+
+            )}
+
             <div className={styles.requestTop}>
 
               <strong>
-                {item.brand || "Предложение"}
+                {item.brand || "Товар"}
               </strong>
 
               <span className={styles.badgeBlue}>
@@ -509,6 +648,16 @@ export default function AdminOffersPage() {
               </span>
 
             </div>
+
+            <p>
+              Артикул:
+              {" "}
+              {item.article || "—"}
+            </p>
+
+            <p>
+              {item.description || "—"}
+            </p>
 
             <p>
               Доставка:
