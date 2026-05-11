@@ -236,9 +236,9 @@ export default function DashboardPage() {
             "client_phone",
             phone
           )
-          .eq(
+          .in(
             "status",
-            "ACTIVE"
+            ["ACTIVE", "NEW"]
           );
 
       const {
@@ -310,9 +310,9 @@ export default function DashboardPage() {
             "client_phone",
             phone
           )
-          .eq(
+          .in(
             "status",
-            "ACTIVE"
+            ["ACTIVE", "NEW"]
           )
           .order(
             "created_at",
@@ -367,8 +367,7 @@ export default function DashboardPage() {
             {
               ascending:false,
             }
-          )
-          .limit(2);
+          );
 
       setGarage(
         garageData || []
@@ -675,8 +674,6 @@ export default function DashboardPage() {
         </h2>
 
         <div className={styles.form}>
-
-          {/* SELECT CAR */}
 
           <select
             className={styles.input}
