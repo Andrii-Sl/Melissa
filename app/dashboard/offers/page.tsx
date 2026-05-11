@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "../dashboard.module.css";
@@ -67,51 +67,35 @@ export default function OffersPage() {
 
     try {
 
+      const cookiePhone =
+        document.cookie
+          .split("; ")
+          .find((row) =>
+            row.startsWith(
+              "client_phone="
+            )
+          )
+          ?.split("=")[1];
+
+      if (cookiePhone)
+        return cookiePhone;
+
       const {
-        data: {
+        data:{
           session,
         },
       } =
         await supabase.auth.getSession();
 
-      let phone =
-        session?.user?.phone;
-
-      if (!phone) {
-
-        const phoneCookie =
-          document.cookie
-            .split("; ")
-            .find((row) =>
-              row.startsWith(
-                "client_phone="
-              )
-            )
-            ?.split("=")[1];
-
-        if (phoneCookie)
-          phone = phoneCookie;
-      }
-
-      if (!phone) {
-
-        const role =
-          document.cookie.includes(
-            "role=client"
-          );
-
-        if (role)
-          phone =
-            "+48519000000";
-      }
-
-      return phone;
+      return (
+        session?.user?.phone || ""
+      );
 
     } catch (error) {
 
       console.error(error);
 
-      return null;
+      return "";
     }
   }
 
@@ -155,14 +139,17 @@ export default function OffersPage() {
 
       if (error) {
 
-        console.error(error);
+        console.error(
+          "LOAD OFFERS ERROR:",
+          error
+        );
 
         setOffers([]);
 
-      } else {
-
-        setOffers(data || []);
+        return;
       }
+
+      setOffers(data || []);
 
     } catch (error) {
 
@@ -178,9 +165,7 @@ export default function OffersPage() {
 
   async function createOrder() {
 
-    if (
-      !selectedOffer
-    )
+    if (!selectedOffer)
       return;
 
     if (
@@ -247,6 +232,15 @@ export default function OffersPage() {
 
               payment_method:
                 paymentMethod,
+
+              article:
+                selectedOffer.article,
+
+              description:
+                selectedOffer.description,
+
+              product_image:
+                selectedOffer.product_image,
             },
           ]);
 
@@ -294,7 +288,7 @@ export default function OffersPage() {
       await loadOffers();
 
       alert(
-        "Заказ оформлен"
+        "Заказ успешно оформлен"
       );
 
     } catch (error) {
@@ -389,9 +383,7 @@ export default function OffersPage() {
 
       {selectedOffer && (
 
-        <section
-          className={styles.section}
-        >
+        <section className={styles.section}>
 
           <div className={styles.card}>
 
@@ -403,30 +395,54 @@ export default function OffersPage() {
               Оформление заказа
             </h2>
 
+            {/* PRODUCT IMAGE */}
+
             {selectedOffer.product_image && (
 
-              <img
-                src={
-                  selectedOffer.product_image
-                }
-                alt=""
+              <div
                 style={{
+                  position:"relative",
                   width:"100%",
+                  height:"240px",
                   borderRadius:"20px",
-                  marginBottom:"16px",
+                  overflow:"hidden",
+                  marginBottom:"18px",
                 }}
-              />
+              >
+
+                <Image
+                  src={
+                    selectedOffer.product_image
+                  }
+                  alt=""
+                  fill
+                  style={{
+                    objectFit:"cover",
+                  }}
+                />
+
+              </div>
 
             )}
 
-            <strong>
+            {/* PRODUCT INFO */}
+
+            <strong
+              style={{
+                fontSize:"24px",
+                display:"block",
+                marginBottom:"10px",
+              }}
+            >
               {
                 selectedOffer.brand
               }
             </strong>
 
             <p>
-              Артикул:
+              <strong>
+                Артикул:
+              </strong>
               {" "}
               {
                 selectedOffer.article ||
@@ -435,6 +451,10 @@ export default function OffersPage() {
             </p>
 
             <p>
+              <strong>
+                Описание:
+              </strong>
+              {" "}
               {
                 selectedOffer.description ||
                 "Описание отсутствует"
@@ -442,7 +462,9 @@ export default function OffersPage() {
             </p>
 
             <p>
-              Доставка:
+              <strong>
+                Срок доставки:
+              </strong>
               {" "}
               {
                 selectedOffer.delivery_days
@@ -451,13 +473,20 @@ export default function OffersPage() {
               дн.
             </p>
 
-            <div className={styles.price}>
+            <div
+              className={styles.price}
+              style={{
+                marginBottom:"20px",
+              }}
+            >
               €
               {" "}
               {
                 selectedOffer.price
               }
             </div>
+
+            {/* DELIVERY FORM */}
 
             <input
               className={styles.input}
@@ -503,6 +532,8 @@ export default function OffersPage() {
               }
             />
 
+            {/* PAYMENT */}
+
             <select
               className={styles.input}
               value={paymentMethod}
@@ -526,6 +557,8 @@ export default function OffersPage() {
               </option>
 
             </select>
+
+            {/* ACTIONS */}
 
             <button
               className={styles.createBtn}
@@ -552,7 +585,7 @@ export default function OffersPage() {
 
       )}
 
-      {/* OFFERS */}
+      {/* OFFERS LIST */}
 
       {!selectedOffer && (
 
@@ -567,6 +600,7 @@ export default function OffersPage() {
               </strong>
 
             </div>
+
           )}
 
           {offers.map((item) => (
@@ -576,24 +610,41 @@ export default function OffersPage() {
               className={styles.card}
             >
 
+              {/* PRODUCT IMAGE */}
+
               {item.product_image && (
 
-                <img
-                  src={item.product_image}
-                  alt=""
+                <div
                   style={{
+                    position:"relative",
                     width:"100%",
+                    height:"220px",
                     borderRadius:"20px",
+                    overflow:"hidden",
                     marginBottom:"16px",
-                    objectFit:"cover",
                   }}
-                />
+                >
+
+                  <Image
+                    src={item.product_image}
+                    alt=""
+                    fill
+                    style={{
+                      objectFit:"cover",
+                    }}
+                  />
+
+                </div>
 
               )}
+
+              {/* PRODUCT INFO */}
 
               <strong
                 style={{
                   fontSize:"24px",
+                  display:"block",
+                  marginBottom:"10px",
                 }}
               >
                 {
@@ -602,12 +653,10 @@ export default function OffersPage() {
                 }
               </strong>
 
-              <p
-                style={{
-                  marginTop:"10px",
-                }}
-              >
-                Артикул:
+              <p>
+                <strong>
+                  Артикул:
+                </strong>
                 {" "}
                 {
                   item.article ||
@@ -616,6 +665,10 @@ export default function OffersPage() {
               </p>
 
               <p>
+                <strong>
+                  Описание:
+                </strong>
+                {" "}
                 {
                   item.description ||
                   "Описание отсутствует"
@@ -623,7 +676,9 @@ export default function OffersPage() {
               </p>
 
               <p>
-                Срок доставки:
+                <strong>
+                  Срок доставки:
+                </strong>
                 {" "}
                 {
                   item.delivery_days || 0
@@ -632,11 +687,15 @@ export default function OffersPage() {
                 дн.
               </p>
 
-              <div className={styles.price}>
+              <div
+                className={styles.price}
+              >
                 €
                 {" "}
                 {item.price || 0}
               </div>
+
+              {/* ACTIONS */}
 
               <button
                 className={styles.createBtn}
@@ -660,6 +719,7 @@ export default function OffersPage() {
               </button>
 
             </div>
+
           ))}
 
         </section>
