@@ -16,6 +16,9 @@ export default function AdminOffersPage() {
   const [loading, setLoading] =
     useState(true);
 
+  const [uploading, setUploading] =
+    useState(false);
+
   const [requestId, setRequestId] =
     useState("");
 
@@ -47,9 +50,9 @@ export default function AdminOffersPage() {
         .on(
           "postgres_changes",
           {
-            event: "*",
-            schema: "public",
-            table: "offers",
+            event:"*",
+            schema:"public",
+            table:"offers",
           },
           () => {
             loadData();
@@ -63,9 +66,9 @@ export default function AdminOffersPage() {
         .on(
           "postgres_changes",
           {
-            event: "*",
-            schema: "public",
-            table: "requests",
+            event:"*",
+            schema:"public",
+            table:"requests",
           },
           () => {
             loadData();
@@ -91,8 +94,8 @@ export default function AdminOffersPage() {
     try {
 
       const {
-        data: offersData,
-        error: offersError,
+        data:offersData,
+        error:offersError,
       } =
         await supabase
           .from("offers")
@@ -100,13 +103,13 @@ export default function AdminOffersPage() {
           .order(
             "created_at",
             {
-              ascending: false,
+              ascending:false,
             }
           );
 
       const {
-        data: requestsData,
-        error: requestsError,
+        data:requestsData,
+        error:requestsError,
       } =
         await supabase
           .from("requests")
@@ -118,7 +121,7 @@ export default function AdminOffersPage() {
           .order(
             "created_at",
             {
-              ascending: false,
+              ascending:false,
             }
           );
 
@@ -162,8 +165,15 @@ export default function AdminOffersPage() {
 
     try {
 
+      setUploading(true);
+
+      const fileExt =
+        file.name
+          .split(".")
+          .pop();
+
       const fileName =
-        `${Date.now()}-${file.name}`;
+        `${Date.now()}.${fileExt}`;
 
       const {
         error,
@@ -202,6 +212,10 @@ export default function AdminOffersPage() {
       console.error(error);
 
       return "";
+
+    } finally {
+
+      setUploading(false);
     }
   }
 
@@ -216,13 +230,11 @@ export default function AdminOffersPage() {
       ) {
 
         alert(
-          "Заполните поля"
+          "Заполните обязательные поля"
         );
 
         return;
       }
-
-      /* FIND REQUEST */
 
       const selectedRequest =
         requests.find(
@@ -240,8 +252,6 @@ export default function AdminOffersPage() {
         return;
       }
 
-      /* CREATE OFFER */
-
       const {
         error,
       } =
@@ -255,12 +265,6 @@ export default function AdminOffersPage() {
               brand:
                 brand.trim(),
 
-              price:
-                Number(price),
-
-              delivery_days:
-                Number(delivery || 0),
-
               article:
                 article.trim(),
 
@@ -270,10 +274,23 @@ export default function AdminOffersPage() {
               product_image:
                 productImage,
 
+              price:
+                Number(price),
+
+              delivery_days:
+                Number(delivery || 0),
+
               client_phone:
                 selectedRequest.client_phone,
 
-              status:"ACTIVE",
+              request_part_name:
+                selectedRequest.part_name,
+
+              payment_status:
+                "PENDING",
+
+              status:
+                "ACTIVE",
 
               created_at:
                 new Date()
@@ -291,8 +308,6 @@ export default function AdminOffersPage() {
 
         return;
       }
-
-      /* UPDATE REQUEST STATUS */
 
       const {
         error:updateError,
@@ -312,8 +327,6 @@ export default function AdminOffersPage() {
         console.error(updateError);
       }
 
-      /* CLEAR */
-
       setBrand("");
       setPrice("");
       setDelivery("");
@@ -321,8 +334,6 @@ export default function AdminOffersPage() {
       setArticle("");
       setDescription("");
       setProductImage("");
-
-      /* RELOAD */
 
       await loadData();
 
@@ -366,7 +377,10 @@ export default function AdminOffersPage() {
         await supabase
           .from("offers")
           .delete()
-          .eq("id", id);
+          .eq(
+            "id",
+            id
+          );
 
       if (error) {
 
@@ -559,7 +573,9 @@ export default function AdminOffersPage() {
                 return;
 
               const imageUrl =
-                await uploadImage(file);
+                await uploadImage(
+                  file
+                );
 
               setProductImage(
                 imageUrl
@@ -584,8 +600,19 @@ export default function AdminOffersPage() {
           <button
             className={styles.createBtn}
             onClick={createOffer}
+            disabled={uploading}
+            style={{
+              opacity:
+                uploading
+                  ? 0.6
+                  : 1,
+            }}
           >
-            + Создать предложение
+            {
+              uploading
+                ? "Загрузка..."
+                : "+ Создать предложение"
+            }
           </button>
 
         </div>
@@ -632,6 +659,7 @@ export default function AdminOffersPage() {
                   width:"100%",
                   borderRadius:"20px",
                   marginBottom:"14px",
+                  objectFit:"cover",
                 }}
               />
 
@@ -644,7 +672,9 @@ export default function AdminOffersPage() {
               </strong>
 
               <span className={styles.badgeBlue}>
-                € {item.price || 0}
+                €
+                {" "}
+                {item.price || 0}
               </span>
 
             </div>
