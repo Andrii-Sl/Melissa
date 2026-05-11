@@ -243,7 +243,7 @@ export default function DashboardPage() {
             "PENDING"
           );
 
-      /* ORDERS COUNT WITHOUT DELIVERED */
+      /* ORDERS WITHOUT DELIVERED */
 
       const {
         count:ordersTotal,
@@ -306,7 +306,7 @@ export default function DashboardPage() {
         latestRequestsData || []
       );
 
-      /* LAST ACTIVE OFFER */
+      /* LAST OFFER */
 
       const {
         data:latestOffersData,
@@ -568,6 +568,112 @@ export default function DashboardPage() {
           ))}
 
         </div>
+
+      </section>
+
+      {/* STATS */}
+
+      <section className={styles.stats}>
+
+        <Link
+          href="/dashboard/requests"
+          className={styles.statCard}
+        >
+
+          <div className={styles.statTop}>
+
+            <div
+              className={`${styles.statIcon} ${styles.red}`}
+            >
+              📄
+            </div>
+
+          </div>
+
+          <div className={styles.statValue}>
+            {requestsCount}
+          </div>
+
+          <div className={styles.statLabel}>
+            Заявки
+          </div>
+
+        </Link>
+
+        <Link
+          href="/dashboard/offers"
+          className={styles.statCard}
+        >
+
+          <div className={styles.statTop}>
+
+            <div
+              className={`${styles.statIcon} ${styles.blue}`}
+            >
+              💶
+            </div>
+
+          </div>
+
+          <div className={styles.statValue}>
+            {offersCount}
+          </div>
+
+          <div className={styles.statLabel}>
+            Предложения
+          </div>
+
+        </Link>
+
+        <Link
+          href="/dashboard/orders"
+          className={styles.statCard}
+        >
+
+          <div className={styles.statTop}>
+
+            <div
+              className={`${styles.statIcon} ${styles.purple}`}
+            >
+              📦
+            </div>
+
+          </div>
+
+          <div className={styles.statValue}>
+            {ordersCount}
+          </div>
+
+          <div className={styles.statLabel}>
+            Заказы
+          </div>
+
+        </Link>
+
+        <Link
+          href="/dashboard/profile"
+          className={styles.statCard}
+        >
+
+          <div className={styles.statTop}>
+
+            <div
+              className={`${styles.statIcon} ${styles.green}`}
+            >
+              👤
+            </div>
+
+          </div>
+
+          <div className={styles.statValue}>
+            {profile?.full_name ? "✓" : "—"}
+          </div>
+
+          <div className={styles.statLabel}>
+            Профиль
+          </div>
+
+        </Link>
 
       </section>
 
