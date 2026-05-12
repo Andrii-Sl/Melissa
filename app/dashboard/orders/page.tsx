@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "../dashboard.module.css";
 
@@ -11,37 +11,14 @@ export default function OrdersPage() {
   const [orders, setOrders] =
     useState<any[]>([]);
 
+  const [profile, setProfile] =
+    useState<any>(null);
+
   const [loading, setLoading] =
     useState(true);
 
-  useEffect(() => {
-
-    loadOrders();
-
-    const channel =
-      supabase
-        .channel("client-orders")
-        .on(
-          "postgres_changes",
-          {
-            event:"*",
-            schema:"public",
-            table:"orders",
-          },
-          () => {
-            loadOrders();
-          }
-        )
-        .subscribe();
-
-    return () => {
-
-      supabase.removeChannel(
-        channel
-      );
-    };
-
-  }, []);
+  const [selectedOrder, setSelectedOrder] =
+    useState<any>(null);
 
   async function getClientPhone() {
 
@@ -61,9 +38,7 @@ export default function OrdersPage() {
         return cookiePhone;
 
       const {
-        data:{
-          session,
-        },
+        data:{ session },
       } =
         await supabase.auth.getSession();
 
@@ -79,7 +54,33 @@ export default function OrdersPage() {
     }
   }
 
-  async function loadOrders() {
+  useEffect(() => {
+
+    loadData();
+
+    const channel =
+      supabase
+        .channel("client-orders")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"orders",
+          },
+          () => {
+            loadData();
+          }
+        )
+        .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+
+  }, []);
+
+  async function loadData() {
 
     try {
 
@@ -92,6 +93,20 @@ export default function OrdersPage() {
 
         return;
       }
+
+      const {
+        data:profileData,
+      } =
+        await supabase
+          .from("profiles")
+          .select("*")
+          .eq(
+            "phone",
+            phone
+          )
+          .maybeSingle();
+
+      setProfile(profileData);
 
       const {
         data,
@@ -117,10 +132,10 @@ export default function OrdersPage() {
 
         setOrders([]);
 
-        return;
-      }
+      } else {
 
-      setOrders(data || []);
+        setOrders(data || []);
+      }
 
     } catch (error) {
 
@@ -130,6 +145,24 @@ export default function OrdersPage() {
 
       setLoading(false);
     }
+  }
+
+  function formatDate(
+    value:string
+  ) {
+
+    if (!value)
+      return "—";
+
+    return new Date(value)
+      .toLocaleDateString(
+        "ru-RU",
+        {
+          day:"numeric",
+          month:"long",
+          year:"numeric",
+        }
+      );
   }
 
   function getStatusText(
@@ -148,74 +181,14 @@ export default function OrdersPage() {
     return "Новый";
   }
 
-  function getStatusClass(
-    status:string
+  function getTotalPrice(
+    price:number
   ) {
 
-    if (status === "DELIVERED")
-      return styles.statusGreen;
-
-    if (status === "SHIPPED")
-      return styles.statusBlue;
-
-    if (status === "PROCESS")
-      return styles.statusOrange;
-
-    return styles.statusGray;
+    return (
+      Number(price || 0) + 8.9
+    ).toFixed(2);
   }
-
-  function getDeliveryDate(
-    days:number
-  ) {
-
-    const date =
-      new Date();
-
-    date.setDate(
-      date.getDate() +
-      Number(days || 0)
-    );
-
-    return date.toLocaleDateString(
-      "ru-RU",
-      {
-        day:"numeric",
-        month:"long",
-      }
-    );
-  }
-
-  function formatPayment(
-    method:string
-  ) {
-
-    if (method === "PAYPAL")
-      return "PayPal";
-
-    return "Банковская карта";
-  }
-
-  const activeOrders =
-    useMemo(
-      () =>
-        orders.filter(
-          (item) =>
-            item.status !==
-            "DELIVERED"
-        ),
-      [orders]
-    );
-
-  const deliveredOrders =
-    useMemo(
-      () =>
-        orders.filter(
-          (item) =>
-            item.status ===
-            "DELIVERED"
-        ),
-      [orders]
-    );
 
   if (loading)
     return (
@@ -237,11 +210,11 @@ export default function OrdersPage() {
           <div>
 
             <p className={styles.hello}>
-              История заказов
+              История покупок
             </p>
 
             <h1 className={styles.mainTitle}>
-              Заказы
+              Мои заказы
             </h1>
 
           </div>
@@ -250,25 +223,13 @@ export default function OrdersPage() {
 
       </header>
 
-      {/* ACTIVE ORDERS */}
+      {/* ORDERS */}
 
       <section className={styles.section}>
 
-        <div className={styles.sectionHead}>
+        <div className={styles.offerListModern}>
 
-          <h2>
-            Активные
-          </h2>
-
-          <span className={styles.counterBadge}>
-            {activeOrders.length}
-          </span>
-
-        </div>
-
-        <div className={styles.offerGrid}>
-
-          {activeOrders.length === 0 && (
+          {orders.length === 0 && (
 
             <div className={styles.emptyCard}>
 
@@ -277,78 +238,43 @@ export default function OrdersPage() {
               </div>
 
               <strong>
-                Нет активных заказов
+                Пока нет заказов
               </strong>
-
-              <p>
-                Здесь появятся ваши заказы
-              </p>
 
             </div>
 
           )}
 
-          {activeOrders.map((item) => (
+          {orders.map((item) => (
 
-            <div
+            <button
               key={item.id}
-              className={styles.orderPremiumCard}
+              className={styles.orderModernCard}
+              onClick={() =>
+                setSelectedOrder(item)
+              }
             >
-
-              {/* IMAGE */}
-
-              {item.product_image && (
-
-                <div
-                  className={
-                    styles.orderImageWrap
-                  }
-                >
-
-                  <Image
-                    src={item.product_image}
-                    alt=""
-                    fill
-                    className={
-                      styles.orderImage
-                    }
-                  />
-
-                </div>
-
-              )}
 
               {/* TOP */}
 
               <div
                 className={
-                  styles.orderTop
+                  styles.orderModernTop
                 }
               >
 
                 <div>
 
-                  <h2
-                    className={
-                      styles.orderTitle
-                    }
-                  >
-                    {
-                      item.part_name ||
-                      "Товар"
-                    }
+                  <h2>
+                    Заказ #
+                    {item.id}
                   </h2>
 
-                  <p
-                    className={
-                      styles.orderArticle
-                    }
-                  >
-                    Артикул:
-                    {" "}
+                  <p>
                     {
-                      item.article ||
-                      "—"
+                      formatDate(
+                        item.created_at
+                      )
                     }
                   </p>
 
@@ -356,9 +282,7 @@ export default function OrdersPage() {
 
                 <div
                   className={
-                    getStatusClass(
-                      item.status
-                    )
+                    styles.orderStatusGreen
                   }
                 >
                   {
@@ -370,154 +294,72 @@ export default function OrdersPage() {
 
               </div>
 
-              {/* DESCRIPTION */}
-
-              <p
-                className={
-                  styles.orderDescription
-                }
-              >
-                {
-                  item.description ||
-                  "Описание отсутствует"
-                }
-              </p>
-
-              {/* META */}
+              {/* PRODUCT */}
 
               <div
                 className={
-                  styles.orderMetaGrid
+                  styles.orderModernProduct
                 }
               >
 
                 <div
                   className={
-                    styles.metaCard
+                    styles.orderModernImage
                   }
                 >
 
-                  <span>
-                    Доставка
-                  </span>
+                  {item.product_image && (
 
-                  <strong>
-                    {
-                      getDeliveryDate(
-                        item.delivery_days
-                      )
-                    }
-                  </strong>
+                    <Image
+                      src={
+                        item.product_image
+                      }
+                      alt=""
+                      fill
+                      className={
+                        styles.offerImage
+                      }
+                    />
+
+                  )}
 
                 </div>
 
                 <div
                   className={
-                    styles.metaCard
+                    styles.orderModernInfo
                   }
                 >
 
-                  <span>
-                    Оплата
-                  </span>
-
                   <strong>
                     {
-                      formatPayment(
-                        item.payment_method
-                      )
+                      item.part_name ||
+                      "Товар"
                     }
                   </strong>
 
-                </div>
-
-              </div>
-
-              {/* PRICE */}
-
-              <div
-                className={
-                  styles.orderPriceRow
-                }
-              >
-
-                <div>
-
-                  <span
-                    className={
-                      styles.priceLabel
-                    }
-                  >
-                    Сумма заказа
-                  </span>
-
-                  <div
-                    className={
-                      styles.orderPrice
-                    }
-                  >
-                    €
+                  <span>
+                    Артикул:
                     {" "}
                     {
-                      item.offer_price || 0
+                      item.article ||
+                      "—"
                     }
-                  </div>
+                  </span>
 
                 </div>
-
-              </div>
-
-              {/* TRACK */}
-
-              <div
-                className={
-                  styles.trackCard
-                }
-              >
 
                 <div
                   className={
-                    styles.trackTop
+                    styles.orderArrow
                   }
                 >
-
-                  <span>
-                    Track номер
-                  </span>
-
-                  <strong>
-                    {
-                      item.track_number ||
-                      "Не присвоен"
-                    }
-                  </strong>
-
+                  ›
                 </div>
 
               </div>
 
-              {/* ADDRESS */}
-
-              <div
-                className={
-                  styles.addressCard
-                }
-              >
-
-                <span>
-                  Адрес доставки
-                </span>
-
-                <p>
-                  {
-                    item.delivery_address ||
-                    "—"
-                  }
-                </p>
-
-              </div>
-
-            </div>
+            </button>
 
           ))}
 
@@ -525,83 +367,351 @@ export default function OrdersPage() {
 
       </section>
 
-      {/* DELIVERED */}
+      {/* FULLSCREEN */}
 
-      <section className={styles.section}>
+      {selectedOrder && (
 
-        <div className={styles.sectionHead}>
+        <div
+          className={styles.checkoutFullscreen}
+        >
 
-          <h2>
-            Доставленные
-          </h2>
+          {/* TOP */}
 
-          <span className={styles.counterBadge}>
-            {deliveredOrders.length}
-          </span>
+          <div
+            className={styles.checkoutTop}
+          >
 
-        </div>
+            <button
+              className={styles.backButton}
+              onClick={() =>
+                setSelectedOrder(null)
+              }
+            >
+              ←
+            </button>
 
-        {deliveredOrders.length === 0 && (
-
-          <div className={styles.emptyCard}>
-
-            <div className={styles.emptyIcon}>
-              🚚
-            </div>
-
-            <strong>
-              Пока нет доставленных заказов
-            </strong>
+            <h2>
+              Мои заказы
+            </h2>
 
           </div>
 
-        )}
-
-        {deliveredOrders.map((item) => (
+          {/* ORDER */}
 
           <div
-            key={item.id}
-            className={styles.deliveredCard}
+            className={styles.checkoutCard}
           >
 
             <div
               className={
-                styles.deliveredLeft
+                styles.orderModernTop
+              }
+            >
+
+              <div>
+
+                <h2>
+                  Заказ #
+                  {selectedOrder.id}
+                </h2>
+
+                <p>
+                  {
+                    formatDate(
+                      selectedOrder.created_at
+                    )
+                  }
+                </p>
+
+              </div>
+
+              <div
+                className={
+                  styles.orderStatusGreen
+                }
+              >
+                {
+                  getStatusText(
+                    selectedOrder.status
+                  )
+                }
+              </div>
+
+            </div>
+
+            <div
+              className={
+                styles.orderModernProduct
+              }
+            >
+
+              <div
+                className={
+                  styles.orderModernImage
+                }
+              >
+
+                {selectedOrder.product_image && (
+
+                  <Image
+                    src={
+                      selectedOrder.product_image
+                    }
+                    alt=""
+                    fill
+                    className={
+                      styles.offerImage
+                    }
+                  />
+
+                )}
+
+              </div>
+
+              <div
+                className={
+                  styles.orderModernInfo
+                }
+              >
+
+                <strong>
+                  {
+                    selectedOrder.part_name
+                  }
+                </strong>
+
+                <span>
+                  Артикул:
+                  {" "}
+                  {
+                    selectedOrder.article
+                  }
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* ADDRESS */}
+
+          <div
+            className={styles.checkoutCard}
+          >
+
+            <div
+              className={
+                styles.checkoutSectionTitle
+              }
+            >
+              📍 Адрес доставки
+            </div>
+
+            <div
+              className={
+                styles.addressModern
               }
             >
 
               <strong>
                 {
-                  item.part_name ||
-                  "Товар"
+                  profile?.first_name
+                }
+                {" "}
+                {
+                  profile?.last_name
                 }
               </strong>
 
               <p>
+                {
+                  selectedOrder.delivery_address ||
+                  "Не указан"
+                }
+              </p>
+
+              <span>
+                {
+                  profile?.phone
+                }
+              </span>
+
+            </div>
+
+          </div>
+
+          {/* TOTAL */}
+
+          <div
+            className={styles.checkoutCard}
+          >
+
+            <div
+              className={
+                styles.checkoutSectionTitle
+              }
+            >
+              📄 Итог заказа
+            </div>
+
+            <div
+              className={
+                styles.totalRow
+              }
+            >
+
+              <span>
+                Товар
+              </span>
+
+              <strong>
                 €
                 {" "}
                 {
-                  item.offer_price || 0
+                  selectedOrder.offer_price
                 }
-              </p>
+              </strong>
 
             </div>
 
             <div
               className={
-                styles.statusGreen
+                styles.totalRow
               }
             >
-              Доставлен
+
+              <span>
+                Доставка
+              </span>
+
+              <strong>
+                € 8.90
+              </strong>
+
+            </div>
+
+            <div
+              className={
+                styles.totalDivider
+              }
+            />
+
+            <div
+              className={
+                styles.totalRowBig
+              }
+            >
+
+              <span>
+                Итого к оплате
+              </span>
+
+              <strong>
+                €
+                {" "}
+                {
+                  getTotalPrice(
+                    selectedOrder.offer_price
+                  )
+                }
+              </strong>
+
             </div>
 
           </div>
 
-        ))}
+          {/* INFO */}
 
-      </section>
+          <div
+            className={styles.checkoutCard}
+          >
 
-      {/* NAVIGATION */}
+            <div
+              className={
+                styles.checkoutSectionTitle
+              }
+            >
+              📄 Информация о заказе
+            </div>
+
+            <div
+              className={
+                styles.orderInfoRow
+              }
+            >
+
+              <span>
+                Track номер
+              </span>
+
+              <strong>
+                {
+                  selectedOrder.track_number ||
+                  "—"
+                }
+              </strong>
+
+            </div>
+
+            <div
+              className={
+                styles.orderInfoRow
+              }
+            >
+
+              <span>
+                Оплата
+              </span>
+
+              <strong>
+                {
+                  selectedOrder.payment_method ||
+                  "CARD"
+                }
+              </strong>
+
+            </div>
+
+            <div
+              className={
+                styles.orderInfoRow
+              }
+            >
+
+              <span>
+                Статус
+              </span>
+
+              <div
+                className={
+                  styles.orderStatusGreen
+                }
+              >
+                {
+                  getStatusText(
+                    selectedOrder.status
+                  )
+                }
+              </div>
+
+            </div>
+
+            <button
+              className={
+                styles.repeatOrderButton
+              }
+            >
+              ↻ Повторить заказ
+            </button>
+
+          </div>
+
+        </div>
+
+      )}
+
+      {/* NAV */}
 
       <nav className={styles.bottomNav}>
 
@@ -609,9 +719,7 @@ export default function OrdersPage() {
           href="/dashboard"
           className={styles.navItem}
         >
-          <span>
-            🏠
-          </span>
+          <span>🏠</span>
           Главная
         </Link>
 
@@ -619,9 +727,7 @@ export default function OrdersPage() {
           href="/dashboard/requests"
           className={styles.navItem}
         >
-          <span>
-            📄
-          </span>
+          <span>📄</span>
           Заявки
         </Link>
 
@@ -629,9 +735,7 @@ export default function OrdersPage() {
           href="/dashboard/offers"
           className={styles.navItem}
         >
-          <span>
-            💶
-          </span>
+          <span>💶</span>
           Предложения
         </Link>
 
@@ -639,9 +743,7 @@ export default function OrdersPage() {
           href="/dashboard/orders"
           className={`${styles.navItem} ${styles.navActive}`}
         >
-          <span>
-            📦
-          </span>
+          <span>📦</span>
           Заказы
         </Link>
 
@@ -649,9 +751,7 @@ export default function OrdersPage() {
           href="/dashboard/profile"
           className={styles.navItem}
         >
-          <span>
-            👤
-          </span>
+          <span>👤</span>
           Профиль
         </Link>
 
