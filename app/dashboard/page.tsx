@@ -484,15 +484,6 @@ export default function DashboardPage() {
 
         </Link>
 
-        <Link
-          href="/dashboard/profile"
-          className={styles.statCard}
-        >
-
-          <div className={styles.statIcon}>
-            🚗
-          </div>
-
           <div className={styles.statInfo}>
 
             <strong>
