@@ -3,7 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+
 import { supabase } from "@/lib/supabase";
+
+import BottomNav from "@/components/BottomNav";
+
 import styles from "../dashboard.module.css";
 
 export default function OffersPage() {
@@ -22,6 +26,8 @@ export default function OffersPage() {
 
   const [paymentMethod, setPaymentMethod] =
     useState("CARD");
+
+  /* PHONE */
 
   async function getClientPhone() {
 
@@ -57,6 +63,8 @@ export default function OffersPage() {
     }
   }
 
+  /* LOAD */
+
   useEffect(() => {
 
     loadData();
@@ -78,7 +86,10 @@ export default function OffersPage() {
         .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+
+      supabase.removeChannel(
+        channel
+      );
     };
 
   }, []);
@@ -97,6 +108,8 @@ export default function OffersPage() {
         return;
       }
 
+      /* PROFILE */
+
       const {
         data:profileData,
       } =
@@ -110,6 +123,8 @@ export default function OffersPage() {
           .maybeSingle();
 
       setProfile(profileData);
+
+      /* OFFERS */
 
       const {
         data,
@@ -154,6 +169,8 @@ export default function OffersPage() {
     }
   }
 
+  /* DELIVERY DATE */
+
   function getDeliveryDate(
     days:number
   ) {
@@ -175,6 +192,8 @@ export default function OffersPage() {
       }
     );
   }
+
+  /* CREATE ORDER */
 
   async function createOrder() {
 
@@ -287,27 +306,36 @@ export default function OffersPage() {
 
     <main className={styles.page}>
 
-      {/* HEADER */}
+      {/* HERO */}
 
-      <header className={styles.header}>
+      <section className={styles.dashboardHero}>
 
-        <div className={styles.headerContent}>
+        <div>
 
-          <div>
+          <p className={styles.dashboardSubtitle}>
+            Каталог предложений
+          </p>
 
-            <p className={styles.hello}>
-              Каталог предложений
-            </p>
+          <h1 className={styles.dashboardTitle}>
+            Предложения
+          </h1>
 
-            <h1 className={styles.mainTitle}>
-              Предложения
-            </h1>
-
-          </div>
+          <p className={styles.dashboardPhone}>
+            Активных:
+            {" "}
+            {offers.length}
+          </p>
 
         </div>
 
-      </header>
+        <Link
+          href="/dashboard/profile"
+          className={styles.dashboardProfile}
+        >
+          👤
+        </Link>
+
+      </section>
 
       {/* OFFERS */}
 
@@ -349,9 +377,7 @@ export default function OffersPage() {
                     src={item.product_image}
                     alt=""
                     fill
-                    className={
-                      styles.offerImage
-                    }
+                    className={styles.offerImage}
                   />
 
                 )}
@@ -383,7 +409,7 @@ export default function OffersPage() {
                 </div>
 
                 <div className={styles.offerModernDelivery}>
-                  🚚 Доставка:
+                  🚚
                   {" "}
                   {
                     getDeliveryDate(
@@ -402,19 +428,15 @@ export default function OffersPage() {
 
       </section>
 
-      {/* CHECKOUT FULLSCREEN */}
+      {/* FULLSCREEN */}
 
       {selectedOffer && (
 
-        <div
-          className={styles.checkoutFullscreen}
-        >
+        <div className={styles.checkoutFullscreen}>
 
           {/* TOP */}
 
-          <div
-            className={styles.checkoutTop}
-          >
+          <div className={styles.checkoutTop}>
 
             <button
               className={styles.backButton}
@@ -433,15 +455,9 @@ export default function OffersPage() {
 
           {/* PRODUCT */}
 
-          <div
-            className={styles.checkoutCard}
-          >
+          <div className={styles.checkoutCard}>
 
-            <div
-              className={
-                styles.checkoutProduct
-              }
-            >
+            <div className={styles.checkoutProduct}>
 
               <div
                 className={
@@ -457,9 +473,7 @@ export default function OffersPage() {
                     }
                     alt=""
                     fill
-                    className={
-                      styles.offerImage
-                    }
+                    className={styles.offerImage}
                   />
 
                 )}
@@ -495,7 +509,7 @@ export default function OffersPage() {
                 </div>
 
                 <span>
-                  🚚 Доставка:
+                  🚚
                   {" "}
                   {
                     getDeliveryDate(
@@ -512,9 +526,7 @@ export default function OffersPage() {
 
           {/* ADDRESS */}
 
-          <div
-            className={styles.checkoutCard}
-          >
+          <div className={styles.checkoutCard}>
 
             <div
               className={
@@ -524,11 +536,7 @@ export default function OffersPage() {
               📍 Адрес доставки
             </div>
 
-            <div
-              className={
-                styles.addressModern
-              }
-            >
+            <div className={styles.addressModern}>
 
               <strong>
                 {
@@ -559,9 +567,7 @@ export default function OffersPage() {
 
           {/* PAYMENT */}
 
-          <div
-            className={styles.checkoutCard}
-          >
+          <div className={styles.checkoutCard}>
 
             <div
               className={
@@ -571,11 +577,7 @@ export default function OffersPage() {
               💳 Способ оплаты
             </div>
 
-            <div
-              className={
-                styles.paymentModern
-              }
-            >
+            <div className={styles.paymentModern}>
 
               <button
                 className={`${styles.paymentModernCard} ${
@@ -615,9 +617,7 @@ export default function OffersPage() {
 
           {/* TOTAL */}
 
-          <div
-            className={styles.checkoutCard}
-          >
+          <div className={styles.checkoutCard}>
 
             <div
               className={
@@ -627,11 +627,7 @@ export default function OffersPage() {
               📄 Итог заказа
             </div>
 
-            <div
-              className={
-                styles.totalRow
-              }
-            >
+            <div className={styles.totalRow}>
 
               <span>
                 Товар
@@ -647,11 +643,7 @@ export default function OffersPage() {
 
             </div>
 
-            <div
-              className={
-                styles.totalRow
-              }
-            >
+            <div className={styles.totalRow}>
 
               <span>
                 Доставка
@@ -665,20 +657,12 @@ export default function OffersPage() {
 
             </div>
 
-            <div
-              className={
-                styles.totalDivider
-              }
-            />
+            <div className={styles.totalDivider} />
 
-            <div
-              className={
-                styles.totalRowBig
-              }
-            >
+            <div className={styles.totalRowBig}>
 
               <span>
-                Итого к оплате
+                Итого
               </span>
 
               <strong>
@@ -699,19 +683,13 @@ export default function OffersPage() {
 
           {/* BUTTON */}
 
-          <div
-            className={
-              styles.checkoutFixed
-            }
-          >
+          <div className={styles.checkoutFixed}>
 
             <button
-              className={
-                styles.payModernButton
-              }
+              className={styles.payModernButton}
               onClick={createOrder}
             >
-              🔒 Оформить заказ →
+              Оформить заказ
             </button>
 
           </div>
@@ -720,51 +698,7 @@ export default function OffersPage() {
 
       )}
 
-      {/* NAV */}
-
-      <nav className={styles.bottomNav}>
-
-        <Link
-          href="/dashboard"
-          className={styles.navItem}
-        >
-          <span>🏠</span>
-          Главная
-        </Link>
-
-        <Link
-          href="/dashboard/requests"
-          className={styles.navItem}
-        >
-          <span>📄</span>
-          Заявки
-        </Link>
-
-        <Link
-          href="/dashboard/offers"
-          className={`${styles.navItem} ${styles.navActive}`}
-        >
-          <span>💶</span>
-          Предложения
-        </Link>
-
-        <Link
-          href="/dashboard/orders"
-          className={styles.navItem}
-        >
-          <span>📦</span>
-          Заказы
-        </Link>
-
-        <Link
-          href="/dashboard/profile"
-          className={styles.navItem}
-        >
-          <span>👤</span>
-          Профиль
-        </Link>
-
-      </nav>
+      <BottomNav />
 
     </main>
   );
