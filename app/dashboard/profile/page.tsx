@@ -38,6 +38,9 @@ export default function ProfilePage() {
   const [billingAddress, setBillingAddress] =
     useState("");
 
+  const [saving, setSaving] =
+    useState(false);
+
   /* LOAD */
 
   useEffect(() => {
@@ -191,6 +194,8 @@ export default function ProfilePage() {
         return;
       }
 
+      setSaving(true);
+
       const fullName =
         `${firstName} ${lastName}`;
 
@@ -228,6 +233,8 @@ export default function ProfilePage() {
         "Профиль сохранен"
       );
 
+      loadProfile();
+
     } catch (error) {
 
       console.error(error);
@@ -235,6 +242,10 @@ export default function ProfilePage() {
       alert(
         "Ошибка соединения"
       );
+
+    } finally {
+
+      setSaving(false);
     }
   }
 
@@ -260,14 +271,18 @@ export default function ProfilePage() {
           </p>
 
           <h1 className={styles.dashboardTitle}>
-            Профиль
+            {
+              firstName
+                ? `${firstName} ${lastName}`
+                : "Профиль"
+            }
           </h1>
 
           <p className={styles.dashboardPhone}>
             📞
             {" "}
             {
-              profile?.phone ||
+              phone ||
               "Телефон не указан"
             }
           </p>
@@ -280,7 +295,7 @@ export default function ProfilePage() {
 
       </section>
 
-      {/* GENERAL */}
+      {/* PROFILE INFO */}
 
       <section className={styles.section}>
 
@@ -292,43 +307,51 @@ export default function ProfilePage() {
               Общая информация
             </h2>
 
-          </div>
-
-          <div className={styles.inputGroupModern}>
-
-            <label>
-              Имя
-            </label>
-
-            <input
-              className={styles.dashboardInput}
-              value={firstName}
-              onChange={(e) =>
-                setFirstName(
-                  e.target.value
-                )
-              }
-              placeholder="Введите имя"
-            />
+            <div className={styles.profileBadge}>
+              Аккаунт
+            </div>
 
           </div>
 
-          <div className={styles.inputGroupModern}>
+          <div className={styles.profileGrid}>
 
-            <label>
-              Фамилия
-            </label>
+            <div className={styles.inputGroupModern}>
 
-            <input
-              className={styles.dashboardInput}
-              value={lastName}
-              onChange={(e) =>
-                setLastName(
-                  e.target.value
-                )
-              }
-              placeholder="Введите фамилию"
-            />
+              <label>
+                Имя
+              </label>
+
+              <input
+                className={styles.dashboardInput}
+                value={firstName}
+                onChange={(e) =>
+                  setFirstName(
+                    e.target.value
+                  )
+                }
+                placeholder="Введите имя"
+              />
+
+            </div>
+
+            <div className={styles.inputGroupModern}>
+
+              <label>
+                Фамилия
+              </label>
+
+              <input
+                className={styles.dashboardInput}
+                value={lastName}
+                onChange={(e) =>
+                  setLastName(
+                    e.target.value
+                  )
+                }
+                placeholder="Введите фамилию"
+              />
+
+            </div>
 
           </div>
 
@@ -380,9 +403,17 @@ export default function ProfilePage() {
 
         <div className={styles.profileModernCard}>
 
-          <h2 className={styles.dashboardSectionTitle}>
-            Адрес доставки
-          </h2>
+          <div className={styles.profileSectionTop}>
+
+            <h2 className={styles.dashboardSectionTitle}>
+              Адрес доставки
+            </h2>
+
+            <div className={styles.profileMiniIcon}>
+              📍
+            </div>
+
+          </div>
 
           <textarea
             className={styles.dashboardTextarea}
@@ -405,9 +436,17 @@ export default function ProfilePage() {
 
         <div className={styles.profileModernCard}>
 
-          <h2 className={styles.dashboardSectionTitle}>
-            Billing address
-          </h2>
+          <div className={styles.profileSectionTop}>
+
+            <h2 className={styles.dashboardSectionTitle}>
+              Billing address
+            </h2>
+
+            <div className={styles.profileMiniIcon}>
+              🧾
+            </div>
+
+          </div>
 
           <textarea
             className={styles.dashboardTextarea}
@@ -478,6 +517,8 @@ export default function ProfilePage() {
                   </strong>
 
                   <span>
+                    VIN:
+                    {" "}
                     {
                       item.vin || "—"
                     }
@@ -502,8 +543,13 @@ export default function ProfilePage() {
         <button
           className={styles.dashboardSubmit}
           onClick={saveProfile}
+          disabled={saving}
         >
-          Сохранить изменения
+          {
+            saving
+              ? "Сохранение..."
+              : "Сохранить изменения"
+          }
         </button>
 
       </section>
