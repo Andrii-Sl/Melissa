@@ -37,9 +37,6 @@ export default function DashboardPage() {
 
   /* LAST DATA */
 
-  const [latestRequests, setLatestRequests] =
-    useState<any[]>([]);
-
   const [latestOffers, setLatestOffers] =
     useState<any[]>([]);
 
@@ -196,30 +193,6 @@ export default function DashboardPage() {
 
       setOrdersCount(
         ordersTotal || 0
-      );
-
-      /* LAST REQUEST */
-
-      const {
-        data:latestRequestsData,
-      } =
-        await supabase
-          .from("requests")
-          .select("*")
-          .eq(
-            "client_phone",
-            phone
-          )
-          .order(
-            "created_at",
-            {
-              ascending:false,
-            }
-          )
-          .limit(1);
-
-      setLatestRequests(
-        latestRequestsData || []
       );
 
       /* LAST OFFER */
@@ -420,7 +393,7 @@ export default function DashboardPage() {
 
             <h1 className={styles.mainTitle}>
               {
-                profile?.full_name ||
+                profile?.first_name ||
                 "Клиент"
               }
             </h1>
@@ -741,62 +714,114 @@ export default function DashboardPage() {
 
       )}
 
-      {/* PROFILE BLOCK */}
+      {/* PROFILE */}
 
       <section className={styles.section}>
 
         <div className={styles.sectionHead}>
 
           <h2>
-            Профиль
+            Профиль клиента
           </h2>
+
+          <Link
+            href="/dashboard/profile"
+            className={styles.linkBtn}
+          >
+            Открыть
+          </Link>
 
         </div>
 
         <Link
           href="/dashboard/profile"
-          className={styles.profileCard}
+          className={styles.profileMainCard}
         >
 
-          <div className={styles.profileRow}>
+          <div className={styles.profileMainTop}>
 
-            <span>
-              Телефон
-            </span>
+            <div
+              className={styles.profileAvatar}
+            >
+              👤
+            </div>
 
-            <strong>
-              {
-                profile?.phone ||
-                "—"
-              }
-            </strong>
+            <div>
+
+              <h3
+                className={
+                  styles.profileMainName
+                }
+              >
+                {
+                  profile?.first_name ||
+                  "Имя"
+                }
+                {" "}
+                {
+                  profile?.last_name ||
+                  ""
+                }
+              </h3>
+
+              <p
+                className={
+                  styles.profileMainPhone
+                }
+              >
+                {
+                  profile?.phone ||
+                  "Телефон не указан"
+                }
+              </p>
+
+            </div>
 
           </div>
 
-          <div className={styles.profileRow}>
+          <div
+            className={
+              styles.profileInfoGrid
+            }
+          >
 
-            <span>
-              Автомобили
-            </span>
-
-            <strong>
-              {garage.length}
-            </strong>
-
-          </div>
-
-          <div className={styles.profileRow}>
-
-            <span>
-              Email
-            </span>
-
-            <strong>
-              {
-                profile?.email ||
-                "—"
+            <div
+              className={
+                styles.profileInfoCard
               }
-            </strong>
+            >
+
+              <span>
+                Адрес доставки
+              </span>
+
+              <strong>
+                {
+                  profile?.delivery_address ||
+                  "Не указан"
+                }
+              </strong>
+
+            </div>
+
+            <div
+              className={
+                styles.profileInfoCard
+              }
+            >
+
+              <span>
+                Email
+              </span>
+
+              <strong>
+                {
+                  profile?.email ||
+                  "Не указан"
+                }
+              </strong>
+
+            </div>
 
           </div>
 
