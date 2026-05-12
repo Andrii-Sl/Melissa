@@ -2,7 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+
 import { supabase } from "@/lib/supabase";
+
+import BottomNav from "@/components/BottomNav";
+
 import styles from "../dashboard.module.css";
 
 export default function RequestsPage() {
@@ -13,31 +17,7 @@ export default function RequestsPage() {
   const [loading, setLoading] =
     useState(true);
 
-  useEffect(() => {
-
-    loadRequests();
-
-    const channel =
-      supabase
-        .channel("client-requests")
-        .on(
-          "postgres_changes",
-          {
-            event:"*",
-            schema:"public",
-            table:"requests",
-          },
-          () => {
-            loadRequests();
-          }
-        )
-        .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-
-  }, []);
+  /* PHONE */
 
   async function getClientPhone() {
 
@@ -47,7 +27,9 @@ export default function RequestsPage() {
         document.cookie
           .split("; ")
           .find((row) =>
-            row.startsWith("client_phone=")
+            row.startsWith(
+              "client_phone="
+            )
           )
           ?.split("=")[1];
 
@@ -71,6 +53,37 @@ export default function RequestsPage() {
     }
   }
 
+  /* LOAD */
+
+  useEffect(() => {
+
+    loadRequests();
+
+    const channel =
+      supabase
+        .channel("client-requests")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"requests",
+          },
+          () => {
+            loadRequests();
+          }
+        )
+        .subscribe();
+
+    return () => {
+
+      supabase.removeChannel(
+        channel
+      );
+    };
+
+  }, []);
+
   async function loadRequests() {
 
     try {
@@ -81,6 +94,7 @@ export default function RequestsPage() {
       if (!phone) {
 
         setRequests([]);
+
         setLoading(false);
 
         return;
@@ -127,6 +141,8 @@ export default function RequestsPage() {
     }
   }
 
+  /* DELETE */
+
   async function deleteRequest(
     id:number
   ) {
@@ -147,7 +163,10 @@ export default function RequestsPage() {
         await supabase
           .from("requests")
           .delete()
-          .eq("id", id);
+          .eq(
+            "id",
+            id
+          );
 
       if (error) {
 
@@ -178,6 +197,21 @@ export default function RequestsPage() {
     }
   }
 
+  /* STATUS */
+
+  function getStatusText(
+    status:string
+  ) {
+
+    if (status === "DONE")
+      return "Выполнен";
+
+    if (status === "PROCESS")
+      return "В обработке";
+
+    return "Новый";
+  }
+
   if (loading)
     return (
       <div className={styles.loading}>
@@ -189,27 +223,36 @@ export default function RequestsPage() {
 
     <main className={styles.page}>
 
-      {/* HEADER */}
+      {/* HERO */}
 
-      <header className={styles.header}>
+      <section className={styles.dashboardHero}>
 
-        <div className={styles.headerContent}>
+        <div>
 
-          <div>
+          <p className={styles.dashboardSubtitle}>
+            Каталог запросов
+          </p>
 
-            <p className={styles.hello}>
-              Мои запросы
-            </p>
+          <h1 className={styles.dashboardTitle}>
+            Запросы
+          </h1>
 
-            <h1 className={styles.mainTitle}>
-              Заявки
-            </h1>
-
-          </div>
+          <p className={styles.dashboardPhone}>
+            Всего запросов:
+            {" "}
+            {requests.length}
+          </p>
 
         </div>
 
-      </header>
+        <Link
+          href="/dashboard/profile"
+          className={styles.dashboardProfile}
+        >
+          👤
+        </Link>
+
+      </section>
 
       {/* REQUESTS */}
 
@@ -251,23 +294,45 @@ export default function RequestsPage() {
                   </p>
 
                   <h3 className={styles.requestTitle}>
-                    {item.car || "—"}
+                    {
+                      item.car ||
+                      "—"
+                    }
                   </h3>
 
                 </div>
 
-                <button
-                  className={
-                    styles.requestDelete
-                  }
-                  onClick={() =>
-                    deleteRequest(
-                      item.id
-                    )
-                  }
-                >
-                  🗑
-                </button>
+                <div className={styles.requestActions}>
+
+                  <div
+                    className={
+                      item.status ===
+                      "DONE"
+                        ? styles.requestStatusDone
+                        : styles.requestStatus
+                    }
+                  >
+                    {
+                      getStatusText(
+                        item.status
+                      )
+                    }
+                  </div>
+
+                  <button
+                    className={
+                      styles.requestDelete
+                    }
+                    onClick={() =>
+                      deleteRequest(
+                        item.id
+                      )
+                    }
+                  >
+                    🗑
+                  </button>
+
+                </div>
 
               </div>
 
@@ -286,7 +351,10 @@ export default function RequestsPage() {
                   </span>
 
                   <strong>
-                    {item.vin || "—"}
+                    {
+                      item.vin ||
+                      "—"
+                    }
                   </strong>
 
                 </div>
@@ -352,61 +420,7 @@ export default function RequestsPage() {
 
       </section>
 
-      {/* BOTTOM NAV */}
-
-      <nav className={styles.bottomNav}>
-
-        <Link
-          href="/dashboard"
-          className={styles.navItem}
-        >
-          <span>
-            🏠
-          </span>
-          Главная
-        </Link>
-
-        <Link
-          href="/dashboard/requests"
-          className={`${styles.navItem} ${styles.navActive}`}
-        >
-          <span>
-            📄
-          </span>
-          Заявки
-        </Link>
-
-        <Link
-          href="/dashboard/offers"
-          className={styles.navItem}
-        >
-          <span>
-            💶
-          </span>
-          Предложения
-        </Link>
-
-        <Link
-          href="/dashboard/orders"
-          className={styles.navItem}
-        >
-          <span>
-            📦
-          </span>
-          Заказы
-        </Link>
-
-        <Link
-          href="/dashboard/profile"
-          className={styles.navItem}
-        >
-          <span>
-            👤
-          </span>
-          Профиль
-        </Link>
-
-      </nav>
+      <BottomNav active="requests" />
 
     </main>
   );
