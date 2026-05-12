@@ -10,24 +10,47 @@ export default function ProfilePage() {
   const [profile, setProfile] =
     useState<any>(null);
 
+  const [garage, setGarage] =
+    useState<any[]>([]);
+
   const [loading, setLoading] =
     useState(true);
 
-  /* READONLY NAME */
+  async function getClientPhone() {
 
-  const [name, setName] =
-    useState("");
+    try {
 
-  /* ADDRESS */
+      const cookiePhone =
+        document.cookie
+          .split("; ")
+          .find((row) =>
+            row.startsWith(
+              "client_phone="
+            )
+          )
+          ?.split("=")[1];
 
-  const [country, setCountry] =
-    useState("");
+      if (cookiePhone)
+        return cookiePhone;
 
-  const [city, setCity] =
-    useState("");
+      const {
+        data:{
+          session,
+        },
+      } =
+        await supabase.auth.getSession();
 
-  const [address, setAddress] =
-    useState("");
+      return (
+        session?.user?.phone || ""
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      return "";
+    }
+  }
 
   useEffect(() => {
     loadProfile();
@@ -37,47 +60,8 @@ export default function ProfilePage() {
 
     try {
 
-      const {
-        data: {
-          session,
-        },
-      } =
-        await supabase.auth.getSession();
-
-      let phone =
-        session?.user?.phone;
-
-      /* COOKIE AUTOLOGIN */
-
-      if (!phone) {
-
-        const phoneCookie =
-          document.cookie
-            .split("; ")
-            .find((row) =>
-              row.startsWith(
-                "client_phone="
-              )
-            )
-            ?.split("=")[1];
-
-        if (phoneCookie)
-          phone = phoneCookie;
-      }
-
-      /* TEST CLIENT */
-
-      if (!phone) {
-
-        const role =
-          document.cookie.includes(
-            "role=client"
-          );
-
-        if (role)
-          phone =
-            "+48519000000";
-      }
+      const phone =
+        await getClientPhone();
 
       if (!phone) {
 
@@ -86,45 +70,43 @@ export default function ProfilePage() {
         return;
       }
 
+      /* PROFILE */
+
       const {
-        data,
-        error,
+        data:profileData,
       } =
         await supabase
           .from("profiles")
           .select("*")
-          .eq("phone", phone)
+          .eq(
+            "phone",
+            phone
+          )
           .maybeSingle();
 
-      if (error) {
+      setProfile(profileData);
 
-        console.error(error);
+      /* GARAGE */
 
-        setLoading(false);
+      const {
+        data:garageData,
+      } =
+        await supabase
+          .from("garage")
+          .select("*")
+          .eq(
+            "client_phone",
+            phone
+          )
+          .order(
+            "created_at",
+            {
+              ascending:false,
+            }
+          );
 
-        return;
-      }
-
-      setProfile(data);
-
-      /* NAME FROM REGISTRATION */
-
-      setName(
-        data?.full_name || ""
-      );
-
-      /* ADDRESS */
-
-      setCountry(
-        data?.country || ""
-      );
-
-      setCity(
-        data?.city || ""
-      );
-
-      setAddress(
-        data?.address || ""
+      setGarage(
+        garageData || []
       );
 
     } catch (error) {
@@ -137,75 +119,22 @@ export default function ProfilePage() {
     }
   }
 
-  /* SAVE PROFILE */
-
-  async function saveProfile() {
+  async function logout() {
 
     try {
 
-      if (!profile?.id) {
+      await supabase.auth.signOut();
 
-        alert(
-          "Профиль не найден"
-        );
+      document.cookie =
+        "client_phone=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
 
-        return;
-      }
-
-      const {
-        error,
-      } =
-        await supabase
-          .from("profiles")
-          .update({
-            country,
-            city,
-            address,
-          })
-          .eq(
-            "id",
-            profile.id
-          );
-
-      if (error) {
-
-        console.error(error);
-
-        alert(
-          "Ошибка сохранения"
-        );
-
-        return;
-      }
-
-      alert(
-        "Профиль сохранён"
-      );
+      window.location.href =
+        "/login";
 
     } catch (error) {
 
       console.error(error);
-
-      alert(
-        "Ошибка соединения"
-      );
     }
-  }
-
-  /* LOGOUT */
-
-  async function logout() {
-
-    document.cookie =
-      "role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-
-    document.cookie =
-      "client_phone=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-
-    await supabase.auth.signOut();
-
-    window.location.href =
-      "/";
   }
 
   if (loading)
@@ -219,106 +148,223 @@ export default function ProfilePage() {
 
     <main className={styles.page}>
 
-      {/* HERO */}
+      {/* HEADER */}
 
-      <section className={styles.hero}>
+      <header className={styles.header}>
 
-        <h1 className={styles.title}>
-          Профиль
-        </h1>
+        <div className={styles.headerContent}>
+
+          <div>
+
+            <p className={styles.hello}>
+              Профиль клиента
+            </p>
+
+            <h1 className={styles.mainTitle}>
+              {
+                profile?.full_name ||
+                "Клиент"
+              }
+            </h1>
+
+          </div>
+
+          <div className={styles.avatar}>
+            👤
+          </div>
+
+        </div>
+
+      </header>
+
+      {/* GENERAL INFO */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionHead}>
+
+          <h2>
+            Общая информация
+          </h2>
+
+        </div>
+
+        <div className={styles.profileCard}>
+
+          <div className={styles.profileRow}>
+
+            <span>
+              Имя
+            </span>
+
+            <strong>
+              {
+                profile?.full_name ||
+                "—"
+              }
+            </strong>
+
+          </div>
+
+          <div className={styles.profileRow}>
+
+            <span>
+              Телефон
+            </span>
+
+            <strong>
+              {
+                profile?.phone ||
+                "—"
+              }
+            </strong>
+
+          </div>
+
+          <div className={styles.profileRow}>
+
+            <span>
+              E-mail
+            </span>
+
+            <strong>
+              {
+                profile?.email ||
+                "—"
+              }
+            </strong>
+
+          </div>
+
+        </div>
 
       </section>
 
-      {/* PROFILE FORM */}
+      {/* DELIVERY ADDRESS */}
 
-      <section className={styles.requestBox}>
+      <section className={styles.section}>
 
-        <div className={styles.form}>
+        <div className={styles.sectionHead}>
 
-          {/* NAME */}
-
-          <input
-            className={styles.input}
-            value={name}
-            readOnly
-            style={{
-              opacity:0.7,
-              cursor:"not-allowed",
-            }}
-          />
-
-          {/* PHONE */}
-
-          <input
-            className={styles.input}
-            value={
-              profile?.phone || ""
-            }
-            readOnly
-            style={{
-              opacity:0.7,
-              cursor:"not-allowed",
-            }}
-          />
-
-          {/* COUNTRY */}
-
-          <input
-            className={styles.input}
-            placeholder="Страна"
-            value={country}
-            onChange={(e) =>
-              setCountry(
-                e.target.value
-              )
-            }
-          />
-
-          {/* CITY */}
-
-          <input
-            className={styles.input}
-            placeholder="Город"
-            value={city}
-            onChange={(e) =>
-              setCity(
-                e.target.value
-              )
-            }
-          />
-
-          {/* ADDRESS */}
-
-          <input
-            className={styles.input}
-            placeholder="Адрес доставки"
-            value={address}
-            onChange={(e) =>
-              setAddress(
-                e.target.value
-              )
-            }
-          />
-
-          {/* SAVE */}
-
-          <button
-            className={styles.createBtn}
-            onClick={saveProfile}
-          >
-            Сохранить
-          </button>
-
-          {/* LOGOUT */}
-
-          <button
-            className={styles.logoutWhiteBtn}
-            onClick={logout}
-          >
-            Выйти
-          </button>
+          <h2>
+            Адрес доставки
+          </h2>
 
         </div>
+
+        <div className={styles.profileCard}>
+
+          <p className={styles.addressText}>
+
+            {
+              profile?.delivery_address ||
+              "Адрес доставки не указан"
+            }
+
+          </p>
+
+        </div>
+
+      </section>
+
+      {/* BILLING ADDRESS */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionHead}>
+
+          <h2>
+            Адрес выставления счёта
+          </h2>
+
+        </div>
+
+        <div className={styles.profileCard}>
+
+          <p className={styles.addressText}>
+
+            {
+              profile?.billing_address ||
+              "Адрес выставления счёта не указан"
+            }
+
+          </p>
+
+        </div>
+
+      </section>
+
+      {/* CARS */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionHead}>
+
+          <h2>
+            Автомобили
+          </h2>
+
+          <Link
+            href="/dashboard/garage"
+            className={styles.linkBtn}
+          >
+            Все
+          </Link>
+
+        </div>
+
+        {garage.length === 0 && (
+
+          <div className={styles.profileCard}>
+
+            <p className={styles.addressText}>
+              Автомобили не добавлены
+            </p>
+
+          </div>
+
+        )}
+
+        {garage.map((item) => (
+
+          <div
+            key={item.id}
+            className={styles.orderCard}
+          >
+
+            <div>
+
+              <strong>
+                {
+                  item.car_name ||
+                  "Автомобиль"
+                }
+              </strong>
+
+              <p>
+                VIN:
+                {" "}
+                {item.vin || "—"}
+              </p>
+
+            </div>
+
+          </div>
+
+        ))}
+
+      </section>
+
+      {/* LOGOUT */}
+
+      <section className={styles.section}>
+
+        <button
+          className={styles.logoutButton}
+          onClick={logout}
+        >
+          Выйти из аккаунта
+        </button>
 
       </section>
 
@@ -330,90 +376,50 @@ export default function ProfilePage() {
           href="/dashboard"
           className={styles.navItem}
         >
-
-          <div className={styles.navIcon}>
-            🏠
-          </div>
-
           <span>
-            Главная
+            🏠
           </span>
-
+          Главная
         </Link>
 
         <Link
           href="/dashboard/requests"
           className={styles.navItem}
         >
-
-          <div className={styles.navIcon}>
-            📄
-          </div>
-
           <span>
-            Заявки
+            📄
           </span>
-
+          Заявки
         </Link>
 
         <Link
           href="/dashboard/offers"
           className={styles.navItem}
         >
-
-          <div className={styles.navIcon}>
-            💶
-          </div>
-
           <span>
-            Предложения
+            💶
           </span>
-
+          Предложения
         </Link>
 
         <Link
           href="/dashboard/orders"
           className={styles.navItem}
         >
-
-          <div className={styles.navIcon}>
+          <span>
             📦
-          </div>
-
-          <span>
-            Заказы
           </span>
-
-        </Link>
-
-        <Link
-          href="/dashboard/garage"
-          className={styles.navItem}
-        >
-
-          <div className={styles.navIcon}>
-            🚗
-          </div>
-
-          <span>
-            Гараж
-          </span>
-
+          Заказы
         </Link>
 
         <Link
           href="/dashboard/profile"
-          className={`${styles.navItem} ${styles.navItemActive}`}
+          className={`${styles.navItem} ${styles.navActive}`}
         >
-
-          <div className={styles.navIcon}>
-            👤
-          </div>
-
           <span>
-            Профиль
+            👤
           </span>
-
+          Профиль
         </Link>
 
       </nav>
