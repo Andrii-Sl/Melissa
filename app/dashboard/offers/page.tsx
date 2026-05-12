@@ -321,7 +321,7 @@ export default function OffersPage() {
           </h1>
 
           <p className={styles.dashboardPhone}>
-            Активных:
+            Активных предложений:
             {" "}
             {offers.length}
           </p>
@@ -371,7 +371,7 @@ export default function OffersPage() {
 
               <div className={styles.offerModernImage}>
 
-                {item.product_image && (
+                {item.product_image ? (
 
                   <Image
                     src={item.product_image}
@@ -379,6 +379,12 @@ export default function OffersPage() {
                     fill
                     className={styles.offerImage}
                   />
+
+                ) : (
+
+                  <div className={styles.imagePlaceholder}>
+                    📦
+                  </div>
 
                 )}
 
@@ -410,6 +416,8 @@ export default function OffersPage() {
 
                 <div className={styles.offerModernDelivery}>
                   🚚
+                  {" "}
+                  Доставка до
                   {" "}
                   {
                     getDeliveryDate(
@@ -465,7 +473,7 @@ export default function OffersPage() {
                 }
               >
 
-                {selectedOffer.product_image && (
+                {selectedOffer.product_image ? (
 
                   <Image
                     src={
@@ -476,11 +484,17 @@ export default function OffersPage() {
                     className={styles.offerImage}
                   />
 
+                ) : (
+
+                  <div className={styles.imagePlaceholder}>
+                    📦
+                  </div>
+
                 )}
 
               </div>
 
-              <div>
+              <div className={styles.checkoutProductInfo}>
 
                 <h3>
                   {
@@ -509,7 +523,7 @@ export default function OffersPage() {
                 </div>
 
                 <span>
-                  🚚
+                  🚚 Доставка:
                   {" "}
                   {
                     getDeliveryDate(
@@ -650,9 +664,7 @@ export default function OffersPage() {
               </span>
 
               <strong>
-                €
-                {" "}
-                8.90
+                € 8.90
               </strong>
 
             </div>
@@ -689,7 +701,7 @@ export default function OffersPage() {
               className={styles.payModernButton}
               onClick={createOrder}
             >
-              Оформить заказ
+              🔒 Оформить заказ
             </button>
 
           </div>
