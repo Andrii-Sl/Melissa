@@ -35,12 +35,12 @@ img{
   padding:
     86px
     14px
-    82px;
+    64px;
 
   overflow-x:hidden;
 }
 
-/* TOP CONSOLE */
+/* TOP BAR */
 
 .topBar{
   position:fixed;
@@ -49,7 +49,7 @@ img{
   left:0;
   right:0;
 
-  height:68px;
+  height:66px;
 
   display:flex;
   align-items:center;
@@ -57,14 +57,13 @@ img{
 
   padding:0 14px;
 
-  background:
-    rgba(255,255,255,.96);
+  background:rgba(255,255,255,.97);
 
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
 
   border-bottom:
-    1px solid rgba(15,23,42,.04);
+    1px solid #111827;
 
   z-index:500;
 }
@@ -77,14 +76,12 @@ img{
 }
 
 .topLogo{
-  width:42px;
-  height:42px;
+  width:40px;
+  height:40px;
 
-  border-radius:14px;
+  border-radius:12px;
 
   object-fit:cover;
-
-  background:#ffffff;
 }
 
 .topInfo{
@@ -105,19 +102,20 @@ img{
 .topSubtitle{
   margin-top:2px;
 
-  color:#9ca3af;
+  color:#6b7280;
 
-  font-size:12px;
+  font-size:11px;
   font-weight:600;
 }
 
 .burgerButton{
-  width:42px;
-  height:42px;
+  width:40px;
+  height:40px;
 
-  border:none;
+  border:
+    1px solid #111827;
 
-  border-radius:14px;
+  border-radius:12px;
 
   background:#ffffff;
 
@@ -127,35 +125,28 @@ img{
 
   color:#111827;
 
-  font-size:20px;
-
-  box-shadow:
-    0 2px 10px rgba(15,23,42,.04);
-
-  border:
-    1px solid rgba(15,23,42,.04);
+  font-size:18px;
 }
 
 /* SECTION */
 
 .section{
-  margin-bottom:18px;
+  margin-bottom:14px;
 }
 
 /* HERO */
 
 .dashboardHero{
   display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
+  flex-direction:column;
 
-  gap:14px;
+  gap:6px;
 
   margin-bottom:18px;
 }
 
 .dashboardSubtitle{
-  margin:0 0 6px;
+  margin:0;
 
   color:#9ca3af;
 
@@ -164,64 +155,26 @@ img{
 }
 
 .dashboardTitle{
-  margin:0 0 10px;
-
-  color:#111827;
-
-  font-size:24px;
-  line-height:1.05;
-  font-weight:900;
-
-  overflow:hidden;
-  word-break:break-word;
-}
-
-.dashboardPhone{
   margin:0;
 
-  color:#6b7280;
-
-  font-size:15px;
-  line-height:1.4;
-  font-weight:600;
-}
-
-.dashboardProfile{
-  width:56px;
-  height:56px;
-
-  border-radius:18px;
-
-  background:#ffffff;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  flex-shrink:0;
-
-  font-size:24px;
-
   color:#111827;
 
-  text-decoration:none;
+  font-size:24px;
+  line-height:1.08;
+  font-weight:900;
 
-  border:
-    1px solid rgba(15,23,42,.04);
-
-  box-shadow:
-    0 2px 12px rgba(15,23,42,.04);
+  word-break:break-word;
 }
 
 /* TITLES */
 
 .sectionTitle,
 .dashboardSectionTitle{
-  margin:0 0 14px;
+  margin:0 0 12px;
 
   color:#111827;
 
-  font-size:22px;
+  font-size:20px;
   line-height:1.2;
   font-weight:900;
 }
@@ -234,21 +187,19 @@ img{
   grid-template-columns:
     repeat(2,minmax(0,1fr));
 
-  gap:12px;
+  gap:10px;
 }
 
 /* CARD */
 
 .dashboardCard{
-  position:relative;
-
   background:#ffffff;
 
-  border-radius:24px;
+  border-radius:20px;
 
-  padding:16px;
+  padding:14px;
 
-  min-height:165px;
+  min-height:118px;
 
   text-decoration:none;
 
@@ -257,10 +208,7 @@ img{
   overflow:hidden;
 
   border:
-    1px solid rgba(15,23,42,.05);
-
-  box-shadow:
-    0 2px 14px rgba(15,23,42,.03);
+    1px solid #111827;
 
   transition:.15s ease;
 }
@@ -270,41 +218,17 @@ img{
 }
 
 .dashboardCardHead{
-  display:flex;
-  align-items:center;
-
-  gap:10px;
-
-  margin-bottom:18px;
+  margin-bottom:16px;
 
   min-width:0;
-}
-
-.dashboardEmoji{
-  width:50px;
-  height:50px;
-
-  border-radius:16px;
-
-  background:#f3f4f6;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  font-size:22px;
-
-  flex-shrink:0;
 }
 
 .dashboardCardHead h3{
   margin:0;
 
-  flex:1;
-
   color:#111827;
 
-  font-size:14px;
+  font-size:15px;
   line-height:1.25;
   font-weight:800;
 
@@ -314,6 +238,12 @@ img{
   display:-webkit-box;
   -webkit-line-clamp:2;
   -webkit-box-orient:vertical;
+}
+
+/* HIDE ICONS */
+
+.dashboardEmoji{
+  display:none;
 }
 
 .dashboardNumbers{
@@ -329,17 +259,15 @@ img{
 .dashboardNumbers strong{
   color:#ef4444;
 
-  font-size:46px;
+  font-size:42px;
   line-height:.9;
   font-weight:900;
-
-  flex-shrink:0;
 }
 
 .dashboardNumbers span{
   color:#111827;
 
-  font-size:13px;
+  font-size:12px;
   line-height:1.25;
   font-weight:700;
 
@@ -348,36 +276,45 @@ img{
   max-width:100%;
 }
 
-/* BOX */
+/* BOXES */
+
+.dashboardBox,
+.dashboardForm,
+.notificationsCard,
+.profileModernCard,
+.checkoutCard,
+.requestCard,
+.orderModernCard,
+.offerModernCard,
+.emptyCard{
+  background:#ffffff;
+
+  border-radius:20px;
+
+  border:
+    1px solid #111827;
+
+  box-shadow:none;
+}
+
+/* FORM */
 
 .dashboardBox,
 .dashboardForm,
 .notificationsCard,
 .profileModernCard,
 .checkoutCard{
-  background:#ffffff;
-
-  border-radius:24px;
-
-  padding:18px;
-
-  border:
-    1px solid rgba(15,23,42,.04);
-
-  box-shadow:
-    0 2px 14px rgba(15,23,42,.03);
+  padding:16px;
 }
-
-/* FORM */
 
 .dashboardLabel{
   display:block;
 
-  margin-bottom:10px;
+  margin-bottom:8px;
 
   color:#6b7280;
 
-  font-size:14px;
+  font-size:13px;
   font-weight:700;
 }
 
@@ -385,35 +322,36 @@ img{
 .dashboardTextarea{
   width:100%;
 
-  border:none;
+  border:
+    1px solid #111827;
 
-  background:#f3f4f6;
+  background:#ffffff;
 
   color:#111827;
 
   outline:none;
 
-  font-size:15px;
+  font-size:14px;
 
   font-family:inherit;
 }
 
 .dashboardInput{
-  height:52px;
+  height:48px;
 
-  border-radius:16px;
+  border-radius:14px;
 
-  padding:0 16px;
+  padding:0 14px;
 
-  margin-bottom:16px;
+  margin-bottom:14px;
 }
 
 .dashboardTextarea{
-  min-height:140px;
+  min-height:120px;
 
-  border-radius:18px;
+  border-radius:14px;
 
-  padding:16px;
+  padding:14px;
 
   resize:none;
 }
@@ -423,48 +361,39 @@ img{
 .payModernButton,
 .repeatOrderButton{
   width:100%;
-  height:52px;
+  height:48px;
 
-  border:none;
+  border:
+    1px solid #111827;
 
-  border-radius:16px;
+  border-radius:14px;
 
-  background:#ef4444;
+  background:#111827;
 
   color:#ffffff;
 
-  font-size:15px;
+  font-size:14px;
   font-weight:800;
 
-  box-shadow:
-    0 8px 20px rgba(239,68,68,.18);
-
-  transition:.15s ease;
+  box-shadow:none;
 }
 
-.dashboardSubmit:active,
-.dashboardButton:active,
-.payModernButton:active,
-.repeatOrderButton:active{
-  transform:scale(.985);
-}
-
-/* PROFILE CARS */
+/* PROFILE */
 
 .profileSectionTop{
   display:flex;
   align-items:center;
   justify-content:space-between;
 
-  gap:14px;
+  gap:12px;
 
-  margin-bottom:14px;
+  margin-bottom:12px;
 }
 
 .profileManageBtn{
   height:34px;
 
-  padding:0 14px;
+  padding:0 12px;
 
   border-radius:999px;
 
@@ -480,6 +409,9 @@ img{
 
   font-size:12px;
   font-weight:700;
+
+  border:
+    1px solid #111827;
 }
 
 .profileCarsList{
@@ -489,7 +421,7 @@ img{
 
   overflow-x:auto;
 
-  padding-bottom:4px;
+  padding-bottom:2px;
 }
 
 .profileCarsList::-webkit-scrollbar{
@@ -497,36 +429,20 @@ img{
 }
 
 .profileCarCard{
-  min-width:160px;
+  min-width:150px;
 
   background:#ffffff;
 
-  border-radius:20px;
+  border-radius:18px;
 
   padding:14px;
 
   border:
-    1px solid rgba(15,23,42,.05);
-
-  box-shadow:
-    0 2px 10px rgba(15,23,42,.03);
+    1px solid #111827;
 }
 
 .profileCarIcon{
-  width:48px;
-  height:48px;
-
-  border-radius:14px;
-
-  background:#f3f4f6;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  font-size:22px;
-
-  margin-bottom:10px;
+  display:none;
 }
 
 .profileCarInfo strong{
@@ -536,7 +452,7 @@ img{
 
   color:#111827;
 
-  font-size:15px;
+  font-size:14px;
   line-height:1.3;
   font-weight:800;
 
@@ -557,37 +473,113 @@ img{
   white-space:nowrap;
 }
 
+/* OFFERS */
+
+.offerListModern,
+.ordersList,
+.requestsList{
+  display:flex;
+  flex-direction:column;
+
+  gap:12px;
+}
+
+.offerModernCard,
+.orderModernCard,
+.requestCard{
+  padding:16px;
+}
+
+.offerModernImage,
+.orderModernImage,
+.requestIcon{
+  display:none;
+}
+
 /* EMPTY */
 
 .emptyCard{
-  background:#ffffff;
-
-  border-radius:24px;
-
-  padding:32px 18px;
+  padding:28px 16px;
 
   text-align:center;
-
-  border:
-    1px solid rgba(15,23,42,.04);
-
-  box-shadow:
-    0 2px 14px rgba(15,23,42,.03);
 }
 
 .emptyIcon{
-  font-size:38px;
+  font-size:34px;
 
-  margin-bottom:14px;
+  margin-bottom:12px;
 }
 
 .emptyCard strong{
   color:#111827;
 
-  font-size:16px;
+  font-size:15px;
 }
 
-/* BOTTOM CONSOLE */
+/* CHECKOUT */
+
+.checkoutFullscreen{
+  position:fixed;
+  inset:0;
+
+  z-index:999;
+
+  overflow-y:auto;
+
+  background:#f5f7fb;
+
+  padding:18px 14px 90px;
+}
+
+.checkoutTop{
+  display:flex;
+  align-items:center;
+
+  gap:12px;
+
+  margin-bottom:18px;
+}
+
+.checkoutTop h2{
+  margin:0;
+
+  color:#111827;
+
+  font-size:20px;
+  font-weight:900;
+}
+
+.backButton{
+  width:42px;
+  height:42px;
+
+  border:
+    1px solid #111827;
+
+  border-radius:14px;
+
+  background:#ffffff;
+
+  font-size:18px;
+}
+
+.checkoutFixed{
+  position:fixed;
+
+  left:0;
+  right:0;
+  bottom:54px;
+
+  padding:12px;
+
+  background:linear-gradient(
+    to top,
+    #f5f7fb 70%,
+    transparent
+  );
+}
+
+/* BOTTOM NAV */
 
 .bottomNav{
   position:fixed;
@@ -596,29 +588,20 @@ img{
   right:8px;
   bottom:8px;
 
-  height:62px;
+  height:44px;
 
-  background:
-    rgba(255,255,255,.98);
-
-  backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);
+  background:#ffffff;
 
   border:
-    1px solid rgba(15,23,42,.05);
+    1px solid #111827;
 
-  border-radius:20px;
+  border-radius:14px;
 
   display:flex;
   align-items:center;
   justify-content:space-around;
 
-  padding:0 2px;
-
   z-index:600;
-
-  box-shadow:
-    0 8px 24px rgba(15,23,42,.06);
 }
 
 .navItem{
@@ -629,23 +612,16 @@ img{
   height:100%;
 
   display:flex;
-  flex-direction:column;
   align-items:center;
   justify-content:center;
-
-  gap:2px;
 
   text-decoration:none;
 
   color:#9ca3af;
 
-  font-size:9px;
-  line-height:1.1;
-  font-weight:700;
+  font-size:0;
 
-  text-align:center;
-
-  padding:0 2px;
+  padding:0;
 }
 
 .navItem span{
@@ -654,13 +630,7 @@ img{
 }
 
 .navItem p{
-  margin:0;
-
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-
-  width:100%;
+  display:none;
 }
 
 .navActive{
@@ -680,7 +650,7 @@ img{
 
   color:#6b7280;
 
-  font-size:15px;
+  font-size:14px;
   font-weight:700;
 }
 
@@ -693,28 +663,24 @@ img{
   }
 
   .dashboardCard{
-    min-height:150px;
+    min-height:108px;
 
-    padding:14px;
+    padding:12px;
   }
 
   .dashboardNumbers strong{
-    font-size:40px;
+    font-size:36px;
   }
 
   .dashboardNumbers span{
-    font-size:12px;
+    font-size:11px;
   }
 
-  .navItem{
-    font-size:8px;
+  .bottomNav{
+    height:40px;
   }
 
   .navItem span{
     font-size:16px;
-  }
-
-  .bottomNav{
-    height:58px;
   }
 }
