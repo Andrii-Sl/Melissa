@@ -68,9 +68,7 @@ export default function DashboardPage() {
         return cookiePhone;
 
       const {
-        data:{
-          session,
-        },
+        data:{ session },
       } =
         await supabase.auth.getSession();
 
@@ -483,6 +481,15 @@ export default function DashboardPage() {
           </div>
 
         </Link>
+
+        <Link
+          href="/dashboard/profile"
+          className={styles.statCard}
+        >
+
+          <div className={styles.statIcon}>
+            🚗
+          </div>
 
           <div className={styles.statInfo}>
 
