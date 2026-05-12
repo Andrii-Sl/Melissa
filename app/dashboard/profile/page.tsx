@@ -2,7 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+
 import { supabase } from "@/lib/supabase";
+
+import BottomNav from "@/components/BottomNav";
+
 import styles from "../dashboard.module.css";
 
 export default function ProfilePage() {
@@ -34,11 +38,15 @@ export default function ProfilePage() {
   const [billingAddress, setBillingAddress] =
     useState("");
 
+  /* LOAD */
+
   useEffect(() => {
 
     loadProfile();
 
   }, []);
+
+  /* PHONE */
 
   async function getClientPhone() {
 
@@ -76,6 +84,8 @@ export default function ProfilePage() {
     }
   }
 
+  /* PROFILE */
+
   async function loadProfile() {
 
     try {
@@ -89,6 +99,8 @@ export default function ProfilePage() {
 
         return;
       }
+
+      /* PROFILE */
 
       const {
         data,
@@ -131,6 +143,8 @@ export default function ProfilePage() {
         );
       }
 
+      /* GARAGE */
+
       const {
         data:garageData,
       } =
@@ -161,6 +175,8 @@ export default function ProfilePage() {
       setLoading(false);
     }
   }
+
+  /* SAVE */
 
   async function saveProfile() {
 
@@ -233,88 +249,97 @@ export default function ProfilePage() {
 
     <main className={styles.page}>
 
-      {/* HEADER */}
+      {/* HERO */}
 
-      <header className={styles.header}>
+      <section className={styles.dashboardHero}>
 
-        <div className={styles.headerContent}>
+        <div>
 
-          <div>
+          <p className={styles.dashboardSubtitle}>
+            Личный кабинет
+          </p>
 
-            <p className={styles.hello}>
-              Личный кабинет
-            </p>
+          <h1 className={styles.dashboardTitle}>
+            Профиль
+          </h1>
 
-            <h1 className={styles.mainTitle}>
-              Профиль
-            </h1>
-
-          </div>
+          <p className={styles.dashboardPhone}>
+            📞
+            {" "}
+            {
+              profile?.phone ||
+              "Телефон не указан"
+            }
+          </p>
 
         </div>
 
-      </header>
+        <div className={styles.dashboardProfile}>
+          👤
+        </div>
+
+      </section>
 
       {/* GENERAL */}
 
       <section className={styles.section}>
 
-        <div className={styles.sectionHead}>
+        <div className={styles.profileModernCard}>
 
-          <h2>
-            Общая информация
-          </h2>
+          <div className={styles.profileSectionTop}>
 
-        </div>
+            <h2 className={styles.dashboardSectionTitle}>
+              Общая информация
+            </h2>
 
-        <div className={styles.profileCard}>
+          </div>
 
-          <div className={styles.inputGroup}>
+          <div className={styles.inputGroupModern}>
 
             <label>
               Имя
             </label>
 
             <input
-              className={styles.input}
+              className={styles.dashboardInput}
               value={firstName}
               onChange={(e) =>
                 setFirstName(
                   e.target.value
                 )
               }
-              placeholder="Имя"
+              placeholder="Введите имя"
             />
 
           </div>
 
-          <div className={styles.inputGroup}>
+          <div className={styles.inputGroupModern}>
 
             <label>
               Фамилия
             </label>
 
             <input
-              className={styles.input}
+              className={styles.dashboardInput}
               value={lastName}
               onChange={(e) =>
                 setLastName(
                   e.target.value
                 )
               }
-              placeholder="Фамилия"
+              placeholder="Введите фамилию"
             />
 
           </div>
 
-          <div className={styles.inputGroup}>
+          <div className={styles.inputGroupModern}>
 
             <label>
               Телефон
             </label>
 
             <input
-              className={styles.input}
+              className={styles.dashboardInput}
               value={phone}
               onChange={(e) =>
                 setPhone(
@@ -326,14 +351,14 @@ export default function ProfilePage() {
 
           </div>
 
-          <div className={styles.inputGroup}>
+          <div className={styles.inputGroupModern}>
 
             <label>
               E-mail
             </label>
 
             <input
-              className={styles.input}
+              className={styles.dashboardInput}
               value={email}
               onChange={(e) =>
                 setEmail(
@@ -353,18 +378,14 @@ export default function ProfilePage() {
 
       <section className={styles.section}>
 
-        <div className={styles.sectionHead}>
+        <div className={styles.profileModernCard}>
 
-          <h2>
+          <h2 className={styles.dashboardSectionTitle}>
             Адрес доставки
           </h2>
 
-        </div>
-
-        <div className={styles.profileCard}>
-
           <textarea
-            className={styles.textarea}
+            className={styles.dashboardTextarea}
             value={deliveryAddress}
             onChange={(e) =>
               setDeliveryAddress(
@@ -382,18 +403,14 @@ export default function ProfilePage() {
 
       <section className={styles.section}>
 
-        <div className={styles.sectionHead}>
+        <div className={styles.profileModernCard}>
 
-          <h2>
-            Адрес выставления счёта
+          <h2 className={styles.dashboardSectionTitle}>
+            Billing address
           </h2>
 
-        </div>
-
-        <div className={styles.profileCard}>
-
           <textarea
-            className={styles.textarea}
+            className={styles.dashboardTextarea}
             value={billingAddress}
             onChange={(e) =>
               setBillingAddress(
@@ -411,53 +428,47 @@ export default function ProfilePage() {
 
       <section className={styles.section}>
 
-        <div className={styles.sectionHead}>
+        <div className={styles.profileModernCard}>
 
-          <h2>
-            Автомобили
-          </h2>
+          <div className={styles.profileSectionTop}>
 
-          <Link
-            href="/dashboard/garage"
-            className={styles.linkBtn}
-          >
-            Управление
-          </Link>
+            <h2 className={styles.dashboardSectionTitle}>
+              Автомобили
+            </h2>
 
-        </div>
-
-        <div className={styles.carsGrid}>
-
-          {garage.length === 0 && (
-
-            <div className={styles.profileCard}>
-
-              <p className={styles.addressText}>
-                Автомобили отсутствуют
-              </p>
-
-            </div>
-
-          )}
-
-          {garage.map((item) => (
-
-            <div
-              key={item.id}
-              className={styles.carCard}
+            <Link
+              href="/dashboard/garage"
+              className={styles.profileManageBtn}
             >
+              Управление
+            </Link>
+
+          </div>
+
+          <div className={styles.profileCarsList}>
+
+            {garage.length === 0 && (
+
+              <div className={styles.emptyMiniCard}>
+
+                Автомобили отсутствуют
+
+              </div>
+
+            )}
+
+            {garage.map((item) => (
 
               <div
-                className={styles.carTop}
+                key={item.id}
+                className={styles.profileCarCard}
               >
 
-                <div
-                  className={styles.carLogo}
-                >
+                <div className={styles.profileCarIcon}>
                   🚘
                 </div>
 
-                <div>
+                <div className={styles.profileCarInfo}>
 
                   <strong>
                     {
@@ -466,17 +477,19 @@ export default function ProfilePage() {
                     }
                   </strong>
 
-                  <p>
-                    {item.vin || "—"}
-                  </p>
+                  <span>
+                    {
+                      item.vin || "—"
+                    }
+                  </span>
 
                 </div>
 
               </div>
 
-            </div>
+            ))}
 
-          ))}
+          </div>
 
         </div>
 
@@ -487,7 +500,7 @@ export default function ProfilePage() {
       <section className={styles.section}>
 
         <button
-          className={styles.primaryButton}
+          className={styles.dashboardSubmit}
           onClick={saveProfile}
         >
           Сохранить изменения
@@ -495,61 +508,7 @@ export default function ProfilePage() {
 
       </section>
 
-      {/* NAV */}
-
-      <nav className={styles.bottomNav}>
-
-        <Link
-          href="/dashboard"
-          className={styles.navItem}
-        >
-          <span>
-            🏠
-          </span>
-          Главная
-        </Link>
-
-        <Link
-          href="/dashboard/requests"
-          className={styles.navItem}
-        >
-          <span>
-            📄
-          </span>
-          Заявки
-        </Link>
-
-        <Link
-          href="/dashboard/offers"
-          className={styles.navItem}
-        >
-          <span>
-            💶
-          </span>
-          Предложения
-        </Link>
-
-        <Link
-          href="/dashboard/orders"
-          className={styles.navItem}
-        >
-          <span>
-            📦
-          </span>
-          Заказы
-        </Link>
-
-        <Link
-          href="/dashboard/profile"
-          className={`${styles.navItem} ${styles.navActive}`}
-        >
-          <span>
-            👤
-          </span>
-          Профиль
-        </Link>
-
-      </nav>
+      <BottomNav active="profile" />
 
     </main>
   );
