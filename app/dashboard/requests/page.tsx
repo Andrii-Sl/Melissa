@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "../dashboard.module.css";
 
@@ -34,10 +34,7 @@ export default function RequestsPage() {
         .subscribe();
 
     return () => {
-
-      supabase.removeChannel(
-        channel
-      );
+      supabase.removeChannel(channel);
     };
 
   }, []);
@@ -50,9 +47,7 @@ export default function RequestsPage() {
         document.cookie
           .split("; ")
           .find((row) =>
-            row.startsWith(
-              "client_phone="
-            )
+            row.startsWith("client_phone=")
           )
           ?.split("=")[1];
 
@@ -60,9 +55,7 @@ export default function RequestsPage() {
         return cookiePhone;
 
       const {
-        data:{
-          session,
-        },
+        data:{ session },
       } =
         await supabase.auth.getSession();
 
@@ -88,7 +81,6 @@ export default function RequestsPage() {
       if (!phone) {
 
         setRequests([]);
-
         setLoading(false);
 
         return;
@@ -100,14 +92,7 @@ export default function RequestsPage() {
       } =
         await supabase
           .from("requests")
-          .select(`
-            id,
-            vin,
-            car,
-            part_name,
-            status,
-            created_at
-          `)
+          .select("*")
           .eq(
             "client_phone",
             phone
@@ -121,10 +106,7 @@ export default function RequestsPage() {
 
       if (error) {
 
-        console.error(
-          "REQUESTS ERROR:",
-          error
-        );
+        console.error(error);
 
         setRequests([]);
 
@@ -151,7 +133,7 @@ export default function RequestsPage() {
 
     const confirmDelete =
       confirm(
-        "Удалить заявку?"
+        "Удалить запрос?"
       );
 
     if (!confirmDelete)
@@ -196,75 +178,6 @@ export default function RequestsPage() {
     }
   }
 
-  function getStatusText(
-    status:string
-  ) {
-
-    if (status === "NEW")
-      return "Новая";
-
-    if (status === "IN_OFFER")
-      return "Есть предложение";
-
-    if (status === "DONE")
-      return "Завершена";
-
-    if (status === "CANCELLED")
-      return "Отменена";
-
-    return status || "NEW";
-  }
-
-  function getStatusClass(
-    status:string
-  ) {
-
-    if (status === "DONE")
-      return styles.badgeGreen;
-
-    if (status === "IN_OFFER")
-      return styles.badgeBlue;
-
-    return styles.badge;
-  }
-
-  function formatDate(
-    value:string
-  ) {
-
-    if (!value)
-      return "—";
-
-    return new Date(value)
-      .toLocaleDateString(
-        "ru-RU",
-        {
-          day:"2-digit",
-          month:"long",
-        }
-      );
-  }
-
-  const activeRequests =
-    useMemo(
-      () =>
-        requests.filter(
-          (item) =>
-            item.status !== "DONE"
-        ),
-      [requests]
-    );
-
-  const completedRequests =
-    useMemo(
-      () =>
-        requests.filter(
-          (item) =>
-            item.status === "DONE"
-        ),
-      [requests]
-    );
-
   if (loading)
     return (
       <div className={styles.loading}>
@@ -285,7 +198,7 @@ export default function RequestsPage() {
           <div>
 
             <p className={styles.hello}>
-              Личный кабинет
+              Мои запросы
             </p>
 
             <h1 className={styles.mainTitle}>
@@ -294,207 +207,152 @@ export default function RequestsPage() {
 
           </div>
 
-          <div className={styles.headerBadge}>
-
-            {activeRequests.length}
-
-          </div>
-
         </div>
 
       </header>
 
-      {/* ACTIVE */}
+      {/* REQUESTS */}
 
       <section className={styles.section}>
 
-        <div className={styles.sectionHead}>
+        <div className={styles.requestsList}>
 
-          <h2>
-            Активные заявки
-          </h2>
+          {requests.length === 0 && (
 
-        </div>
+            <div className={styles.emptyCard}>
 
-        {activeRequests.length === 0 && (
-
-          <div className={styles.emptyCard}>
-
-            <div className={styles.emptyIcon}>
-              📄
-            </div>
-
-            <strong>
-              Нет активных заявок
-            </strong>
-
-            <p>
-              Создайте новую заявку
-              на главной странице
-            </p>
-
-          </div>
-
-        )}
-
-        {activeRequests.map((item) => (
-
-          <div
-            key={item.id}
-            className={styles.requestPremiumCard}
-          >
-
-            <div className={styles.requestTop}>
-
-              <div>
-
-                <div className={styles.requestLabel}>
-                  Деталь
-                </div>
-
-                <h3 className={styles.requestTitle}>
-                  {
-                    item.part_name ||
-                    "Без названия"
-                  }
-                </h3>
-
+              <div className={styles.emptyIcon}>
+                📄
               </div>
-
-              <button
-                onClick={() =>
-                  deleteRequest(
-                    item.id
-                  )
-                }
-                className={styles.deleteCircle}
-              >
-                ×
-              </button>
-
-            </div>
-
-            <div className={styles.requestGrid}>
-
-              <div className={styles.infoBox}>
-
-                <span>
-                  Автомобиль
-                </span>
-
-                <strong>
-                  {item.car || "—"}
-                </strong>
-
-              </div>
-
-              <div className={styles.infoBox}>
-
-                <span>
-                  Дата
-                </span>
-
-                <strong>
-                  {
-                    formatDate(
-                      item.created_at
-                    )
-                  }
-                </strong>
-
-              </div>
-
-            </div>
-
-            <div className={styles.vinBox}>
-
-              <span>
-                VIN
-              </span>
 
               <strong>
-                {item.vin || "—"}
+                Нет запросов
               </strong>
 
             </div>
+
+          )}
+
+          {requests.map((item) => (
 
             <div
-              className={
-                getStatusClass(
-                  item.status
-                )
-              }
+              key={item.id}
+              className={styles.requestCard}
             >
-              {
-                getStatusText(
-                  item.status
-                )
-              }
+
+              {/* TOP */}
+
+              <div className={styles.requestTop}>
+
+                <div>
+
+                  <p className={styles.requestLabel}>
+                    Автомобиль
+                  </p>
+
+                  <h3 className={styles.requestTitle}>
+                    {item.car || "—"}
+                  </h3>
+
+                </div>
+
+                <button
+                  className={
+                    styles.requestDelete
+                  }
+                  onClick={() =>
+                    deleteRequest(
+                      item.id
+                    )
+                  }
+                >
+                  🗑
+                </button>
+
+              </div>
+
+              {/* VIN */}
+
+              <div className={styles.requestRow}>
+
+                <div className={styles.requestIcon}>
+                  🏷
+                </div>
+
+                <div className={styles.requestInfo}>
+
+                  <span>
+                    VIN code
+                  </span>
+
+                  <strong>
+                    {item.vin || "—"}
+                  </strong>
+
+                </div>
+
+              </div>
+
+              {/* PRODUCT */}
+
+              <div className={styles.requestRow}>
+
+                <div className={styles.requestIcon}>
+                  📦
+                </div>
+
+                <div className={styles.requestInfo}>
+
+                  <span>
+                    Наименование товара
+                  </span>
+
+                  <strong>
+                    {
+                      item.part_name ||
+                      "—"
+                    }
+                  </strong>
+
+                </div>
+
+              </div>
+
+              {/* QUANTITY */}
+
+              <div className={styles.requestRow}>
+
+                <div className={styles.requestIcon}>
+                  🧾
+                </div>
+
+                <div className={styles.requestInfo}>
+
+                  <span>
+                    Количество
+                  </span>
+
+                  <strong>
+                    {
+                      item.quantity || 1
+                    }
+                    {" "}
+                    шт.
+                  </strong>
+
+                </div>
+
+              </div>
+
             </div>
 
-          </div>
-
-        ))}
-
-      </section>
-
-      {/* COMPLETED */}
-
-      <section className={styles.section}>
-
-        <div className={styles.sectionHead}>
-
-          <h2>
-            Завершённые
-          </h2>
+          ))}
 
         </div>
 
-        {completedRequests.length === 0 && (
-
-          <div className={styles.emptySmallCard}>
-
-            Нет завершённых заявок
-
-          </div>
-
-        )}
-
-        {completedRequests.map((item) => (
-
-          <div
-            key={item.id}
-            className={styles.historyCard}
-          >
-
-            <div>
-
-              <strong>
-                {
-                  item.part_name ||
-                  "Деталь"
-                }
-              </strong>
-
-              <p>
-                {item.car || "—"}
-              </p>
-
-            </div>
-
-            <div className={styles.badgeGreen}>
-
-              Завершена
-
-            </div>
-
-          </div>
-
-        ))}
-
       </section>
 
-      {/* NAV */}
+      {/* BOTTOM NAV */}
 
       <nav className={styles.bottomNav}>
 
