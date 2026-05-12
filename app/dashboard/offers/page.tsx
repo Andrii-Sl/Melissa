@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "../dashboard.module.css";
@@ -20,18 +20,7 @@ export default function OffersPage() {
   const [selectedOffer, setSelectedOffer] =
     useState<any>(null);
 
-  /* DELIVERY */
-
-  const [country, setCountry] =
-    useState("");
-
-  const [city, setCity] =
-    useState("");
-
-  const [street, setStreet] =
-    useState("");
-
-  const [zip, setZip] =
+  const [deliveryAddress, setDeliveryAddress] =
     useState("");
 
   const [paymentMethod, setPaymentMethod] =
@@ -39,7 +28,7 @@ export default function OffersPage() {
 
   useEffect(() => {
 
-    loadOffers();
+    loadData();
 
     const channel =
       supabase
@@ -52,7 +41,7 @@ export default function OffersPage() {
             table:"offers",
           },
           () => {
-            loadOffers();
+            loadData();
           }
         )
         .subscribe();
@@ -102,27 +91,7 @@ export default function OffersPage() {
     }
   }
 
-  function getDeliveryDate(
-    days:number
-  ) {
-
-    const date =
-      new Date();
-
-    date.setDate(
-      date.getDate() + days
-    );
-
-    return date.toLocaleDateString(
-      "ru-RU",
-      {
-        day:"2-digit",
-        month:"long",
-      }
-    );
-  }
-
-  async function loadOffers() {
+  async function loadData() {
 
     try {
 
@@ -130,8 +99,6 @@ export default function OffersPage() {
         await getClientPhone();
 
       if (!phone) {
-
-        setOffers([]);
 
         setLoading(false);
 
@@ -153,6 +120,15 @@ export default function OffersPage() {
           .maybeSingle();
 
       setProfile(profileData);
+
+      if (
+        profileData?.delivery_address
+      ) {
+
+        setDeliveryAddress(
+          profileData.delivery_address
+        );
+      }
 
       /* OFFERS */
 
@@ -180,23 +156,18 @@ export default function OffersPage() {
 
       if (error) {
 
-        console.error(
-          "LOAD OFFERS ERROR:",
-          error
-        );
+        console.error(error);
 
         setOffers([]);
 
-        return;
-      }
+      } else {
 
-      setOffers(data || []);
+        setOffers(data || []);
+      }
 
     } catch (error) {
 
       console.error(error);
-
-      setOffers([]);
 
     } finally {
 
@@ -204,25 +175,24 @@ export default function OffersPage() {
     }
   }
 
-  function useProfileAddress() {
+  function getDeliveryDate(
+    days:number
+  ) {
 
-    if (!profile)
-      return;
+    const date =
+      new Date();
 
-    setCountry(
-      profile.country || ""
+    date.setDate(
+      date.getDate() +
+      Number(days || 0)
     );
 
-    setCity(
-      profile.city || ""
-    );
-
-    setStreet(
-      profile.street || ""
-    );
-
-    setZip(
-      profile.zip || ""
+    return date.toLocaleDateString(
+      "ru-RU",
+      {
+        day:"numeric",
+        month:"long",
+      }
     );
   }
 
@@ -231,15 +201,10 @@ export default function OffersPage() {
     if (!selectedOffer)
       return;
 
-    if (
-      !country ||
-      !city ||
-      !street ||
-      !zip
-    ) {
+    if (!deliveryAddress) {
 
       alert(
-        "Заполните адрес доставки"
+        "Укажите адрес доставки"
       );
 
       return;
@@ -258,9 +223,6 @@ export default function OffersPage() {
 
         return;
       }
-
-      const fullAddress =
-        `${country}, ${city}, ${street}, ${zip}`;
 
       /* CREATE ORDER */
 
@@ -282,8 +244,6 @@ export default function OffersPage() {
               client_phone:
                 phone,
 
-              track_number:"",
-
               offer_price:
                 selectedOffer.price,
 
@@ -291,7 +251,7 @@ export default function OffersPage() {
                 selectedOffer.delivery_days,
 
               delivery_address:
-                fullAddress,
+                deliveryAddress,
 
               payment_method:
                 paymentMethod,
@@ -312,7 +272,7 @@ export default function OffersPage() {
         console.error(orderError);
 
         alert(
-          "Ошибка создания заказа"
+          orderError.message
         );
 
         return;
@@ -320,38 +280,25 @@ export default function OffersPage() {
 
       /* UPDATE OFFER */
 
-      const {
-        error:updateError,
-      } =
-        await supabase
-          .from("offers")
-          .update({
-            payment_status:"PAID",
-            status:"PAID",
-            delivery_address:
-              fullAddress,
-          })
-          .eq(
-            "id",
-            selectedOffer.id
-          );
-
-      if (updateError) {
-
-        console.error(updateError);
-      }
+      await supabase
+        .from("offers")
+        .update({
+          payment_status:"PAID",
+          status:"PAID",
+          delivery_address:
+            deliveryAddress,
+        })
+        .eq(
+          "id",
+          selectedOffer.id
+        );
 
       setSelectedOffer(null);
 
-      setCountry("");
-      setCity("");
-      setStreet("");
-      setZip("");
-
-      await loadOffers();
+      await loadData();
 
       alert(
-        "Заказ успешно оформлен"
+        "Заказ оформлен"
       );
 
     } catch (error) {
@@ -378,40 +325,25 @@ export default function OffersPage() {
 
     try {
 
-      const {
-        error,
-      } =
-        await supabase
-          .from("offers")
-          .update({
-            payment_status:
-              "CANCELLED",
+      await supabase
+        .from("offers")
+        .update({
+          payment_status:
+            "CANCELLED",
 
-            status:
-              "CANCELLED",
-          })
-          .eq("id", id);
-
-      if (error) {
-
-        console.error(error);
-
-        alert(
-          "Ошибка отмены"
+          status:
+            "CANCELLED",
+        })
+        .eq(
+          "id",
+          id
         );
 
-        return;
-      }
-
-      await loadOffers();
+      await loadData();
 
     } catch (error) {
 
       console.error(error);
-
-      alert(
-        "Ошибка соединения"
-      );
     }
   }
 
@@ -426,19 +358,198 @@ export default function OffersPage() {
 
     <main className={styles.page}>
 
-      {/* HERO */}
+      {/* HEADER */}
 
-      <section className={styles.hero}>
+      <header className={styles.header}>
 
-        <h1 className={styles.title}>
-          Предложения
-        </h1>
+        <div className={styles.headerContent}>
 
-        <p className={styles.phone}>
-          Доступно:
-          {" "}
-          {offers.length}
-        </p>
+          <div>
+
+            <p className={styles.hello}>
+              Каталог предложений
+            </p>
+
+            <h1 className={styles.mainTitle}>
+              Предложения
+            </h1>
+
+          </div>
+
+        </div>
+
+      </header>
+
+      {/* OFFERS */}
+
+      <section className={styles.section}>
+
+        <div className={styles.offerGrid}>
+
+          {offers.length === 0 && (
+
+            <div className={styles.profileCard}>
+
+              <p className={styles.addressText}>
+                Пока нет предложений
+              </p>
+
+            </div>
+
+          )}
+
+          {offers.map((item) => (
+
+            <div
+              key={item.id}
+              className={styles.offerCard}
+            >
+
+              {/* IMAGE */}
+
+              {item.product_image && (
+
+                <div
+                  className={
+                    styles.offerImageWrap
+                  }
+                >
+
+                  <Image
+                    src={item.product_image}
+                    alt=""
+                    fill
+                    className={
+                      styles.offerImage
+                    }
+                  />
+
+                </div>
+
+              )}
+
+              {/* CONTENT */}
+
+              <div
+                className={
+                  styles.offerContent
+                }
+              >
+
+                <h2
+                  className={
+                    styles.offerBrand
+                  }
+                >
+                  {
+                    item.brand ||
+                    "Товар"
+                  }
+                </h2>
+
+                <p
+                  className={
+                    styles.offerArticle
+                  }
+                >
+                  Артикул:
+                  {" "}
+                  {
+                    item.article ||
+                    "—"
+                  }
+                </p>
+
+                <p
+                  className={
+                    styles.offerDescription
+                  }
+                >
+                  {
+                    item.description ||
+                    "Описание отсутствует"
+                  }
+                </p>
+
+                <div
+                  className={
+                    styles.offerMeta
+                  }
+                >
+
+                  <div
+                    className={
+                      styles.deliveryDate
+                    }
+                  >
+
+                    <span>
+                      Доставка
+                    </span>
+
+                    <strong>
+                      {
+                        getDeliveryDate(
+                          item.delivery_days
+                        )
+                      }
+                    </strong>
+
+                  </div>
+
+                  <div
+                    className={
+                      styles.offerPrice
+                    }
+                  >
+                    €
+                    {" "}
+                    {item.price || 0}
+                  </div>
+
+                </div>
+
+                <div
+                  className={
+                    styles.offerButtons
+                  }
+                >
+
+                  <button
+                    className={
+                      styles.buyButton
+                    }
+                    onClick={() =>
+                      setSelectedOffer(
+                        item
+                      )
+                    }
+                  >
+                    Оформить заказ
+                  </button>
+
+                  <button
+                    className={
+                      styles.cancelButton
+                    }
+                    onClick={() =>
+                      cancelOffer(
+                        item.id
+                      )
+                    }
+                  >
+                    ✕
+                  </button>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          ))}
+
+        </div>
 
       </section>
 
@@ -446,241 +557,181 @@ export default function OffersPage() {
 
       {selectedOffer && (
 
-        <section className={styles.section}>
+        <>
 
-          <div className={styles.card}>
+          <div
+            className={
+              styles.checkoutOverlay
+            }
+            onClick={() =>
+              setSelectedOffer(null)
+            }
+          />
+
+          <div
+            className={
+              styles.checkoutSheet
+            }
+          >
+
+            <h2
+              className={
+                styles.checkoutTitle
+              }
+            >
+              Оформление заказа
+            </h2>
 
             {/* IMAGE */}
 
             {selectedOffer.product_image && (
 
-              <Image
-                src={
-                  selectedOffer.product_image
-                }
-                alt=""
-                width={800}
-                height={500}
+              <div
                 className={
-                  styles.productImage
+                  styles.checkoutImage
                 }
-              />
+              >
+
+                <Image
+                  src={
+                    selectedOffer.product_image
+                  }
+                  alt=""
+                  fill
+                  className={
+                    styles.offerImage
+                  }
+                />
+
+              </div>
 
             )}
 
             {/* PRODUCT */}
 
-            <div
+            <h3
               className={
-                styles.productTitle
+                styles.checkoutName
               }
             >
               {
                 selectedOffer.brand
               }
-            </div>
+            </h3>
 
-            <div
+            <p
               className={
-                styles.productMeta
+                styles.offerArticle
               }
             >
-
-              <span
-                className={
-                  styles.productLabel
-                }
-              >
-                Артикул
-              </span>
-
+              Артикул:
+              {" "}
               {
                 selectedOffer.article ||
                 "—"
               }
+            </p>
 
-            </div>
+            <p
+              className={
+                styles.offerDescription
+              }
+            >
+              {
+                selectedOffer.description
+              }
+            </p>
 
             <div
               className={
-                styles.productMeta
+                styles.deliveryDate
               }
             >
 
-              <span
-                className={
-                  styles.productLabel
-                }
-              >
-                Описание
+              <span>
+                Доставка
               </span>
 
-              {
-                selectedOffer.description ||
-                "Описание отсутствует"
-              }
+              <strong>
+                {
+                  getDeliveryDate(
+                    selectedOffer.delivery_days
+                  )
+                }
+              </strong>
 
             </div>
 
             <div
               className={
-                styles.deliveryBox
+                styles.checkoutPrice
               }
             >
-
-              <div
-                className={
-                  styles.deliveryTitle
-                }
-              >
-                Доставка
-              </div>
-
-              <div
-                className={
-                  styles.deliveryDate
-                }
-              >
-                Доставка:
-                {" "}
-                {
-                  getDeliveryDate(
-                    selectedOffer.delivery_days || 0
-                  )
-                }
-              </div>
-
-              <div
-                className={
-                  styles.price
-                }
-              >
-                €
-                {" "}
-                {
-                  selectedOffer.price
-                }
-              </div>
-
+              €
+              {" "}
+              {selectedOffer.price}
             </div>
 
             {/* ADDRESS */}
 
             <div
-              style={{
-                marginTop:"20px",
-              }}
+              className={
+                styles.checkoutSection
+              }
             >
 
-              <div
+              <label
                 className={
-                  styles.deliveryTitle
+                  styles.checkoutLabel
                 }
               >
                 Адрес доставки
-              </div>
+              </label>
 
-              <div
+              <textarea
                 className={
-                  styles.addressBox
+                  styles.textarea
                 }
-              >
-
-                <button
-                  className={
-                    styles.logoutWhiteBtn
-                  }
-                  onClick={
-                    useProfileAddress
-                  }
-                >
-                  Использовать адрес из профиля
-                </button>
-
-                <input
-                  className={
-                    styles.input
-                  }
-                  placeholder="Страна"
-                  value={country}
-                  onChange={(e) =>
-                    setCountry(
-                      e.target.value
-                    )
-                  }
-                />
-
-                <input
-                  className={
-                    styles.input
-                  }
-                  placeholder="Город"
-                  value={city}
-                  onChange={(e) =>
-                    setCity(
-                      e.target.value
-                    )
-                  }
-                />
-
-                <input
-                  className={
-                    styles.input
-                  }
-                  placeholder="Улица и дом"
-                  value={street}
-                  onChange={(e) =>
-                    setStreet(
-                      e.target.value
-                    )
-                  }
-                />
-
-                <input
-                  className={
-                    styles.input
-                  }
-                  placeholder="Почтовый индекс"
-                  value={zip}
-                  onChange={(e) =>
-                    setZip(
-                      e.target.value
-                    )
-                  }
-                />
-
-              </div>
+                placeholder="Введите адрес доставки"
+                value={deliveryAddress}
+                onChange={(e) =>
+                  setDeliveryAddress(
+                    e.target.value
+                  )
+                }
+              />
 
             </div>
 
             {/* PAYMENT */}
 
             <div
-              style={{
-                marginTop:"22px",
-              }}
+              className={
+                styles.checkoutSection
+              }
             >
 
-              <div
+              <label
                 className={
-                  styles.deliveryTitle
+                  styles.checkoutLabel
                 }
               >
                 Способ оплаты
-              </div>
+              </label>
 
               <div
                 className={
-                  styles.paymentBox
+                  styles.paymentGrid
                 }
               >
 
                 <button
-                  className={
-                    paymentMethod === "CARD"
-                      ? `${styles.paymentCard} ${styles.paymentCardActive}`
-                      : styles.paymentCard
-                  }
+                  className={`${styles.paymentCard} ${
+                    paymentMethod ===
+                    "CARD"
+                      ? styles.paymentCardActive
+                      : ""
+                  }`}
                   onClick={() =>
                     setPaymentMethod(
                       "CARD"
@@ -691,11 +742,12 @@ export default function OffersPage() {
                 </button>
 
                 <button
-                  className={
-                    paymentMethod === "PAYPAL"
-                      ? `${styles.paymentCard} ${styles.paymentCardActive}`
-                      : styles.paymentCard
-                  }
+                  className={`${styles.paymentCard} ${
+                    paymentMethod ===
+                    "PAYPAL"
+                      ? styles.paymentCardActive
+                      : ""
+                  }`}
                   onClick={() =>
                     setPaymentMethod(
                       "PAYPAL"
@@ -709,208 +761,30 @@ export default function OffersPage() {
 
             </div>
 
-            {/* BUTTONS */}
+          </div>
+
+          {/* BOTTOM BUTTON */}
+
+          <div
+            className={
+              styles.checkoutBottom
+            }
+          >
 
             <button
               className={
-                styles.createBtn
+                styles.checkoutButton
               }
               onClick={createOrder}
             >
-              Оплатить заказ
-            </button>
-
-            <button
-              className={
-                styles.logoutBtn
-              }
-              onClick={() =>
-                setSelectedOffer(null)
-              }
-            >
-              Отмена
+              Оплатить €
+              {" "}
+              {selectedOffer.price}
             </button>
 
           </div>
 
-        </section>
-
-      )}
-
-      {/* OFFERS */}
-
-      {!selectedOffer && (
-
-        <section className={styles.section}>
-
-          {offers.length === 0 && (
-
-            <div className={styles.card}>
-
-              <strong>
-                Пока нет предложений
-              </strong>
-
-            </div>
-
-          )}
-
-          {offers.map((item) => (
-
-            <div
-              key={item.id}
-              className={styles.card}
-            >
-
-              {/* IMAGE */}
-
-              {item.product_image && (
-
-                <Image
-                  src={
-                    item.product_image
-                  }
-                  alt=""
-                  width={800}
-                  height={500}
-                  className={
-                    styles.productImage
-                  }
-                />
-
-              )}
-
-              {/* TITLE */}
-
-              <div
-                className={
-                  styles.productTitle
-                }
-              >
-                {
-                  item.brand ||
-                  "Товар"
-                }
-              </div>
-
-              {/* ARTICLE */}
-
-              <div
-                className={
-                  styles.productMeta
-                }
-              >
-
-                <span
-                  className={
-                    styles.productLabel
-                  }
-                >
-                  Артикул
-                </span>
-
-                {
-                  item.article || "—"
-                }
-
-              </div>
-
-              {/* DESCRIPTION */}
-
-              <div
-                className={
-                  styles.productMeta
-                }
-              >
-
-                <span
-                  className={
-                    styles.productLabel
-                  }
-                >
-                  Описание
-                </span>
-
-                {
-                  item.description ||
-                  "Описание отсутствует"
-                }
-
-              </div>
-
-              {/* DELIVERY */}
-
-              <div
-                className={
-                  styles.deliveryBox
-                }
-              >
-
-                <div
-                  className={
-                    styles.deliveryTitle
-                  }
-                >
-                  Доставка
-                </div>
-
-                <div
-                  className={
-                    styles.deliveryDate
-                  }
-                >
-                  До
-                  {" "}
-                  {
-                    getDeliveryDate(
-                      item.delivery_days || 0
-                    )
-                  }
-                </div>
-
-                <div
-                  className={
-                    styles.price
-                  }
-                >
-                  €
-                  {" "}
-                  {
-                    item.price || 0
-                  }
-                </div>
-
-              </div>
-
-              {/* BUTTONS */}
-
-              <button
-                className={
-                  styles.createBtn
-                }
-                onClick={() =>
-                  setSelectedOffer(item)
-                }
-              >
-                Оформить заказ
-              </button>
-
-              <button
-                onClick={() =>
-                  cancelOffer(item.id)
-                }
-                className={
-                  styles.logoutBtn
-                }
-              >
-                Отменить
-              </button>
-
-            </div>
-
-          ))}
-
-        </section>
+        </>
 
       )}
 
@@ -922,60 +796,50 @@ export default function OffersPage() {
           href="/dashboard"
           className={styles.navItem}
         >
-
-          <div className={styles.navIcon}>
-            🏠
-          </div>
-
           <span>
-            Главная
+            🏠
           </span>
-
+          Главная
         </Link>
 
         <Link
           href="/dashboard/requests"
           className={styles.navItem}
         >
-
-          <div className={styles.navIcon}>
-            📄
-          </div>
-
           <span>
-            Заявки
+            📄
           </span>
-
+          Заявки
         </Link>
 
         <Link
           href="/dashboard/offers"
-          className={`${styles.navItem} ${styles.navItemActive}`}
+          className={`${styles.navItem} ${styles.navActive}`}
         >
-
-          <div className={styles.navIcon}>
-            💶
-          </div>
-
           <span>
-            Предложения
+            💶
           </span>
-
+          Предложения
         </Link>
 
         <Link
           href="/dashboard/orders"
           className={styles.navItem}
         >
-
-          <div className={styles.navIcon}>
-            📦
-          </div>
-
           <span>
-            Заказы
+            📦
           </span>
+          Заказы
+        </Link>
 
+        <Link
+          href="/dashboard/profile"
+          className={styles.navItem}
+        >
+          <span>
+            👤
+          </span>
+          Профиль
         </Link>
 
       </nav>
