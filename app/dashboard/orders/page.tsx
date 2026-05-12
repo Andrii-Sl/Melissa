@@ -1,7 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "../dashboard.module.css";
 
@@ -12,9 +13,6 @@ export default function OrdersPage() {
 
   const [loading, setLoading] =
     useState(true);
-
-  const [activeTab, setActiveTab] =
-    useState("ACTIVE");
 
   useEffect(() => {
 
@@ -37,6 +35,7 @@ export default function OrdersPage() {
         .subscribe();
 
     return () => {
+
       supabase.removeChannel(
         channel
       );
@@ -48,6 +47,19 @@ export default function OrdersPage() {
 
     try {
 
+      const cookiePhone =
+        document.cookie
+          .split("; ")
+          .find((row) =>
+            row.startsWith(
+              "client_phone="
+            )
+          )
+          ?.split("=")[1];
+
+      if (cookiePhone)
+        return cookiePhone;
+
       const {
         data:{
           session,
@@ -55,32 +67,15 @@ export default function OrdersPage() {
       } =
         await supabase.auth.getSession();
 
-      let phone =
-        session?.user?.phone;
-
-      if (!phone) {
-
-        const phoneCookie =
-          document.cookie
-            .split("; ")
-            .find((row) =>
-              row.startsWith(
-                "client_phone="
-              )
-            )
-            ?.split("=")[1];
-
-        if (phoneCookie)
-          phone = phoneCookie;
-      }
-
-      return phone;
+      return (
+        session?.user?.phone || ""
+      );
 
     } catch (error) {
 
       console.error(error);
 
-      return null;
+      return "";
     }
   }
 
@@ -93,7 +88,6 @@ export default function OrdersPage() {
 
       if (!phone) {
 
-        setOrders([]);
         setLoading(false);
 
         return;
@@ -105,22 +99,7 @@ export default function OrdersPage() {
       } =
         await supabase
           .from("orders")
-          .select(`
-            id,
-            status,
-            offer_price,
-            delivery_days,
-            delivery_address,
-            payment_method,
-            track_number,
-            created_at,
-            offers (
-              brand,
-              article,
-              description,
-              product_image
-            )
-          `)
+          .select("*")
           .eq(
             "client_phone",
             phone
@@ -147,8 +126,6 @@ export default function OrdersPage() {
 
       console.error(error);
 
-      setOrders([]);
-
     } finally {
 
       setLoading(false);
@@ -171,42 +148,39 @@ export default function OrdersPage() {
     return "Новый";
   }
 
-  function getPaymentText(
-    method:string
+  function getDeliveryDate(
+    days:number
   ) {
 
-    if (method === "CARD")
-      return "Банковская карта";
+    const date =
+      new Date();
 
-    if (method === "CASH")
-      return "Наличные";
+    date.setDate(
+      date.getDate() +
+      Number(days || 0)
+    );
 
-    if (method === "TRANSFER")
-      return "Банковский перевод";
-
-    return "—";
+    return date.toLocaleDateString(
+      "ru-RU",
+      {
+        day:"numeric",
+        month:"long",
+      }
+    );
   }
 
   const activeOrders =
-    useMemo(
-      () =>
-        orders.filter(
-          (item) =>
-            item.status !==
-            "DELIVERED"
-        ),
-      [orders]
+    orders.filter(
+      (item) =>
+        item.status !==
+        "DELIVERED"
     );
 
   const deliveredOrders =
-    useMemo(
-      () =>
-        orders.filter(
-          (item) =>
-            item.status ===
-            "DELIVERED"
-        ),
-      [orders]
+    orders.filter(
+      (item) =>
+        item.status ===
+        "DELIVERED"
     );
 
   if (loading)
@@ -220,85 +194,49 @@ export default function OrdersPage() {
 
     <main className={styles.page}>
 
-      {/* HERO */}
+      {/* HEADER */}
 
-      <section className={styles.hero}>
+      <header className={styles.header}>
 
-        <h1 className={styles.title}>
-          Заказы
-        </h1>
+        <div className={styles.headerContent}>
 
-        <p className={styles.phone}>
-          Активных:
-          {" "}
-          {activeOrders.length}
-        </p>
+          <div>
 
-      </section>
+            <p className={styles.hello}>
+              История заказов
+            </p>
 
-      {/* TABS */}
+            <h1 className={styles.mainTitle}>
+              Заказы
+            </h1>
 
-      <section
-        className={styles.section}
-        style={{
-          paddingTop:"0",
-        }}
-      >
-
-        <div
-          style={{
-            display:"flex",
-            gap:"10px",
-          }}
-        >
-
-          <button
-            className={
-              activeTab === "ACTIVE"
-                ? styles.createBtn
-                : styles.logoutWhiteBtn
-            }
-            onClick={() =>
-              setActiveTab(
-                "ACTIVE"
-              )
-            }
-          >
-            Активные
-          </button>
-
-          <button
-            className={
-              activeTab === "DELIVERED"
-                ? styles.createBtn
-                : styles.logoutWhiteBtn
-            }
-            onClick={() =>
-              setActiveTab(
-                "DELIVERED"
-              )
-            }
-          >
-            Доставленные
-          </button>
+          </div>
 
         </div>
 
-      </section>
+      </header>
 
-      {/* ACTIVE ORDERS */}
+      {/* ACTIVE */}
 
-      {activeTab === "ACTIVE" && (
+      <section className={styles.section}>
 
-        <section className={styles.section}>
+        <div className={styles.sectionHead}>
+
+          <h2>
+            Активные
+          </h2>
+
+        </div>
+
+        <div className={styles.offerGrid}>
 
           {activeOrders.length === 0 && (
 
-            <div className={styles.card}>
+            <div className={styles.profileCard}>
 
-              <strong>
+              <p className={styles.addressText}>
                 Нет активных заказов
-              </strong>
+              </p>
 
             </div>
 
@@ -308,229 +246,300 @@ export default function OrdersPage() {
 
             <div
               key={item.id}
-              className={styles.card}
+              className={styles.offerCard}
             >
 
-              {item.offers?.product_image && (
+              {/* IMAGE */}
 
-                <img
-                  src={
-                    item.offers
-                      .product_image
+              {item.product_image && (
+
+                <div
+                  className={
+                    styles.offerImageWrap
                   }
-                  alt=""
-                  style={{
-                    width:"100%",
-                    borderRadius:"20px",
-                    marginBottom:"16px",
-                    objectFit:"cover",
-                  }}
-                />
+                >
+
+                  <Image
+                    src={item.product_image}
+                    alt=""
+                    fill
+                    className={
+                      styles.offerImage
+                    }
+                  />
+
+                </div>
 
               )}
 
-              <strong
-                style={{
-                  fontSize:"24px",
-                  display:"block",
-                  marginBottom:"10px",
-                }}
-              >
-                {
-                  item.offers?.brand ||
-                  "Товар"
-                }
-              </strong>
-
-              <p>
-                Артикул:
-                {" "}
-                {
-                  item.offers?.article ||
-                  "—"
-                }
-              </p>
-
-              <p>
-                {
-                  item.offers
-                    ?.description ||
-                  "Описание отсутствует"
-                }
-              </p>
-
-              <p>
-                Срок доставки:
-                {" "}
-                {
-                  item.delivery_days || 0
-                }
-                {" "}
-                дн.
-              </p>
-
-              <div className={styles.price}>
-                €
-                {" "}
-                {
-                  item.offer_price || 0
-                }
-              </div>
-
-              <p>
-                Адрес доставки:
-                {" "}
-                {
-                  item.delivery_address ||
-                  "—"
-                }
-              </p>
-
-              <p>
-                Способ оплаты:
-                {" "}
-                {
-                  getPaymentText(
-                    item.payment_method
-                  )
-                }
-              </p>
-
-              <p>
-                Track:
-                {" "}
-                {
-                  item.track_number ||
-                  "—"
-                }
-              </p>
+              {/* CONTENT */}
 
               <div
                 className={
-                  item.status ===
-                  "SHIPPED"
-                    ? styles.badgeBlue
-                    : styles.badge
+                  styles.offerContent
                 }
-                style={{
-                  marginTop:"14px",
-                }}
               >
 
-                {
-                  getStatusText(
-                    item.status
-                  )
-                }
+                <h2
+                  className={
+                    styles.offerBrand
+                  }
+                >
+                  {
+                    item.part_name ||
+                    "Товар"
+                  }
+                </h2>
 
-              </div>
+                <p
+                  className={
+                    styles.offerArticle
+                  }
+                >
+                  Артикул:
+                  {" "}
+                  {
+                    item.article ||
+                    "—"
+                  }
+                </p>
 
-            </div>
+                <p
+                  className={
+                    styles.offerDescription
+                  }
+                >
+                  {
+                    item.description ||
+                    "Описание отсутствует"
+                  }
+                </p>
 
-          ))}
+                <div
+                  className={
+                    styles.offerMeta
+                  }
+                >
 
-        </section>
-
-      )}
-
-      {/* DELIVERED */}
-
-      {activeTab === "DELIVERED" && (
-
-        <section className={styles.section}>
-
-          {deliveredOrders.length === 0 && (
-
-            <div className={styles.card}>
-
-              <strong>
-                Нет доставленных заказов
-              </strong>
-
-            </div>
-
-          )}
-
-          {deliveredOrders.map((item) => (
-
-            <div
-              key={item.id}
-              className={styles.card}
-              style={{
-                display:"flex",
-                alignItems:"center",
-                justifyContent:"space-between",
-                gap:"14px",
-                padding:"14px 18px",
-              }}
-            >
-
-              <div
-                style={{
-                  display:"flex",
-                  alignItems:"center",
-                  gap:"14px",
-                }}
-              >
-
-                {item.offers?.product_image && (
-
-                  <img
-                    src={
-                      item.offers
-                        .product_image
+                  <div
+                    className={
+                      styles.deliveryDate
                     }
-                    alt=""
-                    style={{
-                      width:"70px",
-                      height:"70px",
-                      borderRadius:"14px",
-                      objectFit:"cover",
-                    }}
-                  />
+                  >
 
-                )}
+                    <span>
+                      Доставка
+                    </span>
 
-                <div>
+                    <strong>
+                      {
+                        getDeliveryDate(
+                          item.delivery_days
+                        )
+                      }
+                    </strong>
 
-                  <strong>
-                    {
-                      item.offers?.brand ||
-                      "Товар"
+                  </div>
+
+                  <div
+                    className={
+                      styles.offerPrice
                     }
-                  </strong>
-
-                  <p
-                    style={{
-                      marginTop:"4px",
-                    }}
                   >
                     €
                     {" "}
                     {
                       item.offer_price || 0
                     }
-                  </p>
+                  </div>
 
                 </div>
 
-              </div>
+                <div
+                  className={
+                    styles.profileCard
+                  }
+                  style={{
+                    marginTop:"10px",
+                    padding:"16px",
+                  }}
+                >
 
-              <div
-                className={
-                  styles.badgeGreen
-                }
-              >
-                Доставлен
+                  <div
+                    className={
+                      styles.profileRow
+                    }
+                  >
+
+                    <span>
+                      Статус
+                    </span>
+
+                    <strong>
+                      {
+                        getStatusText(
+                          item.status
+                        )
+                      }
+                    </strong>
+
+                  </div>
+
+                  <div
+                    className={
+                      styles.profileRow
+                    }
+                  >
+
+                    <span>
+                      Track номер
+                    </span>
+
+                    <strong>
+                      {
+                        item.track_number ||
+                        "—"
+                      }
+                    </strong>
+
+                  </div>
+
+                  <div
+                    className={
+                      styles.profileRow
+                    }
+                  >
+
+                    <span>
+                      Оплата
+                    </span>
+
+                    <strong>
+                      {
+                        item.payment_method ||
+                        "CARD"
+                      }
+                    </strong>
+
+                  </div>
+
+                </div>
+
+                <div
+                  className={
+                    styles.checkoutSection
+                  }
+                  style={{
+                    marginBottom:0,
+                    marginTop:"18px",
+                  }}
+                >
+
+                  <label
+                    className={
+                      styles.checkoutLabel
+                    }
+                  >
+                    Адрес доставки
+                  </label>
+
+                  <div
+                    className={
+                      styles.profileCard
+                    }
+                    style={{
+                      padding:"16px",
+                    }}
+                  >
+
+                    <p
+                      className={
+                        styles.addressText
+                      }
+                    >
+                      {
+                        item.delivery_address ||
+                        "—"
+                      }
+                    </p>
+
+                  </div>
+
+                </div>
+
               </div>
 
             </div>
 
           ))}
 
-        </section>
+        </div>
 
-      )}
+      </section>
+
+      {/* DELIVERED */}
+
+      <section className={styles.section}>
+
+        <div className={styles.sectionHead}>
+
+          <h2>
+            Доставленные
+          </h2>
+
+        </div>
+
+        {deliveredOrders.length === 0 && (
+
+          <div className={styles.profileCard}>
+
+            <p className={styles.addressText}>
+              Пока нет доставленных заказов
+            </p>
+
+          </div>
+
+        )}
+
+        {deliveredOrders.map((item) => (
+
+          <div
+            key={item.id}
+            className={styles.orderCard}
+          >
+
+            <div>
+
+              <strong>
+                {
+                  item.part_name ||
+                  "Товар"
+                }
+              </strong>
+
+              <p>
+                €
+                {" "}
+                {
+                  item.offer_price || 0
+                }
+              </p>
+
+            </div>
+
+            <div
+              className={
+                styles.statusBadge
+              }
+            >
+              Доставлен
+            </div>
+
+          </div>
+
+        ))}
+
+      </section>
 
       {/* NAV */}
 
@@ -540,60 +549,50 @@ export default function OrdersPage() {
           href="/dashboard"
           className={styles.navItem}
         >
-
-          <div className={styles.navIcon}>
-            🏠
-          </div>
-
           <span>
-            Главная
+            🏠
           </span>
-
+          Главная
         </Link>
 
         <Link
           href="/dashboard/requests"
           className={styles.navItem}
         >
-
-          <div className={styles.navIcon}>
-            📄
-          </div>
-
           <span>
-            Заявки
+            📄
           </span>
-
+          Заявки
         </Link>
 
         <Link
           href="/dashboard/offers"
           className={styles.navItem}
         >
-
-          <div className={styles.navIcon}>
-            💶
-          </div>
-
           <span>
-            Предложения
+            💶
           </span>
-
+          Предложения
         </Link>
 
         <Link
           href="/dashboard/orders"
-          className={`${styles.navItem} ${styles.navItemActive}`}
+          className={`${styles.navItem} ${styles.navActive}`}
         >
-
-          <div className={styles.navIcon}>
-            📦
-          </div>
-
           <span>
-            Заказы
+            📦
           </span>
+          Заказы
+        </Link>
 
+        <Link
+          href="/dashboard/profile"
+          className={styles.navItem}
+        >
+          <span>
+            👤
+          </span>
+          Профиль
         </Link>
 
       </nav>
