@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "../dashboard.module.css";
 
@@ -117,10 +117,10 @@ export default function OrdersPage() {
 
         setOrders([]);
 
-      } else {
-
-        setOrders(data || []);
+        return;
       }
+
+      setOrders(data || []);
 
     } catch (error) {
 
@@ -148,6 +148,22 @@ export default function OrdersPage() {
     return "Новый";
   }
 
+  function getStatusClass(
+    status:string
+  ) {
+
+    if (status === "DELIVERED")
+      return styles.statusGreen;
+
+    if (status === "SHIPPED")
+      return styles.statusBlue;
+
+    if (status === "PROCESS")
+      return styles.statusOrange;
+
+    return styles.statusGray;
+  }
+
   function getDeliveryDate(
     days:number
   ) {
@@ -169,18 +185,36 @@ export default function OrdersPage() {
     );
   }
 
+  function formatPayment(
+    method:string
+  ) {
+
+    if (method === "PAYPAL")
+      return "PayPal";
+
+    return "Банковская карта";
+  }
+
   const activeOrders =
-    orders.filter(
-      (item) =>
-        item.status !==
-        "DELIVERED"
+    useMemo(
+      () =>
+        orders.filter(
+          (item) =>
+            item.status !==
+            "DELIVERED"
+        ),
+      [orders]
     );
 
   const deliveredOrders =
-    orders.filter(
-      (item) =>
-        item.status ===
-        "DELIVERED"
+    useMemo(
+      () =>
+        orders.filter(
+          (item) =>
+            item.status ===
+            "DELIVERED"
+        ),
+      [orders]
     );
 
   if (loading)
@@ -216,7 +250,7 @@ export default function OrdersPage() {
 
       </header>
 
-      {/* ACTIVE */}
+      {/* ACTIVE ORDERS */}
 
       <section className={styles.section}>
 
@@ -226,16 +260,28 @@ export default function OrdersPage() {
             Активные
           </h2>
 
+          <span className={styles.counterBadge}>
+            {activeOrders.length}
+          </span>
+
         </div>
 
         <div className={styles.offerGrid}>
 
           {activeOrders.length === 0 && (
 
-            <div className={styles.profileCard}>
+            <div className={styles.emptyCard}>
 
-              <p className={styles.addressText}>
+              <div className={styles.emptyIcon}>
+                📦
+              </div>
+
+              <strong>
                 Нет активных заказов
+              </strong>
+
+              <p>
+                Здесь появятся ваши заказы
               </p>
 
             </div>
@@ -246,7 +292,7 @@ export default function OrdersPage() {
 
             <div
               key={item.id}
-              className={styles.offerCard}
+              className={styles.orderPremiumCard}
             >
 
               {/* IMAGE */}
@@ -255,7 +301,7 @@ export default function OrdersPage() {
 
                 <div
                   className={
-                    styles.offerImageWrap
+                    styles.orderImageWrap
                   }
                 >
 
@@ -264,7 +310,7 @@ export default function OrdersPage() {
                     alt=""
                     fill
                     className={
-                      styles.offerImage
+                      styles.orderImage
                     }
                   />
 
@@ -272,78 +318,142 @@ export default function OrdersPage() {
 
               )}
 
-              {/* CONTENT */}
+              {/* TOP */}
 
               <div
                 className={
-                  styles.offerContent
+                  styles.orderTop
                 }
               >
 
-                <h2
-                  className={
-                    styles.offerBrand
-                  }
-                >
-                  {
-                    item.part_name ||
-                    "Товар"
-                  }
-                </h2>
+                <div>
 
-                <p
-                  className={
-                    styles.offerArticle
-                  }
-                >
-                  Артикул:
-                  {" "}
-                  {
-                    item.article ||
-                    "—"
-                  }
-                </p>
+                  <h2
+                    className={
+                      styles.orderTitle
+                    }
+                  >
+                    {
+                      item.part_name ||
+                      "Товар"
+                    }
+                  </h2>
 
-                <p
-                  className={
-                    styles.offerDescription
-                  }
-                >
-                  {
-                    item.description ||
-                    "Описание отсутствует"
-                  }
-                </p>
+                  <p
+                    className={
+                      styles.orderArticle
+                    }
+                  >
+                    Артикул:
+                    {" "}
+                    {
+                      item.article ||
+                      "—"
+                    }
+                  </p>
+
+                </div>
 
                 <div
                   className={
-                    styles.offerMeta
+                    getStatusClass(
+                      item.status
+                    )
+                  }
+                >
+                  {
+                    getStatusText(
+                      item.status
+                    )
+                  }
+                </div>
+
+              </div>
+
+              {/* DESCRIPTION */}
+
+              <p
+                className={
+                  styles.orderDescription
+                }
+              >
+                {
+                  item.description ||
+                  "Описание отсутствует"
+                }
+              </p>
+
+              {/* META */}
+
+              <div
+                className={
+                  styles.orderMetaGrid
+                }
+              >
+
+                <div
+                  className={
+                    styles.metaCard
                   }
                 >
 
-                  <div
+                  <span>
+                    Доставка
+                  </span>
+
+                  <strong>
+                    {
+                      getDeliveryDate(
+                        item.delivery_days
+                      )
+                    }
+                  </strong>
+
+                </div>
+
+                <div
+                  className={
+                    styles.metaCard
+                  }
+                >
+
+                  <span>
+                    Оплата
+                  </span>
+
+                  <strong>
+                    {
+                      formatPayment(
+                        item.payment_method
+                      )
+                    }
+                  </strong>
+
+                </div>
+
+              </div>
+
+              {/* PRICE */}
+
+              <div
+                className={
+                  styles.orderPriceRow
+                }
+              >
+
+                <div>
+
+                  <span
                     className={
-                      styles.deliveryDate
+                      styles.priceLabel
                     }
                   >
-
-                    <span>
-                      Доставка
-                    </span>
-
-                    <strong>
-                      {
-                        getDeliveryDate(
-                          item.delivery_days
-                        )
-                      }
-                    </strong>
-
-                  </div>
+                    Сумма заказа
+                  </span>
 
                   <div
                     className={
-                      styles.offerPrice
+                      styles.orderPrice
                     }
                   >
                     €
@@ -355,117 +465,55 @@ export default function OrdersPage() {
 
                 </div>
 
-                <div
-                  className={
-                    styles.profileCard
-                  }
-                  style={{
-                    marginTop:"10px",
-                    padding:"16px",
-                  }}
-                >
+              </div>
 
-                  <div
-                    className={
-                      styles.profileRow
-                    }
-                  >
+              {/* TRACK */}
 
-                    <span>
-                      Статус
-                    </span>
-
-                    <strong>
-                      {
-                        getStatusText(
-                          item.status
-                        )
-                      }
-                    </strong>
-
-                  </div>
-
-                  <div
-                    className={
-                      styles.profileRow
-                    }
-                  >
-
-                    <span>
-                      Track номер
-                    </span>
-
-                    <strong>
-                      {
-                        item.track_number ||
-                        "—"
-                      }
-                    </strong>
-
-                  </div>
-
-                  <div
-                    className={
-                      styles.profileRow
-                    }
-                  >
-
-                    <span>
-                      Оплата
-                    </span>
-
-                    <strong>
-                      {
-                        item.payment_method ||
-                        "CARD"
-                      }
-                    </strong>
-
-                  </div>
-
-                </div>
+              <div
+                className={
+                  styles.trackCard
+                }
+              >
 
                 <div
                   className={
-                    styles.checkoutSection
+                    styles.trackTop
                   }
-                  style={{
-                    marginBottom:0,
-                    marginTop:"18px",
-                  }}
                 >
 
-                  <label
-                    className={
-                      styles.checkoutLabel
+                  <span>
+                    Track номер
+                  </span>
+
+                  <strong>
+                    {
+                      item.track_number ||
+                      "Не присвоен"
                     }
-                  >
-                    Адрес доставки
-                  </label>
-
-                  <div
-                    className={
-                      styles.profileCard
-                    }
-                    style={{
-                      padding:"16px",
-                    }}
-                  >
-
-                    <p
-                      className={
-                        styles.addressText
-                      }
-                    >
-                      {
-                        item.delivery_address ||
-                        "—"
-                      }
-                    </p>
-
-                  </div>
+                  </strong>
 
                 </div>
+
+              </div>
+
+              {/* ADDRESS */}
+
+              <div
+                className={
+                  styles.addressCard
+                }
+              >
+
+                <span>
+                  Адрес доставки
+                </span>
+
+                <p>
+                  {
+                    item.delivery_address ||
+                    "—"
+                  }
+                </p>
 
               </div>
 
@@ -487,15 +535,23 @@ export default function OrdersPage() {
             Доставленные
           </h2>
 
+          <span className={styles.counterBadge}>
+            {deliveredOrders.length}
+          </span>
+
         </div>
 
         {deliveredOrders.length === 0 && (
 
-          <div className={styles.profileCard}>
+          <div className={styles.emptyCard}>
 
-            <p className={styles.addressText}>
+            <div className={styles.emptyIcon}>
+              🚚
+            </div>
+
+            <strong>
               Пока нет доставленных заказов
-            </p>
+            </strong>
 
           </div>
 
@@ -505,10 +561,14 @@ export default function OrdersPage() {
 
           <div
             key={item.id}
-            className={styles.orderCard}
+            className={styles.deliveredCard}
           >
 
-            <div>
+            <div
+              className={
+                styles.deliveredLeft
+              }
+            >
 
               <strong>
                 {
@@ -529,7 +589,7 @@ export default function OrdersPage() {
 
             <div
               className={
-                styles.statusBadge
+                styles.statusGreen
               }
             >
               Доставлен
@@ -541,7 +601,7 @@ export default function OrdersPage() {
 
       </section>
 
-      {/* NAV */}
+      {/* NAVIGATION */}
 
       <nav className={styles.bottomNav}>
 
