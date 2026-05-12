@@ -7,14 +7,38 @@ import styles from "../dashboard.module.css";
 
 export default function ProfilePage() {
 
-  const [profile, setProfile] =
-    useState<any>(null);
+  const [loading, setLoading] =
+    useState(true);
 
   const [garage, setGarage] =
     useState<any[]>([]);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [profile, setProfile] =
+    useState<any>(null);
+
+  const [firstName, setFirstName] =
+    useState("");
+
+  const [lastName, setLastName] =
+    useState("");
+
+  const [phone, setPhone] =
+    useState("");
+
+  const [email, setEmail] =
+    useState("");
+
+  const [deliveryAddress, setDeliveryAddress] =
+    useState("");
+
+  const [billingAddress, setBillingAddress] =
+    useState("");
+
+  useEffect(() => {
+
+    loadProfile();
+
+  }, []);
 
   async function getClientPhone() {
 
@@ -52,41 +76,60 @@ export default function ProfilePage() {
     }
   }
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
-
   async function loadProfile() {
 
     try {
 
-      const phone =
+      const clientPhone =
         await getClientPhone();
 
-      if (!phone) {
+      if (!clientPhone) {
 
         setLoading(false);
 
         return;
       }
 
-      /* PROFILE */
-
       const {
-        data:profileData,
+        data,
       } =
         await supabase
           .from("profiles")
           .select("*")
           .eq(
             "phone",
-            phone
+            clientPhone
           )
           .maybeSingle();
 
-      setProfile(profileData);
+      if (data) {
 
-      /* GARAGE */
+        setProfile(data);
+
+        setFirstName(
+          data.first_name || ""
+        );
+
+        setLastName(
+          data.last_name || ""
+        );
+
+        setPhone(
+          data.phone || ""
+        );
+
+        setEmail(
+          data.email || ""
+        );
+
+        setDeliveryAddress(
+          data.delivery_address || ""
+        );
+
+        setBillingAddress(
+          data.billing_address || ""
+        );
+      }
 
       const {
         data:garageData,
@@ -96,7 +139,7 @@ export default function ProfilePage() {
           .select("*")
           .eq(
             "client_phone",
-            phone
+            clientPhone
           )
           .order(
             "created_at",
@@ -119,21 +162,63 @@ export default function ProfilePage() {
     }
   }
 
-  async function logout() {
+  async function saveProfile() {
 
     try {
 
-      await supabase.auth.signOut();
+      if (!phone) {
 
-      document.cookie =
-        "client_phone=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        alert(
+          "Телефон обязателен"
+        );
 
-      window.location.href =
-        "/login";
+        return;
+      }
+
+      const fullName =
+        `${firstName} ${lastName}`;
+
+      const {
+        error,
+      } =
+        await supabase
+          .from("profiles")
+          .upsert([
+            {
+              phone,
+              first_name:firstName,
+              last_name:lastName,
+              full_name:fullName,
+              email,
+              delivery_address:
+                deliveryAddress,
+              billing_address:
+                billingAddress,
+            },
+          ]);
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "Ошибка сохранения"
+        );
+
+        return;
+      }
+
+      alert(
+        "Профиль сохранен"
+      );
 
     } catch (error) {
 
       console.error(error);
+
+      alert(
+        "Ошибка соединения"
+      );
     }
   }
 
@@ -157,27 +242,20 @@ export default function ProfilePage() {
           <div>
 
             <p className={styles.hello}>
-              Профиль клиента
+              Личный кабинет
             </p>
 
             <h1 className={styles.mainTitle}>
-              {
-                profile?.full_name ||
-                "Клиент"
-              }
+              Профиль
             </h1>
 
-          </div>
-
-          <div className={styles.avatar}>
-            👤
           </div>
 
         </div>
 
       </header>
 
-      {/* GENERAL INFO */}
+      {/* GENERAL */}
 
       <section className={styles.section}>
 
@@ -191,48 +269,79 @@ export default function ProfilePage() {
 
         <div className={styles.profileCard}>
 
-          <div className={styles.profileRow}>
+          <div className={styles.inputGroup}>
 
-            <span>
+            <label>
               Имя
-            </span>
+            </label>
 
-            <strong>
-              {
-                profile?.full_name ||
-                "—"
+            <input
+              className={styles.input}
+              value={firstName}
+              onChange={(e) =>
+                setFirstName(
+                  e.target.value
+                )
               }
-            </strong>
+              placeholder="Имя"
+            />
 
           </div>
 
-          <div className={styles.profileRow}>
+          <div className={styles.inputGroup}>
 
-            <span>
+            <label>
+              Фамилия
+            </label>
+
+            <input
+              className={styles.input}
+              value={lastName}
+              onChange={(e) =>
+                setLastName(
+                  e.target.value
+                )
+              }
+              placeholder="Фамилия"
+            />
+
+          </div>
+
+          <div className={styles.inputGroup}>
+
+            <label>
               Телефон
-            </span>
+            </label>
 
-            <strong>
-              {
-                profile?.phone ||
-                "—"
+            <input
+              className={styles.input}
+              value={phone}
+              onChange={(e) =>
+                setPhone(
+                  e.target.value
+                )
               }
-            </strong>
+              placeholder="+48..."
+            />
 
           </div>
 
-          <div className={styles.profileRow}>
+          <div className={styles.inputGroup}>
 
-            <span>
+            <label>
               E-mail
-            </span>
+            </label>
 
-            <strong>
-              {
-                profile?.email ||
-                "—"
+            <input
+              className={styles.input}
+              value={email}
+              onChange={(e) =>
+                setEmail(
+                  e.target.value
+                )
               }
-            </strong>
+              placeholder="mail@example.com"
+            />
 
           </div>
 
@@ -240,7 +349,7 @@ export default function ProfilePage() {
 
       </section>
 
-      {/* DELIVERY ADDRESS */}
+      {/* DELIVERY */}
 
       <section className={styles.section}>
 
@@ -254,20 +363,22 @@ export default function ProfilePage() {
 
         <div className={styles.profileCard}>
 
-          <p className={styles.addressText}>
-
-            {
-              profile?.delivery_address ||
-              "Адрес доставки не указан"
+          <textarea
+            className={styles.textarea}
+            value={deliveryAddress}
+            onChange={(e) =>
+              setDeliveryAddress(
+                e.target.value
+              )
             }
-
-          </p>
+            placeholder="Введите адрес доставки"
+          />
 
         </div>
 
       </section>
 
-      {/* BILLING ADDRESS */}
+      {/* BILLING */}
 
       <section className={styles.section}>
 
@@ -281,20 +392,22 @@ export default function ProfilePage() {
 
         <div className={styles.profileCard}>
 
-          <p className={styles.addressText}>
-
-            {
-              profile?.billing_address ||
-              "Адрес выставления счёта не указан"
+          <textarea
+            className={styles.textarea}
+            value={billingAddress}
+            onChange={(e) =>
+              setBillingAddress(
+                e.target.value
+              )
             }
-
-          </p>
+            placeholder="Введите billing address"
+          />
 
         </div>
 
       </section>
 
-      {/* CARS */}
+      {/* GARAGE */}
 
       <section className={styles.section}>
 
@@ -308,67 +421,81 @@ export default function ProfilePage() {
             href="/dashboard/garage"
             className={styles.linkBtn}
           >
-            Все
+            Управление
           </Link>
 
         </div>
 
-        {garage.length === 0 && (
+        <div className={styles.carsGrid}>
 
-          <div className={styles.profileCard}>
+          {garage.length === 0 && (
 
-            <p className={styles.addressText}>
-              Автомобили не добавлены
-            </p>
+            <div className={styles.profileCard}>
 
-          </div>
-
-        )}
-
-        {garage.map((item) => (
-
-          <div
-            key={item.id}
-            className={styles.orderCard}
-          >
-
-            <div>
-
-              <strong>
-                {
-                  item.car_name ||
-                  "Автомобиль"
-                }
-              </strong>
-
-              <p>
-                VIN:
-                {" "}
-                {item.vin || "—"}
+              <p className={styles.addressText}>
+                Автомобили отсутствуют
               </p>
 
             </div>
 
-          </div>
+          )}
 
-        ))}
+          {garage.map((item) => (
+
+            <div
+              key={item.id}
+              className={styles.carCard}
+            >
+
+              <div
+                className={styles.carTop}
+              >
+
+                <div
+                  className={styles.carLogo}
+                >
+                  🚘
+                </div>
+
+                <div>
+
+                  <strong>
+                    {
+                      item.car_name ||
+                      "Автомобиль"
+                    }
+                  </strong>
+
+                  <p>
+                    {item.vin || "—"}
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          ))}
+
+        </div>
 
       </section>
 
-      {/* LOGOUT */}
+      {/* SAVE */}
 
       <section className={styles.section}>
 
         <button
-          className={styles.logoutButton}
-          onClick={logout}
+          className={styles.primaryButton}
+          onClick={saveProfile}
         >
-          Выйти из аккаунта
+          Сохранить изменения
         </button>
 
       </section>
 
-      {/* BOTTOM NAV */}
+      {/* NAV */}
 
       <nav className={styles.bottomNav}>
 
