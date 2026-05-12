@@ -17,6 +17,9 @@ export default function RequestsPage() {
   const [loading, setLoading] =
     useState(true);
 
+  const [selectedRequest, setSelectedRequest] =
+    useState<any>(null);
+
   /* PHONE */
 
   async function getClientPhone() {
@@ -187,6 +190,13 @@ export default function RequestsPage() {
           )
       );
 
+      if (
+        selectedRequest?.id === id
+      ) {
+
+        setSelectedRequest(null);
+      }
+
     } catch (error) {
 
       console.error(error);
@@ -210,6 +220,37 @@ export default function RequestsPage() {
       return "В обработке";
 
     return "Новый";
+  }
+
+  function getStatusClass(
+    status:string
+  ) {
+
+    if (status === "DONE")
+      return styles.requestStatusDone;
+
+    if (status === "PROCESS")
+      return styles.requestStatusProcess;
+
+    return styles.requestStatusNew;
+  }
+
+  function formatDate(
+    value:string
+  ) {
+
+    if (!value)
+      return "—";
+
+    return new Date(value)
+      .toLocaleDateString(
+        "ru-RU",
+        {
+          day:"numeric",
+          month:"long",
+          year:"numeric",
+        }
+      );
   }
 
   if (loading)
@@ -278,9 +319,12 @@ export default function RequestsPage() {
 
           {requests.map((item) => (
 
-            <div
+            <button
               key={item.id}
               className={styles.requestCard}
+              onClick={() =>
+                setSelectedRequest(item)
+              }
             >
 
               {/* TOP */}
@@ -304,14 +348,7 @@ export default function RequestsPage() {
 
                 <div className={styles.requestActions}>
 
-                  <div
-                    className={
-                      item.status ===
-                      "DONE"
-                        ? styles.requestStatusDone
-                        : styles.requestStatus
-                    }
-                  >
+                  <div className={`${styles.requestStatusBadge} ${getStatusClass(item.status)}`}>
                     {
                       getStatusText(
                         item.status
@@ -320,14 +357,15 @@ export default function RequestsPage() {
                   </div>
 
                   <button
-                    className={
-                      styles.requestDelete
-                    }
-                    onClick={() =>
+                    className={styles.requestDelete}
+                    onClick={(event) => {
+
+                      event.stopPropagation();
+
                       deleteRequest(
                         item.id
-                      )
-                    }
+                      );
+                    }}
                   >
                     🗑
                   </button>
@@ -412,13 +450,219 @@ export default function RequestsPage() {
 
               </div>
 
-            </div>
+            </button>
 
           ))}
 
         </div>
 
       </section>
+
+      {/* FULLSCREEN */}
+
+      {selectedRequest && (
+
+        <div className={styles.checkoutFullscreen}>
+
+          {/* TOP */}
+
+          <div className={styles.checkoutTop}>
+
+            <button
+              className={styles.backButton}
+              onClick={() =>
+                setSelectedRequest(null)
+              }
+            >
+              ←
+            </button>
+
+            <h2>
+              Информация о запросе
+            </h2>
+
+          </div>
+
+          {/* CARD */}
+
+          <div className={styles.checkoutCard}>
+
+            <div className={styles.requestTop}>
+
+              <div>
+
+                <p className={styles.requestLabel}>
+                  Автомобиль
+                </p>
+
+                <h3 className={styles.requestTitle}>
+                  {
+                    selectedRequest.car ||
+                    "—"
+                  }
+                </h3>
+
+              </div>
+
+              <div className={`${styles.requestStatusBadge} ${getStatusClass(selectedRequest.status)}`}>
+                {
+                  getStatusText(
+                    selectedRequest.status
+                  )
+                }
+              </div>
+
+            </div>
+
+            <div className={styles.requestRow}>
+
+              <div className={styles.requestIcon}>
+                🏷
+              </div>
+
+              <div className={styles.requestInfo}>
+
+                <span>
+                  VIN code
+                </span>
+
+                <strong>
+                  {
+                    selectedRequest.vin ||
+                    "—"
+                  }
+                </strong>
+
+              </div>
+
+            </div>
+
+            <div className={styles.requestRow}>
+
+              <div className={styles.requestIcon}>
+                📦
+              </div>
+
+              <div className={styles.requestInfo}>
+
+                <span>
+                  Наименование товара
+                </span>
+
+                <strong>
+                  {
+                    selectedRequest.part_name ||
+                    "—"
+                  }
+                </strong>
+
+              </div>
+
+            </div>
+
+            <div className={styles.requestRow}>
+
+              <div className={styles.requestIcon}>
+                🧾
+              </div>
+
+              <div className={styles.requestInfo}>
+
+                <span>
+                  Количество
+                </span>
+
+                <strong>
+                  {
+                    selectedRequest.quantity || 1
+                  }
+                  {" "}
+                  шт.
+                </strong>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* INFO */}
+
+          <div className={styles.checkoutCard}>
+
+            <div className={styles.checkoutSectionTitle}>
+              📄 Информация
+            </div>
+
+            <div className={styles.orderInfoRow}>
+
+              <span>
+                Статус
+              </span>
+
+              <div className={`${styles.requestStatusBadge} ${getStatusClass(selectedRequest.status)}`}>
+                {
+                  getStatusText(
+                    selectedRequest.status
+                  )
+                }
+              </div>
+
+            </div>
+
+            <div className={styles.orderInfoRow}>
+
+              <span>
+                Дата создания
+              </span>
+
+              <strong>
+                {
+                  formatDate(
+                    selectedRequest.created_at
+                  )
+                }
+              </strong>
+
+            </div>
+
+            <div className={styles.orderInfoRow}>
+
+              <span>
+                ID запроса
+              </span>
+
+              <strong>
+                #
+                {
+                  selectedRequest.id
+                }
+              </strong>
+
+            </div>
+
+          </div>
+
+          {/* DELETE */}
+
+          <div className={styles.checkoutFixed}>
+
+            <button
+              className={styles.deleteRequestButton}
+              onClick={() =>
+                deleteRequest(
+                  selectedRequest.id
+                )
+              }
+            >
+              Удалить запрос
+            </button>
+
+          </div>
+
+        </div>
+
+      )}
 
       <BottomNav active="requests" />
 
