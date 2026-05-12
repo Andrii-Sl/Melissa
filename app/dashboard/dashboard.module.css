@@ -33,9 +33,9 @@ img{
   background:#f5f7fb;
 
   padding:
-    86px
+    78px
     14px
-    64px;
+    74px;
 
   overflow-x:hidden;
 }
@@ -49,7 +49,7 @@ img{
   left:0;
   right:0;
 
-  height:66px;
+  height:64px;
 
   display:flex;
   align-items:center;
@@ -57,13 +57,10 @@ img{
 
   padding:0 14px;
 
-  background:rgba(255,255,255,.97);
-
-  backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);
+  background:#ffffff;
 
   border-bottom:
-    1px solid #111827;
+    1px solid #111111;
 
   z-index:500;
 }
@@ -76,12 +73,15 @@ img{
 }
 
 .topLogo{
-  width:40px;
-  height:40px;
+  width:38px;
+  height:38px;
 
   border-radius:12px;
 
   object-fit:cover;
+
+  border:
+    1px solid #111111;
 }
 
 .topInfo{
@@ -95,12 +95,12 @@ img{
   color:#111827;
 
   font-size:17px;
-  line-height:1.1;
-  font-weight:800;
+  line-height:1;
+  font-weight:900;
 }
 
 .topSubtitle{
-  margin-top:2px;
+  margin:3px 0 0;
 
   color:#6b7280;
 
@@ -109,11 +109,11 @@ img{
 }
 
 .burgerButton{
-  width:40px;
-  height:40px;
+  width:38px;
+  height:38px;
 
   border:
-    1px solid #111827;
+    1px solid #111111;
 
   border-radius:12px;
 
@@ -126,27 +126,18 @@ img{
   color:#111827;
 
   font-size:18px;
-}
 
-/* SECTION */
-
-.section{
-  margin-bottom:14px;
+  cursor:pointer;
 }
 
 /* HERO */
 
 .dashboardHero{
-  display:flex;
-  flex-direction:column;
-
-  gap:6px;
-
-  margin-bottom:18px;
+  margin-bottom:20px;
 }
 
 .dashboardSubtitle{
-  margin:0;
+  margin:0 0 8px;
 
   color:#9ca3af;
 
@@ -159,24 +150,11 @@ img{
 
   color:#111827;
 
-  font-size:24px;
-  line-height:1.08;
+  font-size:36px;
+  line-height:1.02;
   font-weight:900;
 
-  word-break:break-word;
-}
-
-/* TITLES */
-
-.sectionTitle,
-.dashboardSectionTitle{
-  margin:0 0 12px;
-
-  color:#111827;
-
-  font-size:20px;
-  line-height:1.2;
-  font-weight:900;
+  letter-spacing:-1.4px;
 }
 
 /* GRID */
@@ -187,7 +165,9 @@ img{
   grid-template-columns:
     repeat(2,minmax(0,1fr));
 
-  gap:10px;
+  gap:12px;
+
+  margin-bottom:18px;
 }
 
 /* CARD */
@@ -195,20 +175,20 @@ img{
 .dashboardCard{
   background:#ffffff;
 
-  border-radius:20px;
+  border:
+    1px solid #111111;
 
-  padding:14px;
+  border-radius:22px;
 
-  min-height:118px;
+  min-height:138px;
+
+  padding:16px;
 
   text-decoration:none;
 
   color:#111827;
 
   overflow:hidden;
-
-  border:
-    1px solid #111827;
 
   transition:.15s ease;
 }
@@ -218,9 +198,7 @@ img{
 }
 
 .dashboardCardHead{
-  margin-bottom:16px;
-
-  min-width:0;
+  margin-bottom:18px;
 }
 
 .dashboardCardHead h3{
@@ -229,37 +207,25 @@ img{
   color:#111827;
 
   font-size:15px;
-  line-height:1.25;
+  line-height:1.2;
   font-weight:800;
 
   overflow:hidden;
   text-overflow:ellipsis;
-
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
-}
-
-/* HIDE ICONS */
-
-.dashboardEmoji{
-  display:none;
+  white-space:nowrap;
 }
 
 .dashboardNumbers{
   display:flex;
   align-items:flex-end;
-  flex-wrap:wrap;
 
-  gap:6px;
-
-  min-width:0;
+  gap:8px;
 }
 
 .dashboardNumbers strong{
   color:#ef4444;
 
-  font-size:42px;
+  font-size:44px;
   line-height:.9;
   font-weight:900;
 }
@@ -268,62 +234,51 @@ img{
   color:#111827;
 
   font-size:12px;
-  line-height:1.25;
+  line-height:1.3;
   font-weight:700;
 
   word-break:break-word;
-
-  max-width:100%;
 }
 
-/* BOXES */
+/* SECTION */
 
-.dashboardBox,
-.dashboardForm,
-.notificationsCard,
-.profileModernCard,
-.checkoutCard,
-.requestCard,
-.orderModernCard,
-.offerModernCard,
-.emptyCard{
+.section{
+  margin-bottom:16px;
+}
+
+/* TITLES */
+
+.sectionTitle{
+  margin:0 0 16px;
+
+  color:#111827;
+
+  font-size:22px;
+  line-height:1.1;
+  font-weight:900;
+}
+
+/* BOX */
+
+.dashboardBox{
   background:#ffffff;
 
-  border-radius:20px;
-
   border:
-    1px solid #111827;
+    1px solid #111111;
 
-  box-shadow:none;
+  border-radius:22px;
+
+  padding:18px;
 }
 
 /* FORM */
-
-.dashboardBox,
-.dashboardForm,
-.notificationsCard,
-.profileModernCard,
-.checkoutCard{
-  padding:16px;
-}
-
-.dashboardLabel{
-  display:block;
-
-  margin-bottom:8px;
-
-  color:#6b7280;
-
-  font-size:13px;
-  font-weight:700;
-}
 
 .dashboardInput,
 .dashboardTextarea{
   width:100%;
 
   border:
-    1px solid #111827;
+    1px solid #111111;
 
   background:#ffffff;
 
@@ -331,13 +286,13 @@ img{
 
   outline:none;
 
-  font-size:14px;
+  font-size:15px;
 
   font-family:inherit;
 }
 
 .dashboardInput{
-  height:48px;
+  height:50px;
 
   border-radius:14px;
 
@@ -356,15 +311,11 @@ img{
   resize:none;
 }
 
-.dashboardSubmit,
-.dashboardButton,
-.payModernButton,
-.repeatOrderButton{
+.dashboardButton{
   width:100%;
-  height:48px;
+  height:50px;
 
-  border:
-    1px solid #111827;
+  border:none;
 
   border-radius:14px;
 
@@ -375,208 +326,74 @@ img{
   font-size:14px;
   font-weight:800;
 
-  box-shadow:none;
+  cursor:pointer;
 }
 
-/* PROFILE */
+.dashboardButton:active{
+  transform:scale(.985);
+}
 
-.profileSectionTop{
+/* NOTIFICATIONS */
+
+.notificationsList{
+  display:flex;
+  flex-direction:column;
+}
+
+.notificationItem{
   display:flex;
   align-items:center;
-  justify-content:space-between;
+
+  padding:14px 0;
+
+  border-bottom:
+    1px solid #e5e7eb;
+}
+
+.notificationItem:last-child{
+  border-bottom:none;
+}
+
+.notificationLeft{
+  display:flex;
+  align-items:flex-start;
 
   gap:12px;
 
-  margin-bottom:12px;
+  width:100%;
 }
 
-.profileManageBtn{
-  height:34px;
-
-  padding:0 12px;
+.notificationDot{
+  width:10px;
+  height:10px;
 
   border-radius:999px;
 
-  background:#111827;
+  background:#ef4444;
 
-  color:#ffffff;
+  margin-top:6px;
 
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  text-decoration:none;
-
-  font-size:12px;
-  font-weight:700;
-
-  border:
-    1px solid #111827;
+  flex-shrink:0;
 }
 
-.profileCarsList{
-  display:flex;
-
-  gap:10px;
-
-  overflow-x:auto;
-
-  padding-bottom:2px;
-}
-
-.profileCarsList::-webkit-scrollbar{
-  display:none;
-}
-
-.profileCarCard{
-  min-width:150px;
-
-  background:#ffffff;
-
-  border-radius:18px;
-
-  padding:14px;
-
-  border:
-    1px solid #111827;
-}
-
-.profileCarIcon{
-  display:none;
-}
-
-.profileCarInfo strong{
+.notificationLeft strong{
   display:block;
 
-  margin-bottom:6px;
+  margin-bottom:4px;
 
   color:#111827;
 
   font-size:14px;
-  line-height:1.3;
-  font-weight:800;
-
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
+  line-height:1.4;
+  font-weight:700;
 }
 
-.profileCarInfo span{
-  display:block;
+.notificationLeft p{
+  margin:0;
 
   color:#6b7280;
 
   font-size:12px;
-
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-
-/* OFFERS */
-
-.offerListModern,
-.ordersList,
-.requestsList{
-  display:flex;
-  flex-direction:column;
-
-  gap:12px;
-}
-
-.offerModernCard,
-.orderModernCard,
-.requestCard{
-  padding:16px;
-}
-
-.offerModernImage,
-.orderModernImage,
-.requestIcon{
-  display:none;
-}
-
-/* EMPTY */
-
-.emptyCard{
-  padding:28px 16px;
-
-  text-align:center;
-}
-
-.emptyIcon{
-  font-size:34px;
-
-  margin-bottom:12px;
-}
-
-.emptyCard strong{
-  color:#111827;
-
-  font-size:15px;
-}
-
-/* CHECKOUT */
-
-.checkoutFullscreen{
-  position:fixed;
-  inset:0;
-
-  z-index:999;
-
-  overflow-y:auto;
-
-  background:#f5f7fb;
-
-  padding:18px 14px 90px;
-}
-
-.checkoutTop{
-  display:flex;
-  align-items:center;
-
-  gap:12px;
-
-  margin-bottom:18px;
-}
-
-.checkoutTop h2{
-  margin:0;
-
-  color:#111827;
-
-  font-size:20px;
-  font-weight:900;
-}
-
-.backButton{
-  width:42px;
-  height:42px;
-
-  border:
-    1px solid #111827;
-
-  border-radius:14px;
-
-  background:#ffffff;
-
-  font-size:18px;
-}
-
-.checkoutFixed{
-  position:fixed;
-
-  left:0;
-  right:0;
-  bottom:54px;
-
-  padding:12px;
-
-  background:linear-gradient(
-    to top,
-    #f5f7fb 70%,
-    transparent
-  );
 }
 
 /* BOTTOM NAV */
@@ -588,14 +405,14 @@ img{
   right:8px;
   bottom:8px;
 
-  height:44px;
+  height:54px;
 
   background:#ffffff;
 
   border:
-    1px solid #111827;
+    1px solid #111111;
 
-  border-radius:14px;
+  border-radius:16px;
 
   display:flex;
   align-items:center;
@@ -612,29 +429,40 @@ img{
   height:100%;
 
   display:flex;
+  flex-direction:column;
   align-items:center;
   justify-content:center;
+
+  gap:2px;
 
   text-decoration:none;
 
   color:#9ca3af;
 
-  font-size:0;
+  font-size:9px;
+  line-height:1;
+  font-weight:700;
 
-  padding:0;
+  overflow:hidden;
 }
 
 .navItem span{
-  font-size:18px;
+  font-size:16px;
   line-height:1;
 }
 
 .navItem p{
-  display:none;
+  margin:0;
+
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+
+  max-width:100%;
 }
 
 .navActive{
-  color:#ef4444;
+  color:#111827;
 }
 
 /* LOADING */
@@ -648,9 +476,9 @@ img{
 
   background:#f5f7fb;
 
-  color:#6b7280;
+  color:#111827;
 
-  font-size:14px;
+  font-size:15px;
   font-weight:700;
 }
 
@@ -659,28 +487,20 @@ img{
 @media (max-width:360px){
 
   .dashboardTitle{
-    font-size:21px;
+    font-size:30px;
   }
 
   .dashboardCard{
-    min-height:108px;
+    min-height:128px;
 
-    padding:12px;
+    padding:14px;
   }
 
   .dashboardNumbers strong{
-    font-size:36px;
+    font-size:38px;
   }
 
-  .dashboardNumbers span{
-    font-size:11px;
-  }
-
-  .bottomNav{
-    height:40px;
-  }
-
-  .navItem span{
-    font-size:16px;
+  .navItem{
+    font-size:8px;
   }
 }
