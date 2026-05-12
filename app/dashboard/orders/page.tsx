@@ -200,6 +200,24 @@ export default function OrdersPage() {
     return "Новый";
   }
 
+  /* STATUS STYLE */
+
+  function getStatusClass(
+    status:string
+  ) {
+
+    if (status === "DELIVERED")
+      return styles.orderStatusDelivered;
+
+    if (status === "SHIPPED")
+      return styles.orderStatusShipped;
+
+    if (status === "PROCESS")
+      return styles.orderStatusProcess;
+
+    return styles.orderStatusNew;
+  }
+
   /* TOTAL */
 
   function getTotalPrice(
@@ -306,7 +324,7 @@ export default function OrdersPage() {
 
                 </div>
 
-                <div className={styles.orderStatusGreen}>
+                <div className={`${styles.orderStatusBadge} ${getStatusClass(item.status)}`}>
                   {
                     getStatusText(
                       item.status
@@ -322,7 +340,7 @@ export default function OrdersPage() {
 
                 <div className={styles.orderModernImage}>
 
-                  {item.product_image && (
+                  {item.product_image ? (
 
                     <Image
                       src={
@@ -332,6 +350,12 @@ export default function OrdersPage() {
                       fill
                       className={styles.offerImage}
                     />
+
+                  ) : (
+
+                    <div className={styles.imagePlaceholder}>
+                      📦
+                    </div>
 
                   )}
 
@@ -419,7 +443,7 @@ export default function OrdersPage() {
 
               </div>
 
-              <div className={styles.orderStatusGreen}>
+              <div className={`${styles.orderStatusBadge} ${getStatusClass(selectedOrder.status)}`}>
                 {
                   getStatusText(
                     selectedOrder.status
@@ -433,7 +457,7 @@ export default function OrdersPage() {
 
               <div className={styles.orderModernImage}>
 
-                {selectedOrder.product_image && (
+                {selectedOrder.product_image ? (
 
                   <Image
                     src={
@@ -443,6 +467,12 @@ export default function OrdersPage() {
                     fill
                     className={styles.offerImage}
                   />
+
+                ) : (
+
+                  <div className={styles.imagePlaceholder}>
+                    📦
+                  </div>
 
                 )}
 
@@ -609,7 +639,7 @@ export default function OrdersPage() {
                 Статус
               </span>
 
-              <div className={styles.orderStatusGreen}>
+              <div className={`${styles.orderStatusBadge} ${getStatusClass(selectedOrder.status)}`}>
                 {
                   getStatusText(
                     selectedOrder.status
