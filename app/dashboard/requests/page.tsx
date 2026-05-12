@@ -100,16 +100,14 @@ export default function RequestsPage() {
       } =
         await supabase
           .from("requests")
-          .select(
-            `
-              id,
-              vin,
-              car,
-              part_name,
-              status,
-              created_at
-            `
-          )
+          .select(`
+            id,
+            vin,
+            car,
+            part_name,
+            status,
+            created_at
+          `)
           .eq(
             "client_phone",
             phone
@@ -242,8 +240,7 @@ export default function RequestsPage() {
         "ru-RU",
         {
           day:"2-digit",
-          month:"2-digit",
-          year:"numeric",
+          month:"long",
         }
       );
   }
@@ -279,27 +276,39 @@ export default function RequestsPage() {
 
     <main className={styles.page}>
 
-      {/* HERO */}
+      {/* HEADER */}
 
-      <section className={styles.hero}>
+      <header className={styles.header}>
 
-        <h1 className={styles.title}>
-          Заявки
-        </h1>
+        <div className={styles.headerContent}>
 
-        <p className={styles.phone}>
-          Активных:
-          {" "}
-          {activeRequests.length}
-        </p>
+          <div>
 
-      </section>
+            <p className={styles.hello}>
+              Личный кабинет
+            </p>
 
-      {/* ACTIVE REQUESTS */}
+            <h1 className={styles.mainTitle}>
+              Заявки
+            </h1>
+
+          </div>
+
+          <div className={styles.headerBadge}>
+
+            {activeRequests.length}
+
+          </div>
+
+        </div>
+
+      </header>
+
+      {/* ACTIVE */}
 
       <section className={styles.section}>
 
-        <div className={styles.sectionTop}>
+        <div className={styles.sectionHead}>
 
           <h2>
             Активные заявки
@@ -309,11 +318,20 @@ export default function RequestsPage() {
 
         {activeRequests.length === 0 && (
 
-          <div className={styles.card}>
+          <div className={styles.emptyCard}>
+
+            <div className={styles.emptyIcon}>
+              📄
+            </div>
 
             <strong>
               Нет активных заявок
             </strong>
+
+            <p>
+              Создайте новую заявку
+              на главной странице
+            </p>
 
           </div>
 
@@ -323,14 +341,25 @@ export default function RequestsPage() {
 
           <div
             key={item.id}
-            className={styles.card}
+            className={styles.requestPremiumCard}
           >
 
-            <div className={styles.sectionTop}>
+            <div className={styles.requestTop}>
 
-              <strong>
-                {item.part_name || "Деталь"}
-              </strong>
+              <div>
+
+                <div className={styles.requestLabel}>
+                  Деталь
+                </div>
+
+                <h3 className={styles.requestTitle}>
+                  {
+                    item.part_name ||
+                    "Без названия"
+                  }
+                </h3>
+
+              </div>
 
               <button
                 onClick={() =>
@@ -338,39 +367,56 @@ export default function RequestsPage() {
                     item.id
                   )
                 }
-                style={{
-                  border:"none",
-                  background:"none",
-                  fontSize:"18px",
-                  cursor:"pointer",
-                }}
+                className={styles.deleteCircle}
               >
-                🗑️
+                ×
               </button>
 
             </div>
 
-            <p>
-              Автомобиль:
-              {" "}
-              {item.car || "—"}
-            </p>
+            <div className={styles.requestGrid}>
 
-            <p>
-              VIN:
-              {" "}
-              {item.vin || "—"}
-            </p>
+              <div className={styles.infoBox}>
 
-            <p>
-              Дата:
-              {" "}
-              {
-                formatDate(
-                  item.created_at
-                )
-              }
-            </p>
+                <span>
+                  Автомобиль
+                </span>
+
+                <strong>
+                  {item.car || "—"}
+                </strong>
+
+              </div>
+
+              <div className={styles.infoBox}>
+
+                <span>
+                  Дата
+                </span>
+
+                <strong>
+                  {
+                    formatDate(
+                      item.created_at
+                    )
+                  }
+                </strong>
+
+              </div>
+
+            </div>
+
+            <div className={styles.vinBox}>
+
+              <span>
+                VIN
+              </span>
+
+              <strong>
+                {item.vin || "—"}
+              </strong>
+
+            </div>
 
             <div
               className={
@@ -396,7 +442,7 @@ export default function RequestsPage() {
 
       <section className={styles.section}>
 
-        <div className={styles.sectionTop}>
+        <div className={styles.sectionHead}>
 
           <h2>
             Завершённые
@@ -406,11 +452,9 @@ export default function RequestsPage() {
 
         {completedRequests.length === 0 && (
 
-          <div className={styles.card}>
+          <div className={styles.emptySmallCard}>
 
-            <strong>
-              Нет завершённых заявок
-            </strong>
+            Нет завершённых заявок
 
           </div>
 
@@ -420,39 +464,28 @@ export default function RequestsPage() {
 
           <div
             key={item.id}
-            className={styles.card}
+            className={styles.historyCard}
           >
 
-            <strong>
-              {item.part_name || "Деталь"}
-            </strong>
+            <div>
 
-            <p>
-              Автомобиль:
-              {" "}
-              {item.car || "—"}
-            </p>
+              <strong>
+                {
+                  item.part_name ||
+                  "Деталь"
+                }
+              </strong>
 
-            <p>
-              VIN:
-              {" "}
-              {item.vin || "—"}
-            </p>
+              <p>
+                {item.car || "—"}
+              </p>
 
-            <p>
-              Дата:
-              {" "}
-              {
-                formatDate(
-                  item.created_at
-                )
-              }
-            </p>
+            </div>
 
-            <div
-              className={styles.badgeGreen}
-            >
+            <div className={styles.badgeGreen}>
+
               Завершена
+
             </div>
 
           </div>
@@ -461,7 +494,7 @@ export default function RequestsPage() {
 
       </section>
 
-      {/* BOTTOM NAV */}
+      {/* NAV */}
 
       <nav className={styles.bottomNav}>
 
@@ -469,60 +502,50 @@ export default function RequestsPage() {
           href="/dashboard"
           className={styles.navItem}
         >
-
-          <div className={styles.navIcon}>
-            🏠
-          </div>
-
           <span>
-            Главная
+            🏠
           </span>
-
+          Главная
         </Link>
 
         <Link
           href="/dashboard/requests"
-          className={`${styles.navItem} ${styles.navItemActive}`}
+          className={`${styles.navItem} ${styles.navActive}`}
         >
-
-          <div className={styles.navIcon}>
-            📄
-          </div>
-
           <span>
-            Заявки
+            📄
           </span>
-
+          Заявки
         </Link>
 
         <Link
           href="/dashboard/offers"
           className={styles.navItem}
         >
-
-          <div className={styles.navIcon}>
-            💶
-          </div>
-
           <span>
-            Предложения
+            💶
           </span>
-
+          Предложения
         </Link>
 
         <Link
           href="/dashboard/orders"
           className={styles.navItem}
         >
-
-          <div className={styles.navIcon}>
-            📦
-          </div>
-
           <span>
-            Заказы
+            📦
           </span>
+          Заказы
+        </Link>
 
+        <Link
+          href="/dashboard/profile"
+          className={styles.navItem}
+        >
+          <span>
+            👤
+          </span>
+          Профиль
         </Link>
 
       </nav>
