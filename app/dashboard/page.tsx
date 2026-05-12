@@ -24,6 +24,9 @@ export default function DashboardPage() {
   const [partName, setPartName] =
     useState("");
 
+  const [quantity, setQuantity] =
+    useState("1");
+
   /* COUNTS */
 
   const [requestsCount, setRequestsCount] =
@@ -35,18 +38,37 @@ export default function DashboardPage() {
   const [ordersCount, setOrdersCount] =
     useState(0);
 
-  /* LAST DATA */
+  /* TOTAL */
 
-  const [latestOffers, setLatestOffers] =
-    useState<any[]>([]);
+  const [requestsTotal, setRequestsTotal] =
+    useState(0);
 
-  const [latestOrders, setLatestOrders] =
-    useState<any[]>([]);
+  const [offersTotal, setOffersTotal] =
+    useState(0);
+
+  const [ordersTotal, setOrdersTotal] =
+    useState(0);
 
   /* GARAGE */
 
   const [garage, setGarage] =
     useState<any[]>([]);
+
+  /* NOTIFICATIONS */
+
+  const [notifications] =
+    useState([
+      {
+        id:1,
+        text:"Ваш запрос получил новые предложения",
+        time:"10 мин. назад",
+      },
+      {
+        id:2,
+        text:"Заказ доставлен",
+        time:"1 ч. назад",
+      },
+    ]);
 
   /* PHONE */
 
@@ -120,10 +142,31 @@ export default function DashboardPage() {
 
       setProfile(profileData);
 
-      /* COUNTS */
+      /* REQUESTS */
 
       const {
-        count:requestsTotal,
+        count:reqActive,
+      } =
+        await supabase
+          .from("requests")
+          .select(
+            "id",
+            {
+              count:"exact",
+              head:true,
+            }
+          )
+          .eq(
+            "client_phone",
+            phone
+          )
+          .neq(
+            "status",
+            "DONE"
+          );
+
+      const {
+        count:reqTotal,
       } =
         await supabase
           .from("requests")
@@ -139,8 +182,10 @@ export default function DashboardPage() {
             phone
           );
 
+      /* OFFERS */
+
       const {
-        count:offersTotal,
+        count:offActive,
       } =
         await supabase
           .from("offers")
@@ -161,7 +206,26 @@ export default function DashboardPage() {
           );
 
       const {
-        count:ordersTotal,
+        count:offTotal,
+      } =
+        await supabase
+          .from("offers")
+          .select(
+            "id",
+            {
+              count:"exact",
+              head:true,
+            }
+          )
+          .eq(
+            "client_phone",
+            phone
+          );
+
+      /* ORDERS */
+
+      const {
+        count:ordActive,
       } =
         await supabase
           .from("orders")
@@ -181,69 +245,30 @@ export default function DashboardPage() {
             "DELIVERED"
           );
 
-      setRequestsCount(
-        requestsTotal || 0
-      );
-
-      setOffersCount(
-        offersTotal || 0
-      );
-
-      setOrdersCount(
-        ordersTotal || 0
-      );
-
-      /* LAST OFFER */
-
       const {
-        data:latestOffersData,
-      } =
-        await supabase
-          .from("offers")
-          .select("*")
-          .eq(
-            "client_phone",
-            phone
-          )
-          .eq(
-            "payment_status",
-            "PENDING"
-          )
-          .order(
-            "created_at",
-            {
-              ascending:false,
-            }
-          )
-          .limit(1);
-
-      setLatestOffers(
-        latestOffersData || []
-      );
-
-      /* LAST ORDER */
-
-      const {
-        data:latestOrdersData,
+        count:ordTotal,
       } =
         await supabase
           .from("orders")
-          .select("*")
+          .select(
+            "id",
+            {
+              count:"exact",
+              head:true,
+            }
+          )
           .eq(
             "client_phone",
             phone
-          )
-          .order(
-            "created_at",
-            {
-              ascending:false,
-            }
-          )
-          .limit(1);
+          );
 
-      setLatestOrders(
-        latestOrdersData || []
-      );
+      setRequestsCount(reqActive || 0);
+      setOffersCount(offActive || 0);
+      setOrdersCount(ordActive || 0);
+
+      setRequestsTotal(reqTotal || 0);
+      setOffersTotal(offTotal || 0);
+      setOrdersTotal(ordTotal || 0);
 
       /* GARAGE */
 
@@ -297,7 +322,11 @@ export default function DashboardPage() {
 
   async function createRequest() {
 
-    if (!vin || !partName) {
+    if (
+      !vin ||
+      !partName ||
+      !quantity
+    ) {
 
       alert(
         "Заполните обязательные поля"
@@ -329,6 +358,7 @@ export default function DashboardPage() {
             {
               vin,
               car,
+              quantity,
               part_name:partName,
               status:"NEW",
               client_phone:phone,
@@ -340,7 +370,7 @@ export default function DashboardPage() {
         console.error(error);
 
         alert(
-          "Ошибка создания заявки"
+          "Ошибка создания запроса"
         );
 
         return;
@@ -349,9 +379,10 @@ export default function DashboardPage() {
       setVin("");
       setCar("");
       setPartName("");
+      setQuantity("1");
 
       alert(
-        "Заявка создана"
+        "Запрос отправлен"
       );
 
       loadProfile();
@@ -379,129 +410,175 @@ export default function DashboardPage() {
 
       {/* HEADER */}
 
-      <header className={styles.header}>
+      <section className={styles.dashboardHero}>
 
-        <div className={styles.headerContent}>
+        <h1 className={styles.dashboardHello}>
+          Здравствуйте,
+          {" "}
+          {
+            profile?.first_name ||
+            "Клиент"
+          }
+        </h1>
 
-          <div>
+        <p className={styles.dashboardPhone}>
+          📞
+          {" "}
+          {
+            profile?.phone ||
+            "Телефон не указан"
+          }
+        </p>
 
-            <p className={styles.hello}>
-              Кабинет клиента
-            </p>
-
-            <h1 className={styles.mainTitle}>
-              {
-                profile?.first_name ||
-                "Клиент"
-              }
-            </h1>
-
-          </div>
-
-          <Link
-            href="/dashboard/profile"
-            className={styles.avatar}
-          >
-            👤
-          </Link>
-
-        </div>
-
-      </header>
+      </section>
 
       {/* STATS */}
 
-      <section className={styles.statsGrid}>
+      <section className={styles.dashboardGrid}>
 
         <Link
           href="/dashboard/requests"
-          className={styles.statCard}
+          className={styles.dashboardCard}
         >
 
-          <div className={styles.statIcon}>
-            📄
+          <div className={styles.dashboardCardTop}>
+
+            <div className={styles.dashboardIcon}>
+              📄
+            </div>
+
+            <h3>
+              Запросы
+            </h3>
+
           </div>
 
-          <div className={styles.statInfo}>
+          <div className={styles.dashboardCounter}>
 
             <strong>
               {requestsCount}
             </strong>
 
             <span>
-              Заявки
+              /
+              {" "}
+              {requestsTotal}
             </span>
 
           </div>
+
+          <p>
+            активные / всего
+          </p>
 
         </Link>
 
         <Link
           href="/dashboard/offers"
-          className={styles.statCard}
+          className={styles.dashboardCard}
         >
 
-          <div className={styles.statIcon}>
-            💶
+          <div className={styles.dashboardCardTop}>
+
+            <div className={styles.dashboardIcon}>
+              💶
+            </div>
+
+            <h3>
+              Предложения
+            </h3>
+
           </div>
 
-          <div className={styles.statInfo}>
+          <div className={styles.dashboardCounter}>
 
             <strong>
               {offersCount}
             </strong>
 
             <span>
-              Предложения
+              /
+              {" "}
+              {offersTotal}
             </span>
 
           </div>
+
+          <p>
+            активные / всего
+          </p>
 
         </Link>
 
         <Link
           href="/dashboard/orders"
-          className={styles.statCard}
+          className={styles.dashboardCard}
         >
 
-          <div className={styles.statIcon}>
-            📦
+          <div className={styles.dashboardCardTop}>
+
+            <div className={styles.dashboardIcon}>
+              📦
+            </div>
+
+            <h3>
+              Заказы
+            </h3>
+
           </div>
 
-          <div className={styles.statInfo}>
+          <div className={styles.dashboardCounter}>
 
             <strong>
               {ordersCount}
             </strong>
 
             <span>
-              Заказы
+              /
+              {" "}
+              {ordersTotal}
             </span>
 
           </div>
+
+          <p>
+            активные / всего
+          </p>
 
         </Link>
 
         <Link
           href="/dashboard/profile"
-          className={styles.statCard}
+          className={styles.dashboardCard}
         >
 
-          <div className={styles.statIcon}>
-            🚗
+          <div className={styles.dashboardCardTop}>
+
+            <div className={styles.dashboardIcon}>
+              👤
+            </div>
+
+            <h3>
+              Профиль
+            </h3>
+
           </div>
 
-          <div className={styles.statInfo}>
+          <div className={styles.dashboardCounter}>
 
             <strong>
-              {garage.length}
+              1
             </strong>
 
             <span>
-              Автомобили
+              / 1
             </span>
 
           </div>
+
+          <p>
+            активные / всего
+          </p>
 
         </Link>
 
@@ -511,18 +588,18 @@ export default function DashboardPage() {
 
       <section className={styles.section}>
 
-        <div className={styles.sectionHead}>
+        <div className={styles.dashboardForm}>
 
-          <h2>
-            Новая заявка
+          <h2 className={styles.dashboardSectionTitle}>
+            Новый запрос
           </h2>
 
-        </div>
-
-        <div className={styles.formCard}>
+          <label className={styles.dashboardLabel}>
+            Выберите автомобиль
+          </label>
 
           <select
-            className={styles.input}
+            className={styles.dashboardInput}
             value={car}
             onChange={(e) => {
 
@@ -559,16 +636,24 @@ export default function DashboardPage() {
 
           </select>
 
+          <label className={styles.dashboardLabel}>
+            VIN code
+          </label>
+
           <input
-            className={styles.input}
-            placeholder="VIN"
+            className={styles.dashboardInput}
+            placeholder="Введите VIN code"
             value={vin}
             readOnly
           />
 
+          <label className={styles.dashboardLabel}>
+            Наименование запчасти
+          </label>
+
           <input
-            className={styles.input}
-            placeholder="Название детали"
+            className={styles.dashboardInput}
+            placeholder="Введите наименование запчасти"
             value={partName}
             onChange={(e) =>
               setPartName(
@@ -577,253 +662,84 @@ export default function DashboardPage() {
             }
           />
 
+          <label className={styles.dashboardLabel}>
+            Количество
+          </label>
+
+          <input
+            className={styles.dashboardInput}
+            placeholder="Введите количество"
+            value={quantity}
+            onChange={(e) =>
+              setQuantity(
+                e.target.value
+              )
+            }
+          />
+
           <button
-            className={styles.primaryButton}
+            className={styles.dashboardSubmit}
             onClick={createRequest}
           >
-            Создать заявку
+            ＋ Отправить запрос
           </button>
 
         </div>
 
       </section>
 
-      {/* LAST OFFER */}
-
-      {latestOffers.length > 0 && (
-
-        <section className={styles.section}>
-
-          <div className={styles.sectionHead}>
-
-            <h2>
-              Последнее предложение
-            </h2>
-
-            <Link
-              href="/dashboard/offers"
-              className={styles.linkBtn}
-            >
-              Все
-            </Link>
-
-          </div>
-
-          {latestOffers.map((item) => (
-
-            <Link
-              key={item.id}
-              href="/dashboard/offers"
-              className={styles.productCard}
-            >
-
-              <div className={styles.productInfo}>
-
-                <strong>
-                  {
-                    item.brand ||
-                    "Товар"
-                  }
-                </strong>
-
-                <p>
-                  Доставка:
-                  {" "}
-                  {
-                    item.delivery_days || 0
-                  }
-                  {" "}
-                  дн.
-                </p>
-
-                <div className={styles.price}>
-                  €
-                  {" "}
-                  {item.price || 0}
-                </div>
-
-              </div>
-
-            </Link>
-
-          ))}
-
-        </section>
-
-      )}
-
-      {/* LAST ORDER */}
-
-      {latestOrders.length > 0 && (
-
-        <section className={styles.section}>
-
-          <div className={styles.sectionHead}>
-
-            <h2>
-              Последний заказ
-            </h2>
-
-            <Link
-              href="/dashboard/orders"
-              className={styles.linkBtn}
-            >
-              Все
-            </Link>
-
-          </div>
-
-          {latestOrders.map((item) => (
-
-            <Link
-              key={item.id}
-              href="/dashboard/orders"
-              className={styles.orderCard}
-            >
-
-              <div>
-
-                <strong>
-                  {
-                    item.part_name ||
-                    "Заказ"
-                  }
-                </strong>
-
-                <p>
-                  Заказ #
-                  {item.id}
-                </p>
-
-              </div>
-
-              <div className={styles.statusBadge}>
-                {
-                  item.status ||
-                  "NEW"
-                }
-              </div>
-
-            </Link>
-
-          ))}
-
-        </section>
-
-      )}
-
-      {/* PROFILE */}
+      {/* NOTIFICATIONS */}
 
       <section className={styles.section}>
 
-        <div className={styles.sectionHead}>
+        <div className={styles.notificationsCard}>
 
-          <h2>
-            Профиль клиента
+          <h2 className={styles.dashboardSectionTitle}>
+            Уведомления
           </h2>
 
-          <Link
-            href="/dashboard/profile"
-            className={styles.linkBtn}
-          >
-            Открыть
-          </Link>
+          {notifications.map((item) => (
+
+            <div
+              key={item.id}
+              className={styles.notificationItem}
+            >
+
+              <div
+                className={
+                  styles.notificationDot
+                }
+              />
+
+              <div
+                className={
+                  styles.notificationContent
+                }
+              >
+
+                <strong>
+                  {item.text}
+                </strong>
+
+                <span>
+                  {item.time}
+                </span>
+
+              </div>
+
+              <div
+                className={
+                  styles.notificationArrow
+                }
+              >
+                ›
+              </div>
+
+            </div>
+
+          ))}
 
         </div>
-
-        <Link
-          href="/dashboard/profile"
-          className={styles.profileMainCard}
-        >
-
-          <div className={styles.profileMainTop}>
-
-            <div
-              className={styles.profileAvatar}
-            >
-              👤
-            </div>
-
-            <div>
-
-              <h3
-                className={
-                  styles.profileMainName
-                }
-              >
-                {
-                  profile?.first_name ||
-                  "Имя"
-                }
-                {" "}
-                {
-                  profile?.last_name ||
-                  ""
-                }
-              </h3>
-
-              <p
-                className={
-                  styles.profileMainPhone
-                }
-              >
-                {
-                  profile?.phone ||
-                  "Телефон не указан"
-                }
-              </p>
-
-            </div>
-
-          </div>
-
-          <div
-            className={
-              styles.profileInfoGrid
-            }
-          >
-
-            <div
-              className={
-                styles.profileInfoCard
-              }
-            >
-
-              <span>
-                Адрес доставки
-              </span>
-
-              <strong>
-                {
-                  profile?.delivery_address ||
-                  "Не указан"
-                }
-              </strong>
-
-            </div>
-
-            <div
-              className={
-                styles.profileInfoCard
-              }
-            >
-
-              <span>
-                Email
-              </span>
-
-              <strong>
-                {
-                  profile?.email ||
-                  "Не указан"
-                }
-              </strong>
-
-            </div>
-
-          </div>
-
-        </Link>
 
       </section>
 
@@ -835,9 +751,7 @@ export default function DashboardPage() {
           href="/dashboard"
           className={`${styles.navItem} ${styles.navActive}`}
         >
-          <span>
-            🏠
-          </span>
+          <span>🏠</span>
           Главная
         </Link>
 
@@ -845,19 +759,15 @@ export default function DashboardPage() {
           href="/dashboard/requests"
           className={styles.navItem}
         >
-          <span>
-            📄
-          </span>
-          Заявки
+          <span>📄</span>
+          Запросы
         </Link>
 
         <Link
           href="/dashboard/offers"
           className={styles.navItem}
         >
-          <span>
-            💶
-          </span>
+          <span>💶</span>
           Предложения
         </Link>
 
@@ -865,9 +775,7 @@ export default function DashboardPage() {
           href="/dashboard/orders"
           className={styles.navItem}
         >
-          <span>
-            📦
-          </span>
+          <span>📦</span>
           Заказы
         </Link>
 
@@ -875,9 +783,7 @@ export default function DashboardPage() {
           href="/dashboard/profile"
           className={styles.navItem}
         >
-          <span>
-            👤
-          </span>
+          <span>👤</span>
           Профиль
         </Link>
 
