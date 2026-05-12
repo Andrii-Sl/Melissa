@@ -105,6 +105,69 @@ export default function DashboardPage() {
 
     loadData();
 
+    const requestsChannel =
+      supabase
+        .channel("dashboard-requests")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"requests",
+          },
+          () => {
+            loadData();
+          }
+        )
+        .subscribe();
+
+    const offersChannel =
+      supabase
+        .channel("dashboard-offers")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"offers",
+          },
+          () => {
+            loadData();
+          }
+        )
+        .subscribe();
+
+    const ordersChannel =
+      supabase
+        .channel("dashboard-orders")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"orders",
+          },
+          () => {
+            loadData();
+          }
+        )
+        .subscribe();
+
+    return () => {
+
+      supabase.removeChannel(
+        requestsChannel
+      );
+
+      supabase.removeChannel(
+        offersChannel
+      );
+
+      supabase.removeChannel(
+        ordersChannel
+      );
+    };
+
   }, []);
 
   async function loadData() {
@@ -465,6 +528,8 @@ export default function DashboardPage() {
           </h1>
 
           <p className={styles.dashboardPhone}>
+            📞
+            {" "}
             {
               profile?.phone ||
               "Телефон не указан"
@@ -510,10 +575,16 @@ export default function DashboardPage() {
             </strong>
 
             <span>
+              /
+              {" "}
               {requestsTotal}
             </span>
 
           </div>
+
+          <p className={styles.dashboardCardText}>
+            активные / всего
+          </p>
 
         </Link>
 
@@ -541,10 +612,16 @@ export default function DashboardPage() {
             </strong>
 
             <span>
+              /
+              {" "}
               {offersTotal}
             </span>
 
           </div>
+
+          <p className={styles.dashboardCardText}>
+            активные / всего
+          </p>
 
         </Link>
 
@@ -572,10 +649,16 @@ export default function DashboardPage() {
             </strong>
 
             <span>
+              /
+              {" "}
               {ordersTotal}
             </span>
 
           </div>
+
+          <p className={styles.dashboardCardText}>
+            активные / всего
+          </p>
 
         </Link>
 
@@ -603,10 +686,14 @@ export default function DashboardPage() {
             </strong>
 
             <span>
-              1
+              / 1
             </span>
 
           </div>
+
+          <p className={styles.dashboardCardText}>
+            аккаунт
+          </p>
 
         </Link>
 
@@ -693,7 +780,7 @@ export default function DashboardPage() {
             className={styles.dashboardButton}
             onClick={createRequest}
           >
-            Отправить запрос
+            ＋ Отправить запрос
           </button>
 
         </div>
@@ -741,7 +828,11 @@ export default function DashboardPage() {
 
                 </div>
 
-                <span>
+                <span
+                  className={
+                    styles.notificationArrow
+                  }
+                >
                   ›
                 </span>
 
