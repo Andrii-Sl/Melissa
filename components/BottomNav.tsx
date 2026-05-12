@@ -1,13 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+
 import styles from "@/app/dashboard/dashboard.module.css";
 
-export default function BottomNav() {
+type Props = {
+  active?:
+    | "home"
+    | "requests"
+    | "offers"
+    | "orders"
+    | "profile";
+};
 
-  const pathname =
-    usePathname();
+export default function BottomNav({
+  active = "home",
+}:Props) {
 
   return (
 
@@ -16,7 +24,7 @@ export default function BottomNav() {
       <Link
         href="/dashboard"
         className={`${styles.navItem} ${
-          pathname === "/dashboard"
+          active === "home"
             ? styles.navActive
             : ""
         }`}
@@ -28,7 +36,7 @@ export default function BottomNav() {
       <Link
         href="/dashboard/requests"
         className={`${styles.navItem} ${
-          pathname.includes("/requests")
+          active === "requests"
             ? styles.navActive
             : ""
         }`}
@@ -40,7 +48,7 @@ export default function BottomNav() {
       <Link
         href="/dashboard/offers"
         className={`${styles.navItem} ${
-          pathname.includes("/offers")
+          active === "offers"
             ? styles.navActive
             : ""
         }`}
@@ -52,7 +60,7 @@ export default function BottomNav() {
       <Link
         href="/dashboard/orders"
         className={`${styles.navItem} ${
-          pathname.includes("/orders")
+          active === "orders"
             ? styles.navActive
             : ""
         }`}
@@ -64,7 +72,7 @@ export default function BottomNav() {
       <Link
         href="/dashboard/profile"
         className={`${styles.navItem} ${
-          pathname.includes("/profile")
+          active === "profile"
             ? styles.navActive
             : ""
         }`}
