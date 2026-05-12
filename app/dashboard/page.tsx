@@ -5,8 +5,6 @@ import { useEffect, useState } from "react";
 
 import { supabase } from "@/lib/supabase";
 
-import BottomNav from "@/components/BottomNav";
-
 import styles from "./dashboard.module.css";
 
 export default function DashboardPage() {
@@ -369,27 +367,22 @@ export default function DashboardPage() {
 
       /* NOTIFICATIONS */
 
-      const notificationsData =
-        [
-          {
-            id:1,
-            text:
-              "Ваш запрос получил новые предложения",
-            time:
-              "10 мин назад",
-          },
-          {
-            id:2,
-            text:
-              "Заказ обновлен",
-            time:
-              "1 час назад",
-          },
-        ];
-
-      setNotifications(
-        notificationsData
-      );
+      setNotifications([
+        {
+          id:1,
+          text:
+            "Ваш запрос получил новые предложения",
+          time:
+            "10 мин назад",
+        },
+        {
+          id:2,
+          text:
+            "Заказ обновлен",
+          time:
+            "1 час назад",
+        },
+      ]);
 
     } catch (error) {
 
@@ -508,42 +501,56 @@ export default function DashboardPage() {
 
     <main className={styles.page}>
 
+      {/* TOP BAR */}
+
+      <header className={styles.topBar}>
+
+        <div className={styles.topBarLeft}>
+
+          <img
+            src="/logo.png"
+            alt="logo"
+            className={styles.topLogo}
+          />
+
+          <div className={styles.topInfo}>
+
+            <h2 className={styles.topTitle}>
+              Lynko
+            </h2>
+
+            <p className={styles.topSubtitle}>
+              Клиентская панель
+            </p>
+
+          </div>
+
+        </div>
+
+        <button
+          className={styles.burgerButton}
+        >
+          ☰
+        </button>
+
+      </header>
+
       {/* HERO */}
 
       <section className={styles.dashboardHero}>
 
-        <div>
+        <p className={styles.dashboardSubtitle}>
+          Кабинет клиента
+        </p>
 
-          <p className={styles.dashboardSubtitle}>
-            Кабинет клиента
-          </p>
-
-          <h1 className={styles.dashboardTitle}>
-            Здравствуйте,
-            {" "}
-            {
-              profile?.first_name ||
-              "Клиент"
-            }
-          </h1>
-
-          <p className={styles.dashboardPhone}>
-            📞
-            {" "}
-            {
-              profile?.phone ||
-              "Телефон не указан"
-            }
-          </p>
-
-        </div>
-
-        <Link
-          href="/dashboard/profile"
-          className={styles.dashboardProfile}
-        >
-          👤
-        </Link>
+        <h1 className={styles.dashboardTitle}>
+          Здравствуйте,
+          <br />
+          {
+            profile?.first_name ||
+            "Клиент"
+          }
+        </h1>
 
       </section>
 
@@ -557,10 +564,6 @@ export default function DashboardPage() {
         >
 
           <div className={styles.dashboardCardHead}>
-
-            <span className={styles.dashboardEmoji}>
-              📄
-            </span>
 
             <h3>
               Запросы
@@ -578,13 +581,11 @@ export default function DashboardPage() {
               /
               {" "}
               {requestsTotal}
+              <br />
+              активные / всего
             </span>
 
           </div>
-
-          <p className={styles.dashboardCardText}>
-            активные / всего
-          </p>
 
         </Link>
 
@@ -594,10 +595,6 @@ export default function DashboardPage() {
         >
 
           <div className={styles.dashboardCardHead}>
-
-            <span className={styles.dashboardEmoji}>
-              💶
-            </span>
 
             <h3>
               Предложения
@@ -615,13 +612,11 @@ export default function DashboardPage() {
               /
               {" "}
               {offersTotal}
+              <br />
+              активные / всего
             </span>
 
           </div>
-
-          <p className={styles.dashboardCardText}>
-            активные / всего
-          </p>
 
         </Link>
 
@@ -631,10 +626,6 @@ export default function DashboardPage() {
         >
 
           <div className={styles.dashboardCardHead}>
-
-            <span className={styles.dashboardEmoji}>
-              📦
-            </span>
 
             <h3>
               Заказы
@@ -652,13 +643,11 @@ export default function DashboardPage() {
               /
               {" "}
               {ordersTotal}
+              <br />
+              активные / всего
             </span>
 
           </div>
-
-          <p className={styles.dashboardCardText}>
-            активные / всего
-          </p>
 
         </Link>
 
@@ -668,10 +657,6 @@ export default function DashboardPage() {
         >
 
           <div className={styles.dashboardCardHead}>
-
-            <span className={styles.dashboardEmoji}>
-              👤
-            </span>
 
             <h3>
               Профиль
@@ -687,13 +672,11 @@ export default function DashboardPage() {
 
             <span>
               / 1
+              <br />
+              аккаунт
             </span>
 
           </div>
-
-          <p className={styles.dashboardCardText}>
-            аккаунт
-          </p>
 
         </Link>
 
@@ -780,7 +763,7 @@ export default function DashboardPage() {
             className={styles.dashboardButton}
             onClick={createRequest}
           >
-            ＋ Отправить запрос
+            Отправить запрос
           </button>
 
         </div>
@@ -807,11 +790,15 @@ export default function DashboardPage() {
               >
 
                 <div
-                  className={styles.notificationLeft}
+                  className={
+                    styles.notificationLeft
+                  }
                 >
 
                   <div
-                    className={styles.notificationDot}
+                    className={
+                      styles.notificationDot
+                    }
                   />
 
                   <div>
@@ -828,14 +815,6 @@ export default function DashboardPage() {
 
                 </div>
 
-                <span
-                  className={
-                    styles.notificationArrow
-                  }
-                >
-                  ›
-                </span>
-
               </div>
 
             ))}
@@ -846,7 +825,51 @@ export default function DashboardPage() {
 
       </section>
 
-      <BottomNav />
+      {/* BOTTOM NAV */}
+
+      <nav className={styles.bottomNav}>
+
+        <Link
+          href="/dashboard"
+          className={`${styles.navItem} ${styles.navActive}`}
+        >
+          <span>🏠</span>
+          <p>Главная</p>
+        </Link>
+
+        <Link
+          href="/dashboard/requests"
+          className={styles.navItem}
+        >
+          <span>📄</span>
+          <p>Запросы</p>
+        </Link>
+
+        <Link
+          href="/dashboard/offers"
+          className={styles.navItem}
+        >
+          <span>💶</span>
+          <p>Предложения</p>
+        </Link>
+
+        <Link
+          href="/dashboard/orders"
+          className={styles.navItem}
+        >
+          <span>📦</span>
+          <p>Заказы</p>
+        </Link>
+
+        <Link
+          href="/dashboard/profile"
+          className={styles.navItem}
+        >
+          <span>👤</span>
+          <p>Профиль</p>
+        </Link>
+
+      </nav>
 
     </main>
   );
