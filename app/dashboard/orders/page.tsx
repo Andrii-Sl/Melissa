@@ -3,7 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+
 import { supabase } from "@/lib/supabase";
+
+import BottomNav from "@/components/BottomNav";
+
 import styles from "../dashboard.module.css";
 
 export default function OrdersPage() {
@@ -19,6 +23,8 @@ export default function OrdersPage() {
 
   const [selectedOrder, setSelectedOrder] =
     useState<any>(null);
+
+  /* PHONE */
 
   async function getClientPhone() {
 
@@ -54,6 +60,8 @@ export default function OrdersPage() {
     }
   }
 
+  /* LOAD */
+
   useEffect(() => {
 
     loadData();
@@ -75,7 +83,10 @@ export default function OrdersPage() {
         .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+
+      supabase.removeChannel(
+        channel
+      );
     };
 
   }, []);
@@ -94,6 +105,8 @@ export default function OrdersPage() {
         return;
       }
 
+      /* PROFILE */
+
       const {
         data:profileData,
       } =
@@ -107,6 +120,8 @@ export default function OrdersPage() {
           .maybeSingle();
 
       setProfile(profileData);
+
+      /* ORDERS */
 
       const {
         data,
@@ -147,6 +162,8 @@ export default function OrdersPage() {
     }
   }
 
+  /* DATE */
+
   function formatDate(
     value:string
   ) {
@@ -165,6 +182,8 @@ export default function OrdersPage() {
       );
   }
 
+  /* STATUS */
+
   function getStatusText(
     status:string
   ) {
@@ -180,6 +199,8 @@ export default function OrdersPage() {
 
     return "Новый";
   }
+
+  /* TOTAL */
 
   function getTotalPrice(
     price:number
@@ -201,33 +222,42 @@ export default function OrdersPage() {
 
     <main className={styles.page}>
 
-      {/* HEADER */}
+      {/* HERO */}
 
-      <header className={styles.header}>
+      <section className={styles.dashboardHero}>
 
-        <div className={styles.headerContent}>
+        <div>
 
-          <div>
+          <p className={styles.dashboardSubtitle}>
+            История покупок
+          </p>
 
-            <p className={styles.hello}>
-              История покупок
-            </p>
+          <h1 className={styles.dashboardTitle}>
+            Заказы
+          </h1>
 
-            <h1 className={styles.mainTitle}>
-              Мои заказы
-            </h1>
-
-          </div>
+          <p className={styles.dashboardPhone}>
+            Всего заказов:
+            {" "}
+            {orders.length}
+          </p>
 
         </div>
 
-      </header>
+        <Link
+          href="/dashboard/profile"
+          className={styles.dashboardProfile}
+        >
+          👤
+        </Link>
+
+      </section>
 
       {/* ORDERS */}
 
       <section className={styles.section}>
 
-        <div className={styles.offerListModern}>
+        <div className={styles.ordersList}>
 
           {orders.length === 0 && (
 
@@ -257,11 +287,7 @@ export default function OrdersPage() {
 
               {/* TOP */}
 
-              <div
-                className={
-                  styles.orderModernTop
-                }
-              >
+              <div className={styles.orderModernTop}>
 
                 <div>
 
@@ -280,11 +306,7 @@ export default function OrdersPage() {
 
                 </div>
 
-                <div
-                  className={
-                    styles.orderStatusGreen
-                  }
-                >
+                <div className={styles.orderStatusGreen}>
                   {
                     getStatusText(
                       item.status
@@ -296,17 +318,9 @@ export default function OrdersPage() {
 
               {/* PRODUCT */}
 
-              <div
-                className={
-                  styles.orderModernProduct
-                }
-              >
+              <div className={styles.orderModernProduct}>
 
-                <div
-                  className={
-                    styles.orderModernImage
-                  }
-                >
+                <div className={styles.orderModernImage}>
 
                   {item.product_image && (
 
@@ -316,20 +330,14 @@ export default function OrdersPage() {
                       }
                       alt=""
                       fill
-                      className={
-                        styles.offerImage
-                      }
+                      className={styles.offerImage}
                     />
 
                   )}
 
                 </div>
 
-                <div
-                  className={
-                    styles.orderModernInfo
-                  }
-                >
+                <div className={styles.orderModernInfo}>
 
                   <strong>
                     {
@@ -349,11 +357,7 @@ export default function OrdersPage() {
 
                 </div>
 
-                <div
-                  className={
-                    styles.orderArrow
-                  }
-                >
+                <div className={styles.orderArrow}>
                   ›
                 </div>
 
@@ -371,15 +375,11 @@ export default function OrdersPage() {
 
       {selectedOrder && (
 
-        <div
-          className={styles.checkoutFullscreen}
-        >
+        <div className={styles.checkoutFullscreen}>
 
           {/* TOP */}
 
-          <div
-            className={styles.checkoutTop}
-          >
+          <div className={styles.checkoutTop}>
 
             <button
               className={styles.backButton}
@@ -391,22 +391,16 @@ export default function OrdersPage() {
             </button>
 
             <h2>
-              Мои заказы
+              Информация о заказе
             </h2>
 
           </div>
 
           {/* ORDER */}
 
-          <div
-            className={styles.checkoutCard}
-          >
+          <div className={styles.checkoutCard}>
 
-            <div
-              className={
-                styles.orderModernTop
-              }
-            >
+            <div className={styles.orderModernTop}>
 
               <div>
 
@@ -425,11 +419,7 @@ export default function OrdersPage() {
 
               </div>
 
-              <div
-                className={
-                  styles.orderStatusGreen
-                }
-              >
+              <div className={styles.orderStatusGreen}>
                 {
                   getStatusText(
                     selectedOrder.status
@@ -439,17 +429,9 @@ export default function OrdersPage() {
 
             </div>
 
-            <div
-              className={
-                styles.orderModernProduct
-              }
-            >
+            <div className={styles.orderModernProduct}>
 
-              <div
-                className={
-                  styles.orderModernImage
-                }
-              >
+              <div className={styles.orderModernImage}>
 
                 {selectedOrder.product_image && (
 
@@ -459,20 +441,14 @@ export default function OrdersPage() {
                     }
                     alt=""
                     fill
-                    className={
-                      styles.offerImage
-                    }
+                    className={styles.offerImage}
                   />
 
                 )}
 
               </div>
 
-              <div
-                className={
-                  styles.orderModernInfo
-                }
-              >
+              <div className={styles.orderModernInfo}>
 
                 <strong>
                   {
@@ -496,23 +472,13 @@ export default function OrdersPage() {
 
           {/* ADDRESS */}
 
-          <div
-            className={styles.checkoutCard}
-          >
+          <div className={styles.checkoutCard}>
 
-            <div
-              className={
-                styles.checkoutSectionTitle
-              }
-            >
+            <div className={styles.checkoutSectionTitle}>
               📍 Адрес доставки
             </div>
 
-            <div
-              className={
-                styles.addressModern
-              }
-            >
+            <div className={styles.addressModern}>
 
               <strong>
                 {
@@ -543,23 +509,13 @@ export default function OrdersPage() {
 
           {/* TOTAL */}
 
-          <div
-            className={styles.checkoutCard}
-          >
+          <div className={styles.checkoutCard}>
 
-            <div
-              className={
-                styles.checkoutSectionTitle
-              }
-            >
+            <div className={styles.checkoutSectionTitle}>
               📄 Итог заказа
             </div>
 
-            <div
-              className={
-                styles.totalRow
-              }
-            >
+            <div className={styles.totalRow}>
 
               <span>
                 Товар
@@ -575,11 +531,7 @@ export default function OrdersPage() {
 
             </div>
 
-            <div
-              className={
-                styles.totalRow
-              }
-            >
+            <div className={styles.totalRow}>
 
               <span>
                 Доставка
@@ -591,20 +543,12 @@ export default function OrdersPage() {
 
             </div>
 
-            <div
-              className={
-                styles.totalDivider
-              }
-            />
+            <div className={styles.totalDivider} />
 
-            <div
-              className={
-                styles.totalRowBig
-              }
-            >
+            <div className={styles.totalRowBig}>
 
               <span>
-                Итого к оплате
+                Итого
               </span>
 
               <strong>
@@ -623,23 +567,13 @@ export default function OrdersPage() {
 
           {/* INFO */}
 
-          <div
-            className={styles.checkoutCard}
-          >
+          <div className={styles.checkoutCard}>
 
-            <div
-              className={
-                styles.checkoutSectionTitle
-              }
-            >
-              📄 Информация о заказе
+            <div className={styles.checkoutSectionTitle}>
+              📄 Информация
             </div>
 
-            <div
-              className={
-                styles.orderInfoRow
-              }
-            >
+            <div className={styles.orderInfoRow}>
 
               <span>
                 Track номер
@@ -654,11 +588,7 @@ export default function OrdersPage() {
 
             </div>
 
-            <div
-              className={
-                styles.orderInfoRow
-              }
-            >
+            <div className={styles.orderInfoRow}>
 
               <span>
                 Оплата
@@ -673,21 +603,13 @@ export default function OrdersPage() {
 
             </div>
 
-            <div
-              className={
-                styles.orderInfoRow
-              }
-            >
+            <div className={styles.orderInfoRow}>
 
               <span>
                 Статус
               </span>
 
-              <div
-                className={
-                  styles.orderStatusGreen
-                }
-              >
+              <div className={styles.orderStatusGreen}>
                 {
                   getStatusText(
                     selectedOrder.status
@@ -697,11 +619,7 @@ export default function OrdersPage() {
 
             </div>
 
-            <button
-              className={
-                styles.repeatOrderButton
-              }
-            >
+            <button className={styles.repeatOrderButton}>
               ↻ Повторить заказ
             </button>
 
@@ -711,51 +629,7 @@ export default function OrdersPage() {
 
       )}
 
-      {/* NAV */}
-
-      <nav className={styles.bottomNav}>
-
-        <Link
-          href="/dashboard"
-          className={styles.navItem}
-        >
-          <span>🏠</span>
-          Главная
-        </Link>
-
-        <Link
-          href="/dashboard/requests"
-          className={styles.navItem}
-        >
-          <span>📄</span>
-          Заявки
-        </Link>
-
-        <Link
-          href="/dashboard/offers"
-          className={styles.navItem}
-        >
-          <span>💶</span>
-          Предложения
-        </Link>
-
-        <Link
-          href="/dashboard/orders"
-          className={`${styles.navItem} ${styles.navActive}`}
-        >
-          <span>📦</span>
-          Заказы
-        </Link>
-
-        <Link
-          href="/dashboard/profile"
-          className={styles.navItem}
-        >
-          <span>👤</span>
-          Профиль
-        </Link>
-
-      </nav>
+      <BottomNav />
 
     </main>
   );
