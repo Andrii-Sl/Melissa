@@ -1,8 +1,25 @@
+"use client";
+
+import BottomNav from "@/components/BottomNav";
+import TopBar from "@/components/TopBar";
+
 export default function DashboardLayout({
   children,
 }:{
   children:React.ReactNode;
 }) {
 
-  return children;
+  return (
+
+    <>
+
+      <TopBar />
+
+      {children}
+
+      <BottomNav />
+
+    </>
+
+  );
 }
