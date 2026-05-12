@@ -6,7 +6,8 @@ import styles from "@/app/dashboard/dashboard.module.css";
 
 export default function BottomNav() {
 
-  const pathname = usePathname();
+  const pathname =
+    usePathname();
 
   return (
 
@@ -20,81 +21,56 @@ export default function BottomNav() {
             : ""
         }`}
       >
-        <span className={styles.navIcon}>
-          🏠
-        </span>
-
-        <span>
-          Главная
-        </span>
+        <span>🏠</span>
+        Главная
       </Link>
 
       <Link
         href="/dashboard/requests"
         className={`${styles.navItem} ${
-          pathname.includes("/dashboard/requests")
+          pathname.includes("/requests")
             ? styles.navActive
             : ""
         }`}
       >
-        <span className={styles.navIcon}>
-          📄
-        </span>
-
-        <span>
-          Заявки
-        </span>
+        <span>📄</span>
+        Запросы
       </Link>
 
       <Link
         href="/dashboard/offers"
         className={`${styles.navItem} ${
-          pathname.includes("/dashboard/offers")
+          pathname.includes("/offers")
             ? styles.navActive
             : ""
         }`}
       >
-        <span className={styles.navIcon}>
-          💶
-        </span>
-
-        <span>
-          Предложения
-        </span>
+        <span>💶</span>
+        Предложения
       </Link>
 
       <Link
         href="/dashboard/orders"
         className={`${styles.navItem} ${
-          pathname.includes("/dashboard/orders")
+          pathname.includes("/orders")
             ? styles.navActive
             : ""
         }`}
       >
-        <span className={styles.navIcon}>
-          📦
-        </span>
-
-        <span>
-          Заказы
-        </span>
+        <span>📦</span>
+        Заказы
       </Link>
 
       <Link
         href="/dashboard/profile"
         className={`${styles.navItem} ${
-          pathname.includes("/dashboard/profile")
+          pathname.includes("/profile")
             ? styles.navActive
             : ""
         }`}
       >
-        <span className={styles.navIcon}>
-          👤
-        </span>
-
-        <span>
-          Профиль
-        </span>
+        <span>👤</span>
+        Профиль
       </Link>
 
     </nav>
