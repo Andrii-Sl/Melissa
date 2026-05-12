@@ -1,21 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import styles from "@/app/dashboard/dashboard.module.css";
 
-type Props = {
-  active?:
-    | "home"
-    | "requests"
-    | "offers"
-    | "orders"
-    | "profile";
-};
+export default function BottomNav() {
 
-export default function BottomNav({
-  active = "home",
-}:Props) {
+  const pathname =
+    usePathname();
 
   return (
 
@@ -24,61 +17,94 @@ export default function BottomNav({
       <Link
         href="/dashboard"
         className={`${styles.navItem} ${
-          active === "home"
+          pathname === "/dashboard"
             ? styles.navActive
             : ""
         }`}
       >
-        <span>🏠</span>
-        Главная
+
+        <span>⌂</span>
+
+        <p>
+          Главная
+        </p>
+
       </Link>
 
       <Link
         href="/dashboard/requests"
         className={`${styles.navItem} ${
-          active === "requests"
+          pathname.includes(
+            "/dashboard/requests"
+          )
             ? styles.navActive
             : ""
         }`}
       >
-        <span>📄</span>
-        Запросы
+
+        <span>◫</span>
+
+        <p>
+          Запросы
+        </p>
+
       </Link>
 
       <Link
         href="/dashboard/offers"
         className={`${styles.navItem} ${
-          active === "offers"
+          pathname.includes(
+            "/dashboard/offers"
+          )
             ? styles.navActive
             : ""
         }`}
       >
-        <span>💶</span>
-        Предложения
+
+        <span>€</span>
+
+        <p>
+          Предложения
+        </p>
+
       </Link>
 
       <Link
         href="/dashboard/orders"
         className={`${styles.navItem} ${
-          active === "orders"
+          pathname.includes(
+            "/dashboard/orders"
+          )
             ? styles.navActive
             : ""
         }`}
       >
-        <span>📦</span>
-        Заказы
+
+        <span>□</span>
+
+        <p>
+          Заказы
+        </p>
+
       </Link>
 
       <Link
         href="/dashboard/profile"
         className={`${styles.navItem} ${
-          active === "profile"
+          pathname.includes(
+            "/dashboard/profile"
+          )
             ? styles.navActive
             : ""
         }`}
       >
-        <span>👤</span>
-        Профиль
+
+        <span>◉</span>
+
+        <p>
+          Профиль
+        </p>
+
       </Link>
 
     </nav>
