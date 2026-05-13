@@ -318,30 +318,27 @@
 
 .bottomNav {
   position: fixed;
-  left: 18px;
-  right: 18px;
-  bottom: 12px;
+  left: 20px;
+  right: 20px;
+  bottom: 10px;
   max-width: 430px;
-  height: 78px;
+
+  height: 62px;
+
   margin: 0 auto;
-  border-radius: 30px;
+
+  border-radius: 26px;
   border: 4px solid #111;
-  background: white;
+
+  background: rgba(255,255,255,0.96);
+
+  backdrop-filter: blur(20px);
+
   display: flex;
   align-items: center;
   justify-content: space-around;
+
   z-index: 100;
-}
-
-.bottomNav a {
-  text-decoration: none;
-  color: #8b90a3;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.activeNav {
-  color: #000 !important;
 }
 
 /* MOBILE */
