@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import {
   Menu,
+  X,
   FileText,
   MessageCircle,
   ShoppingBag,
@@ -18,6 +19,9 @@ import { supabase } from "@/lib/supabase";
 import styles from "../dashboard.module.css";
 
 export default function RequestsPage() {
+
+  const [menuOpen, setMenuOpen] =
+    useState(false);
 
   const [requests, setRequests] =
     useState<any[]>([]);
@@ -109,9 +113,7 @@ export default function RequestsPage() {
       <div className={styles.page}>
 
         <div className={styles.container}>
-
           Загрузка...
-
         </div>
 
       </div>
@@ -148,16 +150,98 @@ export default function RequestsPage() {
 
           </div>
 
-          <button className={styles.burger}>
+          <button
+            className={styles.burger}
+            onClick={() =>
+              setMenuOpen(
+                !menuOpen
+              )
+            }
+          >
 
-            <Menu
-              size={24}
-              strokeWidth={2.4}
-            />
+            {
+              menuOpen ? (
+
+                <X
+                  size={24}
+                  strokeWidth={2.4}
+                />
+
+              ) : (
+
+                <Menu
+                  size={24}
+                  strokeWidth={2.4}
+                />
+
+              )
+            }
 
           </button>
 
         </header>
+
+        {/* MOBILE MENU */}
+
+        {
+          menuOpen && (
+
+            <div className={styles.mobileMenu}>
+
+              <Link
+                href="/dashboard"
+                className={styles.mobileMenuItem}
+                onClick={() =>
+                  setMenuOpen(false)
+                }
+              >
+                Главная
+              </Link>
+
+              <Link
+                href="/dashboard/requests"
+                className={styles.mobileMenuItem}
+                onClick={() =>
+                  setMenuOpen(false)
+                }
+              >
+                Запросы
+              </Link>
+
+              <Link
+                href="/dashboard/offers"
+                className={styles.mobileMenuItem}
+                onClick={() =>
+                  setMenuOpen(false)
+                }
+              >
+                Предложения
+              </Link>
+
+              <Link
+                href="/dashboard/orders"
+                className={styles.mobileMenuItem}
+                onClick={() =>
+                  setMenuOpen(false)
+                }
+              >
+                Заказы
+              </Link>
+
+              <Link
+                href="/dashboard/profile"
+                className={styles.mobileMenuItem}
+                onClick={() =>
+                  setMenuOpen(false)
+                }
+              >
+                Профиль
+              </Link>
+
+            </div>
+
+          )
+        }
 
         {/* HERO */}
 
