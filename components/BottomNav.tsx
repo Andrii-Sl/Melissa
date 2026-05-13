@@ -2,20 +2,13 @@
 
 import Link from "next/link";
 
-import styles from "@/app/dashboard/dashboard.module.css";
-
-type Props = {
-  active?:
-    | "home"
-    | "requests"
-    | "offers"
-    | "orders"
-    | "profile";
-};
+import styles from "./BottomNav.module.css";
 
 export default function BottomNav({
-  active = "home",
-}:Props) {
+  active,
+}:{
+  active:string;
+}) {
 
   return (
 
@@ -25,60 +18,95 @@ export default function BottomNav({
         href="/dashboard"
         className={`${styles.navItem} ${
           active === "home"
-            ? styles.navActive
+            ? styles.navItemActive
             : ""
         }`}
       >
-        <span>🏠</span>
-        <p>Главная</p>
+
+        <div className={styles.navIcon}>
+          🏠
+        </div>
+
+        <div className={styles.navText}>
+          Главная
+        </div>
+
       </Link>
 
       <Link
         href="/dashboard/requests"
         className={`${styles.navItem} ${
           active === "requests"
-            ? styles.navActive
+            ? styles.navItemActive
             : ""
         }`}
       >
-        <span>📄</span>
-        <p>Запросы</p>
+
+        <div className={styles.navIcon}>
+          📄
+        </div>
+
+        <div className={styles.navText}>
+          Запросы
+        </div>
+
       </Link>
 
       <Link
         href="/dashboard/offers"
         className={`${styles.navItem} ${
           active === "offers"
-            ? styles.navActive
+            ? styles.navItemActive
             : ""
         }`}
       >
-        <span>💶</span>
-        <p>Предложения</p>
+
+        <div className={styles.navIcon}>
+          💶
+        </div>
+
+        <div className={styles.navText}>
+          Предложения
+        </div>
+
       </Link>
 
       <Link
         href="/dashboard/orders"
         className={`${styles.navItem} ${
           active === "orders"
-            ? styles.navActive
+            ? styles.navItemActive
             : ""
         }`}
       >
-        <span>📦</span>
-        <p>Заказы</p>
+
+        <div className={styles.navIcon}>
+          📦
+        </div>
+
+        <div className={styles.navText}>
+          Заказы
+        </div>
+
       </Link>
 
       <Link
         href="/dashboard/profile"
         className={`${styles.navItem} ${
           active === "profile"
-            ? styles.navActive
+            ? styles.navItemActive
             : ""
         }`}
       >
-        <span>👤</span>
-        <p>Профиль</p>
+
+        <div className={styles.navIcon}>
+          👤
+        </div>
+
+        <div className={styles.navText}>
+          Профиль
+        </div>
+
       </Link>
 
     </nav>
