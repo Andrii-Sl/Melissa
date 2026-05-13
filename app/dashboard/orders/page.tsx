@@ -297,6 +297,7 @@ export default function OrdersPage() {
 
             <button
               key={item.id}
+              type="button"
               className={styles.orderModernCard}
               onClick={() =>
                 setSelectedOrder(item)
@@ -406,6 +407,7 @@ export default function OrdersPage() {
           <div className={styles.checkoutTop}>
 
             <button
+              type="button"
               className={styles.backButton}
               onClick={() =>
                 setSelectedOrder(null)
@@ -649,7 +651,10 @@ export default function OrdersPage() {
 
             </div>
 
-            <button className={styles.repeatOrderButton}>
+            <button
+              type="button"
+              className={styles.repeatOrderButton}
+            >
               ↻ Повторить заказ
             </button>
 
@@ -659,7 +664,7 @@ export default function OrdersPage() {
 
       )}
 
-      <BottomNav />
+      <BottomNav active="orders" />
 
     </main>
   );
