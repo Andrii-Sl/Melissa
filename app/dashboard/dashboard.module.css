@@ -870,4 +870,34 @@ img{
       -200% 0;
   }
 
+@media (max-width:360px){
+
+  .dashboardTitle{
+    font-size:28px;
+  }
+
+  .dashboardGrid{
+    gap:10px;
+  }
+
+  .dashboardCard{
+    min-height:110px;
+
+    padding:14px;
+  }
+
+  .dashboardCard strong{
+    font-size:38px;
+  }
+
+  .quickActions{
+    flex-direction:column;
+  }
+
+  .quickButton{
+    width:100%;
+  }
+
+}
+
 }
