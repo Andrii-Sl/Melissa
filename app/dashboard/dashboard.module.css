@@ -2,7 +2,7 @@
   min-height: 100vh;
   background: #f5f7fb;
   overflow-x: hidden;
-  padding: 20px 20px 150px;
+  padding: 20px 20px 110px;
 }
 
 .container {
@@ -17,7 +17,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 26px;
+  margin-bottom: 22px;
 }
 
 .logoWrap {
@@ -42,7 +42,7 @@
   font-size: 32px;
   font-weight: 800;
   box-shadow:
-    0 10px 25px rgba(37, 99, 235, 0.24);
+    0 10px 25px rgba(37, 99, 235, 0.22);
 }
 
 .brand {
@@ -53,9 +53,9 @@
 }
 
 .subBrand {
-  margin-top: 6px;
+  margin-top: 5px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   color: #8d91a3;
 }
 
@@ -68,17 +68,18 @@
   align-items: center;
   justify-content: center;
   color: #000;
+  padding: 0;
 }
 
 /* HERO */
 
 .hero {
-  margin-bottom: 24px;
+  margin-bottom: 22px;
 }
 
 .welcome {
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0.03em;
   color: #8e92a4;
 }
@@ -94,8 +95,8 @@
 .subtitle {
   margin-top: 18px;
   font-size: 16px;
-  line-height: 1.4;
-  font-weight: 600;
+  line-height: 1.35;
+  font-weight: 700;
   color: #7b8194;
   white-space: nowrap;
 }
@@ -106,20 +107,20 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
 .card {
-  min-height: 132px;
+  min-height: 126px;
   border-radius: 34px;
   border: 4px solid #111;
   background: white;
-  padding: 18px;
+  padding: 16px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   text-decoration: none;
-  transition: 0.2s ease;
+  transition: 0.18s ease;
 }
 
 .card:active {
@@ -130,8 +131,8 @@
 .iconGreen,
 .iconPurple,
 .iconOrange {
-  width: 74px;
-  height: 74px;
+  width: 72px;
+  height: 72px;
   border-radius: 24px;
   display: flex;
   align-items: center;
@@ -179,17 +180,17 @@
 }
 
 .cardValue {
-  margin-top: 6px;
-  font-size: 46px;
+  margin-top: 4px;
+  font-size: 44px;
   line-height: 1;
   font-weight: 900;
   color: #000;
 }
 
 .cardSub {
-  margin-top: 8px;
+  margin-top: 6px;
   font-size: 14px;
-  line-height: 1.3;
+  line-height: 1.25;
   color: #7d8192;
   font-weight: 700;
 }
@@ -200,7 +201,7 @@
   border-radius: 38px;
   border: 4px solid #111;
   background: white;
-  padding: 24px;
+  padding: 20px;
 }
 
 .requestTitle {
@@ -208,24 +209,24 @@
   line-height: 1;
   font-weight: 900;
   color: #000;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
 .input {
-  height: 66px;
-  border-radius: 24px;
+  height: 58px;
+  border-radius: 22px;
   border: 2px solid #e7e8f0;
   background: #f8f8fc;
-  padding: 0 18px;
+  padding: 0 16px;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
 .input svg {
@@ -240,7 +241,7 @@
   outline: none;
   background: transparent;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   color: #111;
   appearance: none;
 }
@@ -255,24 +256,24 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .counter {
   flex: 1;
-  height: 68px;
+  height: 62px;
   border-radius: 22px;
   border: 2px solid #e7e8f0;
   background: #f8f8fc;
-  padding: 0 10px;
+  padding: 0 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
 .counter button {
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   border: none;
   background: transparent;
   display: flex;
@@ -282,15 +283,15 @@
 }
 
 .counter span {
-  font-size: 34px;
+  font-size: 30px;
   line-height: 1;
-  font-weight: 800;
+  font-weight: 900;
   color: #111;
 }
 
 .submit {
   flex: 2;
-  height: 68px;
+  height: 62px;
   border: none;
   border-radius: 22px;
   background: linear-gradient(
@@ -299,15 +300,15 @@
     #111
   );
   color: white;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 900;
   letter-spacing: 0.02em;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   box-shadow:
-    0 16px 30px rgba(0, 0, 0, 0.22);
+    0 14px 28px rgba(0, 0, 0, 0.22);
 }
 
 .submit:active {
@@ -322,23 +323,31 @@
   right: 20px;
   bottom: 10px;
   max-width: 430px;
-
   height: 62px;
-
   margin: 0 auto;
-
   border-radius: 26px;
   border: 4px solid #111;
-
   background: rgba(255,255,255,0.96);
-
   backdrop-filter: blur(20px);
-
   display: flex;
   align-items: center;
   justify-content: space-around;
-
   z-index: 100;
+}
+
+.bottomNav a {
+  text-decoration: none;
+  color: #8b90a3;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.activeNav {
+  color: #000 !important;
 }
 
 /* MOBILE */
@@ -349,7 +358,7 @@
     padding:
       18px
       18px
-      140px;
+      108px;
   }
 
   .name {
@@ -361,8 +370,8 @@
   }
 
   .card {
-    min-height: 124px;
-    padding: 16px;
+    min-height: 120px;
+    padding: 15px;
   }
 
   .iconBlue,
@@ -374,11 +383,11 @@
   }
 
   .cardValue {
-    font-size: 42px;
+    font-size: 40px;
   }
 
   .requestCard {
-    padding: 22px;
+    padding: 18px;
   }
 
   .requestTitle {
@@ -386,10 +395,15 @@
   }
 
   .input {
-    height: 62px;
+    height: 56px;
+  }
+
+  .counter {
+    height: 58px;
   }
 
   .submit {
-    font-size: 16px;
+    height: 58px;
+    font-size: 15px;
   }
 }
