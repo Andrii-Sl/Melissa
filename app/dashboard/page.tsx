@@ -53,6 +53,8 @@ export default function DashboardPage() {
 
     try {
 
+      /* COOKIE */
+
       const cookiePhone =
         document.cookie
           .split("; ")
@@ -63,19 +65,50 @@ export default function DashboardPage() {
           )
           ?.split("=")[1];
 
-      if (cookiePhone)
-        return cookiePhone;
+      if (
+        cookiePhone &&
+        cookiePhone !== "undefined"
+      ) {
+
+        return decodeURIComponent(
+          cookiePhone
+        );
+      }
+
+      /* SUPABASE SESSION */
 
       const {
         data:{ session },
       } =
         await supabase.auth.getSession();
 
-      return (
-        session?.user?.phone || ""
-      );
+      if (
+        session?.user?.phone
+      ) {
 
-    } catch {
+        return session.user.phone;
+      }
+
+      /* LOCAL STORAGE */
+
+      const localPhone =
+        localStorage.getItem(
+          "client_phone"
+        );
+
+      if (
+        localPhone &&
+        localPhone !== "undefined"
+      ) {
+
+        return localPhone;
+      }
+
+      return "";
+
+    } catch (error) {
+
+      console.error(error);
 
       return "";
     }
@@ -239,6 +272,11 @@ export default function DashboardPage() {
       const phone =
         await getClientPhone();
 
+      console.log(
+        "CLIENT PHONE:",
+        phone
+      );
+
       if (!phone) {
 
         setLoading(false);
@@ -250,6 +288,7 @@ export default function DashboardPage() {
 
       const {
         data:profileData,
+        error:profileError,
       } =
         await supabase
           .from("profiles")
@@ -260,12 +299,21 @@ export default function DashboardPage() {
           )
           .maybeSingle();
 
+      if (profileError) {
+
+        console.error(
+          "PROFILE ERROR:",
+          profileError
+        );
+      }
+
       setProfile(profileData);
 
       /* REQUESTS */
 
       const {
         count:reqCount,
+        error:reqError,
       } =
         await supabase
           .from("requests")
@@ -285,6 +333,14 @@ export default function DashboardPage() {
             "DONE"
           );
 
+      if (reqError) {
+
+        console.error(
+          "REQUESTS ERROR:",
+          reqError
+        );
+      }
+
       setRequestsCount(
         reqCount || 0
       );
@@ -293,6 +349,7 @@ export default function DashboardPage() {
 
       const {
         count:offCount,
+        error:offError,
       } =
         await supabase
           .from("offers")
@@ -312,6 +369,14 @@ export default function DashboardPage() {
             "PENDING"
           );
 
+      if (offError) {
+
+        console.error(
+          "OFFERS ERROR:",
+          offError
+        );
+      }
+
       setOffersCount(
         offCount || 0
       );
@@ -320,6 +385,7 @@ export default function DashboardPage() {
 
       const {
         count:ordCount,
+        error:ordError,
       } =
         await supabase
           .from("orders")
@@ -338,6 +404,14 @@ export default function DashboardPage() {
             "status",
             "DELIVERED"
           );
+
+      if (ordError) {
+
+        console.error(
+          "ORDERS ERROR:",
+          ordError
+        );
+      }
 
       setOrdersCount(
         ordCount || 0
@@ -364,7 +438,10 @@ export default function DashboardPage() {
 
     } catch (error) {
 
-      console.error(error);
+      console.error(
+        "LOAD DATA ERROR:",
+        error
+      );
 
     } finally {
 
