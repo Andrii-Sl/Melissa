@@ -17,6 +17,9 @@ export default function DashboardPage() {
   const [loading, setLoading] =
     useState(true);
 
+  const [creating, setCreating] =
+    useState(false);
+
   const [profile, setProfile] =
     useState<any>(null);
 
@@ -31,6 +34,20 @@ export default function DashboardPage() {
 
   const [notifications, setNotifications] =
     useState<any[]>([]);
+
+  /* REQUEST FORM */
+
+  const [car, setCar] =
+    useState("");
+
+  const [vin, setVin] =
+    useState("");
+
+  const [partName, setPartName] =
+    useState("");
+
+  const [quantity, setQuantity] =
+    useState("1");
 
   /* INIT */
 
@@ -239,26 +256,6 @@ export default function DashboardPage() {
 
       ]);
 
-      console.log(
-        "PROFILE DATA:",
-        profileResult.data
-      );
-
-      console.log(
-        "REQUESTS:",
-        requestsResult.count
-      );
-
-      console.log(
-        "OFFERS:",
-        offersResult.count
-      );
-
-      console.log(
-        "ORDERS:",
-        ordersResult.count
-      );
-
       /* PROFILE */
 
       setProfile(
@@ -308,6 +305,103 @@ export default function DashboardPage() {
     } finally {
 
       setLoading(false);
+    }
+  }
+
+  /* CREATE REQUEST */
+
+  async function createRequest(
+    e:any
+  ) {
+
+    e.preventDefault();
+
+    if (
+      !car ||
+      !vin ||
+      !partName ||
+      !quantity
+    ) {
+
+      alert(
+        "Заполните все поля"
+      );
+
+      return;
+    }
+
+    try {
+
+      setCreating(true);
+
+      const phone =
+        await getClientPhone();
+
+      if (!phone) {
+
+        alert(
+          "Ошибка авторизации"
+        );
+
+        return;
+      }
+
+      const {
+        error,
+      } =
+        await supabase
+          .from("requests")
+          .insert([
+            {
+              car,
+              vin,
+              part_name:
+                partName,
+              quantity:
+                Number(quantity),
+              status:"NEW",
+              client_phone:
+                phone,
+            },
+          ]);
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "Ошибка создания запроса"
+        );
+
+        return;
+      }
+
+      /* CLEAR FORM */
+
+      setCar("");
+      setVin("");
+      setPartName("");
+      setQuantity("1");
+
+      /* RELOAD */
+
+      await loadData(phone);
+
+      alert(
+        "Запрос успешно создан"
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Ошибка соединения"
+      );
+
+    } finally {
+
+      setCreating(false);
     }
   }
 
@@ -479,40 +573,115 @@ export default function DashboardPage() {
 
       </section>
 
-      {/* QUICK ACTIONS */}
+      {/* NEW REQUEST */}
 
       <section className={styles.section}>
 
         <div className={styles.dashboardBox}>
 
           <h2 className={styles.sectionTitle}>
-            Быстрые действия
+            Новый запрос
           </h2>
 
-          <div className={styles.quickActions}>
+          <form
+            className={styles.requestForm}
+            onSubmit={createRequest}
+          >
 
-            <Link
-              href="/dashboard/requests/new"
-              className={styles.quickButton}
+            {/* CAR */}
+
+            <div className={styles.formGroup}>
+
+              <label className={styles.formLabel}>
+                Автомобиль
+              </label>
+
+              <input
+                type="text"
+                placeholder="Например: BMW X5 F15"
+                className={styles.formInput}
+                value={car}
+                onChange={(e) =>
+                  setCar(e.target.value)
+                }
+              />
+
+            </div>
+
+            {/* VIN */}
+
+            <div className={styles.formGroup}>
+
+              <label className={styles.formLabel}>
+                VIN код
+              </label>
+
+              <input
+                type="text"
+                placeholder="Введите VIN"
+                className={styles.formInput}
+                value={vin}
+                onChange={(e) =>
+                  setVin(e.target.value)
+                }
+              />
+
+            </div>
+
+            {/* PART */}
+
+            <div className={styles.formGroup}>
+
+              <label className={styles.formLabel}>
+                Наименование запчасти
+              </label>
+
+              <input
+                type="text"
+                placeholder="Например: Передний бампер"
+                className={styles.formInput}
+                value={partName}
+                onChange={(e) =>
+                  setPartName(e.target.value)
+                }
+              />
+
+            </div>
+
+            {/* QUANTITY */}
+
+            <div className={styles.formGroup}>
+
+              <label className={styles.formLabel}>
+                Количество
+              </label>
+
+              <input
+                type="number"
+                placeholder="1"
+                className={styles.formInput}
+                value={quantity}
+                onChange={(e) =>
+                  setQuantity(e.target.value)
+                }
+              />
+
+            </div>
+
+            <button
+              type="submit"
+              className={styles.submitButton}
             >
-              Новый запрос
-            </Link>
 
-            <Link
-              href="/dashboard/orders"
-              className={styles.quickButton}
-            >
-              Мои заказы
-            </Link>
+              {
+                creating
+                  ? "Создание..."
+                  : "Сделать запрос"
+              }
 
-            <Link
-              href="/dashboard/offers"
-              className={styles.quickButton}
-            >
-              Предложения
-            </Link>
+            </button>
 
-          </div>
+          </form>
 
         </div>
 
