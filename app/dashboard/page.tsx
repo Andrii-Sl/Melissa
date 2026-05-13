@@ -7,6 +7,7 @@ import { createClient } from "@supabase/supabase-js";
 
 import {
   Menu,
+  X,
   FileText,
   MessageCircle,
   ShoppingBag,
@@ -42,6 +43,9 @@ interface GarageCar {
 }
 
 export default function DashboardPage() {
+
+  const [menuOpen, setMenuOpen] =
+    useState(false);
 
   const [phone, setPhone] =
     useState("");
@@ -352,16 +356,88 @@ export default function DashboardPage() {
 
           </div>
 
-          <button className={styles.burger}>
+          <button
+            className={styles.burger}
+            onClick={() =>
+              setMenuOpen(
+                !menuOpen
+              )
+            }
+          >
 
-            <Menu
-              size={24}
-              strokeWidth={2.4}
-            />
+            {
+              menuOpen ? (
+
+                <X
+                  size={24}
+                  strokeWidth={2.4}
+                />
+
+              ) : (
+
+                <Menu
+                  size={24}
+                  strokeWidth={2.4}
+                />
+
+              )
+            }
 
           </button>
 
         </header>
+
+        {/* MOBILE MENU */}
+
+        {
+          menuOpen && (
+
+            <div className={styles.mobileMenu}>
+
+              <Link
+                href="/dashboard/profile"
+                className={styles.mobileMenuItem}
+                onClick={() =>
+                  setMenuOpen(false)
+                }
+              >
+                Профиль
+              </Link>
+
+              <Link
+                href="/dashboard/requests"
+                className={styles.mobileMenuItem}
+                onClick={() =>
+                  setMenuOpen(false)
+                }
+              >
+                Запросы
+              </Link>
+
+              <Link
+                href="/dashboard/offers"
+                className={styles.mobileMenuItem}
+                onClick={() =>
+                  setMenuOpen(false)
+                }
+              >
+                Предложения
+              </Link>
+
+              <Link
+                href="/dashboard/orders"
+                className={styles.mobileMenuItem}
+                onClick={() =>
+                  setMenuOpen(false)
+                }
+              >
+                Заказы
+              </Link>
+
+            </div>
+
+          )
+        }
 
         {/* HERO */}
 
@@ -598,6 +674,7 @@ export default function DashboardPage() {
               <div className={styles.counter}>
 
                 <button
+                  type="button"
                   onClick={() =>
                     setQuantity(
                       Math.max(
@@ -620,6 +697,7 @@ export default function DashboardPage() {
                 </span>
 
                 <button
+                  type="button"
                   onClick={() =>
                     setQuantity(
                       quantity + 1
