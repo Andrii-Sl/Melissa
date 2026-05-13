@@ -641,4 +641,71 @@ img{
     min-height:104px;
   }
 
+/* SKELETON */
+
+@keyframes skeletonPulse{
+
+  0%{
+    opacity:.45;
+  }
+
+  50%{
+    opacity:.9;
+  }
+
+  100%{
+    opacity:.45;
+  }
+
+}
+
+.skeletonHero{
+  width:180px;
+  height:44px;
+
+  border-radius:14px;
+
+  background:#e5e7eb;
+
+  margin-bottom:24px;
+
+  animation:
+    skeletonPulse 1.4s ease-in-out infinite;
+}
+
+.skeletonGrid{
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:12px;
+
+  margin-bottom:18px;
+}
+
+.skeletonCard{
+  height:118px;
+
+  border-radius:22px;
+
+  background:#e5e7eb;
+
+  animation:
+    skeletonPulse 1.4s ease-in-out infinite;
+}
+
+.skeletonBox{
+  height:140px;
+
+  border-radius:22px;
+
+  background:#e5e7eb;
+
+  margin-bottom:16px;
+
+  animation:
+    skeletonPulse 1.4s ease-in-out infinite;
+}
+
 }
