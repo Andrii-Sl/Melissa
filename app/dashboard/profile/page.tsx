@@ -511,6 +511,7 @@ export default function ProfilePage() {
 
                   <strong>
                     {
+                      item.car ||
                       item.car_name ||
                       "Автомобиль"
                     }
@@ -541,6 +542,7 @@ export default function ProfilePage() {
       <section className={styles.section}>
 
         <button
+          type="button"
           className={styles.dashboardSubmit}
           onClick={saveProfile}
           disabled={saving}
