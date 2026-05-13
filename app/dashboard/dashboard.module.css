@@ -6,7 +6,7 @@
   background:#f5f7fb;
 
   padding:
-    96px
+    84px
     14px
     74px;
 }
@@ -530,5 +530,114 @@
   .quickButton{
     width:100%;
   }
+
+/* REQUEST FORM */
+
+.requestForm{
+  display:flex;
+  flex-direction:column;
+
+  gap:14px;
+}
+
+.formGroup{
+  display:flex;
+  flex-direction:column;
+
+  gap:8px;
+}
+
+.formLabel{
+  color:#111827;
+
+  font-size:13px;
+  line-height:1.2;
+
+  font-weight:700;
+}
+
+.formInput{
+  width:100%;
+  height:54px;
+
+  border:
+    1px solid rgba(17,17,17,.9);
+
+  border-radius:16px;
+
+  background:#ffffff;
+
+  padding:0 16px;
+
+  color:#111827;
+
+  font-size:14px;
+  font-weight:600;
+
+  outline:none;
+
+  transition:
+    border-color .14s ease,
+    box-shadow .14s ease;
+}
+
+.formInput::placeholder{
+  color:#9ca3af;
+}
+
+.formInput:focus{
+  border-color:#111827;
+
+  box-shadow:
+    0 0 0 3px rgba(17,17,17,.06);
+}
+
+.submitButton{
+  width:100%;
+  height:56px;
+
+  border:none;
+
+  border-radius:18px;
+
+  background:#111827;
+
+  color:#ffffff;
+
+  font-size:15px;
+  font-weight:800;
+
+  margin-top:4px;
+
+  transition:
+    transform .14s ease,
+    opacity .14s ease;
+}
+
+.submitButton:active{
+  transform:scale(.985);
+}
+
+.submitButton:disabled{
+  opacity:.6;
+}
+
+/* MOBILE FORM */
+
+@media (max-width:360px){
+
+  .formInput{
+    height:52px;
+
+    font-size:13px;
+  }
+
+  .submitButton{
+    height:54px;
+
+    font-size:14px;
+  }
+
+}
 
 }
