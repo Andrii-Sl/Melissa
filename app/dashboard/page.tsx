@@ -29,29 +29,38 @@ export default function DashboardPage() {
   const [ordersCount, setOrdersCount] =
     useState(0);
 
-  const [
-    animatedRequests,
-    setAnimatedRequests,
-  ] = useState(0);
-
-  const [
-    animatedOffers,
-    setAnimatedOffers,
-  ] = useState(0);
-
-  const [
-    animatedOrders,
-    setAnimatedOrders,
-  ] = useState(0);
-
   const [notifications, setNotifications] =
     useState<any[]>([]);
 
-  /* PHONE */
+  /* INIT */
+
+  useEffect(() => {
+
+    init();
+
+  }, []);
+
+  /* GET PHONE */
 
   async function getClientPhone() {
 
     try {
+
+      /* LOCAL STORAGE */
+
+      const localPhone =
+        localStorage.getItem(
+          "client_phone"
+        );
+
+      if (
+        localPhone &&
+        localPhone !== "undefined" &&
+        localPhone !== "null"
+      ) {
+
+        return localPhone;
+      }
 
       /* COOKIE */
 
@@ -67,7 +76,8 @@ export default function DashboardPage() {
 
       if (
         cookiePhone &&
-        cookiePhone !== "undefined"
+        cookiePhone !== "undefined" &&
+        cookiePhone !== "null"
       ) {
 
         return decodeURIComponent(
@@ -75,7 +85,7 @@ export default function DashboardPage() {
         );
       }
 
-      /* SUPABASE SESSION */
+      /* SESSION */
 
       const {
         data:{ session },
@@ -89,129 +99,26 @@ export default function DashboardPage() {
         return session.user.phone;
       }
 
-      /* LOCAL STORAGE */
-
-      const localPhone =
-        localStorage.getItem(
-          "client_phone"
-        );
-
-      if (
-        localPhone &&
-        localPhone !== "undefined"
-      ) {
-
-        return localPhone;
-      }
-
       return "";
 
     } catch (error) {
 
-      console.error(error);
+      console.error(
+        "PHONE ERROR:",
+        error
+      );
 
       return "";
     }
   }
 
-  /* LOAD */
+  /* INIT LOAD */
 
-  useEffect(() => {
-
-    loadData();
-
-    /*
-    TEMPORARY:
-    realtime disabled
-    because subscriptions
-    can freeze loading
-    */
-
-  }, []);
-
-  /* COUNTER ANIMATION */
-
-  useEffect(() => {
-
-    animateValue(
-      animatedRequests,
-      requestsCount,
-      setAnimatedRequests
-    );
-
-  }, [requestsCount]);
-
-  useEffect(() => {
-
-    animateValue(
-      animatedOffers,
-      offersCount,
-      setAnimatedOffers
-    );
-
-  }, [offersCount]);
-
-  useEffect(() => {
-
-    animateValue(
-      animatedOrders,
-      ordersCount,
-      setAnimatedOrders
-    );
-
-  }, [ordersCount]);
-
-  function animateValue(
-    start:number,
-    end:number,
-    setter:any
-  ) {
-
-    const duration = 300;
-
-    const startTime =
-      performance.now();
-
-    function update(
-      currentTime:number
-    ) {
-
-      const elapsed =
-        currentTime - startTime;
-
-      const progress =
-        Math.min(
-          elapsed / duration,
-          1
-        );
-
-      const value =
-        Math.floor(
-          start +
-          (end - start) *
-          progress
-        );
-
-      setter(value);
-
-      if (progress < 1) {
-
-        requestAnimationFrame(
-          update
-        );
-      }
-    }
-
-    requestAnimationFrame(
-      update
-    );
-  }
-
-  /* LOAD DATA */
-
-  async function loadData() {
+  async function init() {
 
     try {
+
+      setLoading(true);
 
       const phone =
         await getClientPhone();
@@ -228,7 +135,26 @@ export default function DashboardPage() {
         return;
       }
 
-      /* PARALLEL REQUESTS */
+      await loadData(phone);
+
+    } catch (error) {
+
+      console.error(
+        "INIT ERROR:",
+        error
+      );
+
+      setLoading(false);
+    }
+  }
+
+  /* LOAD DATA */
+
+  async function loadData(
+    phone:string
+  ) {
+
+    try {
 
       const [
         profileResult,
@@ -236,6 +162,8 @@ export default function DashboardPage() {
         offersResult,
         ordersResult,
       ] = await Promise.all([
+
+        /* PROFILE */
 
         supabase
           .from("profiles")
@@ -246,13 +174,14 @@ export default function DashboardPage() {
           )
           .maybeSingle(),
 
+        /* REQUESTS */
+
         supabase
           .from("requests")
           .select(
-            "id",
+            "*",
             {
               count:"exact",
-              head:true,
             }
           )
           .eq(
@@ -264,13 +193,14 @@ export default function DashboardPage() {
             "DONE"
           ),
 
+        /* OFFERS */
+
         supabase
           .from("offers")
           .select(
-            "id",
+            "*",
             {
               count:"exact",
-              head:true,
             }
           )
           .eq(
@@ -282,13 +212,14 @@ export default function DashboardPage() {
             "PENDING"
           ),
 
+        /* ORDERS */
+
         supabase
           .from("orders")
           .select(
-            "id",
+            "*",
             {
               count:"exact",
-              head:true,
             }
           )
           .eq(
@@ -302,69 +233,45 @@ export default function DashboardPage() {
 
       ]);
 
+      console.log(
+        "PROFILE:",
+        profileResult
+      );
+
+      console.log(
+        "REQUESTS:",
+        requestsResult
+      );
+
+      console.log(
+        "OFFERS:",
+        offersResult
+      );
+
+      console.log(
+        "ORDERS:",
+        ordersResult
+      );
+
       /* PROFILE */
 
-      if (profileResult.error) {
+      setProfile(
+        profileResult.data || null
+      );
 
-        console.error(
-          "PROFILE ERROR:",
-          profileResult.error
-        );
+      /* COUNTS */
 
-      } else {
+      setRequestsCount(
+        requestsResult.count || 0
+      );
 
-        setProfile(
-          profileResult.data
-        );
-      }
+      setOffersCount(
+        offersResult.count || 0
+      );
 
-      /* REQUESTS */
-
-      if (requestsResult.error) {
-
-        console.error(
-          "REQUESTS ERROR:",
-          requestsResult.error
-        );
-
-      } else {
-
-        setRequestsCount(
-          requestsResult.count || 0
-        );
-      }
-
-      /* OFFERS */
-
-      if (offersResult.error) {
-
-        console.error(
-          "OFFERS ERROR:",
-          offersResult.error
-        );
-
-      } else {
-
-        setOffersCount(
-          offersResult.count || 0
-        );
-      }
-
-      /* ORDERS */
-
-      if (ordersResult.error) {
-
-        console.error(
-          "ORDERS ERROR:",
-          ordersResult.error
-        );
-
-      } else {
-
-        setOrdersCount(
-          ordersResult.count || 0
-        );
-      }
+      setOrdersCount(
+        ordersResult.count || 0
+      );
 
       /* NOTIFICATIONS */
 
@@ -388,7 +295,7 @@ export default function DashboardPage() {
     } catch (error) {
 
       console.error(
-        "LOAD DATA ERROR:",
+        "LOAD ERROR:",
         error
       );
 
@@ -495,7 +402,7 @@ export default function DashboardPage() {
           </h3>
 
           <strong>
-            {animatedRequests}
+            {requestsCount}
           </strong>
 
         </Link>
@@ -510,7 +417,7 @@ export default function DashboardPage() {
           </h3>
 
           <strong>
-            {animatedOffers}
+            {offersCount}
           </strong>
 
         </Link>
@@ -525,7 +432,7 @@ export default function DashboardPage() {
           </h3>
 
           <strong>
-            {animatedOrders}
+            {ordersCount}
           </strong>
 
         </Link>
@@ -553,13 +460,9 @@ export default function DashboardPage() {
 
         <div className={styles.dashboardBox}>
 
-          <div className={styles.boxTop}>
-
-            <h2 className={styles.sectionTitle}>
-              Быстрые действия
-            </h2>
-
-          </div>
+          <h2 className={styles.sectionTitle}>
+            Быстрые действия
+          </h2>
 
           <div className={styles.quickActions}>
 
