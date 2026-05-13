@@ -1,8 +1,12 @@
 .page {
-  min-height: 100vh;
+  min-height: 100dvh;
   background: #f5f7fb;
   overflow-x: hidden;
   padding: 96px 14px 96px;
+}
+
+.page {
+  overscroll-behavior-y: contain;
 }
 
 .container {
