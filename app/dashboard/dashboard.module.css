@@ -6,7 +6,7 @@
   background:#f5f7fb;
 
   padding:
-    84px
+    96px
     14px
     74px;
 }
@@ -35,7 +35,7 @@
   left:0;
   right:0;
 
-  height:62px;
+  height:68px;
 
   background:#ffffff;
 
@@ -46,7 +46,7 @@
   align-items:center;
   justify-content:space-between;
 
-  padding:0 14px;
+  padding:0 18px;
 
   z-index:500;
 }
@@ -59,15 +59,19 @@
 }
 
 .topLogo{
-  width:38px;
-  height:38px;
+  width:44px;
+  height:44px;
 
-  border-radius:10px;
+  object-fit:cover;
+
+  border-radius:12px;
 
   border:
     1px solid #111111;
 
-  object-fit:cover;
+  background:#ffffff;
+
+  flex-shrink:0;
 }
 
 .topTitle{
@@ -75,8 +79,9 @@
 
   color:#111827;
 
-  font-size:16px;
+  font-size:15px;
   line-height:1;
+
   font-weight:800;
 }
 
@@ -86,16 +91,17 @@
   color:#6b7280;
 
   font-size:11px;
+  line-height:1;
 }
 
 .burgerButton{
-  width:38px;
-  height:38px;
+  width:44px;
+  height:44px;
 
   border:
     1px solid #111111;
 
-  border-radius:10px;
+  border-radius:14px;
 
   background:#ffffff;
 
@@ -103,9 +109,14 @@
   align-items:center;
   justify-content:center;
 
-  font-size:18px;
+  color:#111827;
 
-  cursor:pointer;
+  font-size:22px;
+  line-height:1;
+
+  padding:0;
+
+  flex-shrink:0;
 }
 
 /* HERO */
