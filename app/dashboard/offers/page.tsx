@@ -710,7 +710,7 @@ export default function OffersPage() {
 
       )}
 
-      <BottomNav />
+      <BottomNav active="offers" />
 
     </main>
   );
