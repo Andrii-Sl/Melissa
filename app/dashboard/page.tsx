@@ -35,6 +35,11 @@ export default function DashboardPage() {
   const [notifications, setNotifications] =
     useState<any[]>([]);
 
+  /* GARAGE */
+
+  const [garageCars, setGarageCars] =
+    useState<any[]>([]);
+
   /* REQUEST FORM */
 
   const [car, setCar] =
@@ -181,6 +186,7 @@ export default function DashboardPage() {
         requestsResult,
         offersResult,
         ordersResult,
+        garageResult,
       ] = await Promise.all([
 
         /* PROFILE */
@@ -254,6 +260,16 @@ export default function DashboardPage() {
             "DELIVERED"
           ),
 
+        /* GARAGE */
+
+        supabase
+          .from("garage")
+          .select("*")
+          .eq(
+            "client_phone",
+            cleanPhone
+          ),
+
       ]);
 
       /* PROFILE */
@@ -274,6 +290,12 @@ export default function DashboardPage() {
 
       setOrdersCount(
         ordersResult.count || 0
+      );
+
+      /* GARAGE */
+
+      setGarageCars(
+        garageResult.data || []
       );
 
       /* NOTIFICATIONS */
@@ -305,6 +327,32 @@ export default function DashboardPage() {
     } finally {
 
       setLoading(false);
+    }
+  }
+
+  /* SELECT CAR */
+
+  function handleSelectCar(
+    value:string
+  ) {
+
+    setCar(value);
+
+    const selectedCar =
+      garageCars.find(
+        (item) =>
+          (
+            item.car ||
+            item.name ||
+            ""
+          ) === value
+      );
+
+    if (selectedCar) {
+
+      setVin(
+        selectedCar.vin || ""
+      );
     }
   }
 
@@ -596,15 +644,40 @@ export default function DashboardPage() {
                 Автомобиль
               </label>
 
-              <input
-                type="text"
-                placeholder="Например: BMW X5 F15"
+              <select
                 className={styles.formInput}
                 value={car}
                 onChange={(e) =>
-                  setCar(e.target.value)
+                  handleSelectCar(
+                    e.target.value
+                  )
                 }
-              />
+              >
+
+                <option value="">
+                  Выберите из гаража
+                </option>
+
+                {garageCars.map((item) => (
+
+                  <option
+                    key={item.id}
+                    value={
+                      item.car ||
+                      item.name
+                    }
+                  >
+
+                    {
+                      item.car ||
+                      item.name
+                    }
+
+                  </option>
+
+                ))}
+
+              </select>
 
             </div>
 
@@ -618,12 +691,10 @@ export default function DashboardPage() {
 
               <input
                 type="text"
-                placeholder="Введите VIN"
+                placeholder="VIN код"
                 className={styles.formInput}
                 value={vin}
-                onChange={(e) =>
-                  setVin(e.target.value)
-                }
+                readOnly
               />
 
             </div>
@@ -642,7 +713,9 @@ export default function DashboardPage() {
                 className={styles.formInput}
                 value={partName}
                 onChange={(e) =>
-                  setPartName(e.target.value)
+                  setPartName(
+                    e.target.value
+                  )
                 }
               />
 
@@ -662,11 +735,15 @@ export default function DashboardPage() {
                 className={styles.formInput}
                 value={quantity}
                 onChange={(e) =>
-                  setQuantity(e.target.value)
+                  setQuantity(
+                    e.target.value
+                  )
                 }
               />
 
             </div>
+
+            {/* BUTTON */}
 
             <button
               type="submit"
