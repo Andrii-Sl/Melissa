@@ -4,13 +4,24 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { supabase } from "@/lib/supabase";
+import {
+  Menu,
+  X,
+  Home,
+  FileText,
+  MessageCircle,
+  ShoppingBag,
+  User,
+} from "lucide-react";
 
-import BottomNav from "@/components/BottomNav";
+import { supabase } from "@/lib/supabase";
 
 import styles from "../dashboard.module.css";
 
 export default function OrdersPage() {
+
+  const [menuOpen, setMenuOpen] =
+    useState(false);
 
   const [orders, setOrders] =
     useState<any[]>([]);
@@ -240,34 +251,140 @@ export default function OrdersPage() {
 
     <main className={styles.page}>
 
-      {/* HERO */}
+      {/* HEADER */}
 
-      <section className={styles.dashboardHero}>
+      <header className={styles.header}>
 
-        <div>
+        <div className={styles.logoWrap}>
 
-          <p className={styles.dashboardSubtitle}>
-            История покупок
-          </p>
+          <div className={styles.logo}>
+            L
+          </div>
 
-          <h1 className={styles.dashboardTitle}>
-            Заказы
-          </h1>
+          <div>
 
-          <p className={styles.dashboardPhone}>
-            Всего заказов:
-            {" "}
-            {orders.length}
-          </p>
+            <div className={styles.brand}>
+              LYNKO
+            </div>
+
+            <div className={styles.subBrand}>
+              Клиентская панель
+            </div>
+
+          </div>
 
         </div>
 
-        <Link
-          href="/dashboard/profile"
-          className={styles.dashboardProfile}
+        <button
+          className={styles.burger}
+          onClick={() =>
+            setMenuOpen(
+              !menuOpen
+            )
+          }
         >
-          👤
-        </Link>
+
+          {
+            menuOpen ? (
+
+              <X
+                size={24}
+                strokeWidth={2.4}
+              />
+
+            ) : (
+
+              <Menu
+                size={24}
+                strokeWidth={2.4}
+              />
+
+            )
+          }
+
+        </button>
+
+      </header>
+
+      {/* MOBILE MENU */}
+
+      {
+        menuOpen && (
+
+          <div className={styles.mobileMenu}>
+
+            <Link
+              href="/dashboard"
+              className={styles.mobileMenuItem}
+              onClick={() =>
+                setMenuOpen(false)
+              }
+            >
+              Главная
+            </Link>
+
+            <Link
+              href="/dashboard/requests"
+              className={styles.mobileMenuItem}
+              onClick={() =>
+                setMenuOpen(false)
+              }
+            >
+              Запросы
+            </Link>
+
+            <Link
+              href="/dashboard/offers"
+              className={styles.mobileMenuItem}
+              onClick={() =>
+                setMenuOpen(false)
+              }
+            >
+              Предложения
+            </Link>
+
+            <Link
+              href="/dashboard/orders"
+              className={styles.mobileMenuItem}
+              onClick={() =>
+                setMenuOpen(false)
+              }
+            >
+              Заказы
+            </Link>
+
+            <Link
+              href="/dashboard/profile"
+              className={styles.mobileMenuItem}
+              onClick={() =>
+                setMenuOpen(false)
+              }
+            >
+              Профиль
+            </Link>
+
+          </div>
+
+        )
+      }
+
+      {/* HERO */}
+
+      <section className={styles.hero}>
+
+        <div className={styles.welcome}>
+          ИСТОРИЯ ПОКУПОК
+        </div>
+
+        <h1 className={styles.name}>
+          Заказы
+        </h1>
+
+        <p className={styles.subtitle}>
+          Всего заказов:
+          {" "}
+          {orders.length}
+        </p>
 
       </section>
 
@@ -664,7 +781,59 @@ export default function OrdersPage() {
 
       )}
 
-      <BottomNav active="orders" />
+      {/* BOTTOM NAV */}
+
+      <nav className={styles.bottomNav}>
+
+        <Link href="/dashboard">
+
+          <Home
+            size={22}
+            strokeWidth={2.3}
+          />
+
+        </Link>
+
+        <Link href="/dashboard/requests">
+
+          <FileText
+            size={22}
+            strokeWidth={2.3}
+          />
+
+        </Link>
+
+        <Link href="/dashboard/offers">
+
+          <MessageCircle
+            size={22}
+            strokeWidth={2.3}
+          />
+
+        </Link>
+
+        <Link
+          href="/dashboard/orders"
+          className={styles.activeNav}
+        >
+
+          <ShoppingBag
+            size={22}
+            strokeWidth={2.3}
+          />
+
+        </Link>
+
+        <Link href="/dashboard/profile">
+
+          <User
+            size={22}
+            strokeWidth={2.3}
+          />
+
+        </Link>
+
+      </nav>
 
     </main>
   );
