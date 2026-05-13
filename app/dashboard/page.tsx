@@ -98,6 +98,7 @@ export default function DashboardPage() {
       ) {
 
         clientPhone =
+
           localStorage.getItem(
             "client_phone"
           ) ||
@@ -138,7 +139,7 @@ export default function DashboardPage() {
               "phone",
               clientPhone
             )
-            .single(),
+            .maybeSingle(),
 
           supabase
             .from("requests")
@@ -313,18 +314,26 @@ export default function DashboardPage() {
   }
 
   const firstName =
-    profile?.first_name ||
 
-    profile?.name ||
+    profile?.first_name?.trim() ||
 
-    "Клиент";
-
-  const lastName =
-    profile?.last_name ||
-
-    profile?.surname ||
+    profile?.name?.trim() ||
 
     "";
+
+  const lastName =
+
+    profile?.last_name?.trim() ||
+
+    profile?.surname?.trim() ||
+
+    "";
+
+  const fullName =
+
+    `${firstName} ${lastName}`.trim() ||
+
+    "Клиент";
 
   return (
 
@@ -448,7 +457,7 @@ export default function DashboardPage() {
           </div>
 
           <h1 className={styles.name}>
-            {firstName}
+            {fullName}
           </h1>
 
           <p className={styles.subtitle}>
