@@ -263,22 +263,22 @@
 .bigField{
   width:100%;
 
-  height:82px;
+  height:64px;
 
   border:
     2px solid #111111;
 
-  border-radius:28px;
+  border-radius:22px;
 
   background:#ffffff;
 
   padding:
     0
-    24px;
+    20px;
 
   color:#111827;
 
-  font-size:22px;
+  font-size:18px;
   font-weight:800;
 
   outline:none;
@@ -287,17 +287,47 @@
 
   transition:
     border .15s ease,
-    transform .15s ease;
+    transform .15s ease,
+    box-shadow .15s ease;
 }
 
 .bigField:focus{
   border:
     2px solid #111827;
+
+  box-shadow:
+    0 0 0 4px rgba(17,24,39,.06);
 }
 
 .bigField::placeholder{
   color:#111827;
   opacity:1;
+}
+
+.bigField:disabled{
+  background:#f3f4f6;
+
+  color:#6b7280;
+}
+
+/* SELECT */
+
+.bigFieldSelect{
+  cursor:pointer;
+
+  appearance:none;
+
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='%23111827' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+
+  background-repeat:no-repeat;
+
+  background-position:
+    right 18px center;
+
+  background-size:18px;
+
+  padding-right:52px;
 }
 
 /* BOTTOM ROW */
@@ -307,32 +337,43 @@
   align-items:center;
 
   gap:12px;
+
+  margin-top:2px;
 }
 
 /* QUANTITY */
 
 .quantityField{
-  width:34%;
+  width:32%;
 
-  height:72px;
+  height:60px;
 
   border:
     2px solid #111111;
 
-  border-radius:24px;
+  border-radius:20px;
 
   background:#ffffff;
 
   padding:
     0
-    18px;
+    16px;
 
   color:#111827;
 
-  font-size:20px;
+  font-size:18px;
   font-weight:800;
 
   outline:none;
+
+  transition:
+    border .15s ease,
+    box-shadow .15s ease;
+}
+
+.quantityField:focus{
+  box-shadow:
+    0 0 0 4px rgba(17,24,39,.06);
 }
 
 .quantityField::placeholder{
@@ -345,25 +386,30 @@
 .sendButton{
   flex:1;
 
-  height:72px;
+  height:60px;
 
   border:
     2px solid #111111;
 
-  border-radius:24px;
+  border-radius:20px;
 
-  background:#111827;
+  background:#0f172a;
 
   color:#ffffff;
 
-  font-size:20px;
+  font-size:18px;
   font-weight:900;
 
   cursor:pointer;
 
   transition:
     transform .15s ease,
-    opacity .15s ease;
+    opacity .15s ease,
+    background .15s ease;
+}
+
+.sendButton:hover{
+  background:#111827;
 }
 
 .sendButton:active{
@@ -372,6 +418,28 @@
 
 .sendButton:disabled{
   opacity:.7;
+
+  cursor:not-allowed;
+}
+
+/* EMPTY GARAGE */
+
+.emptyGarage{
+  padding:18px;
+
+  border:
+    2px dashed #d1d5db;
+
+  border-radius:22px;
+
+  text-align:center;
+
+  color:#6b7280;
+
+  font-size:14px;
+  font-weight:700;
+
+  background:#f9fafb;
 }
 
 /* NOTIFICATIONS */
@@ -523,6 +591,13 @@
 
 @media (max-width:360px){
 
+  .page{
+    padding:
+      92px
+      12px
+      88px;
+  }
+
   .dashboardTitle{
     font-size:32px;
   }
@@ -541,17 +616,36 @@
     font-size:40px;
   }
 
-  .bigField{
-    height:72px;
-
-    font-size:18px;
+  .dashboardBox{
+    padding:18px;
   }
 
-  .sendButton,
-  .quantityField{
-    height:64px;
+  .sectionTitle{
+    font-size:21px;
+  }
 
-    font-size:17px;
+  .bigField{
+    height:58px;
+
+    font-size:16px;
+
+    border-radius:20px;
+  }
+
+  .quantityField{
+    height:56px;
+
+    font-size:16px;
+
+    border-radius:18px;
+  }
+
+  .sendButton{
+    height:56px;
+
+    font-size:16px;
+
+    border-radius:18px;
   }
 
 }
