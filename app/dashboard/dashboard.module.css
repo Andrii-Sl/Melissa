@@ -1,4 +1,8 @@
 .page {
+  background: red !important;
+}
+
+.page {
   min-height: 100vh;
   background: #f5f7fb;
   padding: 18px 18px 100px;
