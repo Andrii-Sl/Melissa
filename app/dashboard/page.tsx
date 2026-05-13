@@ -313,27 +313,25 @@ export default function DashboardPage() {
     }
   }
 
-  const firstName =
-
-    profile?.first_name?.trim() ||
-
-    profile?.name?.trim() ||
-
-    "";
-
-  const lastName =
-
-    profile?.last_name?.trim() ||
-
-    profile?.surname?.trim() ||
-
-    "";
-
   const fullName =
 
-    `${firstName} ${lastName}`.trim() ||
+  [
+    profile?.first_name,
+    profile?.last_name,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .trim() ||
 
-    "Клиент";
+  [
+    profile?.name,
+    profile?.surname,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .trim() ||
+
+  "Клиент";
 
   return (
 
