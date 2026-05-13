@@ -1,759 +1,392 @@
 "use client";
 
-import Link from "next/link";
-import {
-  useEffect,
-  useState,
-} from "react";
-
-import { supabase } from "@/lib/supabase";
-
-import BottomNav from "@/components/BottomNav";
-
+import { useEffect, useState } from "react";
 import styles from "./dashboard.module.css";
+import { createClient } from "@supabase/supabase-js";
+import {
+  Menu,
+  FileText,
+  MessageCircle,
+  ShoppingBag,
+  User,
+  Car,
+  Shield,
+  Package,
+  Send,
+  Home,
+} from "lucide-react";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+interface Profile {
+  first_name?: string;
+  last_name?: string;
+  name?: string;
+  surname?: string;
+}
+
+interface GarageCar {
+  id: number;
+  car: string;
+  vin: string;
+}
 
 export default function DashboardPage() {
+  const [phone, setPhone] = useState("");
+  const [profile, setProfile] = useState<Profile | null>(null);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [requestsCount, setRequestsCount] = useState(0);
+  const [offersCount, setOffersCount] = useState(0);
+  const [ordersCount, setOrdersCount] = useState(0);
 
-  const [creating, setCreating] =
-    useState(false);
+  const [garage, setGarage] = useState<GarageCar[]>([]);
 
-  const [profile, setProfile] =
-    useState<any>(null);
+  const [selectedCar, setSelectedCar] = useState("");
+  const [vin, setVin] = useState("");
+  const [partName, setPartName] = useState("");
+  const [quantity, setQuantity] = useState(1);
 
-  const [requestsCount, setRequestsCount] =
-    useState(0);
-
-  const [offersCount, setOffersCount] =
-    useState(0);
-
-  const [ordersCount, setOrdersCount] =
-    useState(0);
-
-  const [notifications, setNotifications] =
-    useState<any[]>([]);
-
-  /* GARAGE */
-
-  const [garageCars, setGarageCars] =
-    useState<any[]>([]);
-
-  /* REQUEST FORM */
-
-  const [car, setCar] =
-    useState("");
-
-  const [vin, setVin] =
-    useState("");
-
-  const [partName, setPartName] =
-    useState("");
-
-  const [quantity, setQuantity] =
-    useState("1");
-
-  /* INIT */
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-
     init();
-
   }, []);
 
-  /* GET PHONE */
-
-  async function getClientPhone() {
-
-    try {
-
-      const localPhone =
-        localStorage.getItem(
-          "client_phone"
-        );
-
-      if (
-        localPhone &&
-        localPhone !== "undefined" &&
-        localPhone !== "null"
-      ) {
-
-        return localPhone.trim();
-      }
-
-      const cookiePhone =
-        document.cookie
-          .split("; ")
-          .find((row) =>
-            row.startsWith(
-              "client_phone="
-            )
-          )
-          ?.split("=")[1];
-
-      if (
-        cookiePhone &&
-        cookiePhone !== "undefined" &&
-        cookiePhone !== "null"
-      ) {
-
-        return decodeURIComponent(
-          cookiePhone
-        ).trim();
-      }
-
-      const {
-        data:{ session },
-      } =
-        await supabase.auth.getSession();
-
-      if (
-        session?.user?.phone
-      ) {
-
-        return session.user.phone.trim();
-      }
-
-      return "";
-
-    } catch (error) {
-
-      console.error(
-        "PHONE ERROR:",
-        error
-      );
-
-      return "";
-    }
-  }
-
-  /* INIT LOAD */
-
   async function init() {
-
     try {
+      let clientPhone = "";
 
-      setLoading(true);
-
-      const phone =
-        await getClientPhone();
-
-      if (!phone) {
-
-        setLoading(false);
-
-        return;
+      if (typeof window !== "undefined") {
+        clientPhone =
+          localStorage.getItem("client_phone") ||
+          document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("client_phone="))
+            ?.split("=")[1] ||
+          "";
       }
 
-      await loadData(phone);
+      clientPhone = clientPhone.trim();
 
-    } catch (error) {
+      setPhone(clientPhone);
 
-      console.error(
-        "INIT ERROR:",
-        error
-      );
-
-      setLoading(false);
-    }
-  }
-
-  /* LOAD DATA */
-
-  async function loadData(
-    phone:string
-  ) {
-
-    try {
-
-      const cleanPhone =
-        phone.trim();
+      if (!clientPhone) return;
 
       const [
-        profileResult,
-        requestsResult,
-        offersResult,
-        ordersResult,
-        garageResult,
+        profileRes,
+        requestsRes,
+        offersRes,
+        ordersRes,
+        garageRes,
       ] = await Promise.all([
-
         supabase
           .from("profiles")
           .select("*")
-          .eq(
-            "phone",
-            cleanPhone
-          )
-          .maybeSingle(),
+          .eq("phone", clientPhone)
+          .single(),
 
         supabase
           .from("requests")
-          .select(
-            "id",
-            {
-              count:"exact",
-              head:true,
-            }
-          )
-          .eq(
-            "client_phone",
-            cleanPhone
-          )
-          .neq(
-            "status",
-            "DONE"
-          ),
+          .select("id", { count: "exact", head: true })
+          .eq("client_phone", clientPhone),
 
         supabase
           .from("offers")
-          .select(
-            "id",
-            {
-              count:"exact",
-              head:true,
-            }
-          )
-          .eq(
-            "client_phone",
-            cleanPhone
-          )
-          .eq(
-            "payment_status",
-            "PENDING"
-          ),
+          .select("client_phone", { count: "exact", head: true })
+          .eq("client_phone", clientPhone),
 
         supabase
           .from("orders")
-          .select(
-            "id",
-            {
-              count:"exact",
-              head:true,
-            }
-          )
-          .eq(
-            "client_phone",
-            cleanPhone
-          )
-          .neq(
-            "status",
-            "DELIVERED"
-          ),
+          .select("client_phone", { count: "exact", head: true })
+          .eq("client_phone", clientPhone),
 
         supabase
           .from("garage")
           .select("*")
-          .eq(
-            "client_phone",
-            cleanPhone
-          ),
-
+          .eq("client_phone", clientPhone),
       ]);
 
-      setProfile(
-        profileResult.data || null
-      );
+      if (profileRes.data) {
+        setProfile(profileRes.data);
+      }
 
-      setRequestsCount(
-        requestsResult.count || 0
-      );
+      setRequestsCount(requestsRes.count || 0);
+      setOffersCount(offersRes.count || 0);
+      setOrdersCount(ordersRes.count || 0);
 
-      setOffersCount(
-        offersResult.count || 0
-      );
-
-      setOrdersCount(
-        ordersResult.count || 0
-      );
-
-      setGarageCars(
-        garageResult.data || []
-      );
-
-      setNotifications([
-        {
-          id:1,
-          text:
-            "Появились новые предложения",
-          time:
-            "10 минут назад",
-        },
-        {
-          id:2,
-          text:
-            "Заказ обновлён",
-          time:
-            "1 час назад",
-        },
-      ]);
-
+      if (garageRes.data) {
+        setGarage(garageRes.data);
+      }
     } catch (error) {
+      console.error(error);
+    }
+  }
 
-      console.error(
-        "LOAD ERROR:",
-        error
-      );
+  function handleCarChange(value: string) {
+    setSelectedCar(value);
 
+    const selected = garage.find((item) => item.car === value);
+
+    if (selected) {
+      setVin(selected.vin || "");
+    }
+  }
+
+  async function handleSubmit() {
+    if (!selectedCar || !partName) return;
+
+    try {
+      setLoading(true);
+
+      await supabase.from("requests").insert({
+        car: selectedCar,
+        vin,
+        part_name: partName,
+        quantity,
+        status: "NEW",
+        client_phone: phone,
+      });
+
+      setPartName("");
+      setQuantity(1);
+
+      const { count } = await supabase
+        .from("requests")
+        .select("id", { count: "exact", head: true })
+        .eq("client_phone", phone);
+
+      setRequestsCount(count || 0);
+    } catch (error) {
+      console.error(error);
     } finally {
-
       setLoading(false);
     }
   }
 
-  /* SELECT CAR */
+  const firstName =
+    profile?.first_name || profile?.name || "Клиент";
 
-  function handleSelectCar(
-    value:string
-  ) {
-
-    setCar(value);
-
-    const selectedCar =
-      garageCars.find(
-        (item) =>
-          (
-            item.car ||
-            item.name ||
-            ""
-          ) === value
-      );
-
-    if (selectedCar) {
-
-      setVin(
-        selectedCar.vin || ""
-      );
-    }
-  }
-
-  /* CREATE REQUEST */
-
-  async function createRequest(
-    e:any
-  ) {
-
-    e.preventDefault();
-
-    if (
-      !car ||
-      !vin ||
-      !partName ||
-      !quantity
-    ) {
-
-      alert(
-        "Заполните все поля"
-      );
-
-      return;
-    }
-
-    try {
-
-      setCreating(true);
-
-      const phone =
-        await getClientPhone();
-
-      if (!phone) {
-
-        alert(
-          "Ошибка авторизации"
-        );
-
-        return;
-      }
-
-      const {
-        error,
-      } =
-        await supabase
-          .from("requests")
-          .insert([
-            {
-              car,
-              vin,
-              part_name:
-                partName,
-              quantity:
-                Number(quantity),
-              status:"NEW",
-              client_phone:
-                phone,
-            },
-          ]);
-
-      if (error) {
-
-        console.error(error);
-
-        alert(
-          "Ошибка создания запроса"
-        );
-
-        return;
-      }
-
-      setCar("");
-      setVin("");
-      setPartName("");
-      setQuantity("1");
-
-      await loadData(phone);
-
-      alert(
-        "Запрос успешно создан"
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
-      alert(
-        "Ошибка соединения"
-      );
-
-    } finally {
-
-      setCreating(false);
-    }
-  }
-
-  /* LOADING */
-
-  if (loading)
-    return (
-
-      <main className={styles.page}>
-
-        <div className={styles.skeletonHero} />
-
-        <div className={styles.skeletonGrid}>
-
-          <div className={styles.skeletonCard} />
-          <div className={styles.skeletonCard} />
-          <div className={styles.skeletonCard} />
-          <div className={styles.skeletonCard} />
-
-        </div>
-
-        <div className={styles.skeletonBox} />
-        <div className={styles.skeletonBox} />
-
-      </main>
-    );
+  const lastName =
+    profile?.last_name || profile?.surname || "";
 
   return (
+    <div className={styles.page}>
+      <div className={styles.container}>
+        <header className={styles.header}>
+          <div className={styles.logoBlock}>
+            <div className={styles.logo}>L</div>
 
-    <main className={styles.page}>
-
-      {/* TOP BAR */}
-
-      <header className={styles.topBar}>
-
-        <div className={styles.topBarLeft}>
-
-          <img
-            src="/logo.png"
-            alt="logo"
-            className={styles.topLogo}
-          />
-
-          <div>
-
-            <h2 className={styles.topTitle}>
-              Lynko
-            </h2>
-
-            <p className={styles.topSubtitle}>
-              Клиентская панель
-            </p>
-
+            <div>
+              <div className={styles.brand}>Lynko</div>
+              <div className={styles.subBrand}>
+                Клиентская панель
+              </div>
+            </div>
           </div>
 
-        </div>
+          <button className={styles.burger}>
+            <Menu size={22} />
+          </button>
+        </header>
 
-        <button
-          className={styles.burgerButton}
-        >
-          ☰
-        </button>
+        <section className={styles.hero}>
+          <div className={styles.heroContent}>
+            <span className={styles.welcome}>
+              Добро пожаловать
+            </span>
 
-      </header>
+            <h1 className={styles.name}>
+              {firstName} {lastName}
+            </h1>
 
-      {/* HERO */}
+            <p className={styles.subtitle}>
+              Управляйте запросами и следите
+              <br />
+              за статусом заказов
+            </p>
+          </div>
 
-      <section className={styles.dashboardHero}>
+          <div className={styles.avatar}>
+            <User size={30} />
+          </div>
+        </section>
 
-        <div>
-
-          <p className={styles.dashboardSubtitle}>
-            Кабинет клиента
-          </p>
-
-          <h1 className={styles.dashboardTitle}>
-
-            {
-              profile?.first_name ||
-              profile?.name ||
-              ""
-            }
-
-            {" "}
-
-            {
-              profile?.last_name ||
-              profile?.surname ||
-              ""
-            }
-
-            {
-              !profile?.first_name &&
-              !profile?.name &&
-              !profile?.last_name &&
-              !profile?.surname &&
-              "Клиент"
-            }
-
-          </h1>
-
-        </div>
-
-      </section>
-
-      {/* GRID */}
-
-      <section className={styles.dashboardGrid}>
-
-        <Link
-          href="/dashboard/requests"
-          className={styles.dashboardCard}
-        >
-
-          <h3>
-            Запросы
-          </h3>
-
-          <strong>
-            {requestsCount}
-          </strong>
-
-        </Link>
-
-        <Link
-          href="/dashboard/offers"
-          className={styles.dashboardCard}
-        >
-
-          <h3>
-            Предложения
-          </h3>
-
-          <strong>
-            {offersCount}
-          </strong>
-
-        </Link>
-
-        <Link
-          href="/dashboard/orders"
-          className={styles.dashboardCard}
-        >
-
-          <h3>
-            Заказы
-          </h3>
-
-          <strong>
-            {ordersCount}
-          </strong>
-
-        </Link>
-
-        <Link
-          href="/dashboard/profile"
-          className={styles.dashboardCard}
-        >
-
-          <h3>
-            Профиль
-          </h3>
-
-          <strong>
-            →
-          </strong>
-
-        </Link>
-
-      </section>
-
-      {/* NEW REQUEST */}
-
-      <section className={styles.section}>
-
-        <div className={styles.dashboardBox}>
-
-          <h2 className={styles.sectionTitle}>
-            Новый запрос
-          </h2>
-
-          <form
-            className={styles.requestForm}
-            onSubmit={createRequest}
-          >
-
-            {/* AUTO */}
-
-            <select
-              className={styles.bigField}
-              value={car}
-              onChange={(e) =>
-                handleSelectCar(
-                  e.target.value
-                )
-              }
-            >
-
-              <option value="">
-                Автомобиль
-              </option>
-
-              {garageCars.map((item) => (
-
-                <option
-                  key={item.id}
-                  value={
-                    item.car ||
-                    item.name
-                  }
-                >
-
-                  {
-                    item.car ||
-                    item.name
-                  }
-
-                </option>
-
-              ))}
-
-            </select>
-
-            {/* VIN */}
-
-            <input
-              type="text"
-              value={vin}
-              readOnly
-              placeholder="VIN код"
-              className={styles.bigField}
-            />
-
-            {/* PART */}
-
-            <input
-              type="text"
-              placeholder="Наименование запчасти"
-              className={styles.bigField}
-              value={partName}
-              onChange={(e) =>
-                setPartName(
-                  e.target.value
-                )
-              }
-            />
-
-            {/* BOTTOM ROW */}
-
-            <div className={styles.bottomRow}>
-
-              <input
-                type="number"
-                placeholder="Кол-во"
-                className={styles.quantityField}
-                value={quantity}
-                onChange={(e) =>
-                  setQuantity(
-                    e.target.value
-                  )
-                }
-              />
-
-              <button
-                type="submit"
-                className={styles.sendButton}
-              >
-
-                {
-                  creating
-                    ? "Создание..."
-                    : "Отправить"
-                }
-
-              </button>
-
+        <section className={styles.statsGrid}>
+          <div className={`${styles.card} ${styles.largeCard}`}>
+            <div className={styles.iconBlue}>
+              <FileText size={22} />
             </div>
 
-          </form>
-
-        </div>
-
-      </section>
-
-      {/* NOTIFICATIONS */}
-
-      <section className={styles.section}>
-
-        <div className={styles.dashboardBox}>
-
-          <h2 className={styles.sectionTitle}>
-            Уведомления
-          </h2>
-
-          <div className={styles.notificationsList}>
-
-            {notifications.map((item) => (
-
-              <div
-                key={item.id}
-                className={styles.notificationItem}
-              >
-
-                <div
-                  className={
-                    styles.notificationDot
-                  }
-                />
-
-                <div
-                  className={
-                    styles.notificationContent
-                  }
-                >
-
-                  <strong>
-                    {item.text}
-                  </strong>
-
-                  <p>
-                    {item.time}
-                  </p>
-
-                </div>
-
+            <div>
+              <div className={styles.cardTitle}>
+                Запросы
               </div>
 
-            ))}
-
+              <div className={styles.cardValue}>
+                {requestsCount}
+              </div>
+            </div>
           </div>
 
-        </div>
+          <div className={`${styles.card} ${styles.smallCard}`}>
+            <div className={styles.iconGreen}>
+              <MessageCircle size={20} />
+            </div>
 
-      </section>
+            <div>
+              <div className={styles.cardTitle}>
+                Предложения
+              </div>
 
-      <BottomNav active="home" />
+              <div className={styles.cardValue}>
+                {offersCount}
+              </div>
+            </div>
+          </div>
 
-    </main>
+          <div className={`${styles.card} ${styles.smallCard}`}>
+            <div className={styles.iconPurple}>
+              <ShoppingBag size={20} />
+            </div>
+
+            <div>
+              <div className={styles.cardTitle}>
+                Заказы
+              </div>
+
+              <div className={styles.cardValue}>
+                {ordersCount}
+              </div>
+            </div>
+          </div>
+
+          <div className={`${styles.card} ${styles.largeCard}`}>
+            <div className={styles.iconOrange}>
+              <User size={20} />
+            </div>
+
+            <div>
+              <div className={styles.cardTitle}>
+                Профиль
+              </div>
+
+              <div className={styles.cardSub}>
+                Управление данными
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className={styles.requestCard}>
+          <div className={styles.requestTitle}>
+            Новый запрос
+          </div>
+
+          <div className={styles.form}>
+            <div className={styles.input}>
+              <Car size={18} />
+
+              <select
+                value={selectedCar}
+                onChange={(e) =>
+                  handleCarChange(e.target.value)
+                }
+              >
+                <option value="">
+                  Выберите автомобиль
+                </option>
+
+                {garage.map((item) => (
+                  <option key={item.id} value={item.car}>
+                    {item.car}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className={styles.input}>
+              <Shield size={18} />
+
+              <input
+                type="text"
+                value={vin}
+                readOnly
+                placeholder="VIN код"
+              />
+            </div>
+
+            <div className={styles.input}>
+              <Package size={18} />
+
+              <input
+                type="text"
+                placeholder="Наименование запчасти"
+                value={partName}
+                onChange={(e) =>
+                  setPartName(e.target.value)
+                }
+              />
+            </div>
+
+            <div className={styles.bottomRow}>
+              <div
+                className={`${styles.input} ${styles.quantity}`}
+              >
+                <input
+                  type="number"
+                  min="1"
+                  value={quantity}
+                  onChange={(e) =>
+                    setQuantity(Number(e.target.value))
+                  }
+                />
+              </div>
+
+              <button
+                className={styles.submit}
+                onClick={handleSubmit}
+                disabled={loading}
+              >
+                <Send size={18} />
+
+                {loading
+                  ? "Отправка..."
+                  : "Отправить"}
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <nav className={styles.bottomNav}>
+        <button className={styles.activeNav}>
+          <Home size={20} />
+          <span>Главная</span>
+        </button>
+
+        <button>
+          <FileText size={20} />
+          <span>Запросы</span>
+        </button>
+
+        <button>
+          <MessageCircle size={20} />
+          <span>Предложения</span>
+        </button>
+
+        <button>
+          <ShoppingBag size={20} />
+          <span>Заказы</span>
+        </button>
+
+        <button>
+          <User size={20} />
+          <span>Профиль</span>
+        </button>
+      </nav>
+    </div>
   );
 }
