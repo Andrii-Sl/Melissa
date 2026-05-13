@@ -17,7 +17,9 @@ import {
   Shield,
   Package,
   Send,
-  Home,
+  Minus,
+  Plus,
+  ChevronDown,
 } from "lucide-react";
 
 const supabase = createClient(
@@ -33,9 +35,9 @@ interface Profile {
 }
 
 interface GarageCar {
-  id: number;
-  car: string;
-  vin: string;
+  id:number;
+  car:string;
+  vin:string;
 }
 
 export default function DashboardPage() {
@@ -302,11 +304,6 @@ export default function DashboardPage() {
     profile?.name ||
     "Клиент";
 
-  const lastName =
-    profile?.last_name ||
-    profile?.surname ||
-    "";
-
   return (
 
     <div className={styles.page}>
@@ -317,7 +314,7 @@ export default function DashboardPage() {
 
         <header className={styles.header}>
 
-          <div className={styles.logoBlock}>
+          <div className={styles.logoWrap}>
 
             <div className={styles.logo}>
               L
@@ -326,7 +323,7 @@ export default function DashboardPage() {
             <div>
 
               <div className={styles.brand}>
-                Lynko
+                LYNKO
               </div>
 
               <div className={styles.subBrand}>
@@ -341,7 +338,7 @@ export default function DashboardPage() {
             type="button"
             className={styles.burger}
           >
-            <Menu size={22} />
+            <Menu size={34} />
           </button>
 
         </header>
@@ -350,28 +347,20 @@ export default function DashboardPage() {
 
         <section className={styles.hero}>
 
-          <div className={styles.heroContent}>
+          <div>
 
-            <span className={styles.welcome}>
-              Добро пожаловать
-            </span>
+            <div className={styles.welcome}>
+              ДОБРО ПОЖАЛОВАТЬ
+            </div>
 
             <h1 className={styles.name}>
               {firstName}
-              {" "}
-              {lastName}
             </h1>
 
             <p className={styles.subtitle}>
-              Управляйте запросами
-              <br />
-              и следите за заказами
+              Управляйте запросами и следите за заказами
             </p>
 
-          </div>
-
-          <div className={styles.avatar}>
-            <User size={30} />
           </div>
 
         </section>
@@ -382,11 +371,11 @@ export default function DashboardPage() {
 
           <Link
             href="/dashboard/requests"
-            className={`${styles.card} ${styles.largeCard}`}
+            className={styles.card}
           >
 
             <div className={styles.iconBlue}>
-              <FileText size={22} />
+              <FileText size={30} />
             </div>
 
             <div>
@@ -405,11 +394,11 @@ export default function DashboardPage() {
 
           <Link
             href="/dashboard/offers"
-            className={`${styles.card} ${styles.smallCard}`}
+            className={styles.card}
           >
 
             <div className={styles.iconGreen}>
-              <MessageCircle size={20} />
+              <MessageCircle size={30} />
             </div>
 
             <div>
@@ -428,11 +417,11 @@ export default function DashboardPage() {
 
           <Link
             href="/dashboard/orders"
-            className={`${styles.card} ${styles.smallCard}`}
+            className={styles.card}
           >
 
             <div className={styles.iconPurple}>
-              <ShoppingBag size={20} />
+              <ShoppingBag size={30} />
             </div>
 
             <div>
@@ -451,11 +440,11 @@ export default function DashboardPage() {
 
           <Link
             href="/dashboard/profile"
-            className={`${styles.card} ${styles.largeCard}`}
+            className={styles.card}
           >
 
             <div className={styles.iconOrange}>
-              <User size={20} />
+              <User size={30} />
             </div>
 
             <div>
@@ -484,11 +473,9 @@ export default function DashboardPage() {
 
           <div className={styles.form}>
 
-            {/* CAR */}
-
             <div className={styles.input}>
 
-              <Car size={18} />
+              <Car size={22} />
 
               <select
                 value={selectedCar}
@@ -518,13 +505,15 @@ export default function DashboardPage() {
 
               </select>
 
-            </div>
+              <ChevronDown
+                size={22}
+              />
 
-            {/* VIN */}
+            </div>
 
             <div className={styles.input}>
 
-              <Shield size={18} />
+              <Shield size={22} />
 
               <input
                 type="text"
@@ -535,11 +524,9 @@ export default function DashboardPage() {
 
             </div>
 
-            {/* PRODUCT */}
-
             <div className={styles.input}>
 
-              <Package size={18} />
+              <Package size={22} />
 
               <input
                 type="text"
@@ -558,20 +545,36 @@ export default function DashboardPage() {
 
             <div className={styles.bottomRow}>
 
-              <div className={`${styles.input} ${styles.quantity}`}>
+              <div className={styles.counter}>
 
-                <input
-                  type="number"
-                  min="1"
-                  value={quantity}
-                  onChange={(e) =>
+                <button
+                  type="button"
+                  onClick={() =>
                     setQuantity(
-                      Number(
-                        e.target.value
+                      Math.max(
+                        1,
+                        quantity - 1
                       )
                     )
                   }
-                />
+                >
+                  <Minus size={20} />
+                </button>
+
+                <span>
+                  {quantity}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setQuantity(
+                      quantity + 1
+                    )
+                  }
+                >
+                  <Plus size={20} />
+                </button>
 
               </div>
 
@@ -582,12 +585,12 @@ export default function DashboardPage() {
                 disabled={loading}
               >
 
-                <Send size={18} />
+                <Send size={22} />
 
                 {
                   loading
                     ? "Отправка..."
-                    : "Отправить"
+                    : "ОТПРАВИТЬ ЗАПРОС"
                 }
 
               </button>
@@ -608,53 +611,23 @@ export default function DashboardPage() {
           href="/dashboard"
           className={styles.activeNav}
         >
-
-          <Home size={20} />
-
-          <span>
-            Главная
-          </span>
-
+          Главная
         </Link>
 
         <Link href="/dashboard/requests">
-
-          <FileText size={20} />
-
-          <span>
-            Запросы
-          </span>
-
+          Запросы
         </Link>
 
         <Link href="/dashboard/offers">
-
-          <MessageCircle size={20} />
-
-          <span>
-            Предложения
-          </span>
-
+          Предложения
         </Link>
 
         <Link href="/dashboard/orders">
-
-          <ShoppingBag size={20} />
-
-          <span>
-            Заказы
-          </span>
-
+          Заказы
         </Link>
 
         <Link href="/dashboard/profile">
-
-          <User size={20} />
-
-          <span>
-            Профиль
-          </span>
-
+          Профиль
         </Link>
 
       </nav>
