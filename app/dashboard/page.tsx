@@ -208,11 +208,26 @@ export default function DashboardPage() {
   }
 
   if (loading)
-    return (
-      <div className={styles.loading}>
-        Загрузка...
+  return (
+
+    <main className={styles.page}>
+
+      <div className={styles.skeletonHero} />
+
+      <div className={styles.skeletonGrid}>
+
+        <div className={styles.skeletonCard} />
+        <div className={styles.skeletonCard} />
+        <div className={styles.skeletonCard} />
+        <div className={styles.skeletonCard} />
+
       </div>
-    );
+
+      <div className={styles.skeletonBox} />
+      <div className={styles.skeletonBox} />
+
+    </main>
+  );
 
   return (
 
