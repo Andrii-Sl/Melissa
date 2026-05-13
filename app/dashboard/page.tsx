@@ -59,7 +59,7 @@ export default function DashboardPage() {
         localPhone !== "null"
       ) {
 
-        return localPhone;
+        return localPhone.trim();
       }
 
       /* COOKIE */
@@ -82,7 +82,7 @@ export default function DashboardPage() {
 
         return decodeURIComponent(
           cookiePhone
-        );
+        ).trim();
       }
 
       /* SESSION */
@@ -96,7 +96,7 @@ export default function DashboardPage() {
         session?.user?.phone
       ) {
 
-        return session.user.phone;
+        return session.user.phone.trim();
       }
 
       return "";
@@ -156,6 +156,9 @@ export default function DashboardPage() {
 
     try {
 
+      const cleanPhone =
+        phone.trim();
+
       const [
         profileResult,
         requestsResult,
@@ -170,7 +173,7 @@ export default function DashboardPage() {
           .select("*")
           .eq(
             "phone",
-            phone
+            cleanPhone
           )
           .maybeSingle(),
 
@@ -179,14 +182,15 @@ export default function DashboardPage() {
         supabase
           .from("requests")
           .select(
-            "*",
+            "id",
             {
               count:"exact",
+              head:true,
             }
           )
           .eq(
             "client_phone",
-            phone
+            cleanPhone
           )
           .neq(
             "status",
@@ -198,14 +202,15 @@ export default function DashboardPage() {
         supabase
           .from("offers")
           .select(
-            "*",
+            "id",
             {
               count:"exact",
+              head:true,
             }
           )
           .eq(
             "client_phone",
-            phone
+            cleanPhone
           )
           .eq(
             "payment_status",
@@ -217,14 +222,15 @@ export default function DashboardPage() {
         supabase
           .from("orders")
           .select(
-            "*",
+            "id",
             {
               count:"exact",
+              head:true,
             }
           )
           .eq(
             "client_phone",
-            phone
+            cleanPhone
           )
           .neq(
             "status",
@@ -234,23 +240,23 @@ export default function DashboardPage() {
       ]);
 
       console.log(
-        "PROFILE:",
-        profileResult
+        "PROFILE DATA:",
+        profileResult.data
       );
 
       console.log(
         "REQUESTS:",
-        requestsResult
+        requestsResult.count
       );
 
       console.log(
         "OFFERS:",
-        offersResult
+        offersResult.count
       );
 
       console.log(
         "ORDERS:",
-        ordersResult
+        ordersResult.count
       );
 
       /* PROFILE */
@@ -378,10 +384,29 @@ export default function DashboardPage() {
           </p>
 
           <h1 className={styles.dashboardTitle}>
+
             {
               profile?.first_name ||
+              profile?.name ||
+              ""
+            }
+
+            {" "}
+
+            {
+              profile?.last_name ||
+              profile?.surname ||
+              ""
+            }
+
+            {
+              !profile?.first_name &&
+              !profile?.name &&
+              !profile?.last_name &&
+              !profile?.surname &&
               "Клиент"
             }
+
           </h1>
 
         </div>
