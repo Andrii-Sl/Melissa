@@ -30,10 +30,7 @@ const supabase = createClient(
 );
 
 interface Profile {
-  first_name?: string;
-  last_name?: string;
-  name?: string;
-  surname?: string;
+  full_name?: string;
 }
 
 interface GarageCar {
@@ -315,23 +312,9 @@ export default function DashboardPage() {
 
   const fullName =
 
-  [
-    profile?.first_name,
-    profile?.last_name,
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .trim() ||
+    profile?.full_name?.trim() ||
 
-  [
-    profile?.name,
-    profile?.surname,
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .trim() ||
-
-  "Клиент";
+    "Клиент";
 
   return (
 
@@ -592,8 +575,6 @@ export default function DashboardPage() {
 
           <div className={styles.form}>
 
-            {/* CAR */}
-
             <div className={styles.input}>
 
               <Car
@@ -634,8 +615,6 @@ export default function DashboardPage() {
 
             </div>
 
-            {/* VIN */}
-
             <div className={styles.input}>
 
               <Shield
@@ -651,8 +630,6 @@ export default function DashboardPage() {
               />
 
             </div>
-
-            {/* PART */}
 
             <div className={styles.input}>
 
@@ -673,8 +650,6 @@ export default function DashboardPage() {
               />
 
             </div>
-
-            {/* ACTIONS */}
 
             <div className={styles.bottomRow}>
 
