@@ -9,27 +9,11 @@ import styles from "./dashboard.module.css";
 
 export default function DashboardPage() {
 
-  const [profile, setProfile] =
-    useState<any>(null);
-
   const [loading, setLoading] =
     useState(true);
 
-  /* REQUEST */
-
-  const [vin, setVin] =
-    useState("");
-
-  const [car, setCar] =
-    useState("");
-
-  const [partName, setPartName] =
-    useState("");
-
-  const [quantity, setQuantity] =
-    useState("1");
-
-  /* COUNTERS */
+  const [profile, setProfile] =
+    useState<any>(null);
 
   const [requestsCount, setRequestsCount] =
     useState(0);
@@ -40,28 +24,8 @@ export default function DashboardPage() {
   const [ordersCount, setOrdersCount] =
     useState(0);
 
-  /* TOTALS */
-
-  const [requestsTotal, setRequestsTotal] =
-    useState(0);
-
-  const [offersTotal, setOffersTotal] =
-    useState(0);
-
-  const [ordersTotal, setOrdersTotal] =
-    useState(0);
-
-  /* GARAGE */
-
-  const [garage, setGarage] =
-    useState<any[]>([]);
-
-  /* NOTIFICATIONS */
-
   const [notifications, setNotifications] =
     useState<any[]>([]);
-
-  /* PHONE */
 
   async function getClientPhone() {
 
@@ -89,82 +53,15 @@ export default function DashboardPage() {
         session?.user?.phone || ""
       );
 
-    } catch (error) {
-
-      console.error(error);
+    } catch {
 
       return "";
     }
   }
 
-  /* LOAD */
-
   useEffect(() => {
 
     loadData();
-
-    const requestsChannel =
-      supabase
-        .channel("dashboard-requests")
-        .on(
-          "postgres_changes",
-          {
-            event:"*",
-            schema:"public",
-            table:"requests",
-          },
-          () => {
-            loadData();
-          }
-        )
-        .subscribe();
-
-    const offersChannel =
-      supabase
-        .channel("dashboard-offers")
-        .on(
-          "postgres_changes",
-          {
-            event:"*",
-            schema:"public",
-            table:"offers",
-          },
-          () => {
-            loadData();
-          }
-        )
-        .subscribe();
-
-    const ordersChannel =
-      supabase
-        .channel("dashboard-orders")
-        .on(
-          "postgres_changes",
-          {
-            event:"*",
-            schema:"public",
-            table:"orders",
-          },
-          () => {
-            loadData();
-          }
-        )
-        .subscribe();
-
-    return () => {
-
-      supabase.removeChannel(
-        requestsChannel
-      );
-
-      supabase.removeChannel(
-        offersChannel
-      );
-
-      supabase.removeChannel(
-        ordersChannel
-      );
-    };
 
   }, []);
 
@@ -201,7 +98,7 @@ export default function DashboardPage() {
       /* REQUESTS */
 
       const {
-        count:reqActive,
+        count:reqCount,
       } =
         await supabase
           .from("requests")
@@ -221,27 +118,14 @@ export default function DashboardPage() {
             "DONE"
           );
 
-      const {
-        count:reqTotal,
-      } =
-        await supabase
-          .from("requests")
-          .select(
-            "id",
-            {
-              count:"exact",
-              head:true,
-            }
-          )
-          .eq(
-            "client_phone",
-            phone
-          );
+      setRequestsCount(
+        reqCount || 0
+      );
 
       /* OFFERS */
 
       const {
-        count:offActive,
+        count:offCount,
       } =
         await supabase
           .from("offers")
@@ -261,27 +145,14 @@ export default function DashboardPage() {
             "PENDING"
           );
 
-      const {
-        count:offTotal,
-      } =
-        await supabase
-          .from("offers")
-          .select(
-            "id",
-            {
-              count:"exact",
-              head:true,
-            }
-          )
-          .eq(
-            "client_phone",
-            phone
-          );
+      setOffersCount(
+        offCount || 0
+      );
 
       /* ORDERS */
 
       const {
-        count:ordActive,
+        count:ordCount,
       } =
         await supabase
           .from("orders")
@@ -301,68 +172,8 @@ export default function DashboardPage() {
             "DELIVERED"
           );
 
-      const {
-        count:ordTotal,
-      } =
-        await supabase
-          .from("orders")
-          .select(
-            "id",
-            {
-              count:"exact",
-              head:true,
-            }
-          )
-          .eq(
-            "client_phone",
-            phone
-          );
-
-      setRequestsCount(
-        reqActive || 0
-      );
-
-      setOffersCount(
-        offActive || 0
-      );
-
       setOrdersCount(
-        ordActive || 0
-      );
-
-      setRequestsTotal(
-        reqTotal || 0
-      );
-
-      setOffersTotal(
-        offTotal || 0
-      );
-
-      setOrdersTotal(
-        ordTotal || 0
-      );
-
-      /* GARAGE */
-
-      const {
-        data:garageData,
-      } =
-        await supabase
-          .from("garage")
-          .select("*")
-          .eq(
-            "client_phone",
-            phone
-          )
-          .order(
-            "created_at",
-            {
-              ascending:false,
-            }
-          );
-
-      setGarage(
-        garageData || []
+        ordCount || 0
       );
 
       /* NOTIFICATIONS */
@@ -371,14 +182,14 @@ export default function DashboardPage() {
         {
           id:1,
           text:
-            "Ваш запрос получил новые предложения",
+            "Появились новые предложения",
           time:
-            "10 мин назад",
+            "10 минут назад",
         },
         {
           id:2,
           text:
-            "Заказ обновлен",
+            "Заказ обновлён",
           time:
             "1 час назад",
         },
@@ -394,102 +205,6 @@ export default function DashboardPage() {
     }
   }
 
-  /* SELECT CAR */
-
-  function selectGarageCar(
-    item:any
-  ) {
-
-    setCar(
-      item.car_name || ""
-    );
-
-    setVin(
-      item.vin || ""
-    );
-  }
-
-  /* CREATE REQUEST */
-
-  async function createRequest() {
-
-    if (
-      !vin ||
-      !partName ||
-      !quantity
-    ) {
-
-      alert(
-        "Заполните обязательные поля"
-      );
-
-      return;
-    }
-
-    try {
-
-      const phone =
-        await getClientPhone();
-
-      if (!phone) {
-
-        alert(
-          "Требуется авторизация"
-        );
-
-        return;
-      }
-
-      const {
-        error,
-      } =
-        await supabase
-          .from("requests")
-          .insert([
-            {
-              vin,
-              car,
-              quantity,
-              part_name:
-                partName,
-              status:"NEW",
-              client_phone:
-                phone,
-            },
-          ]);
-
-      if (error) {
-
-        console.error(error);
-
-        alert(
-          "Ошибка создания запроса"
-        );
-
-        return;
-      }
-
-      setVin("");
-      setCar("");
-      setPartName("");
-      setQuantity("1");
-
-      alert(
-        "Запрос отправлен"
-      );
-
-      loadData();
-
-    } catch (error) {
-
-      console.error(error);
-
-      alert(
-        "Ошибка соединения"
-      );
-    }
-  }
-
   if (loading)
     return (
       <div className={styles.loading}>
@@ -501,56 +216,24 @@ export default function DashboardPage() {
 
     <main className={styles.page}>
 
-      {/* TOP BAR */}
-
-      <header className={styles.topBar}>
-
-        <div className={styles.topBarLeft}>
-
-          <img
-            src="/logo.png"
-            alt="logo"
-            className={styles.topLogo}
-          />
-
-          <div className={styles.topInfo}>
-
-            <h2 className={styles.topTitle}>
-              Lynko
-            </h2>
-
-            <p className={styles.topSubtitle}>
-              Клиентская панель
-            </p>
-
-          </div>
-
-        </div>
-
-        <button
-          className={styles.burgerButton}
-        >
-          ☰
-        </button>
-
-      </header>
-
       {/* HERO */}
 
       <section className={styles.dashboardHero}>
 
-        <p className={styles.dashboardSubtitle}>
-          Кабинет клиента
-        </p>
+        <div>
 
-        <h1 className={styles.dashboardTitle}>
-          Здравствуйте,
-          <br />
-          {
-            profile?.first_name ||
-            "Клиент"
-          }
-        </h1>
+          <p className={styles.dashboardSubtitle}>
+            Кабинет клиента
+          </p>
+
+          <h1 className={styles.dashboardTitle}>
+            {
+              profile?.first_name ||
+              "Клиент"
+            }
+          </h1>
+
+        </div>
 
       </section>
 
@@ -563,29 +246,13 @@ export default function DashboardPage() {
           className={styles.dashboardCard}
         >
 
-          <div className={styles.dashboardCardHead}>
+          <h3>
+            Запросы
+          </h3>
 
-            <h3>
-              Запросы
-            </h3>
-
-          </div>
-
-          <div className={styles.dashboardNumbers}>
-
-            <strong>
-              {requestsCount}
-            </strong>
-
-            <span>
-              /
-              {" "}
-              {requestsTotal}
-              <br />
-              активные / всего
-            </span>
-
-          </div>
+          <strong>
+            {requestsCount}
+          </strong>
 
         </Link>
 
@@ -594,29 +261,13 @@ export default function DashboardPage() {
           className={styles.dashboardCard}
         >
 
-          <div className={styles.dashboardCardHead}>
+          <h3>
+            Предложения
+          </h3>
 
-            <h3>
-              Предложения
-            </h3>
-
-          </div>
-
-          <div className={styles.dashboardNumbers}>
-
-            <strong>
-              {offersCount}
-            </strong>
-
-            <span>
-              /
-              {" "}
-              {offersTotal}
-              <br />
-              активные / всего
-            </span>
-
-          </div>
+          <strong>
+            {offersCount}
+          </strong>
 
         </Link>
 
@@ -625,29 +276,13 @@ export default function DashboardPage() {
           className={styles.dashboardCard}
         >
 
-          <div className={styles.dashboardCardHead}>
+          <h3>
+            Заказы
+          </h3>
 
-            <h3>
-              Заказы
-            </h3>
-
-          </div>
-
-          <div className={styles.dashboardNumbers}>
-
-            <strong>
-              {ordersCount}
-            </strong>
-
-            <span>
-              /
-              {" "}
-              {ordersTotal}
-              <br />
-              активные / всего
-            </span>
-
-          </div>
+          <strong>
+            {ordersCount}
+          </strong>
 
         </Link>
 
@@ -656,115 +291,56 @@ export default function DashboardPage() {
           className={styles.dashboardCard}
         >
 
-          <div className={styles.dashboardCardHead}>
+          <h3>
+            Профиль
+          </h3>
 
-            <h3>
-              Профиль
-            </h3>
-
-          </div>
-
-          <div className={styles.dashboardNumbers}>
-
-            <strong>
-              1
-            </strong>
-
-            <span>
-              / 1
-              <br />
-              аккаунт
-            </span>
-
-          </div>
+          <strong>
+            → 
+          </strong>
 
         </Link>
 
       </section>
 
-      {/* REQUEST FORM */}
+      {/* QUICK ACTIONS */}
 
       <section className={styles.section}>
 
         <div className={styles.dashboardBox}>
 
-          <h2 className={styles.sectionTitle}>
-            Новый запрос
-          </h2>
+          <div className={styles.boxTop}>
 
-          <select
-            className={styles.dashboardInput}
-            value={car}
-            onChange={(e) => {
+            <h2 className={styles.sectionTitle}>
+              Быстрые действия
+            </h2>
 
-              const selected =
-                garage.find(
-                  (item) =>
-                    item.car_name ===
-                    e.target.value
-                );
+          </div>
 
-              if (selected) {
+          <div className={styles.quickActions}>
 
-                selectGarageCar(
-                  selected
-                );
-              }
-            }}
-          >
+            <Link
+              href="/dashboard/requests/new"
+              className={styles.quickButton}
+            >
+              Новый запрос
+            </Link>
 
-            <option value="">
-              Выберите автомобиль
-            </option>
+            <Link
+              href="/dashboard/orders"
+              className={styles.quickButton}
+            >
+              Мои заказы
+            </Link>
 
-            {garage.map((item) => (
+            <Link
+              href="/dashboard/offers"
+              className={styles.quickButton}
+            >
+              Предложения
+            </Link>
 
-              <option
-                key={item.id}
-                value={item.car_name}
-              >
-                {item.car_name}
-              </option>
-
-            ))}
-
-          </select>
-
-          <input
-            className={styles.dashboardInput}
-            placeholder="VIN code"
-            value={vin}
-            readOnly
-          />
-
-          <input
-            className={styles.dashboardInput}
-            placeholder="Наименование запчасти"
-            value={partName}
-            onChange={(e) =>
-              setPartName(
-                e.target.value
-              )
-            }
-          />
-
-          <input
-            className={styles.dashboardInput}
-            placeholder="Количество"
-            value={quantity}
-            onChange={(e) =>
-              setQuantity(
-                e.target.value
-              )
-            }
-          />
-
-          <button
-            className={styles.dashboardButton}
-            onClick={createRequest}
-          >
-            Отправить запрос
-          </button>
+          </div>
 
         </div>
 
@@ -791,27 +367,23 @@ export default function DashboardPage() {
 
                 <div
                   className={
-                    styles.notificationLeft
+                    styles.notificationDot
+                  }
+                />
+
+                <div
+                  className={
+                    styles.notificationContent
                   }
                 >
 
-                  <div
-                    className={
-                      styles.notificationDot
-                    }
-                  />
+                  <strong>
+                    {item.text}
+                  </strong>
 
-                  <div>
-
-                    <strong>
-                      {item.text}
-                    </strong>
-
-                    <p>
-                      {item.time}
-                    </p>
-
-                  </div>
+                  <p>
+                    {item.time}
+                  </p>
 
                 </div>
 
