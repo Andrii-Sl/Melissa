@@ -1,11 +1,19 @@
 "use client";
 
 import Link from "next/link";
+
+import {
+  Menu,
+  FileText,
+  MessageCircle,
+  ShoppingBag,
+  User,
+  Home,
+} from "lucide-react";
+
 import { useEffect, useState } from "react";
 
 import { supabase } from "@/lib/supabase";
-
-import BottomNav from "@/components/BottomNav";
 
 import styles from "../dashboard.module.css";
 
@@ -16,11 +24,6 @@ export default function RequestsPage() {
 
   const [loading, setLoading] =
     useState(true);
-
-  const [selectedRequest, setSelectedRequest] =
-    useState<any>(null);
-
-  /* PHONE */
 
   async function getClientPhone() {
 
@@ -48,42 +51,15 @@ export default function RequestsPage() {
         session?.user?.phone || ""
       );
 
-    } catch (error) {
-
-      console.error(error);
+    } catch {
 
       return "";
     }
   }
 
-  /* LOAD */
-
   useEffect(() => {
 
     loadRequests();
-
-    const channel =
-      supabase
-        .channel("client-requests")
-        .on(
-          "postgres_changes",
-          {
-            event:"*",
-            schema:"public",
-            table:"requests",
-          },
-          () => {
-            loadRequests();
-          }
-        )
-        .subscribe();
-
-    return () => {
-
-      supabase.removeChannel(
-        channel
-      );
-    };
 
   }, []);
 
@@ -96,8 +72,6 @@ export default function RequestsPage() {
 
       if (!phone) {
 
-        setRequests([]);
-
         setLoading(false);
 
         return;
@@ -105,7 +79,6 @@ export default function RequestsPage() {
 
       const {
         data,
-        error,
       } =
         await supabase
           .from("requests")
@@ -121,22 +94,7 @@ export default function RequestsPage() {
             }
           );
 
-      if (error) {
-
-        console.error(error);
-
-        setRequests([]);
-
-        return;
-      }
-
       setRequests(data || []);
-
-    } catch (error) {
-
-      console.error(error);
-
-      setRequests([]);
 
     } finally {
 
@@ -144,174 +102,94 @@ export default function RequestsPage() {
     }
   }
 
-  /* DELETE */
+  if (loading) {
 
-  async function deleteRequest(
-    id:number
-  ) {
-
-    const confirmDelete =
-      confirm(
-        "Удалить запрос?"
-      );
-
-    if (!confirmDelete)
-      return;
-
-    try {
-
-      const {
-        error,
-      } =
-        await supabase
-          .from("requests")
-          .delete()
-          .eq(
-            "id",
-            id
-          );
-
-      if (error) {
-
-        console.error(error);
-
-        alert(
-          "Ошибка удаления"
-        );
-
-        return;
-      }
-
-      setRequests(
-        (prev) =>
-          prev.filter(
-            (item) =>
-              item.id !== id
-          )
-      );
-
-      if (
-        selectedRequest?.id === id
-      ) {
-
-        setSelectedRequest(null);
-      }
-
-    } catch (error) {
-
-      console.error(error);
-
-      alert(
-        "Ошибка соединения"
-      );
-    }
-  }
-
-  /* STATUS */
-
-  function getStatusText(
-    status:string
-  ) {
-
-    if (status === "DONE")
-      return "Выполнен";
-
-    if (status === "PROCESS")
-      return "В обработке";
-
-    return "Новый";
-  }
-
-  function getStatusClass(
-    status:string
-  ) {
-
-    if (status === "DONE")
-      return styles.requestStatusDone;
-
-    if (status === "PROCESS")
-      return styles.requestStatusProcess;
-
-    return styles.requestStatusNew;
-  }
-
-  function formatDate(
-    value:string
-  ) {
-
-    if (!value)
-      return "—";
-
-    return new Date(value)
-      .toLocaleDateString(
-        "ru-RU",
-        {
-          day:"numeric",
-          month:"long",
-          year:"numeric",
-        }
-      );
-  }
-
-  if (loading)
     return (
-      <div className={styles.loading}>
-        Загрузка...
+
+      <div className={styles.page}>
+
+        <div className={styles.container}>
+
+          Загрузка...
+
+        </div>
+
       </div>
     );
+  }
 
   return (
 
-    <main className={styles.page}>
+    <div className={styles.page}>
 
-      {/* HERO */}
+      <div className={styles.container}>
 
-      <section className={styles.dashboardHero}>
+        {/* HEADER */}
 
-        <div>
+        <header className={styles.header}>
 
-          <p className={styles.dashboardSubtitle}>
-            Каталог запросов
-          </p>
+          <div className={styles.logoWrap}>
 
-          <h1 className={styles.dashboardTitle}>
+            <div className={styles.logo}>
+              L
+            </div>
+
+            <div>
+
+              <div className={styles.brand}>
+                LYNKO
+              </div>
+
+              <div className={styles.subBrand}>
+                Клиентская панель
+              </div>
+
+            </div>
+
+          </div>
+
+          <button className={styles.burger}>
+
+            <Menu
+              size={24}
+              strokeWidth={2.4}
+            />
+
+          </button>
+
+        </header>
+
+        {/* HERO */}
+
+        <section className={styles.hero}>
+
+          <div className={styles.welcome}>
+            КАТАЛОГ
+          </div>
+
+          <h1 className={styles.name}>
             Запросы
           </h1>
 
-          <p className={styles.dashboardPhone}>
+          <p className={styles.subtitle}>
             Всего запросов:
             {" "}
             {requests.length}
           </p>
 
-        </div>
+        </section>
 
-        <Link
-          href="/dashboard/profile"
-          className={styles.dashboardProfile}
-        >
-          👤
-        </Link>
+        {/* LIST */}
 
-      </section>
-
-      {/* REQUESTS */}
-
-      <section className={styles.section}>
-
-        <div className={styles.requestsList}>
+        <section className={styles.form}>
 
           {requests.length === 0 && (
 
-            <div className={styles.emptyCard}>
+            <div className={styles.requestCard}>
 
-              <div className={styles.emptyIcon}>
-                📄
-              </div>
-
-              <strong>
+              <div className={styles.requestTitle}>
                 Нет запросов
-              </strong>
+              </div>
 
             </div>
 
@@ -319,356 +197,116 @@ export default function RequestsPage() {
 
           {requests.map((item) => (
 
-            <button
+            <div
               key={item.id}
               className={styles.requestCard}
-              onClick={() =>
-                setSelectedRequest(item)
-              }
+              style={{
+                marginBottom:"12px",
+              }}
             >
 
-              {/* TOP */}
-
-              <div className={styles.requestTop}>
-
-                <div>
-
-                  <p className={styles.requestLabel}>
-                    Автомобиль
-                  </p>
-
-                  <h3 className={styles.requestTitle}>
-                    {
-                      item.car ||
-                      "—"
-                    }
-                  </h3>
-
-                </div>
-
-                <div className={styles.requestActions}>
-
-                  <div className={`${styles.requestStatusBadge} ${getStatusClass(item.status)}`}>
-                    {
-                      getStatusText(
-                        item.status
-                      )
-                    }
-                  </div>
-
-                  <button
-                    type="button"
-                    className={styles.requestDelete}
-                    onClick={(event) => {
-
-                      event.stopPropagation();
-
-                      deleteRequest(
-                        item.id
-                      );
-                    }}
-                  >
-                    🗑
-                  </button>
-
-                </div>
-
+              <div className={styles.cardTitle}>
+                {item.car || "Автомобиль"}
               </div>
 
-              {/* VIN */}
-
-              <div className={styles.requestRow}>
-
-                <div className={styles.requestIcon}>
-                  🏷
-                </div>
-
-                <div className={styles.requestInfo}>
-
-                  <span>
-                    VIN code
-                  </span>
-
-                  <strong>
-                    {
-                      item.vin ||
-                      "—"
-                    }
-                  </strong>
-
-                </div>
-
+              <div
+                style={{
+                  marginTop:"10px",
+                  fontWeight:700,
+                  color:"#7b8194",
+                  fontSize:"14px",
+                }}
+              >
+                VIN:
+                {" "}
+                {item.vin || "—"}
               </div>
 
-              {/* PRODUCT */}
-
-              <div className={styles.requestRow}>
-
-                <div className={styles.requestIcon}>
-                  📦
-                </div>
-
-                <div className={styles.requestInfo}>
-
-                  <span>
-                    Наименование товара
-                  </span>
-
-                  <strong>
-                    {
-                      item.part_name ||
-                      "—"
-                    }
-                  </strong>
-
-                </div>
-
+              <div
+                style={{
+                  marginTop:"6px",
+                  fontWeight:700,
+                  color:"#7b8194",
+                  fontSize:"14px",
+                }}
+              >
+                {item.part_name || "—"}
               </div>
 
-              {/* QUANTITY */}
-
-              <div className={styles.requestRow}>
-
-                <div className={styles.requestIcon}>
-                  🧾
-                </div>
-
-                <div className={styles.requestInfo}>
-
-                  <span>
-                    Количество
-                  </span>
-
-                  <strong>
-                    {
-                      item.quantity || 1
-                    }
-                    {" "}
-                    шт.
-                  </strong>
-
-                </div>
-
+              <div
+                style={{
+                  marginTop:"10px",
+                  fontWeight:900,
+                  fontSize:"15px",
+                }}
+              >
+                {item.quantity || 1}
+                {" "}
+                шт.
               </div>
 
-            </button>
+            </div>
 
           ))}
 
-        </div>
+        </section>
 
-      </section>
+      </div>
 
-      {/* FULLSCREEN */}
+      {/* BOTTOM NAV */}
 
-      {selectedRequest && (
+      <nav className={styles.bottomNav}>
 
-        <div className={styles.checkoutFullscreen}>
+        <Link href="/dashboard">
 
-          {/* TOP */}
+          <Home
+            size={22}
+            strokeWidth={2.3}
+          />
 
-          <div className={styles.checkoutTop}>
+        </Link>
 
-            <button
-              type="button"
-              className={styles.backButton}
-              onClick={() =>
-                setSelectedRequest(null)
-              }
-            >
-              ←
-            </button>
+        <Link
+          href="/dashboard/requests"
+          className={styles.activeNav}
+        >
 
-            <h2>
-              Информация о запросе
-            </h2>
+          <FileText
+            size={22}
+            strokeWidth={2.3}
+          />
 
-          </div>
+        </Link>
 
-          {/* CARD */}
+        <Link href="/dashboard/offers">
 
-          <div className={styles.checkoutCard}>
+          <MessageCircle
+            size={22}
+            strokeWidth={2.3}
+          />
 
-            <div className={styles.requestTop}>
+        </Link>
 
-              <div>
+        <Link href="/dashboard/orders">
 
-                <p className={styles.requestLabel}>
-                  Автомобиль
-                </p>
+          <ShoppingBag
+            size={22}
+            strokeWidth={2.3}
+          />
 
-                <h3 className={styles.requestTitle}>
-                  {
-                    selectedRequest.car ||
-                    "—"
-                  }
-                </h3>
+        </Link>
 
-              </div>
+        <Link href="/dashboard/profile">
 
-              <div className={`${styles.requestStatusBadge} ${getStatusClass(selectedRequest.status)}`}>
-                {
-                  getStatusText(
-                    selectedRequest.status
-                  )
-                }
-              </div>
+          <User
+            size={22}
+            strokeWidth={2.3}
+          />
 
-            </div>
+        </Link>
 
-            <div className={styles.requestRow}>
+      </nav>
 
-              <div className={styles.requestIcon}>
-                🏷
-              </div>
-
-              <div className={styles.requestInfo}>
-
-                <span>
-                  VIN code
-                </span>
-
-                <strong>
-                  {
-                    selectedRequest.vin ||
-                    "—"
-                  }
-                </strong>
-
-              </div>
-
-            </div>
-
-            <div className={styles.requestRow}>
-
-              <div className={styles.requestIcon}>
-                📦
-              </div>
-
-              <div className={styles.requestInfo}>
-
-                <span>
-                  Наименование товара
-                </span>
-
-                <strong>
-                  {
-                    selectedRequest.part_name ||
-                    "—"
-                  }
-                </strong>
-
-              </div>
-
-            </div>
-
-            <div className={styles.requestRow}>
-
-              <div className={styles.requestIcon}>
-                🧾
-              </div>
-
-              <div className={styles.requestInfo}>
-
-                <span>
-                  Количество
-                </span>
-
-                <strong>
-                  {
-                    selectedRequest.quantity || 1
-                  }
-                  {" "}
-                  шт.
-                </strong>
-
-              </div>
-
-            </div>
-
-          </div>
-
-          {/* INFO */}
-
-          <div className={styles.checkoutCard}>
-
-            <div className={styles.checkoutSectionTitle}>
-              📄 Информация
-            </div>
-
-            <div className={styles.orderInfoRow}>
-
-              <span>
-                Статус
-              </span>
-
-              <div className={`${styles.requestStatusBadge} ${getStatusClass(selectedRequest.status)}`}>
-                {
-                  getStatusText(
-                    selectedRequest.status
-                  )
-                }
-              </div>
-
-            </div>
-
-            <div className={styles.orderInfoRow}>
-
-              <span>
-                Дата создания
-              </span>
-
-              <strong>
-                {
-                  formatDate(
-                    selectedRequest.created_at
-                  )
-                }
-              </strong>
-
-            </div>
-
-            <div className={styles.orderInfoRow}>
-
-              <span>
-                ID запроса
-              </span>
-
-              <strong>
-                #
-                {
-                  selectedRequest.id
-                }
-              </strong>
-
-            </div>
-
-          </div>
-
-          {/* DELETE */}
-
-          <div className={styles.checkoutFixed}>
-
-            <button
-              type="button"
-              className={styles.deleteRequestButton}
-              onClick={() =>
-                deleteRequest(
-                  selectedRequest.id
-                )
-              }
-            >
-              Удалить запрос
-            </button>
-
-          </div>
-
-        </div>
-
-      )}
-
-      <BottomNav active="requests" />
-
-    </main>
+    </div>
   );
 }
