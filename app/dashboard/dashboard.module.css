@@ -2,7 +2,7 @@
   min-height: 100vh;
   background: #f5f7fb;
   overflow-x: hidden;
-  padding: 20px 20px 110px;
+  padding: 120px 20px 130px;
 }
 
 .container {
@@ -14,10 +14,27 @@
 /* HEADER */
 
 .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  z-index: 120;
+
+  height: 92px;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 22px;
+
+  padding:
+    env(safe-area-inset-top)
+    24px
+    14px;
+
+  background: rgba(245,247,251,0.96);
+
+  backdrop-filter: blur(20px);
 }
 
 .logoWrap {
@@ -29,20 +46,26 @@
 .logo {
   width: 58px;
   height: 58px;
+
   border-radius: 18px;
+
   background: linear-gradient(
     135deg,
     #0f6bff,
     #2563eb
   );
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   color: white;
+
   font-size: 32px;
   font-weight: 800;
+
   box-shadow:
-    0 10px 25px rgba(37, 99, 235, 0.22);
+    0 10px 25px rgba(37,99,235,0.20);
 }
 
 .brand {
@@ -62,43 +85,51 @@
 .burger {
   width: 52px;
   height: 52px;
+
   border: none;
   background: transparent;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   color: #000;
+
   padding: 0;
 }
 
 /* HERO */
 
 .hero {
-  margin-bottom: 22px;
+  margin-bottom: 24px;
 }
 
 .welcome {
   font-size: 18px;
   font-weight: 900;
   letter-spacing: 0.03em;
-  color: #8e92a4;
+  color: #a0a4b6;
 }
 
 .name {
   margin-top: 10px;
-  font-size: 72px;
+
+  font-size: 74px;
   line-height: 0.9;
+
   font-weight: 900;
   color: #000;
 }
 
 .subtitle {
   margin-top: 18px;
+
   font-size: 16px;
   line-height: 1.35;
+
   font-weight: 700;
+
   color: #7b8194;
-  white-space: nowrap;
 }
 
 /* STATS */
@@ -106,20 +137,31 @@
 .statsGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
+
   gap: 16px;
-  margin-bottom: 20px;
+
+  margin-bottom: 22px;
 }
 
 .card {
   min-height: 126px;
+
   border-radius: 34px;
-  border: 4px solid #111;
+
   background: white;
-  padding: 16px;
+
+  padding: 18px;
+
   display: flex;
   align-items: center;
+
   gap: 14px;
+
   text-decoration: none;
+
+  box-shadow:
+    0 8px 30px rgba(0,0,0,0.05);
+
   transition: 0.18s ease;
 }
 
@@ -131,13 +173,17 @@
 .iconGreen,
 .iconPurple,
 .iconOrange {
-  width: 72px;
-  height: 72px;
+  width: 74px;
+  height: 74px;
+
   border-radius: 24px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   flex-shrink: 0;
+
   color: white;
 }
 
@@ -181,68 +227,90 @@
 
 .cardValue {
   margin-top: 4px;
-  font-size: 44px;
+
+  font-size: 46px;
   line-height: 1;
+
   font-weight: 900;
   color: #000;
 }
 
 .cardSub {
   margin-top: 6px;
+
   font-size: 14px;
   line-height: 1.25;
-  color: #7d8192;
+
+  color: #8d91a3;
+
   font-weight: 700;
 }
 
 /* REQUEST */
 
 .requestCard {
-  border-radius: 38px;
-  border: 4px solid #111;
+  border-radius: 36px;
+
   background: white;
-  padding: 20px;
+
+  padding: 22px;
+
+  box-shadow:
+    0 8px 30px rgba(0,0,0,0.05);
 }
 
 .requestTitle {
   font-size: 30px;
   line-height: 1;
+
   font-weight: 900;
   color: #000;
-  margin-bottom: 16px;
+
+  margin-bottom: 18px;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .input {
-  height: 58px;
-  border-radius: 22px;
-  border: 2px solid #e7e8f0;
+  height: 62px;
+
+  border-radius: 24px;
+
+  border: 2px solid #ececf3;
+
   background: #f8f8fc;
-  padding: 0 16px;
+
+  padding: 0 18px;
+
   display: flex;
   align-items: center;
-  gap: 12px;
+
+  gap: 14px;
 }
 
 .input svg {
-  color: #8d91a3;
+  color: #969ab0;
   flex-shrink: 0;
 }
 
 .input input,
 .input select {
   width: 100%;
+
   border: none;
   outline: none;
+
   background: transparent;
+
   font-size: 16px;
   font-weight: 700;
+
   color: #111;
+
   appearance: none;
 }
 
@@ -255,17 +323,25 @@
 .bottomRow {
   display: flex;
   align-items: center;
+
   gap: 14px;
+
   margin-top: 2px;
 }
 
 .counter {
   flex: 1;
+
   height: 62px;
+
   border-radius: 22px;
-  border: 2px solid #e7e8f0;
+
+  border: 2px solid #ececf3;
+
   background: #f8f8fc;
+
   padding: 0 8px;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -274,41 +350,54 @@
 .counter button {
   width: 38px;
   height: 38px;
+
   border: none;
   background: transparent;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   color: #111;
 }
 
 .counter span {
   font-size: 30px;
   line-height: 1;
+
   font-weight: 900;
   color: #111;
 }
 
 .submit {
   flex: 2;
+
   height: 62px;
+
   border: none;
+
   border-radius: 22px;
+
   background: linear-gradient(
     135deg,
     #000,
     #111
   );
+
   color: white;
+
   font-size: 17px;
   font-weight: 900;
   letter-spacing: 0.02em;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   gap: 10px;
+
   box-shadow:
-    0 14px 28px rgba(0, 0, 0, 0.22);
+    0 14px 28px rgba(0,0,0,0.18);
 }
 
 .submit:active {
@@ -319,31 +408,52 @@
 
 .bottomNav {
   position: fixed;
-  left: 20px;
-  right: 20px;
-  bottom: 10px;
+
+  left: 16px;
+  right: 16px;
+  bottom: 14px;
+
   max-width: 430px;
-  height: 62px;
+
+  height: 82px;
+
   margin: 0 auto;
-  border-radius: 26px;
-  border: 4px solid #111;
+
+  border-radius: 32px;
+
   background: rgba(255,255,255,0.96);
+
   backdrop-filter: blur(20px);
+
   display: flex;
   align-items: center;
   justify-content: space-around;
+
+  box-shadow:
+    0 10px 35px rgba(0,0,0,0.08);
+
   z-index: 100;
 }
 
 .bottomNav a {
   text-decoration: none;
-  color: #8b90a3;
-  font-size: 11px;
-  font-weight: 700;
+
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
+
+  gap: 6px;
+
+  color: #969ab0;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.bottomNav svg {
+  width: 24px;
+  height: 24px;
 }
 
 .activeNav {
@@ -356,30 +466,41 @@
 
   .page {
     padding:
+      116px
       18px
+      126px;
+  }
+
+  .header {
+    padding:
+      env(safe-area-inset-top)
       18px
-      108px;
+      12px;
   }
 
   .name {
-    font-size: 64px;
+    font-size: 66px;
   }
 
   .subtitle {
     font-size: 15px;
   }
 
+  .statsGrid {
+    gap: 14px;
+  }
+
   .card {
-    min-height: 120px;
-    padding: 15px;
+    min-height: 118px;
+    padding: 16px;
   }
 
   .iconBlue,
   .iconGreen,
   .iconPurple,
   .iconOrange {
-    width: 66px;
-    height: 66px;
+    width: 68px;
+    height: 68px;
   }
 
   .cardValue {
@@ -395,7 +516,7 @@
   }
 
   .input {
-    height: 56px;
+    height: 58px;
   }
 
   .counter {
@@ -405,5 +526,10 @@
   .submit {
     height: 58px;
     font-size: 15px;
+  }
+
+  .bottomNav {
+    height: 76px;
+    bottom: 12px;
   }
 }
