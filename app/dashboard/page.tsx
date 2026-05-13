@@ -68,8 +68,6 @@ export default function DashboardPage() {
 
     try {
 
-      /* LOCAL STORAGE */
-
       const localPhone =
         localStorage.getItem(
           "client_phone"
@@ -83,8 +81,6 @@ export default function DashboardPage() {
 
         return localPhone.trim();
       }
-
-      /* COOKIE */
 
       const cookiePhone =
         document.cookie
@@ -106,8 +102,6 @@ export default function DashboardPage() {
           cookiePhone
         ).trim();
       }
-
-      /* SESSION */
 
       const {
         data:{ session },
@@ -144,11 +138,6 @@ export default function DashboardPage() {
 
       const phone =
         await getClientPhone();
-
-      console.log(
-        "CLIENT PHONE:",
-        phone
-      );
 
       if (!phone) {
 
@@ -189,8 +178,6 @@ export default function DashboardPage() {
         garageResult,
       ] = await Promise.all([
 
-        /* PROFILE */
-
         supabase
           .from("profiles")
           .select("*")
@@ -199,8 +186,6 @@ export default function DashboardPage() {
             cleanPhone
           )
           .maybeSingle(),
-
-        /* REQUESTS */
 
         supabase
           .from("requests")
@@ -220,8 +205,6 @@ export default function DashboardPage() {
             "DONE"
           ),
 
-        /* OFFERS */
-
         supabase
           .from("offers")
           .select(
@@ -239,8 +222,6 @@ export default function DashboardPage() {
             "payment_status",
             "PENDING"
           ),
-
-        /* ORDERS */
 
         supabase
           .from("orders")
@@ -260,8 +241,6 @@ export default function DashboardPage() {
             "DELIVERED"
           ),
 
-        /* GARAGE */
-
         supabase
           .from("garage")
           .select("*")
@@ -272,13 +251,9 @@ export default function DashboardPage() {
 
       ]);
 
-      /* PROFILE */
-
       setProfile(
         profileResult.data || null
       );
-
-      /* COUNTS */
 
       setRequestsCount(
         requestsResult.count || 0
@@ -292,13 +267,9 @@ export default function DashboardPage() {
         ordersResult.count || 0
       );
 
-      /* GARAGE */
-
       setGarageCars(
         garageResult.data || []
       );
-
-      /* NOTIFICATIONS */
 
       setNotifications([
         {
@@ -424,14 +395,10 @@ export default function DashboardPage() {
         return;
       }
 
-      /* CLEAR FORM */
-
       setCar("");
       setVin("");
       setPartName("");
       setQuantity("1");
-
-      /* RELOAD */
 
       await loadData(phone);
 
@@ -636,103 +603,75 @@ export default function DashboardPage() {
             onSubmit={createRequest}
           >
 
-            {/* CAR */}
+            {/* AUTO */}
 
-            <div className={styles.formGroup}>
+            <select
+              className={styles.bigField}
+              value={car}
+              onChange={(e) =>
+                handleSelectCar(
+                  e.target.value
+                )
+              }
+            >
 
-              <label className={styles.formLabel}>
+              <option value="">
                 Автомобиль
-              </label>
+              </option>
 
-              <select
-                className={styles.formInput}
-                value={car}
-                onChange={(e) =>
-                  handleSelectCar(
-                    e.target.value
-                  )
-                }
-              >
+              {garageCars.map((item) => (
 
-                <option value="">
-                  Выберите из гаража
+                <option
+                  key={item.id}
+                  value={
+                    item.car ||
+                    item.name
+                  }
+                >
+
+                  {
+                    item.car ||
+                    item.name
+                  }
+
                 </option>
 
-                {garageCars.map((item) => (
+              ))}
 
-                  <option
-                    key={item.id}
-                    value={
-                      item.car ||
-                      item.name
-                    }
-                  >
-
-                    {
-                      item.car ||
-                      item.name
-                    }
-
-                  </option>
-
-                ))}
-
-              </select>
-
-            </div>
+            </select>
 
             {/* VIN */}
 
-            <div className={styles.formGroup}>
-
-              <label className={styles.formLabel}>
-                VIN код
-              </label>
-
-              <input
-                type="text"
-                placeholder="VIN код"
-                className={styles.formInput}
-                value={vin}
-                readOnly
-              />
-
-            </div>
+            <input
+              type="text"
+              value={vin}
+              readOnly
+              placeholder="VIN код"
+              className={styles.bigField}
+            />
 
             {/* PART */}
 
-            <div className={styles.formGroup}>
+            <input
+              type="text"
+              placeholder="Наименование запчасти"
+              className={styles.bigField}
+              value={partName}
+              onChange={(e) =>
+                setPartName(
+                  e.target.value
+                )
+              }
+            />
 
-              <label className={styles.formLabel}>
-                Наименование запчасти
-              </label>
+            {/* BOTTOM ROW */}
 
-              <input
-                type="text"
-                placeholder="Например: Передний бампер"
-                className={styles.formInput}
-                value={partName}
-                onChange={(e) =>
-                  setPartName(
-                    e.target.value
-                  )
-                }
-              />
-
-            </div>
-
-            {/* QUANTITY */}
-
-            <div className={styles.formGroup}>
-
-              <label className={styles.formLabel}>
-                Количество
-              </label>
+            <div className={styles.bottomRow}>
 
               <input
                 type="number"
-                placeholder="1"
-                className={styles.formInput}
+                placeholder="Кол-во"
+                className={styles.quantityField}
                 value={quantity}
                 onChange={(e) =>
                   setQuantity(
@@ -741,22 +680,20 @@ export default function DashboardPage() {
                 }
               />
 
+              <button
+                type="submit"
+                className={styles.sendButton}
+              >
+
+                {
+                  creating
+                    ? "Создание..."
+                    : "Отправить"
+                }
+
+              </button>
+
             </div>
-
-            {/* BUTTON */}
-
-            <button
-              type="submit"
-              className={styles.submitButton}
-            >
-
-              {
-                creating
-                  ? "Создание..."
-                  : "Сделать запрос"
-              }
-
-            </button>
 
           </form>
 
