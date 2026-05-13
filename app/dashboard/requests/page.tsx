@@ -357,6 +357,7 @@ export default function RequestsPage() {
                   </div>
 
                   <button
+                    type="button"
                     className={styles.requestDelete}
                     onClick={(event) => {
 
@@ -469,6 +470,7 @@ export default function RequestsPage() {
           <div className={styles.checkoutTop}>
 
             <button
+              type="button"
               className={styles.backButton}
               onClick={() =>
                 setSelectedRequest(null)
@@ -648,6 +650,7 @@ export default function RequestsPage() {
           <div className={styles.checkoutFixed}>
 
             <button
+              type="button"
               className={styles.deleteRequestButton}
               onClick={() =>
                 deleteRequest(
