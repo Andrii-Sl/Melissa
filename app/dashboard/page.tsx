@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
 
 import { supabase } from "@/lib/supabase";
 
@@ -26,8 +29,25 @@ export default function DashboardPage() {
   const [ordersCount, setOrdersCount] =
     useState(0);
 
+  const [
+    animatedRequests,
+    setAnimatedRequests,
+  ] = useState(0);
+
+  const [
+    animatedOffers,
+    setAnimatedOffers,
+  ] = useState(0);
+
+  const [
+    animatedOrders,
+    setAnimatedOrders,
+  ] = useState(0);
+
   const [notifications, setNotifications] =
     useState<any[]>([]);
+
+  /* PHONE */
 
   async function getClientPhone() {
 
@@ -61,11 +81,156 @@ export default function DashboardPage() {
     }
   }
 
+  /* LOAD */
+
   useEffect(() => {
 
     loadData();
 
+    const requestsChannel =
+      supabase
+        .channel("dashboard-requests")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"requests",
+          },
+          () => {
+            loadData();
+          }
+        )
+        .subscribe();
+
+    const offersChannel =
+      supabase
+        .channel("dashboard-offers")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"offers",
+          },
+          () => {
+            loadData();
+          }
+        )
+        .subscribe();
+
+    const ordersChannel =
+      supabase
+        .channel("dashboard-orders")
+        .on(
+          "postgres_changes",
+          {
+            event:"*",
+            schema:"public",
+            table:"orders",
+          },
+          () => {
+            loadData();
+          }
+        )
+        .subscribe();
+
+    return () => {
+
+      supabase.removeChannel(
+        requestsChannel
+      );
+
+      supabase.removeChannel(
+        offersChannel
+      );
+
+      supabase.removeChannel(
+        ordersChannel
+      );
+    };
+
   }, []);
+
+  /* COUNTER ANIMATION */
+
+  useEffect(() => {
+
+    animateValue(
+      animatedRequests,
+      requestsCount,
+      setAnimatedRequests
+    );
+
+  }, [requestsCount]);
+
+  useEffect(() => {
+
+    animateValue(
+      animatedOffers,
+      offersCount,
+      setAnimatedOffers
+    );
+
+  }, [offersCount]);
+
+  useEffect(() => {
+
+    animateValue(
+      animatedOrders,
+      ordersCount,
+      setAnimatedOrders
+    );
+
+  }, [ordersCount]);
+
+  function animateValue(
+    start:number,
+    end:number,
+    setter:any
+  ) {
+
+    const duration = 300;
+
+    const startTime =
+      performance.now();
+
+    function update(
+      currentTime:number
+    ) {
+
+      const elapsed =
+        currentTime - startTime;
+
+      const progress =
+        Math.min(
+          elapsed / duration,
+          1
+        );
+
+      const value =
+        Math.floor(
+          start +
+          (end - start) *
+          progress
+        );
+
+      setter(value);
+
+      if (progress < 1) {
+
+        requestAnimationFrame(
+          update
+        );
+      }
+    }
+
+    requestAnimationFrame(
+      update
+    );
+  }
+
+  /* LOAD DATA */
 
   async function loadData() {
 
@@ -207,27 +372,29 @@ export default function DashboardPage() {
     }
   }
 
+  /* LOADING */
+
   if (loading)
-  return (
+    return (
 
-    <main className={styles.page}>
+      <main className={styles.page}>
 
-      <div className={styles.skeletonHero} />
+        <div className={styles.skeletonHero} />
 
-      <div className={styles.skeletonGrid}>
+        <div className={styles.skeletonGrid}>
 
-        <div className={styles.skeletonCard} />
-        <div className={styles.skeletonCard} />
-        <div className={styles.skeletonCard} />
-        <div className={styles.skeletonCard} />
+          <div className={styles.skeletonCard} />
+          <div className={styles.skeletonCard} />
+          <div className={styles.skeletonCard} />
+          <div className={styles.skeletonCard} />
 
-      </div>
+        </div>
 
-      <div className={styles.skeletonBox} />
-      <div className={styles.skeletonBox} />
+        <div className={styles.skeletonBox} />
+        <div className={styles.skeletonBox} />
 
-    </main>
-  );
+      </main>
+    );
 
   return (
 
@@ -302,7 +469,7 @@ export default function DashboardPage() {
           </h3>
 
           <strong>
-            {requestsCount}
+            {animatedRequests}
           </strong>
 
         </Link>
@@ -317,7 +484,7 @@ export default function DashboardPage() {
           </h3>
 
           <strong>
-            {offersCount}
+            {animatedOffers}
           </strong>
 
         </Link>
@@ -332,7 +499,7 @@ export default function DashboardPage() {
           </h3>
 
           <strong>
-            {ordersCount}
+            {animatedOrders}
           </strong>
 
         </Link>
