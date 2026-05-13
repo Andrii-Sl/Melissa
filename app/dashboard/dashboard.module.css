@@ -133,16 +133,14 @@ img{
   font-size:18px;
 }
 
-/* HERO */
-
 .dashboardHero{
-  margin-bottom:20px;
+  margin-bottom:22px;
 }
 
 .dashboardSubtitle{
-  margin:0 0 8px;
+  margin:0 0 6px;
 
-  color:#6b7280;
+  color:#9ca3af;
 
   font-size:13px;
   font-weight:700;
@@ -153,10 +151,12 @@ img{
 
   color:#111827;
 
-  font-size:32px;
+  font-size:34px;
   line-height:1;
 
   font-weight:900;
+
+  letter-spacing:-1px;
 }
 
 /* SECTION */
@@ -174,8 +174,6 @@ img{
   font-weight:800;
 }
 
-/* GRID */
-
 .dashboardGrid{
   display:grid;
 
@@ -184,71 +182,88 @@ img{
 
   gap:12px;
 
-  margin-bottom:16px;
+  margin-bottom:18px;
 }
 
 /* CARD */
 
 .dashboardCard{
+  position:relative;
+
+  min-height:124px;
+
   background:#ffffff;
 
   border:
     1px solid #111111;
 
-  border-radius:20px;
-
-  min-height:110px;
+  border-radius:24px;
 
   padding:16px;
-
-  text-decoration:none;
-
-  color:#111827;
 
   display:flex;
   flex-direction:column;
   justify-content:space-between;
 
-  transition:.15s ease;
+  text-decoration:none;
+
+  overflow:hidden;
+
+  transition:
+    transform .14s ease,
+    box-shadow .14s ease,
+    background .14s ease;
+
+  box-shadow:
+    0 1px 0 rgba(0,0,0,.04);
 }
 
 .dashboardCard:active{
   transform:scale(.98);
 }
 
+.dashboardCard:hover{
+  transform:translateY(-1px);
+
+  box-shadow:
+    0 8px 24px rgba(0,0,0,.06);
+}
+
 .dashboardCard h3{
   margin:0;
 
-  font-size:14px;
-  line-height:1.3;
+  color:#6b7280;
 
+  font-size:14px;
   font-weight:700;
+
+  line-height:1.2;
 }
 
 .dashboardCard strong{
-  font-size:38px;
+  color:#111827;
+
+  font-size:48px;
   line-height:1;
 
   font-weight:900;
+
+  letter-spacing:-2px;
 }
 
 /* BOX */
 
-.dashboardBox{
+..dashboardBox{
   background:#ffffff;
 
   border:
     1px solid #111111;
 
-  border-radius:20px;
+  border-radius:24px;
 
-  padding:16px;
-}
+  padding:18px;
 
-.boxTop{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+  margin-bottom:16px;
 }
 
 /* QUICK */
@@ -582,7 +597,7 @@ img{
   display:flex;
   flex-direction:column;
 
-  gap:14px;
+  gap:12px;
 }
 
 .notificationItem{
@@ -590,17 +605,26 @@ img{
   align-items:flex-start;
 
   gap:12px;
+
+  padding:14px;
+
+  border:
+    1px solid #111111;
+
+  border-radius:18px;
+
+  background:#ffffff;
 }
 
 .notificationDot{
-  width:8px;
-  height:8px;
-
-  margin-top:7px;
+  width:10px;
+  height:10px;
 
   border-radius:999px;
 
   background:#111827;
+
+  margin-top:6px;
 
   flex-shrink:0;
 }
@@ -613,14 +637,15 @@ img{
   color:#111827;
 
   font-size:14px;
-  line-height:1.45;
+  line-height:1.35;
+
   font-weight:700;
 }
 
 .notificationContent p{
   margin:0;
 
-  color:#6b7280;
+  color:#9ca3af;
 
   font-size:12px;
 }
@@ -707,5 +732,142 @@ img{
   animation:
     skeletonPulse 1.4s ease-in-out infinite;
 }
+
+.sectionTitle{
+  margin:0 0 16px;
+
+  color:#111827;
+
+  font-size:20px;
+  line-height:1.1;
+
+  font-weight:900;
+
+  letter-spacing:-.5px;
+}
+
+.quickActions{
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:10px;
+}
+
+.quickButton{
+  height:44px;
+
+  padding:0 16px;
+
+  border:
+    1px solid #111111;
+
+  border-radius:14px;
+
+  background:#ffffff;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  text-decoration:none;
+
+  color:#111827;
+
+  font-size:14px;
+  font-weight:700;
+
+  transition:.14s ease;
+}
+
+.quickButton:active{
+  transform:scale(.96);
+}
+
+.quickButton:hover{
+  background:#111827;
+  color:#ffffff;
+}
+
+.skeletonHero{
+  width:180px;
+  height:42px;
+
+  border-radius:14px;
+
+  margin-bottom:22px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #f3f4f6 25%,
+      #e5e7eb 50%,
+      #f3f4f6 75%
+    );
+
+  background-size:200% 100%;
+
+  animation:skeleton 1.2s infinite;
+}
+
+.skeletonGrid{
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:12px;
+
+  margin-bottom:18px;
+}
+
+.skeletonCard{
+  height:124px;
+
+  border-radius:24px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #f3f4f6 25%,
+      #e5e7eb 50%,
+      #f3f4f6 75%
+    );
+
+  background-size:200% 100%;
+
+  animation:skeleton 1.2s infinite;
+}
+
+.skeletonBox{
+  height:140px;
+
+  border-radius:24px;
+
+  margin-bottom:16px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #f3f4f6 25%,
+      #e5e7eb 50%,
+      #f3f4f6 75%
+    );
+
+  background-size:200% 100%;
+
+  animation:skeleton 1.2s infinite;
+}
+
+@keyframes skeleton{
+
+  0%{
+    background-position:
+      200% 0;
+  }
+
+  100%{
+    background-position:
+      -200% 0;
+  }
 
 }
