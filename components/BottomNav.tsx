@@ -2,6 +2,14 @@
 
 import Link from "next/link";
 
+import {
+  Home,
+  FileText,
+  MessageCircle,
+  ShoppingBag,
+  User,
+} from "lucide-react";
+
 import styles from "./BottomNav.module.css";
 
 export default function BottomNav({
@@ -23,13 +31,10 @@ export default function BottomNav({
         }`}
       >
 
-        <div className={styles.navIcon}>
-          🏠
-        </div>
-
-        <div className={styles.navText}>
-          Главная
-        </div>
+        <Home
+          size={22}
+          strokeWidth={2.3}
+        />
 
       </Link>
 
@@ -42,13 +47,10 @@ export default function BottomNav({
         }`}
       >
 
-        <div className={styles.navIcon}>
-          📄
-        </div>
-
-        <div className={styles.navText}>
-          Запросы
-        </div>
+        <FileText
+          size={22}
+          strokeWidth={2.3}
+        />
 
       </Link>
 
@@ -61,13 +63,10 @@ export default function BottomNav({
         }`}
       >
 
-        <div className={styles.navIcon}>
-          💶
-        </div>
-
-        <div className={styles.navText}>
-          Предложения
-        </div>
+        <MessageCircle
+          size={22}
+          strokeWidth={2.3}
+        />
 
       </Link>
 
@@ -80,13 +79,10 @@ export default function BottomNav({
         }`}
       >
 
-        <div className={styles.navIcon}>
-          📦
-        </div>
-
-        <div className={styles.navText}>
-          Заказы
-        </div>
+        <ShoppingBag
+          size={22}
+          strokeWidth={2.3}
+        />
 
       </Link>
 
@@ -99,13 +95,10 @@ export default function BottomNav({
         }`}
       >
 
-        <div className={styles.navIcon}>
-          👤
-        </div>
-
-        <div className={styles.navText}>
-          Профиль
-        </div>
+        <User
+          size={22}
+          strokeWidth={2.3}
+        />
 
       </Link>
 
