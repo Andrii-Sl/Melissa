@@ -354,7 +354,10 @@ export default function DashboardPage() {
 
           <button className={styles.burger}>
 
-            <Menu size={38} />
+            <Menu
+              size={24}
+              strokeWidth={2.4}
+            />
 
           </button>
 
@@ -389,7 +392,10 @@ export default function DashboardPage() {
 
             <div className={styles.iconBlue}>
 
-              <FileText size={34} />
+              <FileText
+                size={22}
+                strokeWidth={2.3}
+              />
 
             </div>
 
@@ -414,7 +420,10 @@ export default function DashboardPage() {
 
             <div className={styles.iconGreen}>
 
-              <MessageCircle size={34} />
+              <MessageCircle
+                size={22}
+                strokeWidth={2.3}
+              />
 
             </div>
 
@@ -439,7 +448,10 @@ export default function DashboardPage() {
 
             <div className={styles.iconPurple}>
 
-              <ShoppingBag size={34} />
+              <ShoppingBag
+                size={22}
+                strokeWidth={2.3}
+              />
 
             </div>
 
@@ -464,7 +476,10 @@ export default function DashboardPage() {
 
             <div className={styles.iconOrange}>
 
-              <User size={34} />
+              <User
+                size={22}
+                strokeWidth={2.3}
+              />
 
             </div>
 
@@ -498,7 +513,10 @@ export default function DashboardPage() {
 
             <div className={styles.input}>
 
-              <Car size={22} />
+              <Car
+                size={18}
+                strokeWidth={2.3}
+              />
 
               <select
                 value={selectedCar}
@@ -526,7 +544,10 @@ export default function DashboardPage() {
 
               </select>
 
-              <ChevronDown size={22} />
+              <ChevronDown
+                size={18}
+                strokeWidth={2.3}
+              />
 
             </div>
 
@@ -534,7 +555,10 @@ export default function DashboardPage() {
 
             <div className={styles.input}>
 
-              <Shield size={22} />
+              <Shield
+                size={18}
+                strokeWidth={2.3}
+              />
 
               <input
                 type="text"
@@ -549,7 +573,10 @@ export default function DashboardPage() {
 
             <div className={styles.input}>
 
-              <Package size={22} />
+              <Package
+                size={18}
+                strokeWidth={2.3}
+              />
 
               <input
                 type="text"
@@ -581,7 +608,10 @@ export default function DashboardPage() {
                   }
                 >
 
-                  <Minus size={22} />
+                  <Minus
+                    size={18}
+                    strokeWidth={2.6}
+                  />
 
                 </button>
 
@@ -597,7 +627,10 @@ export default function DashboardPage() {
                   }
                 >
 
-                  <Plus size={22} />
+                  <Plus
+                    size={18}
+                    strokeWidth={2.6}
+                  />
 
                 </button>
 
@@ -609,11 +642,14 @@ export default function DashboardPage() {
                 disabled={loading}
               >
 
-                <Send size={22} />
+                <Send
+                  size={18}
+                  strokeWidth={2.5}
+                />
 
                 {loading
                   ? "ОТПРАВКА..."
-                  : "ОТПРАВИТЬ ЗАПРОС"}
+                  : "ОТПРАВИТЬ"}
 
               </button>
 
@@ -634,31 +670,46 @@ export default function DashboardPage() {
           className={styles.activeNav}
         >
 
-          <Home />
+          <Home
+            size={22}
+            strokeWidth={2.3}
+          />
 
         </Link>
 
         <Link href="/dashboard/requests">
 
-          <FileText />
+          <FileText
+            size={22}
+            strokeWidth={2.3}
+          />
 
         </Link>
 
         <Link href="/dashboard/offers">
 
-          <MessageCircle />
+          <MessageCircle
+            size={22}
+            strokeWidth={2.3}
+          />
 
         </Link>
 
         <Link href="/dashboard/orders">
 
-          <ShoppingBag />
+          <ShoppingBag
+            size={22}
+            strokeWidth={2.3}
+          />
 
         </Link>
 
         <Link href="/dashboard/profile">
 
-          <User />
+          <User
+            size={22}
+            strokeWidth={2.3}
+          />
 
         </Link>
 
