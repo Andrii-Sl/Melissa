@@ -21,7 +21,7 @@
 
   z-index: 120;
 
-  height: 74px;
+  height: 62px;
 
   display: flex;
   align-items: center;
@@ -29,7 +29,7 @@
 
   padding:
     env(safe-area-inset-top)
-    14px
+    10px
     10px;
 
   background: rgba(245,247,251,0.94);
@@ -46,8 +46,8 @@
 }
 
 .logo {
-  width: 46px;
-  height: 46px;
+  width: 40px;
+  height: 40px;
 
   border-radius: 14px;
 
@@ -71,7 +71,7 @@
 }
 
 .brand {
-  font-size: 22px;
+  font-size: 19px;
   line-height: 1;
   font-weight: 900;
   color: #000;
