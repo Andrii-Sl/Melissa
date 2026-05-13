@@ -120,68 +120,12 @@ export default function DashboardPage() {
 
     loadData();
 
-    const requestsChannel =
-      supabase
-        .channel("dashboard-requests")
-        .on(
-          "postgres_changes",
-          {
-            event:"*",
-            schema:"public",
-            table:"requests",
-          },
-          () => {
-            loadData();
-          }
-        )
-        .subscribe();
-
-    const offersChannel =
-      supabase
-        .channel("dashboard-offers")
-        .on(
-          "postgres_changes",
-          {
-            event:"*",
-            schema:"public",
-            table:"offers",
-          },
-          () => {
-            loadData();
-          }
-        )
-        .subscribe();
-
-    const ordersChannel =
-      supabase
-        .channel("dashboard-orders")
-        .on(
-          "postgres_changes",
-          {
-            event:"*",
-            schema:"public",
-            table:"orders",
-          },
-          () => {
-            loadData();
-          }
-        )
-        .subscribe();
-
-    return () => {
-
-      supabase.removeChannel(
-        requestsChannel
-      );
-
-      supabase.removeChannel(
-        offersChannel
-      );
-
-      supabase.removeChannel(
-        ordersChannel
-      );
-    };
+    /*
+    TEMPORARY:
+    realtime disabled
+    because subscriptions
+    can freeze loading
+    */
 
   }, []);
 
@@ -284,38 +228,25 @@ export default function DashboardPage() {
         return;
       }
 
-      /* PROFILE */
+      /* PARALLEL REQUESTS */
 
-      const {
-        data:profileData,
-        error:profileError,
-      } =
-        await supabase
+      const [
+        profileResult,
+        requestsResult,
+        offersResult,
+        ordersResult,
+      ] = await Promise.all([
+
+        supabase
           .from("profiles")
           .select("*")
           .eq(
             "phone",
             phone
           )
-          .maybeSingle();
+          .maybeSingle(),
 
-      if (profileError) {
-
-        console.error(
-          "PROFILE ERROR:",
-          profileError
-        );
-      }
-
-      setProfile(profileData);
-
-      /* REQUESTS */
-
-      const {
-        count:reqCount,
-        error:reqError,
-      } =
-        await supabase
+        supabase
           .from("requests")
           .select(
             "id",
@@ -331,27 +262,9 @@ export default function DashboardPage() {
           .neq(
             "status",
             "DONE"
-          );
+          ),
 
-      if (reqError) {
-
-        console.error(
-          "REQUESTS ERROR:",
-          reqError
-        );
-      }
-
-      setRequestsCount(
-        reqCount || 0
-      );
-
-      /* OFFERS */
-
-      const {
-        count:offCount,
-        error:offError,
-      } =
-        await supabase
+        supabase
           .from("offers")
           .select(
             "id",
@@ -367,27 +280,9 @@ export default function DashboardPage() {
           .eq(
             "payment_status",
             "PENDING"
-          );
+          ),
 
-      if (offError) {
-
-        console.error(
-          "OFFERS ERROR:",
-          offError
-        );
-      }
-
-      setOffersCount(
-        offCount || 0
-      );
-
-      /* ORDERS */
-
-      const {
-        count:ordCount,
-        error:ordError,
-      } =
-        await supabase
+        supabase
           .from("orders")
           .select(
             "id",
@@ -403,19 +298,73 @@ export default function DashboardPage() {
           .neq(
             "status",
             "DELIVERED"
-          );
+          ),
 
-      if (ordError) {
+      ]);
+
+      /* PROFILE */
+
+      if (profileResult.error) {
 
         console.error(
-          "ORDERS ERROR:",
-          ordError
+          "PROFILE ERROR:",
+          profileResult.error
+        );
+
+      } else {
+
+        setProfile(
+          profileResult.data
         );
       }
 
-      setOrdersCount(
-        ordCount || 0
-      );
+      /* REQUESTS */
+
+      if (requestsResult.error) {
+
+        console.error(
+          "REQUESTS ERROR:",
+          requestsResult.error
+        );
+
+      } else {
+
+        setRequestsCount(
+          requestsResult.count || 0
+        );
+      }
+
+      /* OFFERS */
+
+      if (offersResult.error) {
+
+        console.error(
+          "OFFERS ERROR:",
+          offersResult.error
+        );
+
+      } else {
+
+        setOffersCount(
+          offersResult.count || 0
+        );
+      }
+
+      /* ORDERS */
+
+      if (ordersResult.error) {
+
+        console.error(
+          "ORDERS ERROR:",
+          ordersResult.error
+        );
+
+      } else {
+
+        setOrdersCount(
+          ordersResult.count || 0
+        );
+      }
 
       /* NOTIFICATIONS */
 
