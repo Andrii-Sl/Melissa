@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import styles from "./dashboard.module.css";
-
 import { createClient } from "@supabase/supabase-js";
 
 import {
@@ -17,10 +15,13 @@ import {
   Shield,
   Package,
   Send,
+  Home,
   Minus,
   Plus,
   ChevronDown,
 } from "lucide-react";
+
+import styles from "./dashboard.module.css";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -123,67 +124,69 @@ export default function DashboardPage() {
         offersRes,
         ordersRes,
         garageRes,
-      ] = await Promise.all([
+      ] =
+        await Promise.all([
 
-        supabase
-          .from("profiles")
-          .select("*")
-          .eq(
-            "phone",
-            clientPhone
-          )
-          .single(),
+          supabase
+            .from("profiles")
+            .select("*")
+            .eq(
+              "phone",
+              clientPhone
+            )
+            .single(),
 
-        supabase
-          .from("requests")
-          .select(
-            "id",
-            {
-              count:"exact",
-              head:true,
-            }
-          )
-          .eq(
-            "client_phone",
-            clientPhone
-          ),
+          supabase
+            .from("requests")
+            .select(
+              "id",
+              {
+                count:"exact",
+                head:true,
+              }
+            )
+            .eq(
+              "client_phone",
+              clientPhone
+            ),
 
-        supabase
-          .from("offers")
-          .select(
-            "client_phone",
-            {
-              count:"exact",
-              head:true,
-            }
-          )
-          .eq(
-            "client_phone",
-            clientPhone
-          ),
+          supabase
+            .from("offers")
+            .select(
+              "id",
+              {
+                count:"exact",
+                head:true,
+              }
+            )
+            .eq(
+              "client_phone",
+              clientPhone
+            ),
 
-        supabase
-          .from("orders")
-          .select(
-            "client_phone",
-            {
-              count:"exact",
-              head:true,
-            }
-          )
-          .eq(
-            "client_phone",
-            clientPhone
-          ),
+          supabase
+            .from("orders")
+            .select(
+              "id",
+              {
+                count:"exact",
+                head:true,
+              }
+            )
+            .eq(
+              "client_phone",
+              clientPhone
+            ),
 
-        supabase
-          .from("garage")
-          .select("*")
-          .eq(
-            "client_phone",
-            clientPhone
-          ),
-      ]);
+          supabase
+            .from("garage")
+            .select("*")
+            .eq(
+              "client_phone",
+              clientPhone
+            ),
+
+        ]);
 
       if (
         profileRes.data
@@ -256,11 +259,17 @@ export default function DashboardPage() {
       await supabase
         .from("requests")
         .insert({
+
           car:selectedCar,
+
           vin,
+
           part_name:partName,
+
           quantity,
+
           status:"NEW",
+
           client_phone:phone,
         });
 
@@ -301,8 +310,17 @@ export default function DashboardPage() {
 
   const firstName =
     profile?.first_name ||
+
     profile?.name ||
+
     "Клиент";
+
+  const lastName =
+    profile?.last_name ||
+
+    profile?.surname ||
+
+    "";
 
   return (
 
@@ -334,11 +352,10 @@ export default function DashboardPage() {
 
           </div>
 
-          <button
-            type="button"
-            className={styles.burger}
-          >
-            <Menu size={34} />
+          <button className={styles.burger}>
+
+            <Menu size={38} />
+
           </button>
 
         </header>
@@ -347,21 +364,17 @@ export default function DashboardPage() {
 
         <section className={styles.hero}>
 
-          <div>
-
-            <div className={styles.welcome}>
-              ДОБРО ПОЖАЛОВАТЬ
-            </div>
-
-            <h1 className={styles.name}>
-              {firstName}
-            </h1>
-
-            <p className={styles.subtitle}>
-              Управляйте запросами и следите за заказами
-            </p>
-
+          <div className={styles.welcome}>
+            ДОБРО ПОЖАЛОВАТЬ
           </div>
+
+          <h1 className={styles.name}>
+            {firstName}
+          </h1>
+
+          <p className={styles.subtitle}>
+            Управляйте запросами и следите за заказами
+          </p>
 
         </section>
 
@@ -375,7 +388,9 @@ export default function DashboardPage() {
           >
 
             <div className={styles.iconBlue}>
-              <FileText size={30} />
+
+              <FileText size={34} />
+
             </div>
 
             <div>
@@ -398,7 +413,9 @@ export default function DashboardPage() {
           >
 
             <div className={styles.iconGreen}>
-              <MessageCircle size={30} />
+
+              <MessageCircle size={34} />
+
             </div>
 
             <div>
@@ -421,7 +438,9 @@ export default function DashboardPage() {
           >
 
             <div className={styles.iconPurple}>
-              <ShoppingBag size={30} />
+
+              <ShoppingBag size={34} />
+
             </div>
 
             <div>
@@ -444,7 +463,9 @@ export default function DashboardPage() {
           >
 
             <div className={styles.iconOrange}>
-              <User size={30} />
+
+              <User size={34} />
+
             </div>
 
             <div>
@@ -473,6 +494,8 @@ export default function DashboardPage() {
 
           <div className={styles.form}>
 
+            {/* CAR */}
+
             <div className={styles.input}>
 
               <Car size={22} />
@@ -490,26 +513,24 @@ export default function DashboardPage() {
                   Выберите автомобиль
                 </option>
 
-                {garage.map(
-                  (item) => (
+                {garage.map((item) => (
 
-                    <option
-                      key={item.id}
-                      value={item.car}
-                    >
-                      {item.car}
-                    </option>
+                  <option
+                    key={item.id}
+                    value={item.car}
+                  >
+                    {item.car}
+                  </option>
 
-                  )
-                )}
+                ))}
 
               </select>
 
-              <ChevronDown
-                size={22}
-              />
+              <ChevronDown size={22} />
 
             </div>
+
+            {/* VIN */}
 
             <div className={styles.input}>
 
@@ -523,6 +544,8 @@ export default function DashboardPage() {
               />
 
             </div>
+
+            {/* PART */}
 
             <div className={styles.input}>
 
@@ -541,14 +564,13 @@ export default function DashboardPage() {
 
             </div>
 
-            {/* BOTTOM */}
+            {/* ACTIONS */}
 
             <div className={styles.bottomRow}>
 
               <div className={styles.counter}>
 
                 <button
-                  type="button"
                   onClick={() =>
                     setQuantity(
                       Math.max(
@@ -558,7 +580,9 @@ export default function DashboardPage() {
                     )
                   }
                 >
-                  <Minus size={20} />
+
+                  <Minus size={22} />
+
                 </button>
 
                 <span>
@@ -566,20 +590,20 @@ export default function DashboardPage() {
                 </span>
 
                 <button
-                  type="button"
                   onClick={() =>
                     setQuantity(
                       quantity + 1
                     )
                   }
                 >
-                  <Plus size={20} />
+
+                  <Plus size={22} />
+
                 </button>
 
               </div>
 
               <button
-                type="button"
                 className={styles.submit}
                 onClick={handleSubmit}
                 disabled={loading}
@@ -587,11 +611,9 @@ export default function DashboardPage() {
 
                 <Send size={22} />
 
-                {
-                  loading
-                    ? "Отправка..."
-                    : "ОТПРАВИТЬ ЗАПРОС"
-                }
+                {loading
+                  ? "ОТПРАВКА..."
+                  : "ОТПРАВИТЬ ЗАПРОС"}
 
               </button>
 
@@ -611,23 +633,33 @@ export default function DashboardPage() {
           href="/dashboard"
           className={styles.activeNav}
         >
-          Главная
+
+          <Home />
+
         </Link>
 
         <Link href="/dashboard/requests">
-          Запросы
+
+          <FileText />
+
         </Link>
 
         <Link href="/dashboard/offers">
-          Предложения
+
+          <MessageCircle />
+
         </Link>
 
         <Link href="/dashboard/orders">
-          Заказы
+
+          <ShoppingBag />
+
         </Link>
 
         <Link href="/dashboard/profile">
-          Профиль
+
+          <User />
+
         </Link>
 
       </nav>
