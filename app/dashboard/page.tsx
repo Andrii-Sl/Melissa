@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 
 import { supabase } from "@/lib/supabase";
 
+import BottomNav from "@/components/BottomNav";
+
 import styles from "./dashboard.module.css";
 
 export default function DashboardPage() {
@@ -216,6 +218,40 @@ export default function DashboardPage() {
 
     <main className={styles.page}>
 
+      {/* TOP BAR */}
+
+      <header className={styles.topBar}>
+
+        <div className={styles.topBarLeft}>
+
+          <img
+            src="/logo.png"
+            alt="logo"
+            className={styles.topLogo}
+          />
+
+          <div>
+
+            <h2 className={styles.topTitle}>
+              Lynko
+            </h2>
+
+            <p className={styles.topSubtitle}>
+              Клиентская панель
+            </p>
+
+          </div>
+
+        </div>
+
+        <button
+          className={styles.burgerButton}
+        >
+          ☰
+        </button>
+
+      </header>
+
       {/* HERO */}
 
       <section className={styles.dashboardHero}>
@@ -296,7 +332,7 @@ export default function DashboardPage() {
           </h3>
 
           <strong>
-            → 
+            →
           </strong>
 
         </Link>
@@ -397,51 +433,7 @@ export default function DashboardPage() {
 
       </section>
 
-      {/* BOTTOM NAV */}
-
-      <nav className={styles.bottomNav}>
-
-        <Link
-          href="/dashboard"
-          className={`${styles.navItem} ${styles.navActive}`}
-        >
-          <span>🏠</span>
-          <p>Главная</p>
-        </Link>
-
-        <Link
-          href="/dashboard/requests"
-          className={styles.navItem}
-        >
-          <span>📄</span>
-          <p>Запросы</p>
-        </Link>
-
-        <Link
-          href="/dashboard/offers"
-          className={styles.navItem}
-        >
-          <span>💶</span>
-          <p>Предложения</p>
-        </Link>
-
-        <Link
-          href="/dashboard/orders"
-          className={styles.navItem}
-        >
-          <span>📦</span>
-          <p>Заказы</p>
-        </Link>
-
-        <Link
-          href="/dashboard/profile"
-          className={styles.navItem}
-        >
-          <span>👤</span>
-          <p>Профиль</p>
-        </Link>
-
-      </nav>
+      <BottomNav active="home" />
 
     </main>
   );
