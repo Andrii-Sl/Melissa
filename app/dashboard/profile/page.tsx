@@ -15,6 +15,11 @@ import {
 
 import { supabase } from "@/lib/supabase";
 
+import type {
+  Profile,
+  GarageCar,
+} from "@/types/dashboard";
+
 import { handleError }
 from "@/lib/handleError";
 
@@ -32,10 +37,10 @@ export default function ProfilePage() {
     useState(true);
 
   const [garage, setGarage] =
-    useState<any[]>([]);
+    useState<GarageCar[]>([])
 
   const [profile, setProfile] =
-    useState<any>(null);
+    useState<Profile | null>(null)
 
   const [firstName, setFirstName] =
     useState("");
