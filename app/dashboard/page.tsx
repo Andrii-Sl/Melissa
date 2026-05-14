@@ -4,21 +4,20 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import {
-  Menu,
-  X,
-  FileText,
-  MessageCircle,
-  ShoppingBag,
-  User,
-  Car,
-  Shield,
-  Package,
-  Send,
-  Home,
-  Minus,
-  Plus,
-  ChevronDown,
-  LogOut,
+Menu,
+X,
+FileText,
+MessageCircle,
+ShoppingBag,
+User,
+Car,
+Shield,
+Package,
+Send,
+Home,
+Minus,
+Plus,
+ChevronDown,
 } from "lucide-react";
 
 import { supabase }
@@ -28,831 +27,798 @@ import { handleError }
 from "@/lib/handleError";
 
 import {
-  getClientPhone,
+getClientPhone,
 } from "@/lib/getClientPhone";
 
 import type {
-  Profile,
-  GarageCar,
+Profile,
+GarageCar,
 } from "@/types/dashboard";
 
 import styles from "./dashboard.module.css";
 
 export default function DashboardPage() {
 
-  const [menuOpen, setMenuOpen] =
-    useState(false);
-
-  const [phone, setPhone] =
-    useState("");
-
-  const [profile, setProfile] =
-    useState<Profile | null>(null);
-
-  const [requestsCount, setRequestsCount] =
-    useState(0);
-
-  const [offersCount, setOffersCount] =
-    useState(0);
-
-  const [ordersCount, setOrdersCount] =
-    useState(0);
-
-  const [garage, setGarage] =
-    useState<GarageCar[]>([]);
-
-  const [selectedCar, setSelectedCar] =
-    useState("");
-
-  const [vin, setVin] =
-    useState("");
-
-  const [partName, setPartName] =
-    useState("");
-
-  const [quantity, setQuantity] =
-    useState(1);
-
-  const [loading, setLoading] =
-    useState(false);
-
-  useEffect(() => {
-
-    init();
-
-  }, []);
-
-  async function init() {
-
-    try {
-
-      const clientPhone =
-        await getClientPhone();
-
-      const normalizedPhone =
-        clientPhone.trim();
-
-      setPhone(
-        normalizedPhone
-      );
-
-      if (!normalizedPhone)
-        return;
-
-      const [
-        profileRes,
-        requestsRes,
-        offersRes,
-        ordersRes,
-        garageRes,
-      ] =
-        await Promise.all([
-
-          supabase
-            .from("profiles")
-            .select(`
-              full_name
-            `)
-            .eq(
-              "phone",
-              normalizedPhone
-            )
-            .maybeSingle(),
-
-          supabase
-            .from("requests")
-            .select(
-              "id",
-              {
-                count:"exact",
-                head:true,
-              }
-            )
-            .eq(
-              "client_phone",
-              normalizedPhone
-            ),
-
-          supabase
-            .from("offers")
-            .select(
-              "id",
-              {
-                count:"exact",
-                head:true,
-              }
-            )
-            .eq(
-              "client_phone",
-              normalizedPhone
-            ),
-
-          supabase
-            .from("orders")
-            .select(
-              "id",
-              {
-                count:"exact",
-                head:true,
-              }
-            )
-            .eq(
-              "client_phone",
-              normalizedPhone
-            ),
-
-          supabase
-            .from("garage")
-            .select(`
-              id,
-              car_name,
-              vin,
-              client_phone
-            `)
-            .eq(
-              "client_phone",
-              normalizedPhone
-            )
-            .order(
-              "id",
-              {
-                ascending:false,
-              }
-            ),
-
-        ]);
-
-      if (
-        profileRes.data
-      ) {
-
-        setProfile(
-          profileRes.data
-        );
-      }
-
-      setRequestsCount(
-        requestsRes.count || 0
-      );
-
-      setOffersCount(
-        offersRes.count || 0
-      );
-
-      setOrdersCount(
-        ordersRes.count || 0
-      );
-
-      if (
-        garageRes.error
-      ) {
-
-        console.error(
-          "garage error:",
-          garageRes.error
-        );
-
-      } else {
-
-        setGarage(
-          garageRes.data || []
-        );
-      }
-
-    } catch (error) {
-
-      handleError(error);
-    }
-  }
-
-  function handleCarChange(
-    value:string
-  ) {
-
-    setSelectedCar(value);
-
-    const selected =
-      garage.find(
-        (item) =>
-          item.car_name === value
-      );
-
-    if (selected) {
-
-      setVin(
-        selected.vin || ""
-      );
-
-    } else {
-
-      setVin("");
-    }
-  }
-
-  async function handleSubmit() {
-
-    if (
-      !selectedCar ||
-      !partName
-    ) {
-
-      alert(
-        "Заполните все поля"
-      );
-
-      return;
-    }
-
-    try {
-
-      setLoading(true);
-
-      const {
-        error,
-      } =
-        await supabase
-          .from("requests")
-          .insert({
-            car:selectedCar,
-            vin,
-            part_name:partName,
-            quantity,
-            status:"NEW",
-            client_phone:phone,
-          });
+const [menuOpen, setMenuOpen] =
+useState(false);
+
+const [phone, setPhone] =
+useState("");
+
+const [profile, setProfile] =
+useState<Profile | null>(null);
+
+const [requestsCount, setRequestsCount] =
+useState(0);
+
+const [offersCount, setOffersCount] =
+useState(0);
+
+const [ordersCount, setOrdersCount] =
+useState(0);
+
+const [garage, setGarage] =
+useState<GarageCar[]>([]);
+
+const [selectedCar, setSelectedCar] =
+useState("");
+
+const [vin, setVin] =
+useState("");
+
+const [partName, setPartName] =
+useState("");
+
+const [quantity, setQuantity] =
+useState(1);
+
+const [loading, setLoading] =
+useState(false);
+
+useEffect(() => {
+
+init();
+
+}, []);
+
+async function init() {
+
+try {  
+
+  const clientPhone =  
+    await getClientPhone();  
+
+  const normalizedPhone =  
+    clientPhone.trim();  
+
+  setPhone(  
+    normalizedPhone  
+  );  
+
+  if (!normalizedPhone)  
+    return;  
+
+  const [  
+    profileRes,  
+    requestsRes,  
+    offersRes,  
+    ordersRes,  
+    garageRes,  
+  ] =  
+    await Promise.all([  
+
+      supabase  
+        .from("profiles")  
+        .select(`  
+          full_name  
+        `)  
+        .eq(  
+          "phone",  
+          normalizedPhone  
+        )  
+        .maybeSingle(),  
+
+      supabase  
+        .from("requests")  
+        .select(  
+          "id",  
+          {  
+            count:"exact",  
+            head:true,  
+          }  
+        )  
+        .eq(  
+          "client_phone",  
+          normalizedPhone  
+        ),  
+
+      supabase  
+        .from("offers")  
+        .select(  
+          "id",  
+          {  
+            count:"exact",  
+            head:true,  
+          }  
+        )  
+        .eq(  
+          "client_phone",  
+          normalizedPhone  
+        ),  
+
+      supabase  
+        .from("orders")  
+        .select(  
+          "id",  
+          {  
+            count:"exact",  
+            head:true,  
+          }  
+        )  
+        .eq(  
+          "client_phone",  
+          normalizedPhone  
+        ),  
+
+      supabase  
+        .from("garage")  
+        .select(`  
+          id,  
+          car_name,  
+          vin,  
+          client_phone  
+        `)  
+        .eq(  
+          "client_phone",  
+          normalizedPhone  
+        )  
+        .order(  
+          "id",  
+          {  
+            ascending:false,  
+          }  
+        ),  
+
+    ]);  
+
+  if (  
+    profileRes.data  
+  ) {  
+
+    setProfile(  
+      profileRes.data  
+    );  
+  }  
+
+  setRequestsCount(  
+    requestsRes.count || 0  
+  );  
+
+  setOffersCount(  
+    offersRes.count || 0  
+  );  
+
+  setOrdersCount(  
+    ordersRes.count || 0  
+  );  
+
+  if (  
+    garageRes.error  
+  ) {  
+
+    console.error(  
+      "garage error:",  
+      garageRes.error  
+    );  
+
+  } else {  
+
+    setGarage(  
+      garageRes.data || []  
+    );  
+  }  
+
+} catch (error) {  
+
+  handleError(error);  
+}
+
+}
+
+function handleCarChange(
+value:string
+) {
+
+setSelectedCar(value);  
+
+const selected =  
+  garage.find(  
+    (item) =>  
+      item.car_name === value  
+  );  
+
+if (selected) {  
+
+  setVin(  
+    selected.vin || ""  
+  );  
+
+} else {  
+
+  setVin("");  
+}
+
+}
+
+async function handleSubmit() {
 
-      if (error) {
+if (  
+  !selectedCar ||  
+  !partName  
+) {  
 
-        handleError(error);
+  alert(  
+    "Заполните все поля"  
+  );  
 
-        alert(
-          "Ошибка создания запроса"
-        );
+  return;  
+}  
 
-        return;
-      }
+try {  
 
-      setPartName("");
+  setLoading(true);  
 
-      setQuantity(1);
+  const {  
+    error,  
+  } =  
+    await supabase  
+      .from("requests")  
+      .insert({  
+        car:selectedCar,  
+        vin,  
+        part_name:partName,  
+        quantity,  
+        status:"NEW",  
+        client_phone:phone,  
+      });  
 
-      setSelectedCar("");
+  if (error) {  
 
-      setVin("");
+    handleError(error);  
 
-      const {
-        count,
-      } =
-        await supabase
-          .from("requests")
-          .select(
-            "id",
-            {
-              count:"exact",
-              head:true,
-            }
-          )
-          .eq(
-            "client_phone",
-            phone
-          );
+    alert(  
+      "Ошибка создания запроса"  
+    );  
 
-      setRequestsCount(
-        count || 0
-      );
+    return;  
+  }  
 
-      alert(
-        "Запрос отправлен"
-      );
+  setPartName("");  
 
-    } catch (error) {
+  setQuantity(1);  
 
-      handleError(error);
+  setSelectedCar("");  
 
-      alert(
-        "Ошибка соединения"
-      );
+  setVin("");  
 
-    } finally {
+  const {  
+    count,  
+  } =  
+    await supabase  
+      .from("requests")  
+      .select(  
+        "id",  
+        {  
+          count:"exact",  
+          head:true,  
+        }  
+      )  
+      .eq(  
+        "client_phone",  
+        phone  
+      );  
 
-      setLoading(false);
-    }
-  }
+  setRequestsCount(  
+    count || 0  
+  );  
 
-  function handleLogout() {
+  alert(  
+    "Запрос отправлен"  
+  );  
 
-    localStorage.removeItem(
-      "client_phone"
-    );
+} catch (error) {  
 
-    localStorage.removeItem(
-      "role"
-    );
+  handleError(error);  
 
-    localStorage.clear();
+  alert(  
+    "Ошибка соединения"  
+  );  
 
-    document.cookie =
-      "client_phone=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+} finally {  
 
-    document.cookie =
-      "role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+  setLoading(false);  
+}
 
-    window.location.href =
-      "/login";
-  }
+}
 
-  const fullName =
-
-    profile?.full_name?.trim() ||
-
-    "Клиент";
-
-  return (
-
-    <div className={styles.page}>
-
-      <div className={styles.container}>
-
-        {/* HEADER */}
-
-        <header className={styles.header}>
-
-          <div className={styles.logoWrap}>
-
-            <div className={styles.logo}>
-              L
-            </div>
-
-            <div>
-
-              <div className={styles.brand}>
-                LYNKO
-              </div>
-
-              <div className={styles.subBrand}>
-                Клиентская панель
-              </div>
-
-            </div>
-
-          </div>
-
-          <button
-            type="button"
-            className={styles.burger}
-            onClick={() =>
-              setMenuOpen(
-                !menuOpen
-              )
-            }
-          >
-
-            {
-              menuOpen ? (
-
-                <X
-                  size={24}
-                  strokeWidth={2.4}
-                />
-
-              ) : (
-
-                <Menu
-                  size={24}
-                  strokeWidth={2.4}
-                />
-
-              )
-            }
-
-          </button>
-
-        </header>
-
-        {/* MOBILE MENU */}
-
-        {
-          menuOpen && (
-
-            <div className={styles.mobileMenu}>
-
-              <Link
-                href="/dashboard/profile"
-                className={styles.mobileMenuItem}
-                onClick={() =>
-                  setMenuOpen(false)
-                }
-              >
-                Профиль
-              </Link>
-
-              <Link
-                href="/dashboard/requests"
-                className={styles.mobileMenuItem}
-                onClick={() =>
-                  setMenuOpen(false)
-                }
-              >
-                Запросы
-              </Link>
+const fullName =
 
-              <Link
-                href="/dashboard/offers"
-                className={styles.mobileMenuItem}
-                onClick={() =>
-                  setMenuOpen(false)
-                }
-              >
-                Предложения
-              </Link>
+profile?.full_name?.trim() ||  
+
+"Клиент";
 
-              <Link
-                href="/dashboard/orders"
-                className={styles.mobileMenuItem}
-                onClick={() =>
-                  setMenuOpen(false)
-                }
-              >
-                Заказы
-              </Link>
+return (
+
+<div className={styles.page}>  
+
+  <div className={styles.container}>  
+
+    {/* HEADER */}  
+
+    <header className={styles.header}>  
+
+      <div className={styles.logoWrap}>  
+
+        <div className={styles.logo}>  
+          L  
+        </div>  
+
+        <div>  
+
+          <div className={styles.brand}>  
+            LYNKO  
+          </div>  
+
+          <div className={styles.subBrand}>  
+            Клиентская панель  
+          </div>  
+
+        </div>  
+
+      </div>  
+
+      <button  
+        type="button"  
+        className={styles.burger}  
+        onClick={() =>  
+          setMenuOpen(  
+            !menuOpen  
+          )  
+        }  
+      >  
+
+        {  
+          menuOpen ? (  
+
+            <X  
+              size={24}  
+              strokeWidth={2.4}  
+            />  
+
+          ) : (  
+
+            <Menu  
+              size={24}  
+              strokeWidth={2.4}  
+            />  
+
+          )  
+        }  
+
+      </button>  
 
-              <button
-                type="button"
-                className={styles.mobileLogout}
-                onClick={handleLogout}
-              >
+    </header>  
 
-                <LogOut
-                  size={18}
-                  strokeWidth={2.4}
-                />
+    {/* MOBILE MENU */}  
 
-                ВЫХОД
+    {  
+      menuOpen && (  
 
-              </button>
+        <div className={styles.mobileMenu}>  
 
-            </div>
+          <Link  
+            href="/dashboard/profile"  
+            className={styles.mobileMenuItem}  
+            onClick={() =>  
+              setMenuOpen(false)  
+            }  
+          >  
+            Профиль  
+          </Link>  
 
-          )
-        }
+          <Link  
+            href="/dashboard/requests"  
+            className={styles.mobileMenuItem}  
+            onClick={() =>  
+              setMenuOpen(false)  
+            }  
+          >  
+            Запросы  
+          </Link>  
 
-        {/* HERO */}
+          <Link  
+            href="/dashboard/offers"  
+            className={styles.mobileMenuItem}  
+            onClick={() =>  
+              setMenuOpen(false)  
+            }  
+          >  
+            Предложения  
+          </Link>  
 
-        <section className={styles.hero}>
+          <Link  
+            href="/dashboard/orders"  
+            className={styles.mobileMenuItem}  
+            onClick={() =>  
+              setMenuOpen(false)  
+            }  
+          >  
+            Заказы  
+          </Link>  
 
-          <div className={styles.welcome}>
-            ДОБРО ПОЖАЛОВАТЬ
-          </div>
+        </div>  
 
-          <h1
-            className={styles.name}
-            style={{
-              fontSize:"32px",
-              lineHeight:"36px",
-              whiteSpace:"nowrap",
-              overflow:"hidden",
-              textOverflow:"ellipsis",
-            }}
-          >
-            {fullName}
-          </h1>
+      )  
+    }  
 
-          <p className={styles.subtitle}>
-            Управляйте запросами и следите за заказами
-          </p>
+    {/* HERO */}  
 
-        </section>
+    <section className={styles.hero}>  
 
-{/* STATS */}
+      <div className={styles.welcome}>  
+        ДОБРО ПОЖАЛОВАТЬ  
+      </div>  
 
-<section className={styles.statsGrid}>
+      <h1  
+        className={styles.name}  
+        style={{  
+          fontSize:"32px",  
+          lineHeight:"36px",  
+          whiteSpace:"nowrap",  
+          overflow:"hidden",  
+          textOverflow:"ellipsis",  
+        }}  
+      >  
+        {fullName}  
+      </h1>  
 
-  <Link
-    href="/dashboard/requests"
-    className={styles.card}
-  >
+      <p className={styles.subtitle}>  
+        Управляйте запросами и следите за заказами  
+      </p>  
 
-    <div className={styles.iconBlue}>
+    </section>  
 
-      <FileText
-        size={22}
-        strokeWidth={2.3}
-      />
+    {/* STATS */}  
 
-    </div>
+    <section className={styles.statsGrid}>  
 
-    <div>
+      <Link  
+        href="/dashboard/requests"  
+        className={styles.card}  
+      >  
 
-      <div className={styles.cardTitle}>
-        Запросы
-      </div>
+        <div className={styles.iconBlue}>  
 
-      <div className={styles.cardValue}>
-        {requestsCount}
-      </div>
+          <FileText  
+            size={22}  
+            strokeWidth={2.3}  
+          />  
 
-    </div>
+        </div>  
 
-  </Link>
+        <div>  
 
-  <Link
-    href="/dashboard/offers"
-    className={styles.card}
-  >
+          <div className={styles.cardTitle}>  
+            Запросы  
+          </div>  
 
-    <div className={styles.iconGreen}>
+          <div className={styles.cardValue}>  
+            {requestsCount}  
+          </div>  
 
-      <MessageCircle
-        size={22}
-        strokeWidth={2.3}
-      />
+        </div>  
 
-    </div>
+      </Link>  
 
-    <div>
+      <Link  
+        href="/dashboard/offers"  
+        className={styles.card}  
+      >  
 
-      <div className={styles.cardTitle}>
-        Предложения
-      </div>
+        <div className={styles.iconGreen}>  
 
-      <div className={styles.cardValue}>
-        {offersCount}
-      </div>
+          <MessageCircle  
+            size={22}  
+            strokeWidth={2.3}  
+          />  
 
-    </div>
+        </div>  
 
-  </Link>
+        <div>  
 
-  <Link
-    href="/dashboard/orders"
-    className={styles.card}
-  >
+          <div className={styles.cardTitle}>  
+            Предложения  
+          </div>  
 
-    <div className={styles.iconPurple}>
+          <div className={styles.cardValue}>  
+            {offersCount}  
+          </div>  
 
-      <ShoppingBag
-        size={22}
-        strokeWidth={2.3}
-      />
+        </div>  
 
-    </div>
+      </Link>  
 
-    <div>
+      <Link  
+        href="/dashboard/orders"  
+        className={styles.card}  
+      >  
 
-      <div className={styles.cardTitle}>
-        Заказы
-      </div>
+        <div className={styles.iconPurple}>  
 
-      <div className={styles.cardValue}>
-        {ordersCount}
-      </div>
+          <ShoppingBag  
+            size={22}  
+            strokeWidth={2.3}  
+          />  
 
-    </div>
+        </div>  
 
-  </Link>
+        <div>  
 
-  <Link
-    href="/dashboard/profile"
-    className={styles.card}
-  >
+          <div className={styles.cardTitle}>  
+            Заказы  
+          </div>  
 
-    <div className={styles.iconOrange}>
+          <div className={styles.cardValue}>  
+            {ordersCount}  
+          </div>  
 
-      <User
-        size={22}
-        strokeWidth={2.3}
-      />
+        </div>  
 
-    </div>
+      </Link>  
 
-    <div>
+      <Link  
+        href="/dashboard/profile"  
+        className={styles.card}  
+      >  
 
-      <div className={styles.cardTitle}>
-        Профиль
-      </div>
+        <div className={styles.iconOrange}>  
 
-      <div className={styles.cardSub}>
-        Управление данными
-      </div>
+          <User  
+            size={22}  
+            strokeWidth={2.3}  
+          />  
 
-    </div>
+        </div>  
 
-  </Link>
+        <div>  
 
-</section>
+          <div className={styles.cardTitle}>  
+            Профиль  
+          </div>  
 
-{/* REQUEST */}
+          <div className={styles.cardSub}>  
+            Управление данными  
+          </div>  
 
-<section className={styles.requestCard}>
+        </div>  
 
-  <div className={styles.requestTitle}>
-    Новый запрос
-  </div>
+      </Link>  
 
-  <div className={styles.form}>
+    </section>  
 
-    <div className={styles.input}>
+    {/* REQUEST */}  
 
-      <Car
-        size={18}
-        strokeWidth={2.3}
-      />
+    <section className={styles.requestCard}>  
 
-      <select
-        value={selectedCar}
-        onChange={(e) =>
-          handleCarChange(
-            e.target.value
-          )
-        }
-      >
+      <div className={styles.requestTitle}>  
+        Новый запрос  
+      </div>  
 
-        <option value="">
-          Выберите автомобиль
-        </option>
+      <div className={styles.form}>  
 
-        {garage.map((item) => (
+        <div className={styles.input}>  
 
-          <option
-            key={item.id}
-            value={item.car_name}
-          >
-            {item.car_name}
-          </option>
+          <Car  
+            size={18}  
+            strokeWidth={2.3}  
+          />  
 
-        ))}
+          <select  
+            value={selectedCar}  
+            onChange={(e) =>  
+              handleCarChange(  
+                e.target.value  
+              )  
+            }  
+          >  
 
-      </select>
+            <option value="">  
+              Выберите автомобиль  
+            </option>  
 
-      <ChevronDown
-        size={18}
-        strokeWidth={2.3}
-      />
+            {garage.map((item) => (  
 
-    </div>
+              <option  
+                key={item.id}  
+                value={item.car_name}  
+              >  
+                {item.car_name}  
+              </option>  
 
-    <div className={styles.input}>
+            ))}  
 
-      <Shield
-        size={18}
-        strokeWidth={2.3}
-      />
+          </select>  
 
-      <input
-        type="text"
-        value={vin}
-        readOnly
-        placeholder="VIN код"
-      />
+          <ChevronDown  
+            size={18}  
+            strokeWidth={2.3}  
+          />  
 
-    </div>
+        </div>  
 
-    <div className={styles.input}>
+        <div className={styles.input}>  
 
-      <Package
-        size={18}
-        strokeWidth={2.3}
-      />
+          <Shield  
+            size={18}  
+            strokeWidth={2.3}  
+          />  
 
-      <input
-        type="text"
-        placeholder="Наименование запчасти"
-        value={partName}
-        onChange={(e) =>
-          setPartName(
-            e.target.value
-          )
-        }
-      />
+          <input  
+            type="text"  
+            value={vin}  
+            readOnly  
+            placeholder="VIN код"  
+          />  
 
-    </div>
+        </div>  
 
-    <div className={styles.bottomRow}>
+        <div className={styles.input}>  
 
-      <div className={styles.counter}>
+          <Package  
+            size={18}  
+            strokeWidth={2.3}  
+          />  
 
-        <button
-          type="button"
-          onClick={() =>
-            setQuantity(
-              Math.max(
-                1,
-                quantity - 1
-              )
-            )
-          }
-        >
+          <input  
+            type="text"  
+            placeholder="Наименование запчасти"  
+            value={partName}  
+            onChange={(e) =>  
+              setPartName(  
+                e.target.value  
+              )  
+            }  
+          />  
 
-          <Minus
-            size={18}
-            strokeWidth={2.6}
-          />
+        </div>  
 
-        </button>
+        <div className={styles.bottomRow}>  
 
-        <span>
-          {quantity}
-        </span>
+          <div className={styles.counter}>  
 
-        <button
-          type="button"
-          onClick={() =>
-            setQuantity(
-              quantity + 1
-            )
-          }
-        >
+            <button  
+              type="button"  
+              onClick={() =>  
+                setQuantity(  
+                  Math.max(  
+                    1,  
+                    quantity - 1  
+                  )  
+                )  
+              }  
+            >  
 
-          <Plus
-            size={18}
-            strokeWidth={2.6}
-          />
+              <Minus  
+                size={18}  
+                strokeWidth={2.6}  
+              />  
 
-        </button>
+            </button>  
 
-      </div>
+            <span>  
+              {quantity}  
+            </span>  
 
-      <button
-        className={styles.submit}
-        onClick={handleSubmit}
-        disabled={loading}
-      >
+            <button  
+              type="button"  
+              onClick={() =>  
+                setQuantity(  
+                  quantity + 1  
+                )  
+              }  
+            >  
 
-        <Send
-          size={18}
-          strokeWidth={2.5}
-        />
+              <Plus  
+                size={18}  
+                strokeWidth={2.6}  
+              />  
 
-        {
-          loading
-            ? "ОТПРАВКА..."
-            : "ОТПРАВИТЬ"
-        }
+            </button>  
 
-      </button>
+          </div>  
 
-    </div>
+          <button  
+            className={styles.submit}  
+            onClick={handleSubmit}  
+            disabled={loading}  
+          >  
 
-  </div>
+            <Send  
+              size={18}  
+              strokeWidth={2.5}  
+            />  
 
-</section>
+            {  
+              loading  
+                ? "ОТПРАВКА..."  
+                : "ОТПРАВИТЬ"  
+            }  
 
-      </div>
+          </button>  
 
-      {/* BOTTOM NAV */}
+        </div>  
 
-      <nav className={styles.bottomNav}>
+      </div>  
 
-        <Link
-          href="/dashboard"
-          className={styles.activeNav}
-        >
+    </section>  
 
-          <Home
-            size={22}
-            strokeWidth={2.3}
-          />
+  </div>  
 
-        </Link>
+  {/* BOTTOM NAV */}  
 
-        <Link href="/dashboard/requests">
+  <nav className={styles.bottomNav}>  
 
-          <FileText
-            size={22}
-            strokeWidth={2.3}
-          />
+    <Link  
+      href="/dashboard"  
+      className={styles.activeNav}  
+    >  
 
-        </Link>
+      <Home  
+        size={22}  
+        strokeWidth={2.3}  
+      />  
 
-        <Link href="/dashboard/offers">
+    </Link>  
 
-          <MessageCircle
-            size={22}
-            strokeWidth={2.3}
-          />
+    <Link href="/dashboard/requests">  
 
-        </Link>
+      <FileText  
+        size={22}  
+        strokeWidth={2.3}  
+      />  
 
-        <Link href="/dashboard/orders">
+    </Link>  
 
-          <ShoppingBag
-            size={22}
-            strokeWidth={2.3}
-          />
+    <Link href="/dashboard/offers">  
 
-        </Link>
+      <MessageCircle  
+        size={22}  
+        strokeWidth={2.3}  
+      />  
 
-        <Link href="/dashboard/profile">
+    </Link>  
 
-          <User
-            size={22}
-            strokeWidth={2.3}
-          />
+    <Link href="/dashboard/orders">  
 
-        </Link>
+      <ShoppingBag  
+        size={22}  
+        strokeWidth={2.3}  
+      />  
 
-      </nav>
+    </Link>  
 
-    </div>
-  );
+    <Link href="/dashboard/profile">  
+
+      <User  
+        size={22}  
+        strokeWidth={2.3}  
+      />  
+
+    </Link>  
+
+  </nav>  
+
+</div>
+
+);
 }
