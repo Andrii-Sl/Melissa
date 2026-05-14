@@ -16,6 +16,9 @@ import {
 
 import { supabase } from "@/lib/supabase";
 
+import { handleError }
+from "@/lib/handleError";
+
 import { getClientPhone }
 from "@/lib/getClientPhone";
 
@@ -117,7 +120,7 @@ export default function OffersPage() {
 
       if (error) {
 
-        console.error(error);
+        handleError(error);
 
         setOffers([]);
 
