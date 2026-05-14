@@ -22,6 +22,9 @@ import {
 
 import { supabase } from "@/lib/supabase";
 
+import { handleError }
+from "@/lib/handleError";
+
 import { getClientPhone }
 from "@/lib/getClientPhone";
 
@@ -286,7 +289,7 @@ export default function DashboardPage() {
 
     } catch (error) {
 
-      console.error(error);
+      handleError(error);
 
     } finally {
 
