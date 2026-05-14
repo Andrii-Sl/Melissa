@@ -21,6 +21,8 @@ export interface GarageCar {
 
   car:string;
 
+  car_name?:string;
+
   vin:string;
 }
 
