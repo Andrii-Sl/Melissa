@@ -1,5 +1,14 @@
 import { supabase } from "@/lib/supabase";
 
+function normalizePhone(
+  value:string
+) {
+
+  return value
+    .replace(/\s/g, "")
+    .trim();
+}
+
 export async function getClientPhone() {
 
   try {
@@ -19,12 +28,11 @@ export async function getClientPhone() {
         "client_phone"
       );
 
-    if (
-      localPhone &&
-      localPhone.trim()
-    ) {
+    if (localPhone) {
 
-      return localPhone.trim();
+      return normalizePhone(
+        localPhone
+      );
     }
 
     /* COOKIE */
@@ -39,14 +47,13 @@ export async function getClientPhone() {
         )
         ?.split("=")[1];
 
-    if (
-      cookiePhone &&
-      cookiePhone.trim()
-    ) {
+    if (cookiePhone) {
 
       const normalizedPhone =
-        decodeURIComponent(
-          cookiePhone.trim()
+        normalizePhone(
+          decodeURIComponent(
+            cookiePhone
+          )
         );
 
       localStorage.setItem(
@@ -57,31 +64,22 @@ export async function getClientPhone() {
       return normalizedPhone;
     }
 
-    /* SUPABASE SESSION */
+    /* SESSION */
 
     const {
       data:{ session },
-      error,
     } =
       await supabase.auth.getSession();
 
-    if (error) {
-
-      console.error(error);
-
-      return "";
-    }
-
     const sessionPhone =
-      session?.user?.phone || "";
+      session?.user?.phone;
 
-    if (
-      sessionPhone &&
-      sessionPhone.trim()
-    ) {
+    if (sessionPhone) {
 
       const normalizedPhone =
-        sessionPhone.trim();
+        normalizePhone(
+          sessionPhone
+        );
 
       localStorage.setItem(
         "client_phone",
@@ -95,10 +93,7 @@ export async function getClientPhone() {
 
   } catch (error) {
 
-    console.error(
-      "getClientPhone error:",
-      error
-    );
+    console.error(error);
 
     return "";
   }
