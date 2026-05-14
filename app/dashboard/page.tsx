@@ -15,7 +15,7 @@ import {
   Package,
   Send,
   Home,
- Minus,
+  Minus,
   Plus,
   ChevronDown,
 } from "lucide-react";
@@ -165,11 +165,18 @@ export default function DashboardPage() {
             .select(`
               id,
               car_name,
-              vin
+              vin,
+              client_phone
             `)
             .eq(
               "client_phone",
               normalizedPhone
+            )
+            .order(
+              "id",
+              {
+                ascending:false,
+              }
             ),
 
         ]);
@@ -196,11 +203,18 @@ export default function DashboardPage() {
       );
 
       if (
-        garageRes.data
+        garageRes.error
       ) {
 
+        console.error(
+          "garage error:",
+          garageRes.error
+        );
+
+      } else {
+
         setGarage(
-          garageRes.data
+          garageRes.data || []
         );
       }
 
@@ -227,6 +241,10 @@ export default function DashboardPage() {
       setVin(
         selected.vin || ""
       );
+
+    } else {
+
+      setVin("");
     }
   }
 
@@ -276,6 +294,10 @@ export default function DashboardPage() {
       setPartName("");
 
       setQuantity(1);
+
+      setSelectedCar("");
+
+      setVin("");
 
       const {
         count,
