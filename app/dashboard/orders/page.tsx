@@ -35,16 +35,16 @@ export default function OrdersPage() {
     useState(false);
 
   const [orders, setOrders] =
-    useState<OrderItem[]>([])
+    useState<OrderItem[]>([]);
 
   const [profile, setProfile] =
-    useState<Profile | null>(null)
+    useState<Profile | null>(null);
 
   const [loading, setLoading] =
     useState(true);
 
   const [selectedOrder, setSelectedOrder] =
-    useState<any>(null);
+    useState<OrderItem | null>(null);
 
   /* LOAD */
 
@@ -62,7 +62,7 @@ export default function OrdersPage() {
         await getClientPhone();
 
       const normalizedPhone =
-        phone.trim();
+        String(phone || "").trim();
 
       if (!normalizedPhone) {
 
@@ -77,7 +77,7 @@ export default function OrdersPage() {
 
       const localProfile =
         localStorage.getItem(
-          "profile"
+          `profile_${normalizedPhone}`
         );
 
       if (localProfile) {
@@ -125,14 +125,16 @@ export default function OrdersPage() {
 
         setOrders([]);
 
-      } else {
+        setLoading(false);
 
-        setOrders(data || []);
+        return;
       }
+
+      setOrders(data || []);
 
     } catch (error) {
 
-      console.error(error);
+      handleError(error);
 
       setOrders([]);
 
@@ -559,7 +561,8 @@ export default function OrdersPage() {
 
                 <strong>
                   {
-                    selectedOrder.part_name
+                    selectedOrder.part_name ||
+                    "Товар"
                   }
                 </strong>
 
@@ -567,7 +570,8 @@ export default function OrdersPage() {
                   Артикул:
                   {" "}
                   {
-                    selectedOrder.article
+                    selectedOrder.article ||
+                    "—"
                   }
                 </span>
 
@@ -622,7 +626,7 @@ export default function OrdersPage() {
                 €
                 {" "}
                 {
-                  selectedOrder.offer_price
+                  selectedOrder.offer_price || 0
                 }
               </strong>
 
@@ -653,7 +657,9 @@ export default function OrdersPage() {
                 {" "}
                 {
                   getTotalPrice(
-                    selectedOrder.offer_price
+                    Number(
+                      selectedOrder.offer_price
+                    )
                   )
                 }
               </strong>
