@@ -35,16 +35,16 @@ export default function OffersPage() {
     useState(false);
 
   const [offers, setOffers] =
-    useState<OfferItem[]>([])
+    useState<OfferItem[]>([]);
 
   const [profile, setProfile] =
-    useState<Profile | null>(null)
+    useState<Profile | null>(null);
 
   const [loading, setLoading] =
     useState(true);
 
   const [selectedOffer, setSelectedOffer] =
-    useState<any>(null);
+    useState<OfferItem | null>(null);
 
   const [paymentMethod, setPaymentMethod] =
     useState("CARD");
@@ -65,7 +65,7 @@ export default function OffersPage() {
         await getClientPhone();
 
       const normalizedPhone =
-        phone.trim();
+        String(phone || "").trim();
 
       if (!normalizedPhone) {
 
@@ -80,7 +80,7 @@ export default function OffersPage() {
 
       const localProfile =
         localStorage.getItem(
-          "profile"
+          `profile_${normalizedPhone}`
         );
 
       if (localProfile) {
@@ -129,14 +129,16 @@ export default function OffersPage() {
 
         setOffers([]);
 
-      } else {
+        setLoading(false);
 
-        setOffers(data || []);
+        return;
       }
+
+      setOffers(data || []);
 
     } catch (error) {
 
-      console.error(error);
+      handleError(error);
 
       setOffers([]);
 
@@ -183,7 +185,7 @@ export default function OffersPage() {
         await getClientPhone();
 
       const normalizedPhone =
-        phone.trim();
+        String(phone || "").trim();
 
       if (!normalizedPhone) {
 
@@ -237,7 +239,7 @@ export default function OffersPage() {
 
       if (orderError) {
 
-        console.error(orderError);
+        handleError(orderError);
 
         alert(
           "Ошибка оформления"
@@ -246,16 +248,26 @@ export default function OffersPage() {
         return;
       }
 
-      await supabase
-        .from("offers")
-        .update({
-          payment_status:"PAID",
-          status:"PAID",
-        })
-        .eq(
-          "id",
-          selectedOffer.id
-        );
+      const {
+        error:updateError,
+      } =
+        await supabase
+          .from("offers")
+          .update({
+            payment_status:"PAID",
+            status:"PAID",
+          })
+          .eq(
+            "id",
+            selectedOffer.id
+          );
+
+      if (updateError) {
+
+        handleError(updateError);
+
+        return;
+      }
 
       alert(
         "Заказ оформлен"
@@ -263,11 +275,11 @@ export default function OffersPage() {
 
       setSelectedOffer(null);
 
-      loadData();
+      await loadData();
 
     } catch (error) {
 
-      console.error(error);
+      handleError(error);
 
       alert(
         "Ошибка соединения"
@@ -604,143 +616,6 @@ export default function OffersPage() {
               </div>
 
             </div>
-
-          </div>
-
-          <div className={styles.checkoutCard}>
-
-            <div className={styles.checkoutSectionTitle}>
-              📍 Адрес доставки
-            </div>
-
-            <div className={styles.addressModern}>
-
-              <strong>
-                {profile?.first_name}
-                {" "}
-                {profile?.last_name}
-              </strong>
-
-              <p>
-                {
-                  profile?.delivery_address ||
-                  "Адрес не указан"
-                }
-              </p>
-
-              <span>
-                {profile?.phone}
-              </span>
-
-            </div>
-
-          </div>
-
-          <div className={styles.checkoutCard}>
-
-            <div className={styles.checkoutSectionTitle}>
-              💳 Способ оплаты
-            </div>
-
-            <div className={styles.paymentModern}>
-
-              <button
-                type="button"
-                className={`${styles.paymentModernCard} ${
-                  paymentMethod === "CARD"
-                    ? styles.paymentModernActive
-                    : ""
-                }`}
-                onClick={() =>
-                  setPaymentMethod("CARD")
-                }
-              >
-                💳 Банковская карта
-              </button>
-
-              <button
-                type="button"
-                className={`${styles.paymentModernCard} ${
-                  paymentMethod === "PAYPAL"
-                    ? styles.paymentModernActive
-                    : ""
-                }`}
-                onClick={() =>
-                  setPaymentMethod("PAYPAL")
-                }
-              >
-                PayPal
-              </button>
-
-            </div>
-
-          </div>
-
-          <div className={styles.checkoutCard}>
-
-            <div className={styles.checkoutSectionTitle}>
-              📄 Итог заказа
-            </div>
-
-            <div className={styles.totalRow}>
-
-              <span>
-                Товар
-              </span>
-
-              <strong>
-                €
-                {" "}
-                {selectedOffer.price}
-              </strong>
-
-            </div>
-
-            <div className={styles.totalRow}>
-
-              <span>
-                Доставка
-              </span>
-
-              <strong>
-                € 8.90
-              </strong>
-
-            </div>
-
-            <div className={styles.totalDivider} />
-
-            <div className={styles.totalRowBig}>
-
-              <span>
-                Итого
-              </span>
-
-              <strong>
-                €
-                {" "}
-                {
-                  (
-                    Number(
-                      selectedOffer.price
-                    ) + 8.9
-                  ).toFixed(2)
-                }
-              </strong>
-
-            </div>
-
-          </div>
-
-          <div className={styles.checkoutFixed}>
-
-            <button
-              type="button"
-              className={styles.payModernButton}
-              onClick={createOrder}
-            >
-              🔒 Оформить заказ
-            </button>
 
           </div>
 
