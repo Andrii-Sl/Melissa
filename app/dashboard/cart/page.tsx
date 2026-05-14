@@ -10,6 +10,18 @@ import {
   ArrowLeft,
 } from "lucide-react";
 
+import { useRouter }
+from "next/navigation";
+
+import { supabase }
+from "@/lib/supabase";
+
+import { getClientPhone }
+from "@/lib/getClientPhone";
+
+import { handleError }
+from "@/lib/handleError";
+
 import DashboardHeader
 from "@/components/DashboardHeader";
 
@@ -19,6 +31,9 @@ from "../../dashboard/dashboard.module.css";
 type CartItem = {
   id:string;
   brand?:string;
+  article?:string;
+  product_image?:string;
+  delivery_days?:number;
   part_name:string;
   price:number;
   quantity:number;
@@ -26,13 +41,25 @@ type CartItem = {
 
 export default function CartPage() {
 
+  const router =
+    useRouter();
+
   const [menuOpen, setMenuOpen] =
     useState(false);
 
   const [cart, setCart] =
     useState<CartItem[]>([]);
 
+  const [loading, setLoading] =
+    useState(false);
+
   useEffect(() => {
+
+    loadCart();
+
+  }, []);
+
+  function loadCart() {
 
     const stored =
       localStorage.getItem(
@@ -51,9 +78,12 @@ export default function CartPage() {
 
         setCart([]);
       }
-    }
 
-  }, []);
+    } else {
+
+      setCart([]);
+    }
+  }
 
   function removeItem(id:string) {
 
@@ -71,11 +101,131 @@ export default function CartPage() {
     );
   }
 
+  async function checkout() {
+
+    try {
+
+      if (
+        cart.length === 0
+      ) {
+
+        alert(
+          "Корзина пуста"
+        );
+
+        return;
+      }
+
+      setLoading(true);
+
+      const phone =
+        await getClientPhone();
+
+      const normalizedPhone =
+        String(phone || "").trim();
+
+      if (!normalizedPhone) {
+
+        alert(
+          "Ошибка авторизации"
+        );
+
+        return;
+      }
+
+      const orders =
+        cart.map((item) => ({
+
+          offer_id:item.id,
+
+          client_phone:
+            normalizedPhone,
+
+          status:"NEW",
+
+          part_name:
+            item.part_name,
+
+          article:
+            item.article || "",
+
+          quantity:
+            item.quantity,
+
+          offer_price:
+            item.price,
+
+          total_price:
+            item.price *
+            item.quantity,
+
+          payment_method:
+            "CARD",
+
+          delivery_days:
+            item.delivery_days || 0,
+
+          product_image:
+            item.product_image || "",
+
+        }));
+
+      const {
+        error,
+      } =
+        await supabase
+          .from("orders")
+          .insert(orders);
+
+      if (error) {
+
+        handleError(error);
+
+        alert(
+          "Ошибка оформления"
+        );
+
+        return;
+      }
+
+      localStorage.removeItem(
+        "cart"
+      );
+
+      setCart([]);
+
+      alert(
+        "Заказ успешно оформлен"
+      );
+
+      router.push(
+        "/dashboard/orders"
+      );
+
+    } catch (error) {
+
+      handleError(error);
+
+      alert(
+        "Ошибка соединения"
+      );
+
+    } finally {
+
+      setLoading(false);
+    }
+  }
+
   const total = cart.reduce(
+
     (sum, item) =>
+
       sum +
-      item.price *
-      item.quantity,
+      (
+        Number(item.price || 0) *
+        Number(item.quantity || 1)
+      ),
+
     0
   );
 
@@ -91,6 +241,8 @@ export default function CartPage() {
           cartCount={cart.length}
         />
 
+        {/* HERO */}
+
         <section className={styles.hero}>
 
           <div className={styles.welcome}>
@@ -101,7 +253,15 @@ export default function CartPage() {
             Ваш заказ
           </h1>
 
+          <p className={styles.subtitle}>
+            Товаров:
+            {" "}
+            {cart.length}
+          </p>
+
         </section>
+
+        {/* EMPTY */}
 
         {
           cart.length === 0 && (
@@ -126,10 +286,11 @@ export default function CartPage() {
                 style={{
                   color:"#7b8194",
                   marginBottom:"18px",
+                  lineHeight:"22px",
                 }}
               >
-                Добавьте предложения
-                в корзину
+                Добавьте товары
+                из раздела предложений
               </div>
 
               <Link
@@ -138,13 +299,15 @@ export default function CartPage() {
                   styles.profileManageBtn
                 }
               >
-                К ПРЕДЛОЖЕНИЯМ
+                ПЕРЕЙТИ К ПРЕДЛОЖЕНИЯМ
               </Link>
 
             </div>
 
           )
         }
+
+        {/* LIST */}
 
         <div
           className={
@@ -178,11 +341,30 @@ export default function CartPage() {
                   className={
                     styles.profileCarInfo
                   }
+                  style={{
+                    flex:1,
+                  }}
                 >
 
                   <strong>
-                    {item.part_name}
+                    {
+                      item.part_name ||
+                      item.brand ||
+                      "Товар"
+                    }
                   </strong>
+
+                  {
+                    item.article && (
+
+                      <span>
+                        Артикул:
+                        {" "}
+                        {item.article}
+                      </span>
+
+                    )
+                  }
 
                   <span>
                     Количество:
@@ -193,7 +375,9 @@ export default function CartPage() {
                   <span>
                     Цена:
                     {" "}
-                    {item.price} zł
+                    {
+                      item.price
+                    } zł
                   </span>
 
                 </div>
@@ -209,6 +393,8 @@ export default function CartPage() {
                     border:"none",
                     background:"transparent",
                     color:"#ff3b30",
+                    cursor:"pointer",
+                    flexShrink:0,
                   }}
                 >
 
@@ -222,6 +408,8 @@ export default function CartPage() {
           }
 
         </div>
+
+        {/* TOTAL */}
 
         {
           cart.length > 0 && (
@@ -237,28 +425,77 @@ export default function CartPage() {
 
               <div
                 style={{
-                  fontSize:"24px",
-                  fontWeight:900,
+                  display:"flex",
+                  alignItems:"center",
+                  justifyContent:"space-between",
                   marginBottom:"18px",
                 }}
               >
-                Итого:
-                {" "}
-                {total} zł
+
+                <div
+                  style={{
+                    fontSize:"18px",
+                    fontWeight:700,
+                  }}
+                >
+                  Общая сумма
+                </div>
+
+                <div
+                  style={{
+                    fontSize:"28px",
+                    fontWeight:900,
+                  }}
+                >
+                  {total} zł
+                </div>
+
               </div>
 
               <button
+                type="button"
                 className={
                   styles.dashboardSubmit
                 }
+                onClick={checkout}
+                disabled={loading}
               >
-                ОФОРМИТЬ ЗАКАЗ
+
+                {
+                  loading
+                    ? "ОФОРМЛЕНИЕ..."
+                    : "ОФОРМИТЬ ЗАКАЗ"
+                }
+
               </button>
 
             </div>
 
           )
         }
+
+        {/* BACK */}
+
+        <Link
+          href="/dashboard/offers"
+          style={{
+            marginTop:"18px",
+            display:"flex",
+            alignItems:"center",
+            gap:"8px",
+            justifyContent:"center",
+            textDecoration:"none",
+            color:"#7b8194",
+            fontWeight:700,
+            paddingBottom:"100px",
+          }}
+        >
+
+          <ArrowLeft size={18} />
+
+          Вернуться к предложениям
+
+        </Link>
 
       </div>
 
