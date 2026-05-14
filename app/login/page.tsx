@@ -25,8 +25,6 @@ export default function LoginPage() {
   const [surname, setSurname] =
     useState("");
 
-  /* SMS */
-
   const [code, setCode] =
     useState("");
 
@@ -195,49 +193,18 @@ export default function LoginPage() {
 
       /*
         TEST LOGIN
-        Any +phone works
       */
 
-      if (
-        cleanPhone.startsWith("+")
-      ) {
+      await createProfileIfNeeded(
+        cleanPhone
+      );
 
-        await createProfileIfNeeded(
-          cleanPhone
-        );
+      saveClientPhone(
+        cleanPhone
+      );
 
-        saveClientPhone(
-          cleanPhone
-        );
-
-        window.location.href =
-          "/dashboard";
-
-        return;
-      }
-
-      /* REAL SMS LOGIN */
-
-      const {
-        error,
-      } =
-        await supabase.auth.signInWithOtp({
-          phone:
-            cleanPhone,
-        });
-
-      if (error) {
-
-        setSmsError(
-          error.message
-        );
-
-        setLoading(false);
-
-        return;
-      }
-
-      setShowCode(true);
+      window.location.href =
+        "/dashboard";
 
     } catch (error) {
 
