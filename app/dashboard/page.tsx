@@ -8,8 +8,6 @@ import DashboardHeader
 from "@/components/DashboardHeader";
 
 import {
-  Menu,
-  X,
   FileText,
   MessageCircle,
   ShoppingBag,
@@ -22,7 +20,6 @@ import {
   Minus,
   Plus,
   ChevronDown,
-  LogOut,
 } from "lucide-react";
 
 import { supabase }
@@ -368,16 +365,6 @@ export default function DashboardPage() {
     }
   }
 
-  function handleLogout() {
-
-    localStorage.removeItem(
-      "clientPhone"
-    );
-
-    window.location.href =
-      "/";
-  }
-
   const fullName =
 
     profile?.full_name?.trim() ||
@@ -390,156 +377,31 @@ export default function DashboardPage() {
 
       <div className={styles.container}>
 
-        {/* HEADER */}
+        <DashboardHeader
+          menuOpen={menuOpen}
+          setMenuOpen={setMenuOpen}
+          cartCount={cartCount}
+        />
 
-        <header className={styles.header}>
+        {/* HERO */}
 
-          <div className={styles.logoWrap}>
+        <section className={styles.hero}>
 
-            <div className={styles.logo}>
-              L
-            </div>
-
-            <div>
-
-              <div className={styles.brand}>
-                LYNKO
-              </div>
-
-              <div className={styles.subBrand}>
-                Клиентская панель
-              </div>
-
-            </div>
-
+          <div className={styles.welcome}>
+            ДОБРО ПОЖАЛОВАТЬ
           </div>
 
-          <div className={styles.headerActions}>
+          <h1
+            className={styles.name}
+          >
+            {fullName}
+          </h1>
 
-            <Link
-              href="/dashboard/cart"
-              className={styles.cartButton}
-            >
+          <p className={styles.subtitle}>
+            Управляйте запросами и следите за заказами
+          </p>
 
-              <ShoppingBag
-                size={20}
-                strokeWidth={2.4}
-              />
-
-              {
-                cartCount > 0 && (
-
-                  <span
-                    className={styles.cartBadge}
-                  >
-                    {cartCount}
-                  </span>
-
-                )
-              }
-
-            </Link>
-
-            <button
-              type="button"
-              className={styles.burger}
-              onClick={() =>
-                setMenuOpen(
-                  !menuOpen
-                )
-              }
-            >
-
-              {
-                menuOpen ? (
-
-                  <X
-                    size={24}
-                    strokeWidth={2.4}
-                  />
-
-                ) : (
-
-                  <Menu
-                    size={24}
-                    strokeWidth={2.4}
-                  />
-
-                )
-              }
-
-            </button>
-
-          </div>
-
-        </header>
-
-        {/* MOBILE MENU */}
-
-        {
-          menuOpen && (
-
-            <div className={styles.mobileMenu}>
-
-              <Link
-                href="/dashboard/profile"
-                className={styles.mobileMenuItem}
-                onClick={() =>
-                  setMenuOpen(false)
-                }
-              >
-                Профиль
-              </Link>
-
-              <Link
-                href="/dashboard/requests"
-                className={styles.mobileMenuItem}
-                onClick={() =>
-                  setMenuOpen(false)
-                }
-              >
-                Запросы
-              </Link>
-
-              <Link
-                href="/dashboard/offers"
-                className={styles.mobileMenuItem}
-                onClick={() =>
-                  setMenuOpen(false)
-                }
-              >
-                Предложения
-              </Link>
-
-              <Link
-                href="/dashboard/orders"
-                className={styles.mobileMenuItem}
-                onClick={() =>
-                  setMenuOpen(false)
-                }
-              >
-                Заказы
-              </Link>
-
-              <button
-                type="button"
-                className={styles.mobileLogout}
-                onClick={handleLogout}
-              >
-
-                <LogOut
-                  size={18}
-                  strokeWidth={2.5}
-                />
-
-                Выйти
-
-              </button>
-
-            </div>
-
-          )
-        }
+        </section>
 
       </div>
 
