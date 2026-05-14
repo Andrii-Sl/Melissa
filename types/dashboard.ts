@@ -19,9 +19,7 @@ export interface GarageCar {
 
   id:number;
 
-  car?:string;
-
-  car_name?:string;
+  car_name:string;
 
   vin:string;
 
