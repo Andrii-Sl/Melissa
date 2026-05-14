@@ -459,8 +459,8 @@ export default function ProfilePage() {
         >
 
           {
-            firstName
-              ? `${firstName} ${lastName}`
+            profile
+              ? `${profile.first_name || ""} ${profile.last_name || ""}`.trim()
               : "Профиль"
           }
 
@@ -485,6 +485,8 @@ export default function ProfilePage() {
 
           <div className={styles.form}>
 
+            {/* ФИО */}
+
             <div className={styles.input}>
 
               <User
@@ -495,7 +497,9 @@ export default function ProfilePage() {
               <input
                 type="text"
                 value={
-                  `${firstName} ${lastName}`.trim()
+                  profile
+                    ? `${profile.first_name || ""} ${profile.last_name || ""}`.trim()
+                    : ""
                 }
                 placeholder="ФИО"
                 readOnly
@@ -503,6 +507,8 @@ export default function ProfilePage() {
               />
 
             </div>
+
+            {/* PHONE */}
 
             <div className={styles.input}>
 
@@ -520,6 +526,8 @@ export default function ProfilePage() {
               />
 
             </div>
+
+            {/* EMAIL */}
 
             <div className={styles.input}>
 
@@ -624,176 +632,6 @@ export default function ProfilePage() {
         </div>
 
       </section>
-
-      {/* GARAGE */}
-
-      <section className={styles.section}>
-
-        <div className={styles.profileModernCard}>
-
-          <h2
-            className={styles.dashboardSectionTitle}
-            style={{
-              marginBottom:"18px",
-            }}
-          >
-            Автомобили
-          </h2>
-
-          <div className={styles.profileCarsList}>
-
-            {garage.length === 0 && (
-
-              <div className={styles.emptyMiniCard}>
-
-                <div
-                  style={{
-                    fontWeight:800,
-                    fontSize:"16px",
-                    marginBottom:"6px",
-                  }}
-                >
-                  Автомобили отсутствуют
-                </div>
-
-                <div
-                  style={{
-                    color:"#7b8194",
-                    fontSize:"14px",
-                    fontWeight:600,
-                    lineHeight:"20px",
-                    marginBottom:"16px",
-                  }}
-                >
-                  Управляйте автомобилями
-                  в отдельном разделе
-                </div>
-
-                <Link
-                  href="/dashboard/garage"
-                  className={styles.profileManageBtn}
-                >
-                  УПРАВЛЕНИЕ АВТОМОБИЛЯМИ
-                </Link>
-
-              </div>
-
-            )}
-
-            {garage.map((item) => (
-
-              <div
-                key={item.id}
-                className={styles.profileCarCard}
-              >
-
-                <div className={styles.profileCarIcon}>
-                  🚘
-                </div>
-
-                <div className={styles.profileCarInfo}>
-
-                  <strong>
-                    {
-                      item.car_name ||
-                      "Автомобиль"
-                    }
-                  </strong>
-
-                  <span>
-                    VIN:
-                    {" "}
-                    {item.vin || "—"}
-                  </span>
-
-                </div>
-
-              </div>
-
-            ))}
-
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* SAVE */}
-
-      <section
-        className={`${styles.section} ${styles.saveSection}`}
-      >
-
-        <button
-          type="button"
-          className={styles.dashboardSubmit}
-          onClick={saveProfile}
-          disabled={saving}
-        >
-
-          {
-            saving
-              ? "СОХРАНЕНИЕ..."
-              : "СОХРАНИТЬ ИЗМЕНЕНИЯ"
-          }
-
-        </button>
-
-      </section>
-
-      {/* BOTTOM NAV */}
-
-      <nav className={styles.bottomNav}>
-
-        <Link href="/dashboard">
-
-          <Home
-            size={22}
-            strokeWidth={2.3}
-          />
-
-        </Link>
-
-        <Link href="/dashboard/requests">
-
-          <FileText
-            size={22}
-            strokeWidth={2.3}
-          />
-
-        </Link>
-
-        <Link href="/dashboard/offers">
-
-          <MessageCircle
-            size={22}
-            strokeWidth={2.3}
-          />
-
-        </Link>
-
-        <Link href="/dashboard/orders">
-
-          <ShoppingBag
-            size={22}
-            strokeWidth={2.3}
-          />
-
-        </Link>
-
-        <Link
-          href="/dashboard/profile"
-          className={styles.activeNav}
-        >
-
-          <User
-            size={22}
-            strokeWidth={2.3}
-          />
-
-        </Link>
-
-      </nav>
 
     </main>
   );
