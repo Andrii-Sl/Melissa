@@ -125,11 +125,15 @@
 .name {
   margin-top: 6px;
 
-  font-size: 42px;
-  line-height: 0.92;
+  font-size: 34px;
+  line-height: 1;
 
   font-weight: 900;
   color: #000;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .subtitle {
