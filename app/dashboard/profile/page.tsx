@@ -15,6 +15,9 @@ import {
 
 import { supabase } from "@/lib/supabase";
 
+import { getClientPhone }
+from "@/lib/getClientPhone";
+
 import styles from "../dashboard.module.css";
 
 export default function ProfilePage() {
@@ -60,46 +63,6 @@ export default function ProfilePage() {
 
   }, []);
 
-  /* PHONE */
-
-  async function getClientPhone() {
-
-    try {
-
-      /* COOKIE */
-
-      const cookiePhone =
-        document.cookie
-          .split("; ")
-          .find((row) =>
-            row.startsWith(
-              "client_phone="
-            )
-          )
-          ?.split("=")[1];
-
-      if (cookiePhone)
-        return cookiePhone;
-
-      /* SUPABASE SESSION */
-
-      const {
-        data:{ session },
-      } =
-        await supabase.auth.getSession();
-
-      return (
-        session?.user?.phone || ""
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
-      return "";
-    }
-  }
-
   /* PROFILE */
 
   async function loadProfile() {
@@ -107,7 +70,9 @@ export default function ProfilePage() {
     try {
 
       const clientPhone =
-        await getClientPhone();
+        (
+          await getClientPhone()
+        ).trim();
 
       if (!clientPhone) {
 
@@ -270,7 +235,7 @@ export default function ProfilePage() {
 
     try {
 
-      if (!phone) {
+      if (!phone.trim()) {
 
         alert(
           "Телефон обязателен"
@@ -281,11 +246,14 @@ export default function ProfilePage() {
 
       setSaving(true);
 
+      const normalizedPhone =
+        phone.trim();
+
       const fullName =
         `${firstName} ${lastName}`.trim();
 
       const profileData = {
-        phone,
+        phone:normalizedPhone,
         first_name:firstName,
         last_name:lastName,
         full_name:fullName,
@@ -317,9 +285,11 @@ export default function ProfilePage() {
       }
 
       localStorage.setItem(
-        `profile_${phone}`,
+        `profile_${normalizedPhone}`,
         JSON.stringify(profileData)
       );
+
+      setProfile(profileData);
 
       alert(
         "Профиль сохранен"
@@ -478,7 +448,16 @@ export default function ProfilePage() {
           ЛИЧНЫЙ КАБИНЕТ
         </div>
 
-        <h1 className={styles.name}>
+        <h1
+          className={styles.name}
+          style={{
+            fontSize:"32px",
+            lineHeight:"36px",
+            whiteSpace:"nowrap",
+            overflow:"hidden",
+            textOverflow:"ellipsis",
+          }}
+        >
 
           {
             firstName
@@ -603,6 +582,219 @@ export default function ProfilePage() {
         </div>
 
       </section>
+
+      {/* DELIVERY */}
+
+      <section className={styles.section}>
+
+        <div className={styles.profileModernCard}>
+
+          <div className={styles.profileSectionTop}>
+
+            <h2 className={styles.dashboardSectionTitle}>
+              Адрес доставки
+            </h2>
+
+            <div className={styles.profileMiniIcon}>
+              📍
+            </div>
+
+          </div>
+
+          <textarea
+            className={styles.dashboardTextarea}
+            value={deliveryAddress}
+            onChange={(e) =>
+              setDeliveryAddress(
+                e.target.value
+              )
+            }
+            placeholder="Введите адрес доставки"
+          />
+
+        </div>
+
+      </section>
+
+      {/* BILLING */}
+
+      <section className={styles.section}>
+
+        <div className={styles.profileModernCard}>
+
+          <div className={styles.profileSectionTop}>
+
+            <h2 className={styles.dashboardSectionTitle}>
+              Billing address
+            </h2>
+
+            <div className={styles.profileMiniIcon}>
+              🧾
+            </div>
+
+          </div>
+
+          <textarea
+            className={styles.dashboardTextarea}
+            value={billingAddress}
+            onChange={(e) =>
+              setBillingAddress(
+                e.target.value
+              )
+            }
+            placeholder="Введите billing address"
+          />
+
+        </div>
+
+      </section>
+
+      {/* GARAGE */}
+
+      <section className={styles.section}>
+
+        <div className={styles.profileModernCard}>
+
+          <div className={styles.profileSectionTop}>
+
+            <h2 className={styles.dashboardSectionTitle}>
+              Автомобили
+            </h2>
+
+            <Link
+              href="/dashboard/garage"
+              className={styles.profileManageBtn}
+            >
+              Управление
+            </Link>
+
+          </div>
+
+          <div className={styles.profileCarsList}>
+
+            {garage.length === 0 && (
+
+              <div className={styles.emptyMiniCard}>
+
+                Автомобили отсутствуют
+
+              </div>
+
+            )}
+
+            {garage.map((item) => (
+
+              <div
+                key={item.id}
+                className={styles.profileCarCard}
+              >
+
+                <div className={styles.profileCarIcon}>
+                  🚘
+                </div>
+
+                <div className={styles.profileCarInfo}>
+
+                  <strong>
+                    {
+                      item.car ||
+                      item.car_name ||
+                      "Автомобиль"
+                    }
+                  </strong>
+
+                  <span>
+                    VIN:
+                    {" "}
+                    {
+                      item.vin || "—"
+                    }
+                  </span>
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* SAVE */}
+
+      <section className={styles.section}>
+
+        <button
+          type="button"
+          className={styles.dashboardSubmit}
+          onClick={saveProfile}
+          disabled={saving}
+        >
+          {
+            saving
+              ? "Сохранение..."
+              : "Сохранить изменения"
+          }
+        </button>
+
+      </section>
+
+      {/* BOTTOM NAV */}
+
+      <nav className={styles.bottomNav}>
+
+        <Link href="/dashboard">
+
+          <Home
+            size={22}
+            strokeWidth={2.3}
+          />
+
+        </Link>
+
+        <Link href="/dashboard/requests">
+
+          <FileText
+            size={22}
+            strokeWidth={2.3}
+          />
+
+        </Link>
+
+        <Link href="/dashboard/offers">
+
+          <MessageCircle
+            size={22}
+            strokeWidth={2.3}
+          />
+
+        </Link>
+
+        <Link href="/dashboard/orders">
+
+          <ShoppingBag
+            size={22}
+            strokeWidth={2.3}
+          />
+
+        </Link>
+
+        <Link
+          href="/dashboard/profile"
+          className={styles.activeNav}
+        >
+
+          <User
+            size={22}
+            strokeWidth={2.3}
+          />
+
+        </Link>
+
+      </nav>
 
     </main>
   );
