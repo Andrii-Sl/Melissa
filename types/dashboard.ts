@@ -19,13 +19,11 @@ export interface GarageCar {
 
   id:number;
 
-  car_name:string;
+  car?:string;
+
+  car_name?:string;
 
   vin:string;
-
-  client_phone?:string;
-
-  created_at?:string;
 }
 
 export interface RequestItem {
