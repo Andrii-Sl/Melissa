@@ -16,6 +16,9 @@ import {
 
 import { supabase } from "@/lib/supabase";
 
+import { getClientPhone }
+from "@/lib/getClientPhone";
+
 import styles from "../dashboard.module.css";
 
 export default function OrdersPage() {
@@ -35,30 +38,6 @@ export default function OrdersPage() {
   const [selectedOrder, setSelectedOrder] =
     useState<any>(null);
 
-  /* PHONE */
-
-  async function getClientPhone() {
-
-    try {
-
-      const cookiePhone =
-        document.cookie
-          .split("; ")
-          .find((row) =>
-            row.startsWith(
-              "client_phone="
-            )
-          )
-          ?.split("=")[1];
-
-      return cookiePhone || "";
-
-    } catch {
-
-      return "";
-    }
-  }
-
   /* LOAD */
 
   useEffect(() => {
@@ -74,7 +53,10 @@ export default function OrdersPage() {
       const phone =
         await getClientPhone();
 
-      if (!phone) {
+      const normalizedPhone =
+        phone.trim();
+
+      if (!normalizedPhone) {
 
         setOrders([]);
 
@@ -119,7 +101,7 @@ export default function OrdersPage() {
           `)
           .eq(
             "client_phone",
-            phone
+            normalizedPhone
           )
           .order(
             "created_at",
