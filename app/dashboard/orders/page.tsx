@@ -16,6 +16,11 @@ import {
 
 import { supabase } from "@/lib/supabase";
 
+import type {
+  OrderItem,
+  Profile,
+} from "@/types/dashboard";
+
 import { handleError }
 from "@/lib/handleError";
 
@@ -30,10 +35,10 @@ export default function OrdersPage() {
     useState(false);
 
   const [orders, setOrders] =
-    useState<any[]>([]);
+    useState<OrderItem[]>([])
 
   const [profile, setProfile] =
-    useState<any>(null);
+    useState<Profile | null>(null)
 
   const [loading, setLoading] =
     useState(true);
