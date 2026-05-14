@@ -83,144 +83,146 @@ init();
 
 async function init() {
 
-try {  
+try {
 
-  const clientPhone =  
-    await getClientPhone();  
+const clientPhone =
+await getClientPhone();
 
-  const normalizedPhone =  
-    clientPhone.trim();  
+const normalizedPhone =
+clientPhone.trim();
 
-  setPhone(  
-    normalizedPhone  
-  );  
+setPhone(
+normalizedPhone
+);
 
-  if (!normalizedPhone)  
-    return;  
+if (!normalizedPhone)
+return;
 
-  const [  
-    profileRes,  
-    requestsRes,  
-    offersRes,  
-    ordersRes,  
-    garageRes,  
-  ] =  
-    await Promise.all([  
+const [
+profileRes,
+requestsRes,
+offersRes,
+ordersRes,
+garageRes,
+] =
+await Promise.all([
 
-      supabase  
-        .from("profiles")  
-        .select(`  
-          full_name  
-        `)  
-        .eq(  
-          "phone",  
-          normalizedPhone  
-        )  
-        .maybeSingle(),  
+supabase    
+    .from("profiles")    
+    .select(`    
+      full_name    
+    `)    
+    .eq(    
+      "phone",    
+      normalizedPhone    
+    )    
+    .maybeSingle(),    
 
-      supabase  
-        .from("requests")  
-        .select(  
-          "id",  
-          {  
-            count:"exact",  
-            head:true,  
-          }  
-        )  
-        .eq(  
-          "client_phone",  
-          normalizedPhone  
-        ),  
+  supabase    
+    .from("requests")    
+    .select(    
+      "id",    
+      {    
+        count:"exact",    
+        head:true,    
+      }    
+    )    
+    .eq(    
+      "client_phone",    
+      normalizedPhone    
+    ),    
 
-      supabase  
-        .from("offers")  
-        .select(  
-          "id",  
-          {  
-            count:"exact",  
-            head:true,  
-          }  
-        )  
-        .eq(  
-          "client_phone",  
-          normalizedPhone  
-        ),  
+  supabase    
+    .from("offers")    
+    .select(    
+      "id",    
+      {    
+        count:"exact",    
+        head:true,    
+      }    
+    )    
+    .eq(    
+      "client_phone",    
+      normalizedPhone    
+    ),    
 
-      supabase  
-        .from("orders")  
-        .select(  
-          "id",  
-          {  
-            count:"exact",  
-            head:true,  
-          }  
-        )  
-        .eq(  
-          "client_phone",  
-          normalizedPhone  
-        ),  
+  supabase    
+    .from("orders")    
+    .select(    
+      "id",    
+      {    
+        count:"exact",    
+        head:true,    
+      }    
+    )    
+    .eq(    
+      "client_phone",    
+      normalizedPhone    
+    ),    
 
-      supabase  
-        .from("garage")  
-        .select(`  
-          id,  
-          car_name,  
-          vin,  
-          client_phone  
-        `)  
-        .eq(  
-          "client_phone",  
-          normalizedPhone  
-        )  
-        .order(  
-          "id",  
-          {  
-            ascending:false,  
-          }  
-        ),  
+  supabase    
+    .from("garage")    
+    .select(`    
+      id,    
+      car_name,    
+      vin,    
+      client_phone    
+    `)    
+    .eq(    
+      "client_phone",    
+      normalizedPhone    
+    )    
+    .order(    
+      "id",    
+      {    
+        ascending:false,    
+      }    
+    ),    
 
-    ]);  
+]);
 
-  if (  
-    profileRes.data  
-  ) {  
+if (
+profileRes.data
+) {
 
-    setProfile(  
-      profileRes.data  
-    );  
-  }  
+setProfile(    
+  profileRes.data    
+);
 
-  setRequestsCount(  
-    requestsRes.count || 0  
-  );  
+}
 
-  setOffersCount(  
-    offersRes.count || 0  
-  );  
+setRequestsCount(
+requestsRes.count || 0
+);
 
-  setOrdersCount(  
-    ordersRes.count || 0  
-  );  
+setOffersCount(
+offersRes.count || 0
+);
 
-  if (  
-    garageRes.error  
-  ) {  
+setOrdersCount(
+ordersRes.count || 0
+);
 
-    console.error(  
-      "garage error:",  
-      garageRes.error  
-    );  
+if (
+garageRes.error
+) {
 
-  } else {  
+console.error(    
+  "garage error:",    
+  garageRes.error    
+);
 
-    setGarage(  
-      garageRes.data || []  
-    );  
-  }  
+} else {
 
-} catch (error) {  
+setGarage(    
+  garageRes.data || []    
+);
 
-  handleError(error);  
+}
+
+} catch (error) {
+
+handleError(error);
 }
 
 }
@@ -229,596 +231,585 @@ function handleCarChange(
 value:string
 ) {
 
-setSelectedCar(value);  
+setSelectedCar(value);
 
-const selected =  
-  garage.find(  
-    (item) =>  
-      item.car_name === value  
-  );  
+const selected =
+garage.find(
+(item) =>
+item.car_name === value
+);
 
-if (selected) {  
+if (selected) {
 
-  setVin(  
-    selected.vin || ""  
-  );  
+setVin(
+selected.vin || ""
+);
 
-} else {  
+} else {
 
-  setVin("");  
+setVin("");
 }
 
 }
 
 async function handleSubmit() {
 
-if (  
-  !selectedCar ||  
-  !partName  
-) {  
+if (
+!selectedCar ||
+!partName
+) {
 
-  alert(  
-    "Заполните все поля"  
-  );  
+alert(
+"Заполните все поля"
+);
 
-  return;  
-}  
+return;
+}
 
-try {  
+try {
 
-  setLoading(true);  
+setLoading(true);
 
-  const {  
-    error,  
-  } =  
-    await supabase  
-      .from("requests")  
-      .insert({  
-        car:selectedCar,  
-        vin,  
-        part_name:partName,  
-        quantity,  
-        status:"NEW",  
-        client_phone:phone,  
-      });  
+const {
+error,
+} =
+await supabase
+.from("requests")
+.insert({
+car:selectedCar,
+vin,
+part_name:partName,
+quantity,
+status:"NEW",
+client_phone:phone,
+});
 
-  if (error) {  
+if (error) {
 
-    handleError(error);  
+handleError(error);    
 
-    alert(  
-      "Ошибка создания запроса"  
-    );  
+alert(    
+  "Ошибка создания запроса"    
+);    
 
-    return;  
-  }  
+return;
 
-  setPartName("");  
+}
 
-  setQuantity(1);  
+setPartName("");
 
-  setSelectedCar("");  
+setQuantity(1);
 
-  setVin("");  
+setSelectedCar("");
 
-  const {  
-    count,  
-  } =  
-    await supabase  
-      .from("requests")  
-      .select(  
-        "id",  
-        {  
-          count:"exact",  
-          head:true,  
-        }  
-      )  
-      .eq(  
-        "client_phone",  
-        phone  
-      );  
+setVin("");
 
-  setRequestsCount(  
-    count || 0  
-  );  
+const {
+count,
+} =
+await supabase
+.from("requests")
+.select(
+"id",
+{
+count:"exact",
+head:true,
+}
+)
+.eq(
+"client_phone",
+phone
+);
 
-  alert(  
-    "Запрос отправлен"  
-  );  
+setRequestsCount(
+count || 0
+);
 
-} catch (error) {  
+alert(
+"Запрос отправлен"
+);
 
-  handleError(error);  
+} catch (error) {
 
-  alert(  
-    "Ошибка соединения"  
-  );  
+handleError(error);
 
-} finally {  
+alert(
+"Ошибка соединения"
+);
 
-  setLoading(false);  
+} finally {
+
+setLoading(false);
 }
 
 }
 
 const fullName =
 
-profile?.full_name?.trim() ||  
+profile?.full_name?.trim() ||
 
 "Клиент";
 
 return (
 
-<div className={styles.page}>  
-
-  <div className={styles.container}>  
-
-    {/* HEADER */}  
-
-    <header className={styles.header}>  
-
-      <div className={styles.logoWrap}>  
-
-        <div className={styles.logo}>  
-          L  
-        </div>  
-
-        <div>  
+<div className={styles.page}>      <div className={styles.container}>    {/* HEADER */}    
+
+<header className={styles.header}>    
+
+  <div className={styles.logoWrap}>    
+
+    <div className={styles.logo}>    
+      L    
+    </div>    
+
+    <div>    
+
+      <div className={styles.brand}>    
+        LYNKO    
+      </div>    
+
+      <div className={styles.subBrand}>    
+        Клиентская панель    
+      </div>    
+
+    </div>    
+
+  </div>    
+
+  <button    
+    type="button"    
+    className={styles.burger}    
+    onClick={() =>    
+      setMenuOpen(    
+        !menuOpen    
+      )    
+    }    
+  >    
+
+    {    
+      menuOpen ? (    
+
+        <X    
+          size={24}    
+          strokeWidth={2.4}    
+        />    
+
+      ) : (    
+
+        <Menu    
+          size={24}    
+          strokeWidth={2.4}    
+        />    
+
+      )    
+    }    
+
+  </button>    
+
+</header>    
 
-          <div className={styles.brand}>  
-            LYNKO  
-          </div>  
+{/* MOBILE MENU */}    
+
+{    
+  menuOpen && (    
 
-          <div className={styles.subBrand}>  
-            Клиентская панель  
-          </div>  
+    <div className={styles.mobileMenu}>    
+
+      <Link    
+        href="/dashboard/profile"    
+        className={styles.mobileMenuItem}    
+        onClick={() =>    
+          setMenuOpen(false)    
+        }    
+      >    
+        Профиль    
+      </Link>    
 
-        </div>  
-
-      </div>  
-
-      <button  
-        type="button"  
-        className={styles.burger}  
-        onClick={() =>  
-          setMenuOpen(  
-            !menuOpen  
-          )  
-        }  
-      >  
-
-        {  
-          menuOpen ? (  
-
-            <X  
-              size={24}  
-              strokeWidth={2.4}  
-            />  
-
-          ) : (  
-
-            <Menu  
-              size={24}  
-              strokeWidth={2.4}  
-            />  
+      <Link    
+        href="/dashboard/requests"    
+        className={styles.mobileMenuItem}    
+        onClick={() =>    
+          setMenuOpen(false)    
+        }    
+      >    
+        Запросы    
+      </Link>    
 
-          )  
-        }  
+      <Link    
+        href="/dashboard/offers"    
+        className={styles.mobileMenuItem}    
+        onClick={() =>    
+          setMenuOpen(false)    
+        }    
+      >    
+        Предложения    
+      </Link>    
 
-      </button>  
+      <Link    
+        href="/dashboard/orders"    
+        className={styles.mobileMenuItem}    
+        onClick={() =>    
+          setMenuOpen(false)    
+        }    
+      >    
+        Заказы    
+      </Link>    
 
-    </header>  
+    </div>    
 
-    {/* MOBILE MENU */}  
+  )    
+}    
 
-    {  
-      menuOpen && (  
+{/* HERO */}    
 
-        <div className={styles.mobileMenu}>  
+<section className={styles.hero}>    
 
-          <Link  
-            href="/dashboard/profile"  
-            className={styles.mobileMenuItem}  
-            onClick={() =>  
-              setMenuOpen(false)  
-            }  
-          >  
-            Профиль  
-          </Link>  
+  <div className={styles.welcome}>    
+    ДОБРО ПОЖАЛОВАТЬ    
+  </div>    
 
-          <Link  
-            href="/dashboard/requests"  
-            className={styles.mobileMenuItem}  
-            onClick={() =>  
-              setMenuOpen(false)  
-            }  
-          >  
-            Запросы  
-          </Link>  
+  <h1    
+    className={styles.name}    
+    style={{    
+      fontSize:"32px",    
+      lineHeight:"36px",    
+      whiteSpace:"nowrap",    
+      overflow:"hidden",    
+      textOverflow:"ellipsis",    
+    }}    
+  >    
+    {fullName}    
+  </h1>    
 
-          <Link  
-            href="/dashboard/offers"  
-            className={styles.mobileMenuItem}  
-            onClick={() =>  
-              setMenuOpen(false)  
-            }  
-          >  
-            Предложения  
-          </Link>  
+  <p className={styles.subtitle}>    
+    Управляйте запросами и следите за заказами    
+  </p>    
 
-          <Link  
-            href="/dashboard/orders"  
-            className={styles.mobileMenuItem}  
-            onClick={() =>  
-              setMenuOpen(false)  
-            }  
-          >  
-            Заказы  
-          </Link>  
+</section>    
 
-        </div>  
+{/* STATS */}    
 
-      )  
-    }  
+<section className={styles.statsGrid}>    
 
-    {/* HERO */}  
+  <Link    
+    href="/dashboard/requests"    
+    className={styles.card}    
+  >    
 
-    <section className={styles.hero}>  
+    <div className={styles.iconBlue}>    
 
-      <div className={styles.welcome}>  
-        ДОБРО ПОЖАЛОВАТЬ  
-      </div>  
+      <FileText    
+        size={22}    
+        strokeWidth={2.3}    
+      />    
 
-      <h1  
-        className={styles.name}  
-        style={{  
-          fontSize:"32px",  
-          lineHeight:"36px",  
-          whiteSpace:"nowrap",  
-          overflow:"hidden",  
-          textOverflow:"ellipsis",  
-        }}  
-      >  
-        {fullName}  
-      </h1>  
+    </div>    
 
-      <p className={styles.subtitle}>  
-        Управляйте запросами и следите за заказами  
-      </p>  
+    <div>    
 
-    </section>  
+      <div className={styles.cardTitle}>    
+        Запросы    
+      </div>    
 
-    {/* STATS */}  
+      <div className={styles.cardValue}>    
+        {requestsCount}    
+      </div>    
 
-    <section className={styles.statsGrid}>  
+    </div>    
 
-      <Link  
-        href="/dashboard/requests"  
-        className={styles.card}  
-      >  
+  </Link>    
 
-        <div className={styles.iconBlue}>  
+  <Link    
+    href="/dashboard/offers"    
+    className={styles.card}    
+  >    
 
-          <FileText  
-            size={22}  
-            strokeWidth={2.3}  
-          />  
+    <div className={styles.iconGreen}>    
 
-        </div>  
+      <MessageCircle    
+        size={22}    
+        strokeWidth={2.3}    
+      />    
 
-        <div>  
+    </div>    
 
-          <div className={styles.cardTitle}>  
-            Запросы  
-          </div>  
+    <div>    
 
-          <div className={styles.cardValue}>  
-            {requestsCount}  
-          </div>  
+      <div className={styles.cardTitle}>    
+        Предложения    
+      </div>    
 
-        </div>  
+      <div className={styles.cardValue}>    
+        {offersCount}    
+      </div>    
 
-      </Link>  
+    </div>    
 
-      <Link  
-        href="/dashboard/offers"  
-        className={styles.card}  
-      >  
+  </Link>    
 
-        <div className={styles.iconGreen}>  
+  <Link    
+    href="/dashboard/orders"    
+    className={styles.card}    
+  >    
 
-          <MessageCircle  
-            size={22}  
-            strokeWidth={2.3}  
-          />  
+    <div className={styles.iconPurple}>    
 
-        </div>  
+      <ShoppingBag    
+        size={22}    
+        strokeWidth={2.3}    
+      />    
 
-        <div>  
+    </div>    
 
-          <div className={styles.cardTitle}>  
-            Предложения  
-          </div>  
+    <div>    
 
-          <div className={styles.cardValue}>  
-            {offersCount}  
-          </div>  
+      <div className={styles.cardTitle}>    
+        Заказы    
+      </div>    
 
-        </div>  
+      <div className={styles.cardValue}>    
+        {ordersCount}    
+      </div>    
 
-      </Link>  
+    </div>    
 
-      <Link  
-        href="/dashboard/orders"  
-        className={styles.card}  
-      >  
+  </Link>    
 
-        <div className={styles.iconPurple}>  
+  <Link    
+    href="/dashboard/profile"    
+    className={styles.card}    
+  >    
 
-          <ShoppingBag  
-            size={22}  
-            strokeWidth={2.3}  
-          />  
+    <div className={styles.iconOrange}>    
 
-        </div>  
+      <User    
+        size={22}    
+        strokeWidth={2.3}    
+      />    
 
-        <div>  
+    </div>    
 
-          <div className={styles.cardTitle}>  
-            Заказы  
-          </div>  
+    <div>    
 
-          <div className={styles.cardValue}>  
-            {ordersCount}  
-          </div>  
+      <div className={styles.cardTitle}>    
+        Профиль    
+      </div>    
 
-        </div>  
+      <div className={styles.cardSub}>    
+        Управление данными    
+      </div>    
 
-      </Link>  
+    </div>    
 
-      <Link  
-        href="/dashboard/profile"  
-        className={styles.card}  
-      >  
+  </Link>    
 
-        <div className={styles.iconOrange}>  
+</section>    
 
-          <User  
-            size={22}  
-            strokeWidth={2.3}  
-          />  
+{/* REQUEST */}    
 
-        </div>  
+<section className={styles.requestCard}>    
 
-        <div>  
+  <div className={styles.requestTitle}>    
+    Новый запрос    
+  </div>    
 
-          <div className={styles.cardTitle}>  
-            Профиль  
-          </div>  
+  <div className={styles.form}>    
 
-          <div className={styles.cardSub}>  
-            Управление данными  
-          </div>  
+    <div className={styles.input}>    
 
-        </div>  
+      <Car    
+        size={18}    
+        strokeWidth={2.3}    
+      />    
 
-      </Link>  
+      <select    
+        value={selectedCar}    
+        onChange={(e) =>    
+          handleCarChange(    
+            e.target.value    
+          )    
+        }    
+      >    
 
-    </section>  
+        <option value="">    
+          Выберите автомобиль    
+        </option>    
 
-    {/* REQUEST */}  
+        {garage.map((item) => (    
 
-    <section className={styles.requestCard}>  
+          <option    
+            key={item.id}    
+            value={item.car_name}    
+          >    
+            {item.car_name}    
+          </option>    
 
-      <div className={styles.requestTitle}>  
-        Новый запрос  
-      </div>  
+        ))}    
 
-      <div className={styles.form}>  
+      </select>    
 
-        <div className={styles.input}>  
+      <ChevronDown    
+        size={18}    
+        strokeWidth={2.3}    
+      />    
 
-          <Car  
-            size={18}  
-            strokeWidth={2.3}  
-          />  
+    </div>    
 
-          <select  
-            value={selectedCar}  
-            onChange={(e) =>  
-              handleCarChange(  
-                e.target.value  
-              )  
-            }  
-          >  
+    <div className={styles.input}>    
 
-            <option value="">  
-              Выберите автомобиль  
-            </option>  
+      <Shield    
+        size={18}    
+        strokeWidth={2.3}    
+      />    
 
-            {garage.map((item) => (  
+      <input    
+        type="text"    
+        value={vin}    
+        readOnly    
+        placeholder="VIN код"    
+      />    
 
-              <option  
-                key={item.id}  
-                value={item.car_name}  
-              >  
-                {item.car_name}  
-              </option>  
+    </div>    
 
-            ))}  
+    <div className={styles.input}>    
 
-          </select>  
+      <Package    
+        size={18}    
+        strokeWidth={2.3}    
+      />    
 
-          <ChevronDown  
-            size={18}  
-            strokeWidth={2.3}  
-          />  
+      <input    
+        type="text"    
+        placeholder="Наименование запчасти"    
+        value={partName}    
+        onChange={(e) =>    
+          setPartName(    
+            e.target.value    
+          )    
+        }    
+      />    
 
-        </div>  
+    </div>    
 
-        <div className={styles.input}>  
+    <div className={styles.bottomRow}>    
 
-          <Shield  
-            size={18}  
-            strokeWidth={2.3}  
-          />  
+      <div className={styles.counter}>    
 
-          <input  
-            type="text"  
-            value={vin}  
-            readOnly  
-            placeholder="VIN код"  
-          />  
+        <button    
+          type="button"    
+          onClick={() =>    
+            setQuantity(    
+              Math.max(    
+                1,    
+                quantity - 1    
+              )    
+            )    
+          }    
+        >    
 
-        </div>  
+          <Minus    
+            size={18}    
+            strokeWidth={2.6}    
+          />    
 
-        <div className={styles.input}>  
+        </button>    
 
-          <Package  
-            size={18}  
-            strokeWidth={2.3}  
-          />  
+        <span>    
+          {quantity}    
+        </span>    
 
-          <input  
-            type="text"  
-            placeholder="Наименование запчасти"  
-            value={partName}  
-            onChange={(e) =>  
-              setPartName(  
-                e.target.value  
-              )  
-            }  
-          />  
+        <button    
+          type="button"    
+          onClick={() =>    
+            setQuantity(    
+              quantity + 1    
+            )    
+          }    
+        >    
 
-        </div>  
+          <Plus    
+            size={18}    
+            strokeWidth={2.6}    
+          />    
 
-        <div className={styles.bottomRow}>  
+        </button>    
 
-          <div className={styles.counter}>  
+      </div>    
 
-            <button  
-              type="button"  
-              onClick={() =>  
-                setQuantity(  
-                  Math.max(  
-                    1,  
-                    quantity - 1  
-                  )  
-                )  
-              }  
-            >  
+      <button    
+        className={styles.submit}    
+        onClick={handleSubmit}    
+        disabled={loading}    
+      >    
 
-              <Minus  
-                size={18}  
-                strokeWidth={2.6}  
-              />  
+        <Send    
+          size={18}    
+          strokeWidth={2.5}    
+        />    
 
-            </button>  
+        {    
+          loading    
+            ? "ОТПРАВКА..."    
+            : "ОТПРАВИТЬ"    
+        }    
 
-            <span>  
-              {quantity}  
-            </span>  
+      </button>    
 
-            <button  
-              type="button"  
-              onClick={() =>  
-                setQuantity(  
-                  quantity + 1  
-                )  
-              }  
-            >  
+    </div>    
 
-              <Plus  
-                size={18}  
-                strokeWidth={2.6}  
-              />  
+  </div>    
 
-            </button>  
+</section>
 
-          </div>  
+  </div>    {/* BOTTOM NAV */}
 
-          <button  
-            className={styles.submit}  
-            onClick={handleSubmit}  
-            disabled={loading}  
-          >  
+  <nav className={styles.bottomNav}>    <Link    
+  href="/dashboard"    
+  className={styles.activeNav}    
+>    
 
-            <Send  
-              size={18}  
-              strokeWidth={2.5}  
-            />  
+  <Home    
+    size={22}    
+    strokeWidth={2.3}    
+  />    
 
-            {  
-              loading  
-                ? "ОТПРАВКА..."  
-                : "ОТПРАВИТЬ"  
-            }  
+</Link>    
 
-          </button>  
+<Link href="/dashboard/requests">    
 
-        </div>  
+  <FileText    
+    size={22}    
+    strokeWidth={2.3}    
+  />    
 
-      </div>  
+</Link>    
 
-    </section>  
+<Link href="/dashboard/offers">    
 
-  </div>  
+  <MessageCircle    
+    size={22}    
+    strokeWidth={2.3}    
+  />    
 
-  {/* BOTTOM NAV */}  
+</Link>    
 
-  <nav className={styles.bottomNav}>  
+<Link href="/dashboard/orders">    
 
-    <Link  
-      href="/dashboard"  
-      className={styles.activeNav}  
-    >  
+  <ShoppingBag    
+    size={22}    
+    strokeWidth={2.3}    
+  />    
 
-      <Home  
-        size={22}  
-        strokeWidth={2.3}  
-      />  
+</Link>    
 
-    </Link>  
+<Link href="/dashboard/profile">    
 
-    <Link href="/dashboard/requests">  
+  <User    
+    size={22}    
+    strokeWidth={2.3}    
+  />    
 
-      <FileText  
-        size={22}  
-        strokeWidth={2.3}  
-      />  
+</Link>
 
-    </Link>  
-
-    <Link href="/dashboard/offers">  
-
-      <MessageCircle  
-        size={22}  
-        strokeWidth={2.3}  
-      />  
-
-    </Link>  
-
-    <Link href="/dashboard/orders">  
-
-      <ShoppingBag  
-        size={22}  
-        strokeWidth={2.3}  
-      />  
-
-    </Link>  
-
-    <Link href="/dashboard/profile">  
-
-      <User  
-        size={22}  
-        strokeWidth={2.3}  
-      />  
-
-    </Link>  
-
-  </nav>  
-
-</div>
-
-);
+  </nav>    </div>  );
 }
