@@ -20,18 +20,20 @@ import {
   ChevronDown,
 } from "lucide-react";
 
-import { supabase } from "@/lib/supabase";
+import { supabase }
+from "@/lib/supabase";
 
 import { handleError }
 from "@/lib/handleError";
+
+import {
+  getClientPhone,
+} from "@/lib/getClientPhone";
 
 import type {
   Profile,
   GarageCar,
 } from "@/types/dashboard";
-
-import { getClientPhone }
-from "@/lib/getClientPhone";
 
 import styles from "./dashboard.module.css";
 
@@ -204,7 +206,7 @@ export default function DashboardPage() {
 
     } catch (error) {
 
-      console.error(error);
+      handleError(error);
     }
   }
 
@@ -233,29 +235,43 @@ export default function DashboardPage() {
     if (
       !selectedCar ||
       !partName
-    )
+    ) {
+
+      alert(
+        "Заполните все поля"
+      );
+
       return;
+    }
 
     try {
 
       setLoading(true);
 
-      await supabase
-        .from("requests")
-        .insert({
+      const {
+        error,
+      } =
+        await supabase
+          .from("requests")
+          .insert({
+            car:selectedCar,
+            vin,
+            part_name:partName,
+            quantity,
+            status:"NEW",
+            client_phone:phone,
+          });
 
-          car:selectedCar,
+      if (error) {
 
-          vin,
+        handleError(error);
 
-          part_name:partName,
+        alert(
+          "Ошибка создания запроса"
+        );
 
-          quantity,
-
-          status:"NEW",
-
-          client_phone:phone,
-        });
+        return;
+      }
 
       setPartName("");
 
@@ -282,9 +298,17 @@ export default function DashboardPage() {
         count || 0
       );
 
+      alert(
+        "Запрос отправлен"
+      );
+
     } catch (error) {
 
       handleError(error);
+
+      alert(
+        "Ошибка соединения"
+      );
 
     } finally {
 
