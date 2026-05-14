@@ -16,6 +16,9 @@ import {
 
 import { supabase } from "@/lib/supabase";
 
+import { handleError }
+from "@/lib/handleError";
+
 import { getClientPhone }
 from "@/lib/getClientPhone";
 
@@ -113,7 +116,7 @@ export default function OrdersPage() {
 
       if (error) {
 
-        console.error(error);
+        handleError(error);
 
         setOrders([]);
 
