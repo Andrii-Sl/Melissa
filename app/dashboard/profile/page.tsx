@@ -28,6 +28,9 @@ export default function ProfilePage() {
   const [garage, setGarage] =
     useState<any[]>([]);
 
+  const [profile, setProfile] =
+    useState<any>(null);
+
   const [firstName, setFirstName] =
     useState("");
 
@@ -63,6 +66,8 @@ export default function ProfilePage() {
 
     try {
 
+      /* COOKIE */
+
       const cookiePhone =
         document.cookie
           .split("; ")
@@ -73,9 +78,23 @@ export default function ProfilePage() {
           )
           ?.split("=")[1];
 
-      return cookiePhone || "";
+      if (cookiePhone)
+        return cookiePhone;
 
-    } catch {
+      /* SUPABASE SESSION */
+
+      const {
+        data:{ session },
+      } =
+        await supabase.auth.getSession();
+
+      return (
+        session?.user?.phone || ""
+      );
+
+    } catch (error) {
+
+      console.error(error);
 
       return "";
     }
@@ -97,17 +116,19 @@ export default function ProfilePage() {
         return;
       }
 
-      /* PROFILE */
+      /* CACHE */
 
       const cachedProfile =
         localStorage.getItem(
-          "profile"
+          `profile_${clientPhone}`
         );
 
       if (cachedProfile) {
 
         const parsed =
           JSON.parse(cachedProfile);
+
+        setProfile(parsed);
 
         setFirstName(
           parsed.first_name || ""
@@ -133,6 +154,8 @@ export default function ProfilePage() {
           parsed.billing_address || ""
         );
       }
+
+      /* PROFILE */
 
       const {
         data,
@@ -160,8 +183,10 @@ export default function ProfilePage() {
 
       } else if (data) {
 
+        setProfile(data);
+
         localStorage.setItem(
-          "profile",
+          `profile_${clientPhone}`,
           JSON.stringify(data)
         );
 
@@ -194,6 +219,7 @@ export default function ProfilePage() {
 
       const {
         data:garageData,
+        error:garageError,
       } =
         await supabase
           .from("garage")
@@ -215,9 +241,18 @@ export default function ProfilePage() {
           )
           .limit(10);
 
-      setGarage(
-        garageData || []
-      );
+      if (garageError) {
+
+        console.error(
+          garageError
+        );
+
+      } else {
+
+        setGarage(
+          garageData || []
+        );
+      }
 
     } catch (error) {
 
@@ -247,7 +282,7 @@ export default function ProfilePage() {
       setSaving(true);
 
       const fullName =
-        `${firstName} ${lastName}`;
+        `${firstName} ${lastName}`.trim();
 
       const profileData = {
         phone,
@@ -282,13 +317,15 @@ export default function ProfilePage() {
       }
 
       localStorage.setItem(
-        "profile",
+        `profile_${phone}`,
         JSON.stringify(profileData)
       );
 
       alert(
         "Профиль сохранен"
       );
+
+      await loadProfile();
 
     } catch (error) {
 
@@ -566,219 +603,6 @@ export default function ProfilePage() {
         </div>
 
       </section>
-
-      {/* DELIVERY */}
-
-      <section className={styles.section}>
-
-        <div className={styles.profileModernCard}>
-
-          <div className={styles.profileSectionTop}>
-
-            <h2 className={styles.dashboardSectionTitle}>
-              Адрес доставки
-            </h2>
-
-            <div className={styles.profileMiniIcon}>
-              📍
-            </div>
-
-          </div>
-
-          <textarea
-            className={styles.dashboardTextarea}
-            value={deliveryAddress}
-            onChange={(e) =>
-              setDeliveryAddress(
-                e.target.value
-              )
-            }
-            placeholder="Введите адрес доставки"
-          />
-
-        </div>
-
-      </section>
-
-      {/* BILLING */}
-
-      <section className={styles.section}>
-
-        <div className={styles.profileModernCard}>
-
-          <div className={styles.profileSectionTop}>
-
-            <h2 className={styles.dashboardSectionTitle}>
-              Billing address
-            </h2>
-
-            <div className={styles.profileMiniIcon}>
-              🧾
-            </div>
-
-          </div>
-
-          <textarea
-            className={styles.dashboardTextarea}
-            value={billingAddress}
-            onChange={(e) =>
-              setBillingAddress(
-                e.target.value
-              )
-            }
-            placeholder="Введите billing address"
-          />
-
-        </div>
-
-      </section>
-
-      {/* GARAGE */}
-
-      <section className={styles.section}>
-
-        <div className={styles.profileModernCard}>
-
-          <div className={styles.profileSectionTop}>
-
-            <h2 className={styles.dashboardSectionTitle}>
-              Автомобили
-            </h2>
-
-            <Link
-              href="/dashboard/garage"
-              className={styles.profileManageBtn}
-            >
-              Управление
-            </Link>
-
-          </div>
-
-          <div className={styles.profileCarsList}>
-
-            {garage.length === 0 && (
-
-              <div className={styles.emptyMiniCard}>
-
-                Автомобили отсутствуют
-
-              </div>
-
-            )}
-
-            {garage.map((item) => (
-
-              <div
-                key={item.id}
-                className={styles.profileCarCard}
-              >
-
-                <div className={styles.profileCarIcon}>
-                  🚘
-                </div>
-
-                <div className={styles.profileCarInfo}>
-
-                  <strong>
-                    {
-                      item.car ||
-                      item.car_name ||
-                      "Автомобиль"
-                    }
-                  </strong>
-
-                  <span>
-                    VIN:
-                    {" "}
-                    {
-                      item.vin || "—"
-                    }
-                  </span>
-
-                </div>
-
-              </div>
-
-            ))}
-
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* SAVE */}
-
-      <section className={styles.section}>
-
-        <button
-          type="button"
-          className={styles.dashboardSubmit}
-          onClick={saveProfile}
-          disabled={saving}
-        >
-          {
-            saving
-              ? "Сохранение..."
-              : "Сохранить изменения"
-          }
-        </button>
-
-      </section>
-
-      {/* BOTTOM NAV */}
-
-      <nav className={styles.bottomNav}>
-
-        <Link href="/dashboard">
-
-          <Home
-            size={22}
-            strokeWidth={2.3}
-          />
-
-        </Link>
-
-        <Link href="/dashboard/requests">
-
-          <FileText
-            size={22}
-            strokeWidth={2.3}
-          />
-
-        </Link>
-
-        <Link href="/dashboard/offers">
-
-          <MessageCircle
-            size={22}
-            strokeWidth={2.3}
-          />
-
-        </Link>
-
-        <Link href="/dashboard/orders">
-
-          <ShoppingBag
-            size={22}
-            strokeWidth={2.3}
-          />
-
-        </Link>
-
-        <Link
-          href="/dashboard/profile"
-          className={styles.activeNav}
-        >
-
-          <User
-            size={22}
-            strokeWidth={2.3}
-          />
-
-        </Link>
-
-      </nav>
 
     </main>
   );
