@@ -49,11 +49,36 @@ export default function OffersPage() {
   const [paymentMethod, setPaymentMethod] =
     useState("CARD");
 
+  const [cartCount, setCartCount] =
+    useState(0);
+
   /* LOAD */
 
   useEffect(() => {
 
     loadData();
+
+    const cart =
+      localStorage.getItem(
+        "cart"
+      );
+
+    if (cart) {
+
+      try {
+
+        const parsed =
+          JSON.parse(cart);
+
+        setCartCount(
+          parsed.length || 0
+        );
+
+      } catch {
+
+        setCartCount(0);
+      }
+    }
 
   }, []);
 
@@ -146,6 +171,65 @@ export default function OffersPage() {
 
       setLoading(false);
     }
+  }
+
+  /* CART */
+
+  function addToCart(
+    offer:OfferItem
+  ) {
+
+    const currentCart =
+      JSON.parse(
+        localStorage.getItem(
+          "cart"
+        ) || "[]"
+      );
+
+    const exists =
+      currentCart.find(
+        (item:any) =>
+          item.id === offer.id
+      );
+
+    if (exists) {
+
+      alert(
+        "Уже в корзине"
+      );
+
+      return;
+    }
+
+    currentCart.push({
+      id:offer.id,
+      brand:offer.brand,
+      article:offer.article,
+      part_name:
+        offer.brand,
+      price:
+        Number(
+          offer.price || 0
+        ),
+      quantity:1,
+      product_image:
+        offer.product_image,
+      delivery_days:
+        offer.delivery_days,
+    });
+
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(currentCart)
+    );
+
+    setCartCount(
+      currentCart.length
+    );
+
+    alert(
+      "Добавлено в корзину"
+    );
   }
 
   /* DELIVERY DATE */
@@ -322,35 +406,63 @@ export default function OffersPage() {
 
         </div>
 
-        <button
-          type="button"
-          className={styles.burger}
-          onClick={() =>
-            setMenuOpen(
-              !menuOpen
-            )
-          }
-        >
+        <div className={styles.headerActions}>
 
-          {
-            menuOpen ? (
+          <Link
+            href="/dashboard/cart"
+            className={styles.cartButton}
+          >
 
-              <X
-                size={24}
-                strokeWidth={2.4}
-              />
+            <ShoppingBag
+              size={20}
+              strokeWidth={2.4}
+            />
 
-            ) : (
+            {
+              cartCount > 0 && (
 
-              <Menu
-                size={24}
-                strokeWidth={2.4}
-              />
+                <span
+                  className={styles.cartBadge}
+                >
+                  {cartCount}
+                </span>
 
-            )
-          }
+              )
+            }
 
-        </button>
+          </Link>
+
+          <button
+            type="button"
+            className={styles.burger}
+            onClick={() =>
+              setMenuOpen(
+                !menuOpen
+              )
+            }
+          >
+
+            {
+              menuOpen ? (
+
+                <X
+                  size={24}
+                  strokeWidth={2.4}
+                />
+
+              ) : (
+
+                <Menu
+                  size={24}
+                  strokeWidth={2.4}
+                />
+
+              )
+            }
+
+          </button>
+
+        </div>
 
       </header>
 
@@ -460,75 +572,102 @@ export default function OffersPage() {
 
           {offers.map((item) => (
 
-            <button
+            <div
               key={item.id}
-              type="button"
               className={styles.offerModernCard}
-              onClick={() =>
-                setSelectedOffer(item)
-              }
             >
 
-              <div className={styles.offerModernImage}>
+              <button
+                type="button"
+                style={{
+                  border:"none",
+                  background:"transparent",
+                  width:"100%",
+                  padding:0,
+                  textAlign:"left",
+                }}
+                onClick={() =>
+                  setSelectedOffer(item)
+                }
+              >
 
-                {item.product_image ? (
+                <div className={styles.offerModernImage}>
 
-                  <Image
-                    src={item.product_image}
-                    alt=""
-                    fill
-                    className={styles.offerImage}
-                  />
+                  {item.product_image ? (
 
-                ) : (
+                    <Image
+                      src={item.product_image}
+                      alt=""
+                      fill
+                      className={styles.offerImage}
+                    />
 
-                  <div className={styles.imagePlaceholder}>
-                    📦
+                  ) : (
+
+                    <div className={styles.imagePlaceholder}>
+                      📦
+                    </div>
+
+                  )}
+
+                </div>
+
+                <div className={styles.offerModernContent}>
+
+                  <h2>
+                    {
+                      item.brand ||
+                      "Товар"
+                    }
+                  </h2>
+
+                  <p>
+                    Артикул:
+                    {" "}
+                    {
+                      item.article ||
+                      "—"
+                    }
+                  </p>
+
+                  <div className={styles.offerModernPrice}>
+                    €
+                    {" "}
+                    {item.price || 0}
                   </div>
 
-                )}
+                  <div className={styles.offerModernDelivery}>
+                    🚚
+                    {" "}
+                    Доставка до
+                    {" "}
+                    {
+                      getDeliveryDate(
+                        item.delivery_days
+                      )
+                    }
+                  </div>
 
-              </div>
-
-              <div className={styles.offerModernContent}>
-
-                <h2>
-                  {
-                    item.brand ||
-                    "Товар"
-                  }
-                </h2>
-
-                <p>
-                  Артикул:
-                  {" "}
-                  {
-                    item.article ||
-                    "—"
-                  }
-                </p>
-
-                <div className={styles.offerModernPrice}>
-                  €
-                  {" "}
-                  {item.price || 0}
                 </div>
 
-                <div className={styles.offerModernDelivery}>
-                  🚚
-                  {" "}
-                  Доставка до
-                  {" "}
-                  {
-                    getDeliveryDate(
-                      item.delivery_days
-                    )
-                  }
-                </div>
+              </button>
 
-              </div>
+              <button
+                type="button"
+                className={styles.dashboardSubmit}
+                style={{
+                  marginTop:"14px",
+                  height:"52px",
+                  fontSize:"14px",
+                }}
+                onClick={() =>
+                  addToCart(item)
+                }
+              >
+                ДОБАВИТЬ В КОРЗИНУ
+              </button>
 
-            </button>
+            </div>
 
           ))}
 
@@ -616,6 +755,14 @@ export default function OffersPage() {
               </div>
 
             </div>
+
+            <button
+              type="button"
+              className={styles.dashboardSubmit}
+              onClick={createOrder}
+            >
+              ОФОРМИТЬ ЗАКАЗ
+            </button>
 
           </div>
 
