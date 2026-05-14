@@ -14,6 +14,10 @@ import {
 
 import { useEffect, useState } from "react";
 
+import type {
+  RequestItem,
+} from "@/types/dashboard";
+
 import { handleError }
 from "@/lib/handleError";
 
@@ -30,7 +34,7 @@ export default function RequestsPage() {
     useState(false);
 
   const [requests, setRequests] =
-    useState<any[]>([]);
+    useState<RequestItem[]>([])
 
   const [loading, setLoading] =
     useState(true);
