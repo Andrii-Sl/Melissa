@@ -1,8 +1,12 @@
 "use client";
 
 import { useState } from "react";
+
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+
+import { supabase }
+from "@/lib/supabase";
+
 import styles from "./login.module.css";
 
 export default function LoginPage() {
@@ -41,8 +45,20 @@ export default function LoginPage() {
     phone:string
   ) {
 
+    const normalizedPhone =
+      phone.trim();
+
+    /* LOCAL STORAGE */
+
+    localStorage.setItem(
+      "client_phone",
+      normalizedPhone
+    );
+
+    /* COOKIE */
+
     document.cookie =
-      `client_phone=${phone}; path=/; max-age=31536000; SameSite=Lax`;
+      `client_phone=${normalizedPhone}; path=/; max-age=31536000; SameSite=Lax`;
 
     document.cookie =
       "role=client; path=/; max-age=31536000; SameSite=Lax";
@@ -150,6 +166,11 @@ export default function LoginPage() {
         cleanPhone ===
         "14051978"
       ) {
+
+        localStorage.setItem(
+          "role",
+          "admin"
+        );
 
         document.cookie =
           "role=admin; path=/; max-age=31536000; SameSite=Lax";
@@ -294,6 +315,10 @@ export default function LoginPage() {
       );
 
       setLoading(false);
+
+    } finally {
+
+      setLoading(false);
     }
   }
 
@@ -335,21 +360,25 @@ export default function LoginPage() {
             {/* LABEL */}
 
             <div className={styles.label}>
+
               {
                 mode === "login"
                   ? "ВХОД"
                   : "РЕГИСТРАЦИЯ"
               }
+
             </div>
 
             {/* TITLE */}
 
             <h1 className={styles.title}>
+
               {
                 mode === "login"
                   ? "Личный кабинет"
                   : "Регистрация"
               }
+
             </h1>
 
             {/* REGISTER */}
@@ -426,6 +455,7 @@ export default function LoginPage() {
             <button
               className={styles.button}
               onClick={submit}
+              disabled={loading}
             >
 
               {
@@ -451,7 +481,9 @@ export default function LoginPage() {
                     lineHeight:"1.4",
                   }}
                 >
+
                   {smsError}
+
                 </div>
               )
             }
@@ -484,6 +516,7 @@ export default function LoginPage() {
                   <button
                     className={styles.button}
                     onClick={verifyCode}
+                    disabled={loading}
                   >
                     ПОДТВЕРДИТЬ КОД
                   </button>
