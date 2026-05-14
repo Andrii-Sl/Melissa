@@ -34,7 +34,7 @@ export default function RequestsPage() {
     useState(false);
 
   const [requests, setRequests] =
-    useState<RequestItem[]>([])
+    useState<RequestItem[]>([]);
 
   const [loading, setLoading] =
     useState(true);
@@ -55,7 +55,7 @@ export default function RequestsPage() {
         await getClientPhone();
 
       const normalizedPhone =
-        phone.trim();
+        String(phone || "").trim();
 
       if (!normalizedPhone) {
 
@@ -94,9 +94,11 @@ export default function RequestsPage() {
 
       if (error) {
 
-        console.error(error);
+        handleError(error);
 
         setRequests([]);
+
+        setLoading(false);
 
         return;
       }
