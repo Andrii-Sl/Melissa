@@ -14,6 +14,9 @@ import {
 
 import { useEffect, useState } from "react";
 
+import { handleError }
+from "@/lib/handleError";
+
 import { supabase } from "@/lib/supabase";
 
 import { getClientPhone }
@@ -98,7 +101,7 @@ export default function RequestsPage() {
 
     } catch (error) {
 
-      console.error(error);
+      handleError(error);
 
       setRequests([]);
 
