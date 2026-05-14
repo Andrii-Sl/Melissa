@@ -4,6 +4,16 @@ export async function getClientPhone() {
 
   try {
 
+    /* CLIENT ONLY */
+
+    if (
+      typeof window ===
+      "undefined"
+    ) {
+
+      return "";
+    }
+
     /* LOCAL STORAGE */
 
     const localPhone =
@@ -11,8 +21,13 @@ export async function getClientPhone() {
         "client_phone"
       );
 
-    if (localPhone)
-      return localPhone;
+    if (
+      localPhone &&
+      localPhone.trim()
+    ) {
+
+      return localPhone.trim();
+    }
 
     /* COOKIE */
 
@@ -26,23 +41,50 @@ export async function getClientPhone() {
         )
         ?.split("=")[1];
 
-    if (cookiePhone)
-      return cookiePhone;
+    if (
+      cookiePhone &&
+      cookiePhone.trim()
+    ) {
+
+      return decodeURIComponent(
+        cookiePhone.trim()
+      );
+    }
 
     /* SUPABASE SESSION */
 
     const {
       data:{ session },
+      error,
     } =
       await supabase.auth.getSession();
 
-    return (
-      session?.user?.phone || ""
-    );
+    if (error) {
+
+      console.error(error);
+
+      return "";
+    }
+
+    const sessionPhone =
+      session?.user?.phone;
+
+    if (
+      sessionPhone &&
+      sessionPhone.trim()
+    ) {
+
+      return sessionPhone.trim();
+    }
+
+    return "";
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "getClientPhone error:",
+      error
+    );
 
     return "";
   }
