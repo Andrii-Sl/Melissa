@@ -192,7 +192,6 @@ export default function ProfilePage() {
           .from("garage")
           .select(`
             id,
-            car,
             car_name,
             vin
           `)
@@ -269,9 +268,12 @@ export default function ProfilePage() {
       } =
         await supabase
           .from("profiles")
-          .upsert([
+          .upsert(
             profileData,
-          ]);
+            {
+              onConflict:"phone",
+            }
+          );
 
       if (error) {
 
@@ -290,10 +292,6 @@ export default function ProfilePage() {
       );
 
       setProfile(profileData);
-
-      setPhone(
-        normalizedPhone
-      );
 
       alert(
         "Профиль сохранен"
@@ -497,12 +495,8 @@ export default function ProfilePage() {
               <input
                 type="text"
                 value={firstName}
-                onChange={(e) =>
-                  setFirstName(
-                    e.target.value
-                  )
-                }
                 placeholder="Введите имя"
+                readOnly
               />
 
             </div>
@@ -517,12 +511,8 @@ export default function ProfilePage() {
               <input
                 type="text"
                 value={lastName}
-                onChange={(e) =>
-                  setLastName(
-                    e.target.value
-                  )
-                }
                 placeholder="Введите фамилию"
+                readOnly
               />
 
             </div>
@@ -537,12 +527,8 @@ export default function ProfilePage() {
               <input
                 type="text"
                 value={phone}
-                onChange={(e) =>
-                  setPhone(
-                    e.target.value
-                  )
-                }
                 placeholder="+48..."
+                readOnly
               />
 
             </div>
@@ -722,7 +708,6 @@ export default function ProfilePage() {
                   <strong>
                     {
                       item.car_name ||
-                      item.car ||
                       "Автомобиль"
                     }
                   </strong>
