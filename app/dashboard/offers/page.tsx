@@ -16,6 +16,9 @@ import {
 
 import { supabase } from "@/lib/supabase";
 
+import { getClientPhone }
+from "@/lib/getClientPhone";
+
 import styles from "../dashboard.module.css";
 
 export default function OffersPage() {
@@ -38,30 +41,6 @@ export default function OffersPage() {
   const [paymentMethod, setPaymentMethod] =
     useState("CARD");
 
-  /* PHONE */
-
-  async function getClientPhone() {
-
-    try {
-
-      const cookiePhone =
-        document.cookie
-          .split("; ")
-          .find((row) =>
-            row.startsWith(
-              "client_phone="
-            )
-          )
-          ?.split("=")[1];
-
-      return cookiePhone || "";
-
-    } catch {
-
-      return "";
-    }
-  }
-
   /* LOAD */
 
   useEffect(() => {
@@ -77,7 +56,10 @@ export default function OffersPage() {
       const phone =
         await getClientPhone();
 
-      if (!phone) {
+      const normalizedPhone =
+        phone.trim();
+
+      if (!normalizedPhone) {
 
         setOffers([]);
 
@@ -119,7 +101,7 @@ export default function OffersPage() {
           `)
           .eq(
             "client_phone",
-            phone
+            normalizedPhone
           )
           .eq(
             "payment_status",
@@ -192,7 +174,10 @@ export default function OffersPage() {
       const phone =
         await getClientPhone();
 
-      if (!phone) {
+      const normalizedPhone =
+        phone.trim();
+
+      if (!normalizedPhone) {
 
         alert(
           "Ошибка авторизации"
@@ -217,7 +202,7 @@ export default function OffersPage() {
               status:"NEW",
 
               client_phone:
-                phone,
+                normalizedPhone,
 
               offer_price:
                 selectedOffer.price,
