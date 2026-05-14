@@ -16,6 +16,9 @@ import { useEffect, useState } from "react";
 
 import { supabase } from "@/lib/supabase";
 
+import { getClientPhone }
+from "@/lib/getClientPhone";
+
 import styles from "../dashboard.module.css";
 
 export default function RequestsPage() {
@@ -28,30 +31,6 @@ export default function RequestsPage() {
 
   const [loading, setLoading] =
     useState(true);
-
-  /* PHONE */
-
-  async function getClientPhone() {
-
-    try {
-
-      const cookiePhone =
-        document.cookie
-          .split("; ")
-          .find((row) =>
-            row.startsWith(
-              "client_phone="
-            )
-          )
-          ?.split("=")[1];
-
-      return cookiePhone || "";
-
-    } catch {
-
-      return "";
-    }
-  }
 
   /* LOAD */
 
@@ -68,7 +47,10 @@ export default function RequestsPage() {
       const phone =
         await getClientPhone();
 
-      if (!phone) {
+      const normalizedPhone =
+        phone.trim();
+
+      if (!normalizedPhone) {
 
         setRequests([]);
 
@@ -93,7 +75,7 @@ export default function RequestsPage() {
           `)
           .eq(
             "client_phone",
-            phone
+            normalizedPhone
           )
           .order(
             "created_at",
