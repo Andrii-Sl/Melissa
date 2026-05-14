@@ -25,20 +25,15 @@ import { supabase } from "@/lib/supabase";
 import { handleError }
 from "@/lib/handleError";
 
+import type {
+  Profile,
+  GarageCar,
+} from "@/types/dashboard";
+
 import { getClientPhone }
 from "@/lib/getClientPhone";
 
 import styles from "./dashboard.module.css";
-
-interface Profile {
-  full_name?: string;
-}
-
-interface GarageCar {
-  id:number;
-  car:string;
-  vin:string;
-}
 
 export default function DashboardPage() {
 
