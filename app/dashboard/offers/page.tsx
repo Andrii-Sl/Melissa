@@ -16,6 +16,11 @@ import {
 
 import { supabase } from "@/lib/supabase";
 
+import type {
+  OfferItem,
+  Profile,
+} from "@/types/dashboard";
+
 import { handleError }
 from "@/lib/handleError";
 
@@ -30,10 +35,10 @@ export default function OffersPage() {
     useState(false);
 
   const [offers, setOffers] =
-    useState<any[]>([]);
+    useState<OfferItem[]>([])
 
   const [profile, setProfile] =
-    useState<any>(null);
+    useState<Profile | null>(null)
 
   const [loading, setLoading] =
     useState(true);
