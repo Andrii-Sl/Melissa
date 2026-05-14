@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { createClient } from "@supabase/supabase-js";
-
 import {
   Menu,
   X,
@@ -22,12 +20,12 @@ import {
   ChevronDown,
 } from "lucide-react";
 
-import styles from "./dashboard.module.css";
+import { supabase } from "@/lib/supabase";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { getClientPhone }
+from "@/lib/getClientPhone";
+
+import styles from "./dashboard.module.css";
 
 interface Profile {
   full_name?: string;
@@ -87,37 +85,17 @@ export default function DashboardPage() {
 
     try {
 
-      let clientPhone = "";
+      const clientPhone =
+        await getClientPhone();
 
-      if (
-        typeof window !==
-        "undefined"
-      ) {
-
-        clientPhone =
-
-          localStorage.getItem(
-            "client_phone"
-          ) ||
-
-          document.cookie
-            .split("; ")
-            .find((row) =>
-              row.startsWith(
-                "client_phone="
-              )
-            )
-            ?.split("=")[1] ||
-
-          "";
-      }
-
-      clientPhone =
+      const normalizedPhone =
         clientPhone.trim();
 
-      setPhone(clientPhone);
+      setPhone(
+        normalizedPhone
+      );
 
-      if (!clientPhone)
+      if (!normalizedPhone)
         return;
 
       const [
@@ -131,10 +109,12 @@ export default function DashboardPage() {
 
           supabase
             .from("profiles")
-            .select("*")
+            .select(`
+              full_name
+            `)
             .eq(
               "phone",
-              clientPhone
+              normalizedPhone
             )
             .maybeSingle(),
 
@@ -149,7 +129,7 @@ export default function DashboardPage() {
             )
             .eq(
               "client_phone",
-              clientPhone
+              normalizedPhone
             ),
 
           supabase
@@ -163,7 +143,7 @@ export default function DashboardPage() {
             )
             .eq(
               "client_phone",
-              clientPhone
+              normalizedPhone
             ),
 
           supabase
@@ -177,15 +157,19 @@ export default function DashboardPage() {
             )
             .eq(
               "client_phone",
-              clientPhone
+              normalizedPhone
             ),
 
           supabase
             .from("garage")
-            .select("*")
+            .select(`
+              id,
+              car,
+              vin
+            `)
             .eq(
               "client_phone",
-              clientPhone
+              normalizedPhone
             ),
 
         ]);
@@ -347,6 +331,7 @@ export default function DashboardPage() {
           </div>
 
           <button
+            type="button"
             className={styles.burger}
             onClick={() =>
               setMenuOpen(
@@ -565,215 +550,7 @@ export default function DashboardPage() {
 
         </section>
 
-        {/* REQUEST */}
-
-        <section className={styles.requestCard}>
-
-          <div className={styles.requestTitle}>
-            Новый запрос
-          </div>
-
-          <div className={styles.form}>
-
-            <div className={styles.input}>
-
-              <Car
-                size={18}
-                strokeWidth={2.3}
-              />
-
-              <select
-                value={selectedCar}
-                onChange={(e) =>
-                  handleCarChange(
-                    e.target.value
-                  )
-                }
-              >
-
-                <option value="">
-                  Выберите автомобиль
-                </option>
-
-                {garage.map((item) => (
-
-                  <option
-                    key={item.id}
-                    value={item.car}
-                  >
-                    {item.car}
-                  </option>
-
-                ))}
-
-              </select>
-
-              <ChevronDown
-                size={18}
-                strokeWidth={2.3}
-              />
-
-            </div>
-
-            <div className={styles.input}>
-
-              <Shield
-                size={18}
-                strokeWidth={2.3}
-              />
-
-              <input
-                type="text"
-                value={vin}
-                readOnly
-                placeholder="VIN код"
-              />
-
-            </div>
-
-            <div className={styles.input}>
-
-              <Package
-                size={18}
-                strokeWidth={2.3}
-              />
-
-              <input
-                type="text"
-                placeholder="Наименование запчасти"
-                value={partName}
-                onChange={(e) =>
-                  setPartName(
-                    e.target.value
-                  )
-                }
-              />
-
-            </div>
-
-            <div className={styles.bottomRow}>
-
-              <div className={styles.counter}>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setQuantity(
-                      Math.max(
-                        1,
-                        quantity - 1
-                      )
-                    )
-                  }
-                >
-
-                  <Minus
-                    size={18}
-                    strokeWidth={2.6}
-                  />
-
-                </button>
-
-                <span>
-                  {quantity}
-                </span>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setQuantity(
-                      quantity + 1
-                    )
-                  }
-                >
-
-                  <Plus
-                    size={18}
-                    strokeWidth={2.6}
-                  />
-
-                </button>
-
-              </div>
-
-              <button
-                className={styles.submit}
-                onClick={handleSubmit}
-                disabled={loading}
-              >
-
-                <Send
-                  size={18}
-                  strokeWidth={2.5}
-                />
-
-                {loading
-                  ? "ОТПРАВКА..."
-                  : "ОТПРАВИТЬ"}
-
-              </button>
-
-            </div>
-
-          </div>
-
-        </section>
-
       </div>
-
-      {/* BOTTOM NAV */}
-
-      <nav className={styles.bottomNav}>
-
-        <Link
-          href="/dashboard"
-          className={styles.activeNav}
-        >
-
-          <Home
-            size={22}
-            strokeWidth={2.3}
-          />
-
-        </Link>
-
-        <Link href="/dashboard/requests">
-
-          <FileText
-            size={22}
-            strokeWidth={2.3}
-          />
-
-        </Link>
-
-        <Link href="/dashboard/offers">
-
-          <MessageCircle
-            size={22}
-            strokeWidth={2.3}
-          />
-
-        </Link>
-
-        <Link href="/dashboard/orders">
-
-          <ShoppingBag
-            size={22}
-            strokeWidth={2.3}
-          />
-
-        </Link>
-
-        <Link href="/dashboard/profile">
-
-          <User
-            size={22}
-            strokeWidth={2.3}
-          />
-
-        </Link>
-
-      </nav>
 
     </div>
   );
