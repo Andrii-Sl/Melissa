@@ -28,9 +28,6 @@ export default function ProfilePage() {
   const [garage, setGarage] =
     useState<any[]>([]);
 
-  const [profile, setProfile] =
-    useState<any>(null);
-
   const [firstName, setFirstName] =
     useState("");
 
@@ -76,23 +73,9 @@ export default function ProfilePage() {
           )
           ?.split("=")[1];
 
-      if (cookiePhone)
-        return cookiePhone;
+      return cookiePhone || "";
 
-      const {
-        data:{
-          session,
-        },
-      } =
-        await supabase.auth.getSession();
-
-      return (
-        session?.user?.phone || ""
-      );
-
-    } catch (error) {
-
-      console.error(error);
+    } catch {
 
       return "";
     }
@@ -116,21 +99,71 @@ export default function ProfilePage() {
 
       /* PROFILE */
 
+      const cachedProfile =
+        localStorage.getItem(
+          "profile"
+        );
+
+      if (cachedProfile) {
+
+        const parsed =
+          JSON.parse(cachedProfile);
+
+        setFirstName(
+          parsed.first_name || ""
+        );
+
+        setLastName(
+          parsed.last_name || ""
+        );
+
+        setPhone(
+          parsed.phone || ""
+        );
+
+        setEmail(
+          parsed.email || ""
+        );
+
+        setDeliveryAddress(
+          parsed.delivery_address || ""
+        );
+
+        setBillingAddress(
+          parsed.billing_address || ""
+        );
+      }
+
       const {
         data,
+        error,
       } =
         await supabase
           .from("profiles")
-          .select("*")
+          .select(`
+            first_name,
+            last_name,
+            phone,
+            email,
+            delivery_address,
+            billing_address
+          `)
           .eq(
             "phone",
             clientPhone
           )
           .maybeSingle();
 
-      if (data) {
+      if (error) {
 
-        setProfile(data);
+        console.error(error);
+
+      } else if (data) {
+
+        localStorage.setItem(
+          "profile",
+          JSON.stringify(data)
+        );
 
         setFirstName(
           data.first_name || ""
@@ -164,7 +197,12 @@ export default function ProfilePage() {
       } =
         await supabase
           .from("garage")
-          .select("*")
+          .select(`
+            id,
+            car,
+            car_name,
+            vin
+          `)
           .eq(
             "client_phone",
             clientPhone
@@ -174,7 +212,8 @@ export default function ProfilePage() {
             {
               ascending:false,
             }
-          );
+          )
+          .limit(10);
 
       setGarage(
         garageData || []
@@ -210,23 +249,25 @@ export default function ProfilePage() {
       const fullName =
         `${firstName} ${lastName}`;
 
+      const profileData = {
+        phone,
+        first_name:firstName,
+        last_name:lastName,
+        full_name:fullName,
+        email,
+        delivery_address:
+          deliveryAddress,
+        billing_address:
+          billingAddress,
+      };
+
       const {
         error,
       } =
         await supabase
           .from("profiles")
           .upsert([
-            {
-              phone,
-              first_name:firstName,
-              last_name:lastName,
-              full_name:fullName,
-              email,
-              delivery_address:
-                deliveryAddress,
-              billing_address:
-                billingAddress,
-            },
+            profileData,
           ]);
 
       if (error) {
@@ -240,11 +281,14 @@ export default function ProfilePage() {
         return;
       }
 
+      localStorage.setItem(
+        "profile",
+        JSON.stringify(profileData)
+      );
+
       alert(
         "Профиль сохранен"
       );
-
-      loadProfile();
 
     } catch (error) {
 
@@ -296,6 +340,7 @@ export default function ProfilePage() {
         </div>
 
         <button
+          type="button"
           className={styles.burger}
           onClick={() =>
             setMenuOpen(
