@@ -4,6 +4,16 @@ export async function getClientPhone() {
 
   try {
 
+    /* CLIENT ONLY */
+
+    if (
+      typeof window ===
+      "undefined"
+    ) {
+
+      return "";
+    }
+
     /* LOCAL STORAGE */
 
     const localPhone =
@@ -11,7 +21,10 @@ export async function getClientPhone() {
         "client_phone"
       );
 
-    if (localPhone?.trim()) {
+    if (
+      localPhone &&
+      localPhone.trim()
+    ) {
 
       return localPhone.trim();
     }
@@ -28,41 +41,66 @@ export async function getClientPhone() {
         )
         ?.split("=")[1];
 
-    if (cookiePhone?.trim()) {
+    if (
+      cookiePhone &&
+      cookiePhone.trim()
+    ) {
+
+      const normalizedPhone =
+        decodeURIComponent(
+          cookiePhone.trim()
+        );
 
       localStorage.setItem(
         "client_phone",
-        cookiePhone.trim()
+        normalizedPhone
       );
 
-      return cookiePhone.trim();
+      return normalizedPhone;
     }
 
     /* SUPABASE SESSION */
 
     const {
       data:{ session },
+      error,
     } =
       await supabase.auth.getSession();
+
+    if (error) {
+
+      console.error(error);
+
+      return "";
+    }
 
     const sessionPhone =
       session?.user?.phone || "";
 
-    if (sessionPhone?.trim()) {
+    if (
+      sessionPhone &&
+      sessionPhone.trim()
+    ) {
+
+      const normalizedPhone =
+        sessionPhone.trim();
 
       localStorage.setItem(
         "client_phone",
-        sessionPhone.trim()
+        normalizedPhone
       );
 
-      return sessionPhone.trim();
+      return normalizedPhone;
     }
 
     return "";
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "getClientPhone error:",
+      error
+    );
 
     return "";
   }
