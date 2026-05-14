@@ -29,6 +29,8 @@ export default function RequestsPage() {
   const [loading, setLoading] =
     useState(true);
 
+  /* PHONE */
+
   async function getClientPhone() {
 
     try {
@@ -43,23 +45,15 @@ export default function RequestsPage() {
           )
           ?.split("=")[1];
 
-      if (cookiePhone)
-        return cookiePhone;
-
-      const {
-        data:{ session },
-      } =
-        await supabase.auth.getSession();
-
-      return (
-        session?.user?.phone || ""
-      );
+      return cookiePhone || "";
 
     } catch {
 
       return "";
     }
   }
+
+  /* LOAD */
 
   useEffect(() => {
 
@@ -76,6 +70,8 @@ export default function RequestsPage() {
 
       if (!phone) {
 
+        setRequests([]);
+
         setLoading(false);
 
         return;
@@ -83,10 +79,18 @@ export default function RequestsPage() {
 
       const {
         data,
+        error,
       } =
         await supabase
           .from("requests")
-          .select("*")
+          .select(`
+            id,
+            car,
+            vin,
+            part_name,
+            quantity,
+            created_at
+          `)
           .eq(
             "client_phone",
             phone
@@ -96,9 +100,25 @@ export default function RequestsPage() {
             {
               ascending:false,
             }
-          );
+          )
+          .limit(30);
+
+      if (error) {
+
+        console.error(error);
+
+        setRequests([]);
+
+        return;
+      }
 
       setRequests(data || []);
+
+    } catch (error) {
+
+      console.error(error);
+
+      setRequests([]);
 
     } finally {
 
@@ -113,7 +133,9 @@ export default function RequestsPage() {
       <div className={styles.page}>
 
         <div className={styles.container}>
+
           Загрузка...
+
         </div>
 
       </div>
@@ -151,6 +173,7 @@ export default function RequestsPage() {
           </div>
 
           <button
+            type="button"
             className={styles.burger}
             onClick={() =>
               setMenuOpen(
@@ -290,7 +313,10 @@ export default function RequestsPage() {
             >
 
               <div className={styles.cardTitle}>
-                {item.car || "Автомобиль"}
+                {
+                  item.car ||
+                  "Автомобиль"
+                }
               </div>
 
               <div
@@ -314,7 +340,10 @@ export default function RequestsPage() {
                   fontSize:"14px",
                 }}
               >
-                {item.part_name || "—"}
+                {
+                  item.part_name ||
+                  "—"
+                }
               </div>
 
               <div
@@ -324,7 +353,9 @@ export default function RequestsPage() {
                   fontSize:"15px",
                 }}
               >
-                {item.quantity || 1}
+                {
+                  item.quantity || 1
+                }
                 {" "}
                 шт.
               </div>
