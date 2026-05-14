@@ -528,4 +528,166 @@
   background: #f4f6fb;
 }
 
+/* PROFILE */
+
+.profileModernCard{
+  background:#fff;
+  border-radius:28px;
+  padding:24px;
+  box-shadow:0 4px 20px rgba(0,0,0,.04);
+}
+
+.profileSectionTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:20px;
+}
+
+.dashboardSectionTitle{
+  font-size:28px;
+  font-weight:900;
+  color:#000;
+}
+
+.profileBadge{
+  background:#f3f4f8;
+  padding:10px 16px;
+  border-radius:14px;
+  font-size:13px;
+  font-weight:800;
+  color:#7b8194;
+}
+
+.profileGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-bottom:14px;
+}
+
+.inputGroupModern{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-bottom:16px;
+}
+
+.inputGroupModern label{
+  font-size:14px;
+  font-weight:800;
+  color:#7b8194;
+}
+
+.dashboardInput{
+  height:58px;
+  border:none;
+  border-radius:18px;
+  background:#f5f5f7;
+  padding:0 18px;
+  font-size:16px;
+  font-weight:700;
+  color:#000;
+  outline:none;
+}
+
+.dashboardTextarea{
+  width:100%;
+  min-height:120px;
+  border:none;
+  border-radius:20px;
+  background:#f5f5f7;
+  padding:18px;
+  font-size:15px;
+  font-weight:600;
+  color:#000;
+  outline:none;
+  resize:none;
+}
+
+.profileMiniIcon{
+  width:44px;
+  height:44px;
+  border-radius:14px;
+  background:#f5f5f7;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+}
+
+.profileManageBtn{
+  background:#000;
+  color:#fff;
+  padding:10px 16px;
+  border-radius:14px;
+  text-decoration:none;
+  font-size:13px;
+  font-weight:800;
+}
+
+.profileCarsList{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.profileCarCard{
+  background:#f5f5f7;
+  border-radius:20px;
+  padding:18px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.profileCarIcon{
+  width:54px;
+  height:54px;
+  border-radius:18px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+}
+
+.profileCarInfo{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.profileCarInfo strong{
+  font-size:16px;
+  font-weight:800;
+  color:#000;
+}
+
+.profileCarInfo span{
+  font-size:13px;
+  font-weight:700;
+  color:#7b8194;
+}
+
+.emptyMiniCard{
+  background:#f5f5f7;
+  border-radius:20px;
+  padding:20px;
+  font-size:15px;
+  font-weight:700;
+  color:#7b8194;
+}
+
+.dashboardSubmit{
+  width:100%;
+  height:64px;
+  border:none;
+  border-radius:22px;
+  background:#000;
+  color:#fff;
+  font-size:16px;
+  font-weight:900;
+}
+
 }
