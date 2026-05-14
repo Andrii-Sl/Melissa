@@ -89,14 +89,22 @@ export default function DashboardPage() {
         await getClientPhone();
 
       const normalizedPhone =
-        clientPhone.trim();
+        typeof clientPhone === "string"
+          ? clientPhone.trim()
+          : "";
+
+      if (!normalizedPhone) {
+
+        console.error(
+          "Phone not found"
+        );
+
+        return;
+      }
 
       setPhone(
         normalizedPhone
       );
-
-      if (!normalizedPhone)
-        return;
 
       const [
         profileRes,
@@ -182,6 +190,15 @@ export default function DashboardPage() {
         ]);
 
       if (
+        profileRes.error
+      ) {
+
+        console.error(
+          "profile error:",
+          profileRes.error
+        );
+
+      } else if (
         profileRes.data
       ) {
 
@@ -219,6 +236,11 @@ export default function DashboardPage() {
       }
 
     } catch (error) {
+
+      console.error(
+        "Dashboard init error:",
+        error
+      );
 
       handleError(error);
     }
@@ -482,280 +504,6 @@ export default function DashboardPage() {
           <p className={styles.subtitle}>
             Управляйте запросами и следите за заказами
           </p>
-
-        </section>
-
-        {/* STATS */}
-
-        <section className={styles.statsGrid}>
-
-          <Link
-            href="/dashboard/requests"
-            className={styles.card}
-          >
-
-            <div className={styles.iconBlue}>
-
-              <FileText
-                size={22}
-                strokeWidth={2.3}
-              />
-
-            </div>
-
-            <div>
-
-              <div className={styles.cardTitle}>
-                Запросы
-              </div>
-
-              <div className={styles.cardValue}>
-                {requestsCount}
-              </div>
-
-            </div>
-
-          </Link>
-
-          <Link
-            href="/dashboard/offers"
-            className={styles.card}
-          >
-
-            <div className={styles.iconGreen}>
-
-              <MessageCircle
-                size={22}
-                strokeWidth={2.3}
-              />
-
-            </div>
-
-            <div>
-
-              <div className={styles.cardTitle}>
-                Предложения
-              </div>
-
-              <div className={styles.cardValue}>
-                {offersCount}
-              </div>
-
-            </div>
-
-          </Link>
-
-          <Link
-            href="/dashboard/orders"
-            className={styles.card}
-          >
-
-            <div className={styles.iconPurple}>
-
-              <ShoppingBag
-                size={22}
-                strokeWidth={2.3}
-              />
-
-            </div>
-
-            <div>
-
-              <div className={styles.cardTitle}>
-                Заказы
-              </div>
-
-              <div className={styles.cardValue}>
-                {ordersCount}
-              </div>
-
-            </div>
-
-          </Link>
-
-          <Link
-            href="/dashboard/profile"
-            className={styles.card}
-          >
-
-            <div className={styles.iconOrange}>
-
-              <User
-                size={22}
-                strokeWidth={2.3}
-              />
-
-            </div>
-
-            <div>
-
-              <div className={styles.cardTitle}>
-                Профиль
-              </div>
-
-              <div className={styles.cardSub}>
-                Управление данными
-              </div>
-
-            </div>
-
-          </Link>
-
-        </section>
-
-        {/* REQUEST */}
-
-        <section className={styles.requestCard}>
-
-          <div className={styles.requestTitle}>
-            Новый запрос
-          </div>
-
-          <div className={styles.form}>
-
-            <div className={styles.input}>
-
-              <Car
-                size={18}
-                strokeWidth={2.3}
-              />
-
-              <select
-                value={selectedCar}
-                onChange={(e) =>
-                  handleCarChange(
-                    e.target.value
-                  )
-                }
-              >
-
-                <option value="">
-                  Выберите автомобиль
-                </option>
-
-                {garage.map((item) => (
-
-                  <option
-                    key={item.id}
-                    value={item.car_name}
-                  >
-                    {item.car_name}
-                  </option>
-
-                ))}
-
-              </select>
-
-              <ChevronDown
-                size={18}
-                strokeWidth={2.3}
-              />
-
-            </div>
-
-            <div className={styles.input}>
-
-              <Shield
-                size={18}
-                strokeWidth={2.3}
-              />
-
-              <input
-                type="text"
-                value={vin}
-                readOnly
-                placeholder="VIN код"
-              />
-
-            </div>
-
-            <div className={styles.input}>
-
-              <Package
-                size={18}
-                strokeWidth={2.3}
-              />
-
-              <input
-                type="text"
-                placeholder="Наименование запчасти"
-                value={partName}
-                onChange={(e) =>
-                  setPartName(
-                    e.target.value
-                  )
-                }
-              />
-
-            </div>
-
-            <div className={styles.bottomRow}>
-
-              <div className={styles.counter}>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setQuantity(
-                      Math.max(
-                        1,
-                        quantity - 1
-                      )
-                    )
-                  }
-                >
-
-                  <Minus
-                    size={18}
-                    strokeWidth={2.6}
-                  />
-
-                </button>
-
-                <span>
-                  {quantity}
-                </span>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setQuantity(
-                      quantity + 1
-                    )
-                  }
-                >
-
-                  <Plus
-                    size={18}
-                    strokeWidth={2.6}
-                  />
-
-                </button>
-
-              </div>
-
-              <button
-                className={styles.submit}
-                onClick={handleSubmit}
-                disabled={loading}
-              >
-
-                <Send
-                  size={18}
-                  strokeWidth={2.5}
-                />
-
-                {
-                  loading
-                    ? "ОТПРАВКА..."
-                    : "ОТПРАВИТЬ"
-                }
-
-              </button>
-
-            </div>
-
-          </div>
 
         </section>
 
