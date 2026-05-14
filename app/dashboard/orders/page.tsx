@@ -51,21 +51,9 @@ export default function OrdersPage() {
           )
           ?.split("=")[1];
 
-      if (cookiePhone)
-        return cookiePhone;
+      return cookiePhone || "";
 
-      const {
-        data:{ session },
-      } =
-        await supabase.auth.getSession();
-
-      return (
-        session?.user?.phone || ""
-      );
-
-    } catch (error) {
-
-      console.error(error);
+    } catch {
 
       return "";
     }
@@ -76,29 +64,6 @@ export default function OrdersPage() {
   useEffect(() => {
 
     loadData();
-
-    const channel =
-      supabase
-        .channel("client-orders")
-        .on(
-          "postgres_changes",
-          {
-            event:"*",
-            schema:"public",
-            table:"orders",
-          },
-          () => {
-            loadData();
-          }
-        )
-        .subscribe();
-
-    return () => {
-
-      supabase.removeChannel(
-        channel
-      );
-    };
 
   }, []);
 
@@ -111,6 +76,8 @@ export default function OrdersPage() {
 
       if (!phone) {
 
+        setOrders([]);
+
         setLoading(false);
 
         return;
@@ -118,19 +85,17 @@ export default function OrdersPage() {
 
       /* PROFILE */
 
-      const {
-        data:profileData,
-      } =
-        await supabase
-          .from("profiles")
-          .select("*")
-          .eq(
-            "phone",
-            phone
-          )
-          .maybeSingle();
+      const localProfile =
+        localStorage.getItem(
+          "profile"
+        );
 
-      setProfile(profileData);
+      if (localProfile) {
+
+        setProfile(
+          JSON.parse(localProfile)
+        );
+      }
 
       /* ORDERS */
 
@@ -140,7 +105,18 @@ export default function OrdersPage() {
       } =
         await supabase
           .from("orders")
-          .select("*")
+          .select(`
+            id,
+            part_name,
+            article,
+            status,
+            created_at,
+            product_image,
+            offer_price,
+            delivery_address,
+            payment_method,
+            track_number
+          `)
           .eq(
             "client_phone",
             phone
@@ -150,7 +126,8 @@ export default function OrdersPage() {
             {
               ascending:false,
             }
-          );
+          )
+          .limit(20);
 
       if (error) {
 
@@ -166,6 +143,8 @@ export default function OrdersPage() {
     } catch (error) {
 
       console.error(error);
+
+      setOrders([]);
 
     } finally {
 
@@ -276,6 +255,7 @@ export default function OrdersPage() {
         </div>
 
         <button
+          type="button"
           className={styles.burger}
           onClick={() =>
             setMenuOpen(
@@ -421,8 +401,6 @@ export default function OrdersPage() {
               }
             >
 
-              {/* TOP */}
-
               <div className={styles.orderModernTop}>
 
                 <div>
@@ -452,8 +430,6 @@ export default function OrdersPage() {
 
               </div>
 
-              {/* PRODUCT */}
-
               <div className={styles.orderModernProduct}>
 
                 <div className={styles.orderModernImage}>
@@ -461,9 +437,7 @@ export default function OrdersPage() {
                   {item.product_image ? (
 
                     <Image
-                      src={
-                        item.product_image
-                      }
+                      src={item.product_image}
                       alt=""
                       fill
                       className={styles.offerImage}
@@ -519,8 +493,6 @@ export default function OrdersPage() {
 
         <div className={styles.checkoutFullscreen}>
 
-          {/* TOP */}
-
           <div className={styles.checkoutTop}>
 
             <button
@@ -538,8 +510,6 @@ export default function OrdersPage() {
             </h2>
 
           </div>
-
-          {/* ORDER */}
 
           <div className={styles.checkoutCard}>
 
@@ -579,9 +549,7 @@ export default function OrdersPage() {
                 {selectedOrder.product_image ? (
 
                   <Image
-                    src={
-                      selectedOrder.product_image
-                    }
+                    src={selectedOrder.product_image}
                     alt=""
                     fill
                     className={styles.offerImage}
@@ -619,8 +587,6 @@ export default function OrdersPage() {
 
           </div>
 
-          {/* ADDRESS */}
-
           <div className={styles.checkoutCard}>
 
             <div className={styles.checkoutSectionTitle}>
@@ -630,13 +596,9 @@ export default function OrdersPage() {
             <div className={styles.addressModern}>
 
               <strong>
-                {
-                  profile?.first_name
-                }
+                {profile?.first_name}
                 {" "}
-                {
-                  profile?.last_name
-                }
+                {profile?.last_name}
               </strong>
 
               <p>
@@ -647,16 +609,12 @@ export default function OrdersPage() {
               </p>
 
               <span>
-                {
-                  profile?.phone
-                }
+                {profile?.phone}
               </span>
 
             </div>
 
           </div>
-
-          {/* TOTAL */}
 
           <div className={styles.checkoutCard}>
 
@@ -713,8 +671,6 @@ export default function OrdersPage() {
             </div>
 
           </div>
-
-          {/* INFO */}
 
           <div className={styles.checkoutCard}>
 
