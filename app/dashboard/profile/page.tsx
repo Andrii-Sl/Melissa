@@ -494,25 +494,12 @@ export default function ProfilePage() {
 
               <input
                 type="text"
-                value={firstName}
-                placeholder="Введите имя"
+                value={
+                  `${firstName} ${lastName}`.trim()
+                }
+                placeholder="ФИО"
                 readOnly
-              />
-
-            </div>
-
-            <div className={styles.input}>
-
-              <User
-                size={18}
-                strokeWidth={2.3}
-              />
-
-              <input
-                type="text"
-                value={lastName}
-                placeholder="Введите фамилию"
-                readOnly
+                disabled
               />
 
             </div>
@@ -529,6 +516,7 @@ export default function ProfilePage() {
                 value={phone}
                 placeholder="+48..."
                 readOnly
+                disabled
               />
 
             </div>
