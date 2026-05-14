@@ -3,13 +3,24 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { supabase } from "@/lib/supabase";
+import {
+  Menu,
+  X,
+  Home,
+  FileText,
+  MessageCircle,
+  ShoppingBag,
+  User,
+} from "lucide-react";
 
-import BottomNav from "@/components/BottomNav";
+import { supabase } from "@/lib/supabase";
 
 import styles from "../dashboard.module.css";
 
 export default function ProfilePage() {
+
+  const [menuOpen, setMenuOpen] =
+    useState(false);
 
   const [loading, setLoading] =
     useState(true);
@@ -260,38 +271,152 @@ export default function ProfilePage() {
 
     <main className={styles.page}>
 
+      {/* HEADER */}
+
+      <header className={styles.header}>
+
+        <div className={styles.logoWrap}>
+
+          <div className={styles.logo}>
+            L
+          </div>
+
+          <div>
+
+            <div className={styles.brand}>
+              LYNKO
+            </div>
+
+            <div className={styles.subBrand}>
+              Клиентская панель
+            </div>
+
+          </div>
+
+        </div>
+
+        <button
+          className={styles.burger}
+          onClick={() =>
+            setMenuOpen(
+              !menuOpen
+            )
+          }
+        >
+
+          {
+            menuOpen ? (
+
+              <X
+                size={24}
+                strokeWidth={2.4}
+              />
+
+            ) : (
+
+              <Menu
+                size={24}
+                strokeWidth={2.4}
+              />
+
+            )
+          }
+
+        </button>
+
+      </header>
+
+      {/* MOBILE MENU */}
+
+      {
+        menuOpen && (
+
+          <div className={styles.mobileMenu}>
+
+            <Link
+              href="/dashboard"
+              className={styles.mobileMenuItem}
+              onClick={() =>
+                setMenuOpen(false)
+              }
+            >
+              Главная
+            </Link>
+
+            <Link
+              href="/dashboard/requests"
+              className={styles.mobileMenuItem}
+              onClick={() =>
+                setMenuOpen(false)
+              }
+            >
+              Запросы
+            </Link>
+
+            <Link
+              href="/dashboard/offers"
+              className={styles.mobileMenuItem}
+              onClick={() =>
+                setMenuOpen(false)
+              }
+            >
+              Предложения
+            </Link>
+
+            <Link
+              href="/dashboard/orders"
+              className={styles.mobileMenuItem}
+              onClick={() =>
+                setMenuOpen(false)
+              }
+            >
+              Заказы
+            </Link>
+
+            <Link
+              href="/dashboard/profile"
+              className={styles.mobileMenuItem}
+              onClick={() =>
+                setMenuOpen(false)
+              }
+            >
+              Профиль
+            </Link>
+
+          </div>
+
+        )
+      }
+
       {/* HERO */}
 
-      <section className={styles.dashboardHero}>
+      <section className={styles.hero}>
 
-        <div>
-
-          <p className={styles.dashboardSubtitle}>
-            Личный кабинет
-          </p>
-
-          <h1 className={styles.dashboardTitle}>
-            {
-              firstName
-                ? `${firstName} ${lastName}`
-                : "Профиль"
-            }
-          </h1>
-
-          <p className={styles.dashboardPhone}>
-            📞
-            {" "}
-            {
-              phone ||
-              "Телефон не указан"
-            }
-          </p>
-
+        <div className={styles.welcome}>
+          ЛИЧНЫЙ КАБИНЕТ
         </div>
 
-        <div className={styles.dashboardProfile}>
-          👤
-        </div>
+        <h1 className={styles.name}>
+
+          {
+            firstName
+              ? `${firstName} ${lastName}`
+              : "Профиль"
+          }
+
+        </h1>
+
+        <p className={styles.subtitle}>
+
+          📞
+          {" "}
+
+          {
+            phone ||
+            "Телефон не указан"
+          }
+
+        </p>
 
       </section>
 
@@ -556,7 +681,59 @@ export default function ProfilePage() {
 
       </section>
 
-      <BottomNav active="profile" />
+      {/* BOTTOM NAV */}
+
+      <nav className={styles.bottomNav}>
+
+        <Link href="/dashboard">
+
+          <Home
+            size={22}
+            strokeWidth={2.3}
+          />
+
+        </Link>
+
+        <Link href="/dashboard/requests">
+
+          <FileText
+            size={22}
+            strokeWidth={2.3}
+          />
+
+        </Link>
+
+        <Link href="/dashboard/offers">
+
+          <MessageCircle
+            size={22}
+            strokeWidth={2.3}
+          />
+
+        </Link>
+
+        <Link href="/dashboard/orders">
+
+          <ShoppingBag
+            size={22}
+            strokeWidth={2.3}
+          />
+
+        </Link>
+
+        <Link
+          href="/dashboard/profile"
+          className={styles.activeNav}
+        >
+
+          <User
+            size={22}
+            strokeWidth={2.3}
+          />
+
+        </Link>
+
+      </nav>
 
     </main>
   );
