@@ -10,7 +10,7 @@ import {
   Home,
   FileText,
   MessageCircle,
- ShoppingBag,
+  ShoppingBag,
   User,
 } from "lucide-react";
 
@@ -54,21 +54,9 @@ export default function OffersPage() {
           )
           ?.split("=")[1];
 
-      if (cookiePhone)
-        return cookiePhone;
+      return cookiePhone || "";
 
-      const {
-        data:{ session },
-      } =
-        await supabase.auth.getSession();
-
-      return (
-        session?.user?.phone || ""
-      );
-
-    } catch (error) {
-
-      console.error(error);
+    } catch {
 
       return "";
     }
@@ -79,29 +67,6 @@ export default function OffersPage() {
   useEffect(() => {
 
     loadData();
-
-    const channel =
-      supabase
-        .channel("client-offers")
-        .on(
-          "postgres_changes",
-          {
-            event:"*",
-            schema:"public",
-            table:"offers",
-          },
-          () => {
-            loadData();
-          }
-        )
-        .subscribe();
-
-    return () => {
-
-      supabase.removeChannel(
-        channel
-      );
-    };
 
   }, []);
 
@@ -114,6 +79,8 @@ export default function OffersPage() {
 
       if (!phone) {
 
+        setOffers([]);
+
         setLoading(false);
 
         return;
@@ -121,19 +88,17 @@ export default function OffersPage() {
 
       /* PROFILE */
 
-      const {
-        data:profileData,
-      } =
-        await supabase
-          .from("profiles")
-          .select("*")
-          .eq(
-            "phone",
-            phone
-          )
-          .maybeSingle();
+      const localProfile =
+        localStorage.getItem(
+          "profile"
+        );
 
-      setProfile(profileData);
+      if (localProfile) {
+
+        setProfile(
+          JSON.parse(localProfile)
+        );
+      }
 
       /* OFFERS */
 
@@ -143,7 +108,15 @@ export default function OffersPage() {
       } =
         await supabase
           .from("offers")
-          .select("*")
+          .select(`
+            id,
+            brand,
+            article,
+            price,
+            delivery_days,
+            product_image,
+            description
+          `)
           .eq(
             "client_phone",
             phone
@@ -157,7 +130,8 @@ export default function OffersPage() {
             {
               ascending:false,
             }
-          );
+          )
+          .limit(20);
 
       if (error) {
 
@@ -173,6 +147,8 @@ export default function OffersPage() {
     } catch (error) {
 
       console.error(error);
+
+      setOffers([]);
 
     } finally {
 
@@ -342,6 +318,7 @@ export default function OffersPage() {
         </div>
 
         <button
+          type="button"
           className={styles.burger}
           onClick={() =>
             setMenuOpen(
@@ -480,6 +457,7 @@ export default function OffersPage() {
 
             <button
               key={item.id}
+              type="button"
               className={styles.offerModernCard}
               onClick={() =>
                 setSelectedOffer(item)
@@ -562,6 +540,7 @@ export default function OffersPage() {
           <div className={styles.checkoutTop}>
 
             <button
+              type="button"
               className={styles.backButton}
               onClick={() =>
                 setSelectedOffer(null)
@@ -673,6 +652,7 @@ export default function OffersPage() {
             <div className={styles.paymentModern}>
 
               <button
+                type="button"
                 className={`${styles.paymentModernCard} ${
                   paymentMethod === "CARD"
                     ? styles.paymentModernActive
@@ -686,6 +666,7 @@ export default function OffersPage() {
               </button>
 
               <button
+                type="button"
                 className={`${styles.paymentModernCard} ${
                   paymentMethod === "PAYPAL"
                     ? styles.paymentModernActive
@@ -761,6 +742,7 @@ export default function OffersPage() {
           <div className={styles.checkoutFixed}>
 
             <button
+              type="button"
               className={styles.payModernButton}
               onClick={createOrder}
             >
