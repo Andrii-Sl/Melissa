@@ -1034,4 +1034,82 @@
     height: 60px;
   }
 
+/* NEW LOGO */
+
+.newLogo{
+  width:58px;
+  height:58px;
+
+  border-radius:18px;
+
+  background:#fff;
+
+  border:2px solid #e9e9ef;
+
+  position:relative;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  flex-shrink:0;
+}
+
+/* TRIANGLE */
+
+.logoTriangleOuter{
+  width:0;
+  height:0;
+
+  border-left:18px solid transparent;
+  border-right:18px solid transparent;
+  border-bottom:32px solid #ff2d20;
+
+  position:absolute;
+}
+
+.logoTriangleInner{
+  width:0;
+  height:0;
+
+  border-left:11px solid transparent;
+  border-right:11px solid transparent;
+  border-bottom:20px solid #fff;
+
+  position:absolute;
+  top:18px;
+}
+
+/* BRAND */
+
+.brandRow{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+
+  font-size:34px;
+  line-height:1;
+
+  font-weight:900;
+
+  letter-spacing:-0.03em;
+}
+
+.brandBlack{
+  color:#000;
+}
+
+.brandRed{
+  color:#ff2d20;
+}
+
+.subBrand{
+  margin-top:4px;
+
+  font-size:13px;
+  font-weight:700;
+
+  color:#9ca0b3;
+}
+
 }
