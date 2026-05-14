@@ -37,10 +37,10 @@ export default function ProfilePage() {
     useState(true);
 
   const [garage, setGarage] =
-    useState<GarageCar[]>([])
+    useState<GarageCar[]>([]);
 
   const [profile, setProfile] =
-    useState<Profile | null>(null)
+    useState<Profile | null>(null);
 
   const [firstName, setFirstName] =
     useState("");
@@ -216,7 +216,7 @@ export default function ProfilePage() {
 
       if (garageError) {
 
-        console.error(
+        handleError(
           garageError
         );
 
@@ -229,7 +229,7 @@ export default function ProfilePage() {
 
     } catch (error) {
 
-      console.error(error);
+      handleError(error);
 
     } finally {
 
@@ -283,7 +283,7 @@ export default function ProfilePage() {
 
       if (error) {
 
-        console.error(error);
+        handleError(error);
 
         alert(
           "Ошибка сохранения"
@@ -299,6 +299,10 @@ export default function ProfilePage() {
 
       setProfile(profileData);
 
+      setPhone(
+        normalizedPhone
+      );
+
       alert(
         "Профиль сохранен"
       );
@@ -307,7 +311,7 @@ export default function ProfilePage() {
 
     } catch (error) {
 
-      console.error(error);
+      handleError(error);
 
       alert(
         "Ошибка соединения"
