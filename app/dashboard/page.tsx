@@ -15,7 +15,7 @@ import {
   Package,
   Send,
   Home,
-  Minus,
+ Minus,
   Plus,
   ChevronDown,
 } from "lucide-react";
@@ -164,7 +164,7 @@ export default function DashboardPage() {
             .from("garage")
             .select(`
               id,
-              car,
+              car_name,
               vin
             `)
             .eq(
@@ -219,7 +219,7 @@ export default function DashboardPage() {
     const selected =
       garage.find(
         (item) =>
-          item.car === value
+          item.car_name === value
       );
 
     if (selected) {
@@ -615,9 +615,9 @@ export default function DashboardPage() {
 
                   <option
                     key={item.id}
-                    value={item.car}
+                    value={item.car_name}
                   >
-                    {item.car}
+                    {item.car_name}
                   </option>
 
                 ))}
