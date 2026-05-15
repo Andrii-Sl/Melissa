@@ -115,29 +115,43 @@ export default function DashboardPage() {
       const clientPhone =
         await getClientPhone();
 
+      console.log(
+        "RAW PHONE:",
+        clientPhone
+      );
+
+      if (!clientPhone) {
+
+        console.error(
+          "PHONE NOT FOUND"
+        );
+
+        return;
+      }
+
       const normalizedPhone =
-        String(clientPhone || "")
+        String(clientPhone)
           .replace(/\s/g, "")
           .replace(/[()-]/g, "")
           .trim();
 
       console.log(
-        "PHONE:",
-        normalizedPhone
-      );
-
-      setPhone(
+        "NORMALIZED PHONE:",
         normalizedPhone
       );
 
       if (!normalizedPhone) {
 
         console.error(
-          "EMPTY PHONE"
+          "EMPTY NORMALIZED PHONE"
         );
 
         return;
       }
+
+      setPhone(
+        normalizedPhone
+      );
 
       const [
         profileRes,
@@ -224,27 +238,27 @@ export default function DashboardPage() {
 
       console.log(
         "PROFILE:",
-        profileRes
+        profileRes.data
       );
 
       console.log(
         "REQUESTS:",
-        requestsRes
+        requestsRes.count
       );
 
       console.log(
         "OFFERS:",
-        offersRes
+        offersRes.count
       );
 
       console.log(
         "ORDERS:",
-        ordersRes
+        ordersRes.count
       );
 
       console.log(
         "GARAGE:",
-        garageRes
+        garageRes.data
       );
 
       if (profileRes.error) {
@@ -287,14 +301,9 @@ export default function DashboardPage() {
         );
       }
 
-      if (
-        profileRes.data
-      ) {
-
-        setProfile(
-          profileRes.data
-        );
-      }
+      setProfile(
+        profileRes.data || null
+      );
 
       setRequestsCount(
         requestsRes.count || 0
@@ -459,76 +468,13 @@ export default function DashboardPage() {
           cartCount={cartCount}
         />
 
-        {/* MOBILE MENU */}
-
-        {
-          menuOpen && (
-
-            <div className={styles.mobileMenu}>
-
-              <Link
-                href="/dashboard/profile"
-                className={styles.mobileMenuItem}
-                onClick={() =>
-                  setMenuOpen(false)
-                }
-              >
-                Профиль
-              </Link>
-
-              <Link
-                href="/dashboard/requests"
-                className={styles.mobileMenuItem}
-                onClick={() =>
-                  setMenuOpen(false)
-                }
-              >
-                Запросы
-              </Link>
-
-              <Link
-                href="/dashboard/offers"
-                className={styles.mobileMenuItem}
-                onClick={() =>
-                  setMenuOpen(false)
-                }
-              >
-                Предложения
-              </Link>
-
-              <Link
-                href="/dashboard/orders"
-                className={styles.mobileMenuItem}
-                onClick={() =>
-                  setMenuOpen(false)
-                }
-              >
-                Заказы
-              </Link>
-
-            </div>
-
-          )
-        }
-
-        {/* HERO */}
-
         <section className={styles.hero}>
 
           <div className={styles.welcome}>
             ДОБРО ПОЖАЛОВАТЬ
           </div>
 
-          <h1
-            className={styles.name}
-            style={{
-              fontSize:"32px",
-              lineHeight:"36px",
-              whiteSpace:"nowrap",
-              overflow:"hidden",
-              textOverflow:"ellipsis",
-            }}
-          >
+          <h1 className={styles.name}>
             {fullName}
           </h1>
 
@@ -538,8 +484,6 @@ export default function DashboardPage() {
 
         </section>
 
-        {/* STATS */}
-
         <section className={styles.statsGrid}>
 
           <Link
@@ -548,12 +492,10 @@ export default function DashboardPage() {
           >
 
             <div className={styles.iconBlue}>
-
               <FileText
                 size={22}
                 strokeWidth={2.3}
               />
-
             </div>
 
             <div>
@@ -576,12 +518,10 @@ export default function DashboardPage() {
           >
 
             <div className={styles.iconGreen}>
-
               <MessageCircle
                 size={22}
                 strokeWidth={2.3}
               />
-
             </div>
 
             <div>
@@ -604,12 +544,10 @@ export default function DashboardPage() {
           >
 
             <div className={styles.iconPurple}>
-
               <ShoppingBag
                 size={22}
                 strokeWidth={2.3}
               />
-
             </div>
 
             <div>
@@ -632,12 +570,10 @@ export default function DashboardPage() {
           >
 
             <div className={styles.iconOrange}>
-
               <User
                 size={22}
                 strokeWidth={2.3}
               />
-
             </div>
 
             <div>
@@ -655,8 +591,6 @@ export default function DashboardPage() {
           </Link>
 
         </section>
-
-        {/* REQUEST */}
 
         <section className={styles.requestCard}>
 
@@ -813,8 +747,6 @@ export default function DashboardPage() {
         </section>
 
       </div>
-
-      {/* BOTTOM NAV */}
 
       <nav className={styles.bottomNav}>
 
