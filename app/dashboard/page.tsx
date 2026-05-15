@@ -68,6 +68,12 @@ export default function DashboardPage() {
   const [vin, setVin] =
     useState("");
 
+  const [newCar, setNewCar] =
+    useState("");
+
+  const [newVin, setNewVin] =
+    useState("");
+
   const [partName, setPartName] =
     useState("");
 
@@ -261,46 +267,6 @@ export default function DashboardPage() {
         garageRes.data
       );
 
-      if (profileRes.error) {
-
-        console.error(
-          "PROFILE ERROR:",
-          profileRes.error
-        );
-      }
-
-      if (requestsRes.error) {
-
-        console.error(
-          "REQUESTS ERROR:",
-          requestsRes.error
-        );
-      }
-
-      if (offersRes.error) {
-
-        console.error(
-          "OFFERS ERROR:",
-          offersRes.error
-        );
-      }
-
-      if (ordersRes.error) {
-
-        console.error(
-          "ORDERS ERROR:",
-          ordersRes.error
-        );
-      }
-
-      if (garageRes.error) {
-
-        console.error(
-          "GARAGE ERROR:",
-          garageRes.error
-        );
-      }
-
       setProfile(
         profileRes.data || null
       );
@@ -338,6 +304,15 @@ export default function DashboardPage() {
 
     setSelectedCar(value);
 
+    if (
+      value === "NEW_CAR"
+    ) {
+
+      setVin("");
+
+      return;
+    }
+
     const selected =
       garage.find(
         (item) =>
@@ -358,19 +333,83 @@ export default function DashboardPage() {
 
   async function handleSubmit() {
 
-    if (
-      !selectedCar ||
-      !partName
-    ) {
-
-      alert(
-        "Заполните все поля"
-      );
-
-      return;
-    }
-
     try {
+
+      let finalCar =
+        selectedCar;
+
+      let finalVin =
+        vin;
+
+      if (
+        selectedCar ===
+        "NEW_CAR"
+      ) {
+
+        if (!newCar) {
+
+          alert(
+            "Введите автомобиль"
+          );
+
+          return;
+        }
+
+        finalCar =
+          newCar;
+
+        finalVin =
+          newVin;
+
+        const {
+          error:garageError,
+        } =
+          await supabase
+            .from("garage")
+            .insert({
+              car_name:newCar,
+              vin:newVin,
+              client_phone:phone,
+            });
+
+        if (garageError) {
+
+          console.error(
+            garageError
+          );
+
+          alert(
+            "Ошибка сохранения автомобиля"
+          );
+
+          return;
+        }
+
+        setGarage((prev) => [
+
+          {
+            id:Date.now(),
+            car_name:newCar,
+            vin:newVin,
+            client_phone:phone,
+          },
+
+          ...prev,
+
+        ]);
+      }
+
+      if (
+        !finalCar ||
+        !partName
+      ) {
+
+        alert(
+          "Заполните все поля"
+        );
+
+        return;
+      }
 
       setLoading(true);
 
@@ -380,8 +419,8 @@ export default function DashboardPage() {
         await supabase
           .from("requests")
           .insert({
-            car:selectedCar,
-            vin,
+            car:finalCar,
+            vin:finalVin,
             part_name:partName,
             quantity,
             status:"NEW",
@@ -408,6 +447,10 @@ export default function DashboardPage() {
       setSelectedCar("");
 
       setVin("");
+
+      setNewCar("");
+
+      setNewVin("");
 
       const {
         count,
@@ -631,6 +674,10 @@ export default function DashboardPage() {
 
                 ))}
 
+                <option value="NEW_CAR">
+                  + Добавить автомобиль
+                </option>
+
               </select>
 
               <ChevronDown
@@ -640,21 +687,77 @@ export default function DashboardPage() {
 
             </div>
 
-            <div className={styles.input}>
+            {
+              selectedCar ===
+              "NEW_CAR" && (
 
-              <Shield
-                size={18}
-                strokeWidth={2.3}
-              />
+                <>
+                  <div className={styles.input}>
 
-              <input
-                type="text"
-                value={vin}
-                readOnly
-                placeholder="VIN код"
-              />
+                    <Car
+                      size={18}
+                      strokeWidth={2.3}
+                    />
 
-            </div>
+                    <input
+                      type="text"
+                      placeholder="Марка и модель"
+                      value={newCar}
+                      onChange={(e) =>
+                        setNewCar(
+                          e.target.value
+                        )
+                      }
+                    />
+
+                  </div>
+
+                  <div className={styles.input}>
+
+                    <Shield
+                      size={18}
+                      strokeWidth={2.3}
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="VIN код"
+                      value={newVin}
+                      onChange={(e) =>
+                        setNewVin(
+                          e.target.value
+                        )
+                      }
+                    />
+
+                  </div>
+                </>
+
+              )
+            }
+
+            {
+              selectedCar !==
+              "NEW_CAR" && (
+
+                <div className={styles.input}>
+
+                  <Shield
+                    size={18}
+                    strokeWidth={2.3}
+                  />
+
+                  <input
+                    type="text"
+                    value={vin}
+                    readOnly
+                    placeholder="VIN код"
+                  />
+
+                </div>
+
+              )
+            }
 
             <div className={styles.input}>
 
