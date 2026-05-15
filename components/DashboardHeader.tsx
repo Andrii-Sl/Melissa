@@ -50,7 +50,6 @@ export default function DashboardHeader({
             <div className={styles.logoImageWrap}>
 
   <Image
-    src="/logo-final.png"
     alt="AutoParts-EU"
     width={46}
     height={46}
