@@ -105,13 +105,9 @@ export default function CartPage() {
 
     try {
 
-      if (
-        cart.length === 0
-      ) {
+      if (cart.length === 0) {
 
-        alert(
-          "Корзина пуста"
-        );
+        alert("Корзина пуста");
 
         return;
       }
@@ -122,7 +118,14 @@ export default function CartPage() {
         await getClientPhone();
 
       const normalizedPhone =
-        String(phone || "").trim();
+        String(phone || "")
+          .replace(/\s/g, "")
+          .trim();
+
+      console.log(
+        "CHECKOUT PHONE:",
+        normalizedPhone
+      );
 
       if (!normalizedPhone) {
 
@@ -136,7 +139,8 @@ export default function CartPage() {
       const orders =
         cart.map((item) => ({
 
-          offer_id:item.id,
+          offer_id:
+            item.id || null,
 
           client_phone:
             normalizedPhone,
@@ -144,45 +148,78 @@ export default function CartPage() {
           status:"NEW",
 
           part_name:
-            item.part_name,
+            String(
+              item.part_name || ""
+            ),
 
           article:
-            item.article || "",
+            String(
+              item.article || ""
+            ),
 
           quantity:
-            item.quantity,
+            Number(
+              item.quantity || 1
+            ),
 
           offer_price:
-            item.price,
+            Number(
+              item.price || 0
+            ),
 
           total_price:
-            item.price *
-            item.quantity,
+            Number(
+              item.price || 0
+            ) *
+            Number(
+              item.quantity || 1
+            ),
 
           payment_method:
             "CARD",
 
           delivery_days:
-            item.delivery_days || 0,
+            Number(
+              item.delivery_days || 0
+            ),
 
           product_image:
-            item.product_image || "",
+            String(
+              item.product_image || ""
+            ),
 
         }));
 
+      console.log(
+        "ORDERS:",
+        orders
+      );
+
       const {
         error,
+        data,
       } =
         await supabase
           .from("orders")
-          .insert(orders);
+          .insert(orders)
+          .select();
+
+      console.log(
+        "ORDER RESPONSE:",
+        data
+      );
+
+      console.log(
+        "ORDER ERROR:",
+        error
+      );
 
       if (error) {
 
-        handleError(error);
+        console.error(error);
 
         alert(
-          "Ошибка оформления"
+          error.message
         );
 
         return;
@@ -203,6 +240,11 @@ export default function CartPage() {
       );
 
     } catch (error) {
+
+      console.error(
+        "CHECKOUT ERROR:",
+        error
+      );
 
       handleError(error);
 
@@ -375,9 +417,7 @@ export default function CartPage() {
                   <span>
                     Цена:
                     {" "}
-                    {
-                      item.price
-                    } zł
+                    {item.price} zł
                   </span>
 
                 </div>
