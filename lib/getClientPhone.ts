@@ -4,8 +4,7 @@ function normalizePhone(
   value:string
 ) {
 
-  return value
-    .replace(/\s/g, "")
+  return String(value || "")
     .trim();
 }
 
@@ -24,6 +23,11 @@ export async function getClientPhone() {
     /* LOCAL STORAGE */
 
     const localPhone =
+
+      localStorage.getItem(
+        "clientPhone"
+      ) ||
+
       localStorage.getItem(
         "client_phone"
       );
@@ -57,7 +61,7 @@ export async function getClientPhone() {
         );
 
       localStorage.setItem(
-        "client_phone",
+        "clientPhone",
         normalizedPhone
       );
 
@@ -82,7 +86,7 @@ export async function getClientPhone() {
         );
 
       localStorage.setItem(
-        "client_phone",
+        "clientPhone",
         normalizedPhone
       );
 
