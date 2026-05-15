@@ -51,6 +51,11 @@ export default function DashboardHeader({
 
   <Image
     src="/logo-final.png"
+    alt="AutoParts-EU"
+    width={46}
+    height={46}
+    className={styles.logoImage}
+    priority
   />
 
 </div>
