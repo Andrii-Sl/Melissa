@@ -459,6 +459,58 @@ export default function DashboardPage() {
           cartCount={cartCount}
         />
 
+        {/* MOBILE MENU */}
+
+        {
+          menuOpen && (
+
+            <div className={styles.mobileMenu}>
+
+              <Link
+                href="/dashboard/profile"
+                className={styles.mobileMenuItem}
+                onClick={() =>
+                  setMenuOpen(false)
+                }
+              >
+                Профиль
+              </Link>
+
+              <Link
+                href="/dashboard/requests"
+                className={styles.mobileMenuItem}
+                onClick={() =>
+                  setMenuOpen(false)
+                }
+              >
+                Запросы
+              </Link>
+
+              <Link
+                href="/dashboard/offers"
+                className={styles.mobileMenuItem}
+                onClick={() =>
+                  setMenuOpen(false)
+                }
+              >
+                Предложения
+              </Link>
+
+              <Link
+                href="/dashboard/orders"
+                className={styles.mobileMenuItem}
+                onClick={() =>
+                  setMenuOpen(false)
+                }
+              >
+                Заказы
+              </Link>
+
+            </div>
+
+          )
+        }
+
         {/* HERO */}
 
         <section className={styles.hero}>
@@ -469,6 +521,13 @@ export default function DashboardPage() {
 
           <h1
             className={styles.name}
+            style={{
+              fontSize:"32px",
+              lineHeight:"36px",
+              whiteSpace:"nowrap",
+              overflow:"hidden",
+              textOverflow:"ellipsis",
+            }}
           >
             {fullName}
           </h1>
