@@ -116,14 +116,28 @@ export default function DashboardPage() {
         await getClientPhone();
 
       const normalizedPhone =
-        clientPhone.trim();
+        String(clientPhone || "")
+          .replace(/\s/g, "")
+          .replace(/[()-]/g, "")
+          .trim();
+
+      console.log(
+        "PHONE:",
+        normalizedPhone
+      );
 
       setPhone(
         normalizedPhone
       );
 
-      if (!normalizedPhone)
+      if (!normalizedPhone) {
+
+        console.error(
+          "EMPTY PHONE"
+        );
+
         return;
+      }
 
       const [
         profileRes,
@@ -208,6 +222,66 @@ export default function DashboardPage() {
 
         ]);
 
+      console.log(
+        "PROFILE:",
+        profileRes
+      );
+
+      console.log(
+        "REQUESTS:",
+        requestsRes
+      );
+
+      console.log(
+        "OFFERS:",
+        offersRes
+      );
+
+      console.log(
+        "ORDERS:",
+        ordersRes
+      );
+
+      console.log(
+        "GARAGE:",
+        garageRes
+      );
+
+      if (profileRes.error) {
+
+        console.error(
+          profileRes.error
+        );
+      }
+
+      if (requestsRes.error) {
+
+        console.error(
+          requestsRes.error
+        );
+      }
+
+      if (offersRes.error) {
+
+        console.error(
+          offersRes.error
+        );
+      }
+
+      if (ordersRes.error) {
+
+        console.error(
+          ordersRes.error
+        );
+      }
+
+      if (garageRes.error) {
+
+        console.error(
+          garageRes.error
+        );
+      }
+
       if (
         profileRes.data
       ) {
@@ -229,23 +303,13 @@ export default function DashboardPage() {
         ordersRes.count || 0
       );
 
-      if (
-        garageRes.error
-      ) {
-
-        console.error(
-          "garage error:",
-          garageRes.error
-        );
-
-      } else {
-
-        setGarage(
-          garageRes.data || []
-        );
-      }
+      setGarage(
+        garageRes.data || []
+      );
 
     } catch (error) {
+
+      console.error(error);
 
       handleError(error);
     }
@@ -309,6 +373,8 @@ export default function DashboardPage() {
 
       if (error) {
 
+        console.error(error);
+
         handleError(error);
 
         alert(
@@ -352,6 +418,8 @@ export default function DashboardPage() {
       );
 
     } catch (error) {
+
+      console.error(error);
 
       handleError(error);
 
