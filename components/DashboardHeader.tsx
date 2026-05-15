@@ -1,183 +1,184 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 
 import {
-  Menu,
-  X,
-  ShoppingBag,
-  LogOut,
+Menu,
+X,
+ShoppingBag,
+LogOut,
 } from "lucide-react";
 
 import styles from "@/app/dashboard/dashboard.module.css";
 
 type Props = {
-  menuOpen:boolean;
-  setMenuOpen:(value:boolean)=>void;
-  cartCount?:number;
+menuOpen:boolean;
+setMenuOpen:(value:boolean)=>void;
+cartCount?:number;
 };
 
 export default function DashboardHeader({
-  menuOpen,
-  setMenuOpen,
-  cartCount = 0,
+menuOpen,
+setMenuOpen,
+cartCount = 0,
 }:Props) {
 
-  function handleLogout() {
+function handleLogout() {
 
-    localStorage.removeItem(
-      "clientPhone"
-    );
+localStorage.removeItem(  
+  "clientPhone"  
+);  
 
-    localStorage.removeItem(
-      "client_phone"
-    );
+window.location.href = "/";
 
-    window.location.href = "/";
-  }
+}
 
-  return (
+return (
 
-    <>
-      <header className={styles.header}>
+<>  
+  <header className={styles.header}>  
 
-        <div className={styles.logoWrap}>
+    <div className={styles.logoWrap}>  
 
-          <div className={styles.logoImageWrap}>
+      <div className={styles.logo}>  
+        L  
+      </div>  
 
-            <Image
-              src="/logo-final.png"
-              alt="Logo"
-              fill
-              priority
-              className={styles.logoImage}
-            />
+      <div>  
 
-          </div>
+        <div className={styles.brand}>  
+          LYNKO  
+        </div>  
 
-        </div>
+        <div className={styles.subBrand}>  
+          Клиентская панель  
+        </div>  
 
-        <div className={styles.headerActions}>
+      </div>  
 
-          <Link
-            href="/dashboard/cart"
-            className={styles.cartButton}
-          >
+    </div>  
 
-            <ShoppingBag
-              size={20}
-              strokeWidth={2.4}
-            />
+    <div className={styles.headerActions}>  
 
-            {
-              cartCount > 0 && (
+      <Link  
+        href="/dashboard/cart"  
+        className={styles.cartButton}  
+      >  
 
-                <span
-                  className={styles.cartBadge}
-                >
-                  {cartCount}
-                </span>
+        <ShoppingBag  
+          size={20}  
+          strokeWidth={2.4}  
+        />  
 
-              )
-            }
+        {  
+          cartCount > 0 && (  
 
-          </Link>
+            <span  
+              className={styles.cartBadge}  
+            >  
+              {cartCount}  
+            </span>  
 
-          <button
-            type="button"
-            className={styles.burger}
-            onClick={() =>
-              setMenuOpen(
-                !menuOpen
-              )
-            }
-          >
+          )  
+        }  
 
-            {
-              menuOpen ? (
+      </Link>  
 
-                <X
-                  size={24}
-                  strokeWidth={2.4}
-                />
+      <button  
+        type="button"  
+        className={styles.burger}  
+        onClick={() =>  
+          setMenuOpen(  
+            !menuOpen  
+          )  
+        }  
+      >  
 
-              ) : (
+        {  
+          menuOpen ? (  
 
-                <Menu
-                  size={24}
-                  strokeWidth={2.4}
-                />
+            <X  
+              size={24}  
+              strokeWidth={2.4}  
+            />  
 
-              )
-            }
+          ) : (  
 
-          </button>
+            <Menu  
+              size={24}  
+              strokeWidth={2.4}  
+            />  
 
-        </div>
+          )  
+        }  
 
-      </header>
+      </button>  
 
-      {
-        menuOpen && (
+    </div>  
 
-          <div className={styles.mobileMenu}>
+  </header>  
 
-            <Link
-              href="/dashboard"
-              className={styles.mobileMenuItem}
-            >
-              Главная
-            </Link>
+  {  
+    menuOpen && (  
 
-            <Link
-              href="/dashboard/profile"
-              className={styles.mobileMenuItem}
-            >
-              Профиль
-            </Link>
+      <div className={styles.mobileMenu}>  
 
-            <Link
-              href="/dashboard/requests"
-              className={styles.mobileMenuItem}
-            >
-              Запросы
-            </Link>
+        <Link  
+          href="/dashboard"  
+          className={styles.mobileMenuItem}  
+        >  
+          Главная  
+        </Link>  
 
-            <Link
-              href="/dashboard/offers"
-              className={styles.mobileMenuItem}
-            >
-              Предложения
-            </Link>
+        <Link  
+          href="/dashboard/profile"  
+          className={styles.mobileMenuItem}  
+        >  
+          Профиль  
+        </Link>  
 
-            <Link
-              href="/dashboard/orders"
-              className={styles.mobileMenuItem}
-            >
-              Заказы
-            </Link>
+        <Link  
+          href="/dashboard/requests"  
+          className={styles.mobileMenuItem}  
+        >  
+          Запросы  
+        </Link>  
 
-            <button
-              type="button"
-              className={styles.mobileLogout}
-              onClick={handleLogout}
-            >
+        <Link  
+          href="/dashboard/offers"  
+          className={styles.mobileMenuItem}  
+        >  
+          Предложения  
+        </Link>  
 
-              <LogOut
-                size={18}
-                strokeWidth={2.4}
-              />
+        <Link  
+          href="/dashboard/orders"  
+          className={styles.mobileMenuItem}  
+        >  
+          Заказы  
+        </Link>  
 
-              Выйти
+        <button  
+          type="button"  
+          className={styles.mobileLogout}  
+          onClick={handleLogout}  
+        >  
 
-            </button>
+          <LogOut  
+            size={18}  
+            strokeWidth={2.4}  
+          />  
 
-          </div>
+          Выйти  
 
-        )
-      }
+        </button>  
 
-    </>
-  );
+      </div>  
+
+    )  
+  }  
+
+</>
+
+);
 }
