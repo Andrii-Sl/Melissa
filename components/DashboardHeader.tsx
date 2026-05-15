@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-
 import Image from "next/image";
 
 import {
@@ -37,38 +36,19 @@ export default function DashboardHeader({
   return (
 
     <>
-
       <header className={styles.header}>
 
         <div className={styles.logoWrap}>
 
-          <div className={styles.logoImageWrap}>
+          <div className={styles.logoImage}>
 
             <Image
               src="/logo-final.png"
-              alt="AutoParts-EU"
-              width={52}
-              height={52}
-              className={styles.logoImage}
+              alt="Logo"
+              fill
               priority
+              className={styles.logoImg}
             />
-
-          </div>
-
-          <div>
-
-            <div className={styles.brand}>
-
-              AutoParts-
-              <span className={styles.brandRed}>
-                EU
-              </span>
-
-            </div>
-
-            <div className={styles.subBrand}>
-              Клиентская панель
-            </div>
 
           </div>
 
@@ -86,15 +66,17 @@ export default function DashboardHeader({
               strokeWidth={2.4}
             />
 
-            {cartCount > 0 && (
+            {
+              cartCount > 0 && (
 
-              <span
-                className={styles.cartBadge}
-              >
-                {cartCount}
-              </span>
+                <span
+                  className={styles.cartBadge}
+                >
+                  {cartCount}
+                </span>
 
-            )}
+              )
+            }
 
           </Link>
 
@@ -102,25 +84,29 @@ export default function DashboardHeader({
             type="button"
             className={styles.burger}
             onClick={() =>
-              setMenuOpen(!menuOpen)
+              setMenuOpen(
+                !menuOpen
+              )
             }
           >
 
-            {menuOpen ? (
+            {
+              menuOpen ? (
 
-              <X
-                size={24}
-                strokeWidth={2.4}
-              />
+                <X
+                  size={24}
+                  strokeWidth={2.4}
+                />
 
-            ) : (
+              ) : (
 
-              <Menu
-                size={24}
-                strokeWidth={2.4}
-              />
+                <Menu
+                  size={24}
+                  strokeWidth={2.4}
+                />
 
-            )}
+              )
+            }
 
           </button>
 
@@ -128,65 +114,66 @@ export default function DashboardHeader({
 
       </header>
 
-      {menuOpen && (
+      {
+        menuOpen && (
 
-        <div className={styles.mobileMenu}>
+          <div className={styles.mobileMenu}>
 
-          <Link
-            href="/dashboard"
-            className={styles.mobileMenuItem}
-          >
-            Главная
-          </Link>
+            <Link
+              href="/dashboard"
+              className={styles.mobileMenuItem}
+            >
+              Главная
+            </Link>
 
-          <Link
-            href="/dashboard/profile"
-            className={styles.mobileMenuItem}
-          >
-            Профиль
-          </Link>
+            <Link
+              href="/dashboard/profile"
+              className={styles.mobileMenuItem}
+            >
+              Профиль
+            </Link>
 
-          <Link
-            href="/dashboard/requests"
-            className={styles.mobileMenuItem}
-          >
-            Запросы
-          </Link>
+            <Link
+              href="/dashboard/requests"
+              className={styles.mobileMenuItem}
+            >
+              Запросы
+            </Link>
 
-          <Link
-            href="/dashboard/offers"
-            className={styles.mobileMenuItem}
-          >
-            Предложения
-          </Link>
+            <Link
+              href="/dashboard/offers"
+              className={styles.mobileMenuItem}
+            >
+              Предложения
+            </Link>
 
-          <Link
-            href="/dashboard/orders"
-            className={styles.mobileMenuItem}
-          >
-            Заказы
-          </Link>
+            <Link
+              href="/dashboard/orders"
+              className={styles.mobileMenuItem}
+            >
+              Заказы
+            </Link>
 
-          <button
-            type="button"
-            className={styles.mobileLogout}
-            onClick={handleLogout}
-          >
+            <button
+              type="button"
+              className={styles.mobileLogout}
+              onClick={handleLogout}
+            >
 
-            <LogOut
-              size={18}
-              strokeWidth={2.4}
-            />
+              <LogOut
+                size={18}
+                strokeWidth={2.4}
+              />
 
-            Выйти
+              Выйти
 
-          </button>
+            </button>
 
-        </div>
+          </div>
 
-      )}
+        )
+      }
 
     </>
-
   );
 }
