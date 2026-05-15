@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 
+import Image from "next/image";
+
 import {
   Menu,
   X,
@@ -45,9 +47,13 @@ export default function DashboardHeader({
 
           <div>
 
-            <div className={styles.brand}>
-              LYNKO
-            </div>
+            <div className={styles.logoImageWrap}>
+
+  <Image
+    src="/logo-final.png"
+  />
+
+</div>
 
             <div className={styles.subBrand}>
               Клиентская панель
