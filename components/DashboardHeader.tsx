@@ -27,6 +27,10 @@ export default function DashboardHeader({
   function handleLogout() {
 
     localStorage.removeItem(
+      "clientPhone"
+    );
+
+    localStorage.removeItem(
       "client_phone"
     );
 
@@ -40,14 +44,14 @@ export default function DashboardHeader({
 
         <div className={styles.logoWrap}>
 
-          <div className={styles.logoImage}>
+          <div className={styles.logoImageWrap}>
 
             <Image
               src="/logo-final.png"
               alt="Logo"
               fill
               priority
-              className={styles.logoImg}
+              className={styles.logoImage}
             />
 
           </div>
