@@ -115,10 +115,10 @@ export default function DashboardPage() {
       const clientPhone =
         await getClientPhone();
 
+      /* FIXED PHONE */
+
       const normalizedPhone =
         String(clientPhone || "")
-          .replace(/\s/g, "")
-          .replace(/[()-]/g, "")
           .trim();
 
       console.log(
