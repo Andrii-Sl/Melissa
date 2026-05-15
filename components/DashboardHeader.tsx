@@ -47,7 +47,7 @@ return (
       <div>  
 
         <div className={styles.brand}>  
-          LYNKO  
+          AutoParts-EU 
         </div>  
 
         <div className={styles.subBrand}>  
