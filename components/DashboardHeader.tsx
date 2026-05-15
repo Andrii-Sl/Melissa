@@ -37,62 +37,16 @@ export default function DashboardHeader({
     <>
       <header className={styles.header}>
 
-        {/* LEFT */}
-
         <div className={styles.logoWrap}>
 
-          {/* NEW LOGO */}
-
-          <div className={styles.newLogo}>
-
-            <div
-              className={
-                styles.logoTriangleOuter
-              }
-            />
-
-            <div
-              className={
-                styles.logoTriangleInner
-              }
-            />
-
+          <div className={styles.logo}>
+            L
           </div>
-
-          {/* BRAND */}
 
           <div>
 
-            <div
-              className={
-                styles.brandRow
-              }
-            >
-
-              <span
-                className={
-                  styles.brandBlack
-                }
-              >
-                Auto
-              </span>
-
-              <span
-                className={
-                  styles.brandRed
-                }
-              >
-                Parts
-              </span>
-
-              <span
-                className={
-                  styles.brandBlack
-                }
-              >
-                -EU
-              </span>
-
+            <div className={styles.brand}>
+              LYNKO
             </div>
 
             <div className={styles.subBrand}>
@@ -102,8 +56,6 @@ export default function DashboardHeader({
           </div>
 
         </div>
-
-        {/* RIGHT */}
 
         <div className={styles.headerActions}>
 
@@ -121,9 +73,7 @@ export default function DashboardHeader({
               cartCount > 0 && (
 
                 <span
-                  className={
-                    styles.cartBadge
-                  }
+                  className={styles.cartBadge}
                 >
                   {cartCount}
                 </span>
@@ -167,8 +117,6 @@ export default function DashboardHeader({
 
       </header>
 
-      {/* MOBILE MENU */}
-
       {
         menuOpen && (
 
@@ -176,69 +124,42 @@ export default function DashboardHeader({
 
             <Link
               href="/dashboard"
-              className={
-                styles.mobileMenuItem
-              }
-              onClick={() =>
-                setMenuOpen(false)
-              }
+              className={styles.mobileMenuItem}
             >
               Главная
             </Link>
 
             <Link
               href="/dashboard/profile"
-              className={
-                styles.mobileMenuItem
-              }
-              onClick={() =>
-                setMenuOpen(false)
-              }
+              className={styles.mobileMenuItem}
             >
               Профиль
             </Link>
 
             <Link
               href="/dashboard/requests"
-              className={
-                styles.mobileMenuItem
-              }
-              onClick={() =>
-                setMenuOpen(false)
-              }
+              className={styles.mobileMenuItem}
             >
               Запросы
             </Link>
 
             <Link
               href="/dashboard/offers"
-              className={
-                styles.mobileMenuItem
-              }
-              onClick={() =>
-                setMenuOpen(false)
-              }
+              className={styles.mobileMenuItem}
             >
               Предложения
             </Link>
 
             <Link
               href="/dashboard/orders"
-              className={
-                styles.mobileMenuItem
-              }
-              onClick={() =>
-                setMenuOpen(false)
-              }
+              className={styles.mobileMenuItem}
             >
               Заказы
             </Link>
 
             <button
               type="button"
-              className={
-                styles.mobileLogout
-              }
+              className={styles.mobileLogout}
               onClick={handleLogout}
             >
 
