@@ -90,29 +90,45 @@ export default function DashboardPage() {
 
     init();
 
-    const cart =
-      localStorage.getItem(
-        "cart"
-      );
-
-    if (cart) {
-
-      try {
-
-        const parsed =
-          JSON.parse(cart);
-
-        setCartCount(
-          parsed.length || 0
-        );
-
-      } catch {
-
-        setCartCount(0);
-      }
-    }
+    loadCartCount();
 
   }, []);
+
+  function loadCartCount() {
+
+    try {
+
+      const cart =
+        localStorage.getItem(
+          "cart"
+        );
+
+      if (!cart) {
+
+        setCartCount(0);
+
+        return;
+      }
+
+      const parsed =
+        JSON.parse(cart);
+
+      setCartCount(
+        Array.isArray(parsed)
+          ? parsed.length
+          : 0
+      );
+
+    } catch (error) {
+
+      console.error(
+        "CART ERROR:",
+        error
+      );
+
+      setCartCount(0);
+    }
+  }
 
   async function init() {
 
@@ -149,7 +165,7 @@ export default function DashboardPage() {
       if (!normalizedPhone) {
 
         console.error(
-          "EMPTY NORMALIZED PHONE"
+          "EMPTY PHONE"
         );
 
         return;
@@ -159,113 +175,147 @@ export default function DashboardPage() {
         normalizedPhone
       );
 
-      const [
-        profileRes,
-        requestsRes,
-        offersRes,
-        ordersRes,
-        garageRes,
-      ] =
-        await Promise.all([
+      const profileRes =
+        await supabase
+          .from("profiles")
+          .select(`
+            full_name
+          `)
+          .eq(
+            "phone",
+            normalizedPhone
+          )
+          .maybeSingle();
 
-          supabase
-            .from("profiles")
-            .select(`
-              full_name
-            `)
-            .eq(
-              "phone",
-              normalizedPhone
-            )
-            .maybeSingle(),
+      const requestsRes =
+        await supabase
+          .from("requests")
+          .select(
+            "id",
+            {
+              count:"exact",
+              head:true,
+            }
+          )
+          .eq(
+            "client_phone",
+            normalizedPhone
+          );
 
-          supabase
-            .from("requests")
-            .select(
-              "id",
-              {
-                count:"exact",
-                head:true,
-              }
-            )
-            .eq(
-              "client_phone",
-              normalizedPhone
-            ),
+      const offersRes =
+        await supabase
+          .from("offers")
+          .select(
+            "id",
+            {
+              count:"exact",
+              head:true,
+            }
+          )
+          .eq(
+            "client_phone",
+            normalizedPhone
+          );
 
-          supabase
-            .from("offers")
-            .select(
-              "id",
-              {
-                count:"exact",
-                head:true,
-              }
-            )
-            .eq(
-              "client_phone",
-              normalizedPhone
-            ),
+      const ordersRes =
+        await supabase
+          .from("orders")
+          .select(
+            "id",
+            {
+              count:"exact",
+              head:true,
+            }
+          )
+          .eq(
+            "client_phone",
+            normalizedPhone
+          );
 
-          supabase
-            .from("orders")
-            .select(
-              "id",
-              {
-                count:"exact",
-                head:true,
-              }
-            )
-            .eq(
-              "client_phone",
-              normalizedPhone
-            ),
-
-          supabase
-            .from("garage")
-            .select(`
-              id,
-              car_name,
-              vin,
-              client_phone
-            `)
-            .eq(
-              "client_phone",
-              normalizedPhone
-            )
-            .order(
-              "id",
-              {
-                ascending:false,
-              }
-            ),
-
-        ]);
+      const garageRes =
+        await supabase
+          .from("garage")
+          .select(`
+            id,
+            car_name,
+            vin,
+            client_phone
+          `)
+          .eq(
+            "client_phone",
+            normalizedPhone
+          )
+          .order(
+            "id",
+            {
+              ascending:false,
+            }
+          );
 
       console.log(
         "PROFILE:",
-        profileRes.data
+        profileRes
       );
 
       console.log(
         "REQUESTS:",
-        requestsRes.count
+        requestsRes
       );
 
       console.log(
         "OFFERS:",
-        offersRes.count
+        offersRes
       );
 
       console.log(
         "ORDERS:",
-        ordersRes.count
+        ordersRes
       );
 
       console.log(
         "GARAGE:",
-        garageRes.data
+        garageRes
       );
+
+      if (profileRes.error) {
+
+        console.error(
+          "PROFILE ERROR:",
+          profileRes.error
+        );
+      }
+
+      if (requestsRes.error) {
+
+        console.error(
+          "REQUESTS ERROR:",
+          requestsRes.error
+        );
+      }
+
+      if (offersRes.error) {
+
+        console.error(
+          "OFFERS ERROR:",
+          offersRes.error
+        );
+      }
+
+      if (ordersRes.error) {
+
+        console.error(
+          "ORDERS ERROR:",
+          ordersRes.error
+        );
+      }
+
+      if (garageRes.error) {
+
+        console.error(
+          "GARAGE ERROR:",
+          garageRes.error
+        );
+      }
 
       setProfile(
         profileRes.data || null
@@ -331,9 +381,83 @@ export default function DashboardPage() {
     }
   }
 
+  async function saveNewCar() {
+
+    if (
+      !newCar.trim()
+    ) {
+
+      alert(
+        "Введите автомобиль"
+      );
+
+      return false;
+    }
+
+    const {
+      data,
+      error,
+    } =
+      await supabase
+        .from("garage")
+        .insert({
+          car_name:newCar.trim(),
+          vin:newVin.trim(),
+          client_phone:phone,
+        })
+        .select()
+        .single();
+
+    if (error) {
+
+      console.error(
+        "SAVE CAR ERROR:",
+        error
+      );
+
+      alert(
+        "Ошибка сохранения автомобиля"
+      );
+
+      return false;
+    }
+
+    if (data) {
+
+      setGarage((prev) => [
+
+        data,
+
+        ...prev,
+
+      ]);
+
+      setSelectedCar(
+        data.car_name
+      );
+
+      setVin(
+        data.vin || ""
+      );
+    }
+
+    return true;
+  }
+
   async function handleSubmit() {
 
     try {
+
+      if (
+        !partName.trim()
+      ) {
+
+        alert(
+          "Введите название запчасти"
+        );
+
+        return;
+      }
 
       let finalCar =
         selectedCar;
@@ -346,66 +470,25 @@ export default function DashboardPage() {
         "NEW_CAR"
       ) {
 
-        if (!newCar) {
+        const success =
+          await saveNewCar();
 
-          alert(
-            "Введите автомобиль"
-          );
+        if (!success) {
 
           return;
         }
 
         finalCar =
-          newCar;
+          newCar.trim();
 
         finalVin =
-          newVin;
-
-        const {
-          error:garageError,
-        } =
-          await supabase
-            .from("garage")
-            .insert({
-              car_name:newCar,
-              vin:newVin,
-              client_phone:phone,
-            });
-
-        if (garageError) {
-
-          console.error(
-            garageError
-          );
-
-          alert(
-            "Ошибка сохранения автомобиля"
-          );
-
-          return;
-        }
-
-        setGarage((prev) => [
-
-          {
-            id:Date.now(),
-            car_name:newCar,
-            vin:newVin,
-            client_phone:phone,
-          },
-
-          ...prev,
-
-        ]);
+          newVin.trim();
       }
 
-      if (
-        !finalCar ||
-        !partName
-      ) {
+      if (!finalCar) {
 
         alert(
-          "Заполните все поля"
+          "Выберите автомобиль"
         );
 
         return;
@@ -421,20 +504,26 @@ export default function DashboardPage() {
           .insert({
             car:finalCar,
             vin:finalVin,
-            part_name:partName,
-            quantity,
+            part_name:
+              partName.trim(),
+            quantity:Number(
+              quantity
+            ),
             status:"NEW",
             client_phone:phone,
           });
 
       if (error) {
 
-        console.error(error);
+        console.error(
+          "REQUEST ERROR:",
+          error
+        );
 
         handleError(error);
 
         alert(
-          "Ошибка создания запроса"
+          error.message
         );
 
         return;
@@ -479,7 +568,10 @@ export default function DashboardPage() {
 
     } catch (error) {
 
-      console.error(error);
+      console.error(
+        "SUBMIT ERROR:",
+        error
+      );
 
       handleError(error);
 
@@ -535,10 +627,12 @@ export default function DashboardPage() {
           >
 
             <div className={styles.iconBlue}>
+
               <FileText
                 size={22}
                 strokeWidth={2.3}
               />
+
             </div>
 
             <div>
@@ -561,10 +655,12 @@ export default function DashboardPage() {
           >
 
             <div className={styles.iconGreen}>
+
               <MessageCircle
                 size={22}
                 strokeWidth={2.3}
               />
+
             </div>
 
             <div>
@@ -587,10 +683,12 @@ export default function DashboardPage() {
           >
 
             <div className={styles.iconPurple}>
+
               <ShoppingBag
                 size={22}
                 strokeWidth={2.3}
               />
+
             </div>
 
             <div>
@@ -613,10 +711,12 @@ export default function DashboardPage() {
           >
 
             <div className={styles.iconOrange}>
+
               <User
                 size={22}
                 strokeWidth={2.3}
               />
+
             </div>
 
             <div>
@@ -663,16 +763,18 @@ export default function DashboardPage() {
                   Выберите автомобиль
                 </option>
 
-                {garage.map((item) => (
+                {
+                  garage.map((item) => (
 
-                  <option
-                    key={item.id}
-                    value={item.car_name}
-                  >
-                    {item.car_name}
-                  </option>
+                    <option
+                      key={item.id}
+                      value={item.car_name}
+                    >
+                      {item.car_name}
+                    </option>
 
-                ))}
+                  ))
+                }
 
                 <option value="NEW_CAR">
                   + Добавить автомобиль
@@ -732,7 +834,6 @@ export default function DashboardPage() {
 
                   </div>
                 </>
-
               )
             }
 
@@ -755,7 +856,6 @@ export default function DashboardPage() {
                   />
 
                 </div>
-
               )
             }
 
