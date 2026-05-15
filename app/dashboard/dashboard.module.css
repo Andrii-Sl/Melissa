@@ -31,7 +31,7 @@
 
   z-index: 120;
 
-  height: 62px;
+  height: 72px;
 
   display: flex;
   align-items: center;
@@ -42,7 +42,7 @@
     14px
     10px;
 
-  background: rgba(245,247,251,0.94);
+  background: rgba(245,247,251,0.96);
 
   backdrop-filter: blur(18px);
 
@@ -53,52 +53,21 @@
 .logoWrap {
   display: flex;
   align-items: center;
-  gap: 10px;
 }
 
-.logoImageWrap{
-  width:52px;
-  height:52px;
-
-  border-radius:16px;
-
-  overflow:hidden;
-
-  background:#fff;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  flex-shrink:0;
-
-  box-shadow:
-    0 4px 14px rgba(0,0,0,0.06);
-}
+/* LOGO IMAGE */
 
 .logoImage{
-  width:100%;
-  height:100%;
+  position:relative;
 
-  object-fit:cover;
+  width:150px;
+  height:44px;
+
+  flex-shrink:0;
 }
 
-.brand {
-  font-size: 19px;
-  line-height: 1;
-
-  font-weight: 900;
-
-  color: #000;
-}
-
-.subBrand {
-  margin-top: 2px;
-
-  font-size: 11px;
-  font-weight: 700;
-
-  color: #8d91a3;
+.logoImg{
+  object-fit:contain;
 }
 
 /* HEADER ACTIONS */
@@ -193,7 +162,7 @@
 .mobileMenu {
   position: fixed;
 
-  top: 68px;
+  top: 78px;
   right: 14px;
 
   width: 210px;
@@ -589,356 +558,6 @@
 
   box-shadow:
     0 8px 18px rgba(0,0,0,0.14);
-}
-
-.dashboardSubmit {
-  width: 100%;
-  height: 64px;
-
-  border-radius: 22px;
-
-  font-size: 16px;
-  font-weight: 900;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: 10px;
-}
-
-.profileManageBtn {
-  width: 100%;
-  height: 56px;
-
-  border-radius: 18px;
-
-  text-decoration: none;
-
-  font-size: 15px;
-  font-weight: 900;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  margin-top: 14px;
-}
-
-/* PROFILE */
-
-.profileModernCard {
-  background: #fff;
-
-  border-radius: 28px;
-
-  padding: 24px;
-
-  box-shadow:
-    0 4px 20px rgba(0,0,0,.04);
-}
-
-.dashboardSectionTitle {
-  font-size: 28px;
-  font-weight: 900;
-
-  color: #000;
-}
-
-.profileCarsList {
-  display: flex;
-  flex-direction: column;
-
-  gap: 14px;
-}
-
-.profileCarCard {
-  background: #f5f5f7;
-
-  border-radius: 20px;
-
-  padding: 18px;
-
-  display: flex;
-  align-items: center;
-
-  gap: 14px;
-}
-
-.profileCarIcon {
-  width: 54px;
-  height: 54px;
-
-  border-radius: 18px;
-
-  background: #fff;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  flex-shrink: 0;
-}
-
-.profileCarInfo {
-  flex: 1;
-
-  display: flex;
-  flex-direction: column;
-
-  gap: 4px;
-}
-
-.profileCarInfo strong {
-  font-size: 16px;
-  font-weight: 800;
-
-  color: #000;
-}
-
-.profileCarInfo span {
-  font-size: 13px;
-  font-weight: 700;
-
-  color: #7b8194;
-}
-
-/* EMPTY */
-
-.emptyMiniCard,
-.emptyCard {
-  background: #f5f5f7;
-
-  border-radius: 20px;
-
-  padding: 20px;
-
-  text-align: center;
-}
-
-.emptyIcon {
-  font-size: 40px;
-
-  margin-bottom: 12px;
-}
-
-/* OFFERS */
-
-.offerListModern {
-  display: flex;
-  flex-direction: column;
-
-  gap: 14px;
-}
-
-.offerModernCard {
-  width: 100%;
-
-  border: none;
-
-  background: #fff;
-
-  border-radius: 24px;
-
-  padding: 14px;
-
-  display: flex;
-  align-items: center;
-
-  gap: 14px;
-
-  text-align: left;
-
-  box-shadow:
-    0 4px 14px rgba(0,0,0,0.04);
-
-  cursor: pointer;
-}
-
-.offerModernImage {
-  width: 92px;
-  height: 92px;
-
-  border-radius: 18px;
-
-  overflow: hidden;
-
-  background: #f5f5f7;
-
-  position: relative;
-
-  flex-shrink: 0;
-}
-
-.offerImage {
-  object-fit: cover;
-}
-
-.imagePlaceholder {
-  width: 100%;
-  height: 100%;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 34px;
-}
-
-.offerModernContent {
-  flex: 1;
-}
-
-.offerModernContent h2 {
-  font-size: 16px;
-  line-height: 1.3;
-
-  font-weight: 800;
-
-  color: #000;
-
-  margin-bottom: 6px;
-}
-
-.offerModernContent p {
-  font-size: 13px;
-
-  color: #7b8194;
-
-  margin-bottom: 10px;
-}
-
-.offerModernPrice {
-  font-size: 24px;
-  font-weight: 900;
-
-  color: #000;
-
-  margin-bottom: 8px;
-}
-
-.offerModernDelivery {
-  font-size: 12px;
-  font-weight: 700;
-
-  color: #10b981;
-}
-
-/* CHECKOUT */
-
-.checkoutFullscreen {
-  position: fixed;
-
-  inset: 0;
-
-  background: #f5f7fb;
-
-  z-index: 300;
-
-  overflow-y: auto;
-
-  padding: 24px 14px 120px;
-}
-
-.checkoutTop {
-  display: flex;
-  align-items: center;
-
-  gap: 14px;
-
-  margin-bottom: 20px;
-}
-
-.checkoutTop h2 {
-  font-size: 24px;
-  font-weight: 900;
-}
-
-.backButton {
-  width: 42px;
-  height: 42px;
-
-  border: none;
-
-  border-radius: 14px;
-
-  background: #fff;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 20px;
-
-  cursor: pointer;
-}
-
-.checkoutCard {
-  background: #fff;
-
-  border-radius: 28px;
-
-  padding: 20px;
-
-  box-shadow:
-    0 4px 20px rgba(0,0,0,0.04);
-}
-
-.checkoutProduct {
-  display: flex;
-  gap: 14px;
-}
-
-.checkoutProductImage {
-  width: 110px;
-  height: 110px;
-
-  border-radius: 20px;
-
-  overflow: hidden;
-
-  background: #f5f5f7;
-
-  position: relative;
-
-  flex-shrink: 0;
-}
-
-.checkoutProductInfo h3 {
-  font-size: 18px;
-  font-weight: 800;
-
-  margin-bottom: 6px;
-}
-
-.checkoutProductInfo p {
-  font-size: 13px;
-
-  color: #7b8194;
-
-  margin-bottom: 10px;
-}
-
-.checkoutProductPrice {
-  font-size: 28px;
-  font-weight: 900;
-
-  margin-bottom: 10px;
-}
-
-/* LOADING */
-
-.loading {
-  min-height: 100dvh;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 18px;
-  font-weight: 800;
-
-  color: #111;
 }
 
 /* BOTTOM NAV */
